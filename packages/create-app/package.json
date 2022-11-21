@@ -1,0 +1,28 @@
+{
+  "name": "@xinghunm/create-app",
+  "version": "1.0.0",
+  "description": "Scaffolding for creating app",
+  "author": "xinghunm <xinghunm@keyayun.com>",
+  "homepage": "https://github.com/fengyueran/one-piece#readme",
+  "main": "lib/create-app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.yarnpkg.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fengyueran/one-piece.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/fengyueran/one-piece/issues"
+  }
+}
