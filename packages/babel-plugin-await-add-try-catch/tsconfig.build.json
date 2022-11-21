@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es2021",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "outDir": "lib"
+  },
+  "include": ["src/core"]
+}

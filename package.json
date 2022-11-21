@@ -4,9 +4,6 @@
   "scripts": {
     "lerna": "lerna"
   },
-  "workspaces": [
-    "packages/**"
-  ],
   "devDependencies": {
     "lerna": "^6.0.3"
   }

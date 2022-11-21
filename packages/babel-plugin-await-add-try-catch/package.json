@@ -1,0 +1,28 @@
+{
+  "name": "@xinghunm/babel-plugin-await-add-try-catch",
+  "version": "0.0.1",
+  "main": "lib",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "ts-node examples/add-try-catch/index.ts",
+    "build": "rm -rf lib && tsc -p tsconfig.build.json"
+  },
+  "author": "xhm",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/babel__core": "^7.1.20",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@babel/core": "^7.20.2"
+  }
+}
