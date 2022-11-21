@@ -1,13 +1,13 @@
 {
-  "name": "root",
+  "name": "one-piece",
   "private": true,
   "scripts": {
     "lerna": "lerna"
   },
-  "devDependencies": {
-    "lerna": "^4.0.0"
-  },
   "workspaces": [
     "packages/**"
-  ]
+  ],
+  "devDependencies": {
+    "lerna": "^6.0.3"
+  }
 }
