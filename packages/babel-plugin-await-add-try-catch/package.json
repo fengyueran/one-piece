@@ -1,6 +1,6 @@
 {
   "name": "@xinghunm/babel-plugin-await-add-try-catch",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "lib",
   "files": [
     "lib"
@@ -9,7 +9,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepublish": "yarn build",
+    "prepublishOnly": "yarn build",
     "test": "ts-node examples/add-try-catch/index.ts",
     "compileByBabel": "babel examples/compile-by-babel-or-webpack --out-dir dist",
     "compileByWebpack": "webpack --mode development",
@@ -26,7 +26,7 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
-    "@xinghunm/babel-plugin-await-add-try-catch": "^0.0.1",
+    "@xinghunm/babel-plugin-await-add-try-catch": "^0.0.3",
     "babel-loader": "^9.1.0",
     "eslint": "^8.26.0",
     "react": "^18.2.0",
