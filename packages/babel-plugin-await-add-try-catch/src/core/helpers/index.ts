@@ -1,11 +1,14 @@
 import { NodePath } from '@babel/traverse';
 import * as types from '@babel/types';
-import template from '@babel/template';
 
 export interface Options {
   include: string[];
   exclude: string[];
-  customCatchCode: string;
+  customCatchCode: (
+    filePath: string,
+    funcName: string,
+    errLiteral: string
+  ) => string;
 }
 export interface PluginPass {
   filename: string;
@@ -51,12 +54,14 @@ export const getFuncName = (callFuncPath: NodePath, asyncPath: NodePath) => {
   return funcName;
 };
 
-export const makeCustomCatchCode = (
+export const makeConsole = (
   filePath: string,
   funcName: string,
-  errLiteral: string
-) =>
-  `console.error("\\nfilePath: ${filePath}\\nfuncName: ${funcName}\\nerror:", ${errLiteral})`;
+  errorLiteral: string
+) => `
+funcName: ${funcName}
+filePath: ${filePath}
+${errorLiteral}:`;
 
 export const isAsyncForm = (node: any) => {
   const canAsyncFunc =

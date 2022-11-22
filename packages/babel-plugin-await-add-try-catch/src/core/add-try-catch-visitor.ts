@@ -5,7 +5,7 @@ import template from '@babel/template';
 import {
   PluginPass,
   isAsyncForm,
-  makeCustomCatchCode,
+  makeConsole,
   shouldIgnoreFile,
   getFuncName,
 } from './helpers';
@@ -13,7 +13,8 @@ import {
 const TryCatchTemplate = `
   try {
   } catch (err) {
-    %%CatchCode%%
+    %%CustomCatchCode%%
+    console.error(%%Error%%, err);
   }
 `;
 
@@ -46,9 +47,8 @@ const handleAwaitExpression = function (
     const funcName = getFuncName(path, asyncPath);
 
     const tempArgumentObj = {
-      CatchCode:
-        pluginPass?.opts.customCatchCode ||
-        makeCustomCatchCode(filePath, funcName, 'err'),
+      CustomCatchCode: pluginPass?.opts.customCatchCode || undefined,
+      Error: types.stringLiteral(makeConsole(filePath, funcName, 'err')),
     };
     const tryNode = temp(tempArgumentObj) as types.TryStatement;
 
@@ -63,7 +63,6 @@ const handleAwaitExpression = function (
 export const visitor: Visitor = {
   Function(path) {
     const pluginPass = this as PluginPass;
-    console.log('pluginPass', pluginPass);
     path.traverse({
       AwaitExpression: function (awaitPath) {
         handleAwaitExpression(awaitPath, pluginPass);

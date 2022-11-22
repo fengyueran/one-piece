@@ -1,0 +1,11 @@
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": [
+    [
+      "@xinghunm/babel-plugin-await-add-try-catch",
+      {
+        "customCatchCode": "console.log(\"++++++++++++++++++++++++++++\")"
+      }
+    ]
+  ]
+}
