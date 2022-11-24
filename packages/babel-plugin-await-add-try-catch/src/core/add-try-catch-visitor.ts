@@ -48,7 +48,9 @@ const handleAwaitExpression = function (
 
     const tempArgumentObj = {
       CustomCatchCode: pluginPass?.opts.customCatchCode || undefined,
-      Error: types.stringLiteral(makeConsole(filePath, funcName, 'err')),
+      Error: types.stringLiteral(
+        makeConsole(filePath, funcName, path.node.loc, 'err')
+      ),
     };
     const tryNode = temp(tempArgumentObj) as types.TryStatement;
 

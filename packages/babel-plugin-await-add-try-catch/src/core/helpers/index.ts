@@ -57,10 +57,12 @@ export const getFuncName = (callFuncPath: NodePath, asyncPath: NodePath) => {
 export const makeConsole = (
   filePath: string,
   funcName: string,
+  loc: types.SourceLocation,
   errorLiteral: string
 ) => `
 funcName: ${funcName}
 filePath: ${filePath}
+location: ${JSON.stringify(loc)}
 ${errorLiteral}:`;
 
 export const isAsyncForm = (node: any) => {

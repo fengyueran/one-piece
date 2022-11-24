@@ -9,11 +9,18 @@ const sourceCode = fs.readFileSync(path.join(__dirname, './source-code.ts'), {
 
 const obj = babel.transformSync(sourceCode, {
   plugins: [
-    function MyPlugin(babel) {
-      return {
-        visitor,
-      };
-    },
+    [
+      function MyPlugin(babel) {
+        return {
+          visitor,
+        };
+      },
+      {
+        include: [],
+        exclude: [],
+        customCatchCode: 'console.log("+++++++++++++++---")',
+      },
+    ],
   ],
 });
 
