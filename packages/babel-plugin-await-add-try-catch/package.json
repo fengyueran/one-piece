@@ -10,8 +10,8 @@
   },
   "scripts": {
     "prepublishOnly": "yarn build",
-    "test": "ts-node examples/add-try-catch/index.ts",
-    "compileByBabel": "babel examples/compile-by-babel-or-webpack --out-dir dist",
+    "test": "ts-node examples/add-try-catch-plugin/index.ts",
+    "compileByBabel": "babel --config-file ./babel-config.json examples/compile-by-babel-or-webpack --out-dir dist",
     "compileByWebpack": "webpack --mode development",
     "build": "rm -rf lib && tsc -p tsconfig.build.json"
   },

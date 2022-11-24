@@ -7,6 +7,18 @@ module.exports = {
     filename: '[name].js',
   },
   module: {
-    rules: [{ test: /\.js$/, use: 'babel-loader' }],
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, 'babel-config.json'),
+            },
+          },
+        ],
+      },
+    ],
   },
 };

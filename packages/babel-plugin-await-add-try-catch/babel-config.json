@@ -4,8 +4,8 @@
     [
       "@xinghunm/babel-plugin-await-add-try-catch",
       {
-        // "include": [],
-        // "exclude": [],
+        "include": [],
+        "exclude": [],
         "customCatchCode": "console.log(\"++++++++++++++++++++++++++++\")"
       }
     ]
