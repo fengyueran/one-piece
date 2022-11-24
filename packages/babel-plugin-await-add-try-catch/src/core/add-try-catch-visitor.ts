@@ -15,6 +15,7 @@ const TryCatchTemplate = `
   } catch (err) {
     %%CustomCatchCode%%
     console.error(%%Error%%, err);
+    throw err;
   }
 `;
 
