@@ -1,10 +1,11 @@
-import { visitor } from './add-try-catch-visitor';
+import { declare } from '@babel/helper-plugin-utils';
 
-const babelPlugin = function (babel) {
+import { createVisitor } from './visitor';
+
+const babelPlugin = declare((api, options, dirname) => {
   return {
-    name: 'babel-plugin-await-add-try-catch',
-    visitor,
+    visitor: createVisitor(api, options, dirname),
   };
-};
+});
 
 export default babelPlugin;

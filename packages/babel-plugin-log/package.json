@@ -1,6 +1,6 @@
 {
   "name": "@xinghunm/babel-plugin-log",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib",
   "files": [
     "lib"
@@ -10,10 +10,11 @@
   },
   "scripts": {
     "prepublishOnly": "yarn build",
-    "test": "ts-node examples/add-try-catch/index.ts",
-    "compileByBabel": "babel examples/compile-by-babel-or-webpack --out-dir dist",
+    "test": "ts-node examples/plugin/index.ts",
+    "compileByBabel": "babel --config-file ./babel-config.js examples/compile-by-babel-or-webpack --out-dir dist",
     "compileByWebpack": "webpack --mode development",
-    "build": "rm -rf lib && tsc -p tsconfig.build.json"
+    "build": "rm -rf lib && tsc -p tsconfig.build.json && yarn postBuild",
+    "postBuild": "cp -r lib node_modules/@xinghunm/babel-plugin-log/"
   },
   "author": "xhm",
   "license": "ISC",
@@ -26,7 +27,8 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
-    "@xinghunm/babel-plugin-await-add-try-catch": "^0.0.3",
+    "@xinghunm/babel-plugin-await-add-try-catch": "^0.0.5",
+    "@xinghunm/babel-plugin-log": "^0.0.2",
     "babel-loader": "^9.1.0",
     "eslint": "^8.26.0",
     "react": "^18.2.0",
@@ -34,5 +36,10 @@
     "typescript": "^4.8.4",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.0"
+  },
+  "dependencies": {
+    "@babel/helper-module-imports": "^7.18.6",
+    "@babel/helper-plugin-utils": "^7.20.2",
+    "@babel/template": "^7.18.10"
   }
 }

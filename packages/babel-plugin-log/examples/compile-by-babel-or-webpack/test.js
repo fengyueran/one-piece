@@ -1,7 +1,10 @@
-const test = async () => {
-  const test1 = () => {
-    throw new Error('99999999999999');
-  };
-  await test1();
+const test1 = () => {
+  console.log('test1');
+  return 8;
 };
-test();
+
+const test2 = async () => {
+  console.log('888888888888888888');
+  await Promise.resolve();
+  return 8;
+};

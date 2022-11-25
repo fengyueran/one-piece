@@ -1397,10 +1397,19 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-2.0.0.tgz#f08ea194e01ed45379383a8886e8c85a65a5f26a"
   integrity sha512-Rumq5mHvGXamnOh3O8yLk1sjx8dB30qF1OeR6VC00DIR6SLJ4bwwUGKC4pE7qBFoQyyh0H9sAg3fikYgAqVR0w==
 
-"@xinghunm/babel-plugin-await-add-try-catch@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@xinghunm/babel-plugin-await-add-try-catch/-/babel-plugin-await-add-try-catch-0.0.3.tgz#eb0207f1a7696d0ac32b0e582ff8311600f88b63"
-  integrity sha512-HYcD4+tL1aC+JxAa7eu1vV4N3g7ipQNJ+agWc5cJw3WPiJjTVg/Ms9UFAmR3eOcXNE7kUsf70V6S70X0VdNX5g==
+"@xinghunm/babel-plugin-await-add-try-catch@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@xinghunm/babel-plugin-await-add-try-catch/-/babel-plugin-await-add-try-catch-0.0.5.tgz#0dd2166e8370947b62b889ba2a3700943f814a8d"
+  integrity sha512-jJ5GbMdRgvhbbvgHquc1Zqv7MziBCIHwbtG4/64+HjIfBwR5Ep/PDVdfVxBw3EElctKzlNbat2dv2oQFi5dGIQ==
+
+"@xinghunm/babel-plugin-log@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@xinghunm/babel-plugin-log/-/babel-plugin-log-0.0.2.tgz#54eabfdf60454af65ab0169aee7366812942959f"
+  integrity sha512-aW1ectiiKjZ/ISlTBpT7SqQEr/UbJ8G/fGQ4i4cGfLu/aFlturgxiVSy/+G+V0idt0169vRzXXPPtCxBhV+HKg==
+  dependencies:
+    "@babel/helper-module-imports" "^7.18.6"
+    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/template" "^7.18.10"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
