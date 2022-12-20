@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { LocaleSwitch } from 'src/features';
+import { DicomViewer } from 'src/features';
 
 const Container = styled.div`
   width: 100vw;
@@ -13,7 +13,7 @@ const Container = styled.div`
 export const IndexPage = () => {
   return (
     <Container>
-      <LocaleSwitch />
+      <DicomViewer />
     </Container>
   );
 };
