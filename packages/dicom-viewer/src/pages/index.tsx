@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { DicomViewer } from 'src/features';
+import { DicomViewer } from 'src/features/dicom-viewer';
 
 const Container = styled.div`
   width: 100vw;

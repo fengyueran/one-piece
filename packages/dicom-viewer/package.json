@@ -12,7 +12,9 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.4",
     "styled-components": "^5.3.6",
-    "uzip": "^0.20201231.0"
+    "uzip": "^0.20201231.0",
+    "fast-xml-parser": "^3.19.0",
+    "ramda": "^0.27.1"
   },
   "scripts": {
     "start": "craco start",
