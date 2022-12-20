@@ -37,7 +37,7 @@ export const installPackage = (project: string) => {
   shell.exec('yarn');
 };
 
-export const installReduxDependencies = (project: string) => {
+const installReduxDependencies = (project: string) => {
   shell.cd(project);
   shell.exec('yarn add @reduxjs/toolkit redux redux-persist react-redux');
 };
@@ -47,6 +47,18 @@ export const addRedux = (project: string) => {
   const projectSrc = path.join(project, 'src');
 
   shell.cp(storeFile, projectSrc);
+};
+
+export const addAntd = (project: string) => {
+  const storeFile = path.join(__filename, '../../antd-code/');
+  const projectSrc = path.join(project, 'src/components');
+
+  shell.cp(storeFile, projectSrc);
+};
+
+export const installAntd = (project: string) => {
+  shell.cd(project);
+  shell.exec('yarn add antd');
 };
 
 export const checkGit = () => {
@@ -71,6 +83,12 @@ export const createProjectByTemplate = async (config: Config) => {
   if (shouldAddRedux) {
     addRedux(savePath);
     installReduxDependencies(savePath);
+  }
+
+  const shouldAddAntd = options?.includes(CodeType.Antd);
+  if (shouldAddAntd) {
+    addRedux(savePath);
+    installAntd(savePath);
   }
 
   const shouldAddAppFile = template === Template.React;
