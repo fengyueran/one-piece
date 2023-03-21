@@ -7,7 +7,7 @@ import {
   createColorLabelTexture,
   DicomMaskFormat,
 } from '../materiallibrary';
-import { Image2DSource, Image2D } from '../image-loader';
+import { image } from '../image-loader';
 import { ColorTable } from '../common';
 import { DicomImageBase } from './dicomimagebase';
 
@@ -55,7 +55,7 @@ export class MaskImagePlane extends DicomImageBase {
     );
   }
 
-  protected createTexture(image: Image2D<Uint8Array>) {
+  protected createTexture(image: image.Image2D<Uint8Array>) {
     return createMaskImageTexture(
       image.size[0],
       image.size[1],
@@ -66,7 +66,7 @@ export class MaskImagePlane extends DicomImageBase {
   }
 
   setupData(
-    source: Image2DSource<Uint8Array>,
+    source: image.Image2DSource<Uint8Array>,
     physicalSize: Array<number>,
     opacity: number,
     colorTable: ColorTable,

@@ -1,7 +1,7 @@
-import { image, nifti, dicom } from '@cc/loader';
+import { image, nifti } from '@cc/loader';
 
 import { FullDicomCache } from './full-dicom-cache';
-import { Image3DFromDicom } from '../image-loader';
+import { dicom } from '../image-loader';
 
 export const makeImg3DByNiftiBuffer = async (
   niftiBuffer: ArrayBuffer,
@@ -157,7 +157,7 @@ const makeImage3 = async (series: ReturnType<typeof parseSeries>) => {
         ? series.slices[0].dicom.getTag(tagName)
         : series.slices[index].dicom.getTag(tagName),
   );
-  const r = new Image3DFromDicom<Int16Array>(imageInfo, cache, Int16Array);
+  const r = new dicom.Image3DFromDicom<Int16Array>(imageInfo, cache, Int16Array);
   return r;
 };
 

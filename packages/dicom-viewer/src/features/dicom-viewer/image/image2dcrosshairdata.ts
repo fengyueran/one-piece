@@ -3,16 +3,16 @@ import * as ccloader from '@cc/loader';
 import { CrosshairData } from './crosshairdata';
 
 import { CoordinateSystem, CSType } from './coordinatesystem';
-import { Image2DSource, Image2DSpaceInfo } from '../image-loader';
+import { image } from '../image-loader';
 
 export class Image2DCrosshairData extends CrosshairData {
   cs?: CoordinateSystem;
 
-  private sources: Array<Image2DSource<ccloader.TypedArray>> = [];
+  private sources: Array<image.Image2DSource<ccloader.TypedArray>> = [];
 
   private lastRequested = -1;
 
-  addSource(source: Image2DSource<ccloader.TypedArray>): void {
+  addSource(source: image.Image2DSource<ccloader.TypedArray>): void {
     if (this.sources.indexOf(source) !== -1) {
       return;
     }

@@ -6,15 +6,16 @@
     "@cc/viewers-dvtool": "1.0.13",
     "@cc/viewers-reducer": "^0.0.14",
     "@reduxjs/toolkit": "^1.9.1",
+    "dicom-parser": "^1.8.21",
+    "fast-xml-parser": "^3.19.0",
+    "ramda": "^0.27.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intl": "^6.2.5",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.4",
     "styled-components": "^5.3.6",
-    "uzip": "^0.20201231.0",
-    "fast-xml-parser": "^3.19.0",
-    "ramda": "^0.27.1"
+    "uzip": "^0.20201231.0"
   },
   "scripts": {
     "start": "craco start",

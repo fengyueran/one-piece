@@ -1,7 +1,7 @@
 import { Vector3, Box2, Vector2 } from 'three';
 import * as ccloader from '@cc/loader';
 import { components, products, engine } from '@cc/viewers-dvtool';
-import { Image2DSource, Image2DSpaceInfo } from '../image-loader';
+import { image } from '../image-loader';
 // import * as defaultColorTable from '../../../components/materiallibrary/colortable';
 
 // import { DicomViewControllers } from '../../../components/input';
@@ -25,7 +25,7 @@ export function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
 }
 
 export interface DicomImageCreationOption {
-  maskSource?: Image2DSource<Uint8Array>;
+  maskSource?: image.Image2DSource<Uint8Array>;
   colorTable?: components.ColorTable;
   orthographicSize?: number;
   crosshairType?: components.image.Crosshair2DType;
@@ -64,11 +64,11 @@ export class DicomImageRoot extends engine.TSBehaviour {
 
   protected minimapGo?: engine.GameObject;
 
-  baseSource?: Image2DSource<ccloader.TypedArray>;
+  baseSource?: image.Image2DSource<ccloader.TypedArray>;
 
-  maskSource?: Image2DSource<Uint8Array>;
+  maskSource?: image.Image2DSource<Uint8Array>;
 
-  info?: Image2DSpaceInfo;
+  info?: image.Image2DSpaceInfo;
 
   // controller?: DicomViewControllers;
 
@@ -80,8 +80,8 @@ export class DicomImageRoot extends engine.TSBehaviour {
 
   create(
     name: string,
-    info: Image2DSpaceInfo,
-    baseSource: Image2DSource<ccloader.TypedArray>,
+    info: image.Image2DSpaceInfo,
+    baseSource: image.Image2DSource<ccloader.TypedArray>,
     option: DicomImageCreationOption,
   ): void {
     this.gameObject.name = name;
@@ -122,8 +122,8 @@ export class DicomImageRoot extends engine.TSBehaviour {
   update(): void {}
 
   createBase(
-    info: Image2DSpaceInfo,
-    baseSource: Image2DSource<ccloader.TypedArray>,
+    info: image.Image2DSpaceInfo,
+    baseSource: image.Image2DSource<ccloader.TypedArray>,
     option: DicomImageCreationOption,
   ): void {
     const { name } = this.gameObject;
@@ -226,7 +226,7 @@ export class DicomImageRoot extends engine.TSBehaviour {
   }
 
   setMask(
-    maskSource: Image2DSource<Uint8Array>,
+    maskSource: image.Image2DSource<Uint8Array>,
     maskVisible?: boolean,
     opacity?: number,
     colorTable?: components.ColorTable,

@@ -1,7 +1,7 @@
 import * as ccloader from '@cc/loader';
 import { DicomSceneModel, Option } from '../scene';
 import * as exampleColorTable from './custom-color-table';
-import { Image3DFromDicom, Image3D, makeAxialLoader } from '../image-loader';
+import { dicom, image } from '../image-loader';
 
 export enum Plane {
   'Axial' = 'axial',
@@ -9,12 +9,12 @@ export enum Plane {
   'Coronal' = 'coronal',
 }
 
-export type Image3DType = Image3D<Int16Array> | Image3DFromDicom<Int16Array>;
+export type Image3DType = image.Image3D<Int16Array> | dicom.Image3DFromDicom<Int16Array>;
 
 export const createDicomSceneModel = (
   type: Plane,
-  image: Image3DType,
-  mask?: Image3D<Uint8Array>,
+  image: any,
+  mask?: image.Image3D<Uint8Array>,
   option?: Option,
 ) => {
   let dicomSceneModel;
@@ -24,8 +24,8 @@ export const createDicomSceneModel = (
       dicomSceneModel = new DicomSceneModel(
         'axial',
         image.getAxialInfo(),
-        makeAxialLoader(image),
-        mask && makeAxialLoader(mask),
+        image.makeAxialLoader(image),
+        mask && image.makeAxialLoader(mask),
         exampleColorTable,
         orthographicSize,
         option,
@@ -63,7 +63,7 @@ export const createDicomSceneModel = (
   return dicomSceneModel;
 };
 
-const getTags = (image: ccloader.dicom.Image3DFromDicom<Int16Array>) => {
+const getTags = (image: dicom.Image3DFromDicom<Int16Array>) => {
   const tags =
     image.getSliceInfo &&
     image.getSliceInfo(0, [

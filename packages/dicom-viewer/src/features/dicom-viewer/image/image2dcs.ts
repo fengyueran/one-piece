@@ -5,7 +5,7 @@ import * as ccloader from '@cc/loader';
 import { CoordinateSystem, CSType } from './coordinatesystem';
 
 import { components, engine } from '@cc/viewers-dvtool';
-import { Image2DSource, Image2DSpaceInfo } from '../image-loader';
+import { image } from '../image-loader';
 
 import { CrosshairData } from './crosshairdata';
 
@@ -30,7 +30,7 @@ class NotImplemented extends BaseError {
 }
 
 export class Image2DCS extends engine.TSBehaviour implements CoordinateSystem {
-  spaceInfo!: Image2DSpaceInfo;
+  spaceInfo!: image.Image2DSpaceInfo;
 
   crosshairData?: CrosshairData;
 

@@ -2,7 +2,7 @@ import * as three from 'three';
 import * as ccloader from '@cc/loader';
 import { engine } from '@cc/viewers-dvtool';
 
-import { Image2DSource, Image2D } from '../image-loader';
+import { image } from '../image-loader';
 export class BaseError extends Error {
   constructor(public type: string, public message: string) {
     super(`${type}: ${message}`);
@@ -36,16 +36,16 @@ export class DicomImageBase extends engine.TSBehaviour {
 
   protected physicalSize?: Array<number>;
 
-  protected lastUsedImage?: Image2D<ccloader.TypedArray>;
+  protected lastUsedImage?: image.Image2D<ccloader.TypedArray>;
 
-  protected source?: Image2DSource<ccloader.TypedArray>;
+  protected source?: image.Image2DSource<ccloader.TypedArray>;
 
   protected useLinear = false;
 
   protected dupCount?: Array<number>;
 
   protected setupBase(
-    source: Image2DSource<ccloader.TypedArray>,
+    source: image.Image2DSource<ccloader.TypedArray>,
     physicalSize: Array<number>,
     useLinear?: boolean,
     dupCount?: [number, number],
@@ -140,11 +140,11 @@ export class DicomImageBase extends engine.TSBehaviour {
     this.updateMaterial();
   }
 
-  protected createTexture(_image: Image2D<ccloader.TypedArray>): three.Texture {
+  protected createTexture(_image: image.Image2D<ccloader.TypedArray>): three.Texture {
     throw new NotImplemented('DicomImageBase:createTexture');
   }
 
-  protected createMaterial(_image: Image2D<ccloader.TypedArray>): engine.Material {
+  protected createMaterial(_image: image.Image2D<ccloader.TypedArray>): engine.Material {
     throw new NotImplemented('DicomImageBase:createMaterial');
   }
 

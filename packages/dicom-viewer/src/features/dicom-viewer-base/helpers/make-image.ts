@@ -18,46 +18,7 @@ export const makeImg3DByNiftiBuffer = async (
   return img3;
 };
 
-const newParseDicom = (ab: ArrayBuffer) => {
-  let position = 128;
 
-  const prefixBuffer = ab.slice(position, position + 4);
-  position += 4;
-  const dicomTag = new TextDecoder('utf-8').decode(prefixBuffer);
-  console.log('dicomTag', dicomTag); //DICM
-
-  const group1Buffer = ab.slice(position, position + 1);
-  position += 1;
-  const group1 = new TextDecoder('utf-8').decode(group1Buffer); //\x00
-
-  const group2Buffer = ab.slice(position, position + 1);
-  position += 1;
-  const group2 = new TextDecoder('utf-8').decode(group2Buffer); //\x00
-
-  const element1Buffer = ab.slice(position, position + 1);
-  position += 1;
-  const element1 = new TextDecoder('utf-8').decode(element1Buffer);
-
-  const element2Buffer = ab.slice(position, position + 1);
-  position += 1;
-  const element2 = new TextDecoder('utf-8').decode(element2Buffer);
-
-  const VRBuffer = ab.slice(position, position + 2);
-  position += 2;
-  const VR = new TextDecoder('utf-8').decode(VRBuffer);
-  console.log('VR', VR); //UL
-
-  const VLBuffer = ab.slice(position, position + 2);
-  position += 2;
-  const VL = new Uint16Array(VLBuffer)[0];
-  console.log('VL', VL); //4
-
-  const VFBuffer = ab.slice(position, position + VL);
-  const VF = new Uint32Array(VFBuffer)[0];
-  console.log('VF', VF); //230
-
-  debugger; //eslint-disable-line
-};
 
 // the second step parseDicom.
 const parseDicomBufferList = (dataList: Array<ArrayBuffer>) =>

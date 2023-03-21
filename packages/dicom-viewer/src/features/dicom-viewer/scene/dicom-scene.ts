@@ -3,7 +3,7 @@ import { Vector3 } from 'three';
 import { components, events, engine, products } from '@cc/viewers-dvtool';
 import { OpType } from './dicom-view-controllers';
 import { DicomImageRoot } from './image-root';
-import { Image2DSource, Image2DSpaceInfo } from '../image-loader';
+import { image } from '../image-loader';
 import { DicomImageCreationOption } from '../scene';
 import { DicomImagePlane, Image2DCS } from '../image';
 
@@ -11,7 +11,7 @@ export type Option = {
   startRenderLoopWhenSenceCreate: boolean;
 };
 export class DicomSceneModel extends engine.SceneModel {
-  maskSource?: Image2DSource<Uint8Array>;
+  maskSource?: image.Image2DSource<Uint8Array>;
 
   mRenderReady = false;
 
@@ -38,9 +38,9 @@ export class DicomSceneModel extends engine.SceneModel {
 
   constructor(
     name: string,
-    public info: Image2DSpaceInfo,
-    public baseSource: Image2DSource<Int16Array>,
-    maskSource?: Image2DSource<Uint8Array>,
+    public info: image.Image2DSpaceInfo,
+    public baseSource: image.Image2DSource<Int16Array>,
+    maskSource?: image.Image2DSource<Uint8Array>,
     colorTable?: components.ColorTable,
     public orthographicSize?: number,
     option?: Option,
@@ -94,8 +94,8 @@ export class DicomSceneModel extends engine.SceneModel {
   }
 
   protected createDicomImage(
-    info: Image2DSpaceInfo,
-    baseSource: Image2DSource<ccloader.TypedArray>,
+    info: image.Image2DSpaceInfo,
+    baseSource: image.Image2DSource<ccloader.TypedArray>,
     option: DicomImageCreationOption,
   ): void {
     this.imageRoot.create(this.scene.name, info, baseSource, {

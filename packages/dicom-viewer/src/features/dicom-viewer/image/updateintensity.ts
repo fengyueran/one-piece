@@ -5,22 +5,22 @@ import { CrosshairData } from './crosshairdata';
 
 import { engine } from '@cc/viewers-dvtool';
 import { CoordinateSystem, CSType } from './coordinatesystem';
-import { Image2DSource, Image2D } from '../image-loader';
+import { image } from '../image-loader';
 
 export class UpdateIntensity extends engine.TSBehaviour {
-  lastUsedImage?: Image2D<ccloader.TypedArray>;
+  lastUsedImage?: image.Image2D<ccloader.TypedArray>;
 
   lastCrosshair?: Array<number>;
 
   crosshairData?: CrosshairData;
 
-  source?: Image2DSource<ccloader.TypedArray>;
+  source?: image.Image2DSource<ccloader.TypedArray>;
 
   cs?: CoordinateSystem;
 
   setupData(
     crosshairData: CrosshairData,
-    source: Image2DSource<ccloader.TypedArray>,
+    source: image.Image2DSource<ccloader.TypedArray>,
     cs: CoordinateSystem,
   ): void {
     this.crosshairData = crosshairData;

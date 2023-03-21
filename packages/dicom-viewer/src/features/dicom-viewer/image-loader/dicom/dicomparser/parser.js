@@ -115,6 +115,8 @@
 
       function readDataSet(metaHeaderDataSet) {
         var transferSyntax = readTransferSyntax(metaHeaderDataSet);
+        debugger; //eslint-disable-line
+
         var explicit = isExplicit(transferSyntax);
         var dataSetByteStream = getDataSetByteStream(transferSyntax, metaHeaderDataSet.position);
 

@@ -21,7 +21,7 @@ import {
 
 import * as three from 'three';
 import { components, products, engine } from '@cc/viewers-dvtool';
-import { Image2DSource, Image2D, makeAxialLoader } from './image-loader';
+import { image } from './image-loader';
 
 const Container = styled.div`
   width: 500px;
@@ -55,7 +55,7 @@ const convertBuffer = (buffer: ccloader.TypedArray) => {
   return buffer;
 };
 
-const createTexture = (image: Image2D<ccloader.TypedArray>) => {
+const createTexture = (image: image.Image2D<ccloader.TypedArray>) => {
   const format = getImageFormat(image.pixel);
   const useLinear = false;
   const isWebgl1 = false;
@@ -140,7 +140,7 @@ const run = (img3D: any, basicInfo: any, container: any) => {
   const windowData = new LUTWindowData();
   windowData.setData(window);
 
-  const source = makeAxialLoader(img3D);
+  const source = image.makeAxialLoader(img3D);
   source.request(100);
   const activeDisplayed = source.getActiveDisplayed();
 
@@ -161,18 +161,19 @@ const run = (img3D: any, basicInfo: any, container: any) => {
   const dupCount = [1, 1];
   const planeSize = { w: physicalSize[0] * dupCount[0], h: physicalSize[1] * dupCount[1] };
   const geometry = new three.PlaneBufferGeometry(planeSize.w, planeSize.h);
+  debugger; //eslint-disable-line
 
-  const uv = geometry.getAttribute('uv').array as Float32Array;
-  for (let i = 0; i < uv.length; i += 2) {
-    if (uv[i] === 1) {
-      // eslint-disable-next-line prefer-destructuring
-      uv[i] = dupCount[0];
-    }
-    if (uv[i + 1] === 1) {
-      // eslint-disable-next-line prefer-destructuring
-      uv[i + 1] = dupCount[1];
-    }
-  }
+  // const uv = geometry.getAttribute('uv').array as Float32Array;
+  // for (let i = 0; i < uv.length; i += 2) {
+  //   if (uv[i] === 1) {
+  //     // eslint-disable-next-line prefer-destructuring
+  //     uv[i] = dupCount[0];
+  //   }
+  //   if (uv[i + 1] === 1) {
+  //     // eslint-disable-next-line prefer-destructuring
+  //     uv[i + 1] = dupCount[1];
+  //   }
+  // }
   var mesh = new three.Mesh(geometry, material);
   scene.add(mesh);
 

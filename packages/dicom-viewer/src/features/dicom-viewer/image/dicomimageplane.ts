@@ -10,7 +10,7 @@ import {
 } from '../materiallibrary';
 
 import { DicomImageBase } from './dicomimagebase';
-import { Image2DSource, Image2D } from '../image-loader';
+import { image } from '../image-loader';
 
 export function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
   if (val === undefined || val === null) {
@@ -55,7 +55,7 @@ export class DicomImagePlane extends DicomImageBase {
     return buffer;
   }
 
-  protected createTexture(image: Image2D<ccloader.TypedArray>) {
+  protected createTexture(image: image.Image2D<ccloader.TypedArray>) {
     const format = this.getImageFormat(image.pixel);
     this.usedImageFormat = format;
     return createDicomImageTexture(
@@ -68,7 +68,7 @@ export class DicomImagePlane extends DicomImageBase {
     );
   }
 
-  protected createMaterial(image: Image2D<ccloader.TypedArray>) {
+  protected createMaterial(image: image.Image2D<ccloader.TypedArray>) {
     assertIsDefined(this.windowData);
     assertIsDefined(this.imageTexture);
     const format = this.getImageFormat(image.pixel);
@@ -86,7 +86,7 @@ export class DicomImagePlane extends DicomImageBase {
 
   setupData(
     windowData: components.image.LUTWindowData,
-    source: Image2DSource<ccloader.TypedArray>,
+    source: image.Image2DSource<ccloader.TypedArray>,
     physicalSize: Array<number>,
     useLinear?: boolean,
     dupCount?: [number, number],
