@@ -25,10 +25,16 @@ export const getValidBufferList = async (fileMap: UZIPFiles) => {
   return bufferList;
 };
 
-export const getDicom = async () => {
-  const DICOM_TAR_URL = `${HOST}/dicom.zip`;
-  const arrayBuffer = await fetchFile(DICOM_TAR_URL);
-  const unZipped = await unZip(arrayBuffer);
+// export const getDicom = async () => {
+//   const DICOM_TAR_URL = `${HOST}/dicom.zip`;
+//   const arrayBuffer = await fetchFile(DICOM_TAR_URL);
+//   const unZipped = await unZip(arrayBuffer);
 
-  return getValidBufferList(unZipped);
+//   return getValidBufferList(unZipped);
+// };
+
+export const getDicom = async () => {
+  const res = await fetch(`${HOST}/test.dcm`);
+  const ab = await res.arrayBuffer();
+  return [ab];
 };

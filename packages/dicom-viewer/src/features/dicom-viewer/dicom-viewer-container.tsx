@@ -161,7 +161,6 @@ const run = (img3D: any, basicInfo: any, container: any) => {
   const dupCount = [1, 1];
   const planeSize = { w: physicalSize[0] * dupCount[0], h: physicalSize[1] * dupCount[1] };
   const geometry = new three.PlaneBufferGeometry(planeSize.w, planeSize.h);
-  debugger; //eslint-disable-line
 
   // const uv = geometry.getAttribute('uv').array as Float32Array;
   // for (let i = 0; i < uv.length; i += 2) {

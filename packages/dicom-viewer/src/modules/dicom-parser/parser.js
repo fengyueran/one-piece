@@ -115,7 +115,6 @@
 
       function readDataSet(metaHeaderDataSet) {
         var transferSyntax = readTransferSyntax(metaHeaderDataSet);
-
         var explicit = isExplicit(transferSyntax);
         var dataSetByteStream = getDataSetByteStream(transferSyntax, metaHeaderDataSet.position);
 

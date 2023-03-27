@@ -2,6 +2,7 @@ import { image, nifti } from '@cc/loader';
 
 import { FullDicomCache } from './full-dicom-cache';
 import { dicom } from '../image-loader';
+import { loadImage } from '../../../modules/image-loader';
 
 export const makeImg3DByNiftiBuffer = async (
   niftiBuffer: ArrayBuffer,
@@ -23,6 +24,7 @@ const parseDicom = (dataList: Array<ArrayBuffer>) =>
   dataList
     .map((ab) => {
       try {
+        loadImage(ab);
         return dicom.parseDicom(ab);
       } catch (e) {
         console.log('parseDicom error', e);
