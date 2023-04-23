@@ -1,10 +1,19 @@
 import inquirer from 'inquirer';
 
-import { createProjectByTemplate, CodeType, Config, Template } from './helpers';
+import { makeProject, CodeType, Config, Template } from './make-project';
 
 const Templates = [Template.React, Template.Node];
 
-const Options = [CodeType.Redux, CodeType.Antd];
+const Options = [
+  {
+    name: CodeType.Redux,
+    checked: true,
+  },
+  {
+    name: CodeType.Antd,
+    checked: true,
+  },
+];
 
 inquirer
   .prompt([
@@ -25,6 +34,7 @@ inquirer
       name: 'options',
       message: '选项',
       choices: Options,
+      default: [0, 1],
       when: (answers) => {
         return answers.template === Template.React;
       },
@@ -32,5 +42,5 @@ inquirer
   ])
   .then((answers: Config) => {
     console.log(answers);
-    createProjectByTemplate(answers);
+    makeProject(answers);
   });

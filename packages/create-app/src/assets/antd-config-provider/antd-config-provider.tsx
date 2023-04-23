@@ -1,7 +1,8 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { ConfigProvider } from 'antd';
 
 import zhCN from 'antd/es/locale/zh_CN';
+import enUS from 'antd/es/locale/en_US';
 
 import { LocalContext, Locale } from '../intl-provider-wrapper';
 
@@ -12,10 +13,7 @@ interface Props {
 export const AntdConfigProvider: React.FC<Props> = ({ children }) => {
   const { locale } = useContext(LocalContext);
 
-  const antdLocal = useMemo(() => {
-    if (locale === Locale.ZH) return zhCN;
-    return zhCN;
-  }, [locale]);
+  const antdLocal = locale === Locale.ZH ? zhCN : enUS;
 
   return <ConfigProvider locale={antdLocal}>{children}</ConfigProvider>;
 };
