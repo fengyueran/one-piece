@@ -23,7 +23,7 @@ export const parseDicom = (arrayBuffer: ArrayBuffer): FullDicom => {
   dp.parse();
   return {
     getTag: (tagName: string) => dp.valueOf(tagName),
-    pixelData: (index = 0) => dp.pixelData(index),
+    pixelData: (index = 0) => dp.readPixelData(index),
     rescaleSlope: () => (dp.rescaleSlope() ? parseFloat(dp.rescaleSlope()) : dp.rescaleSlope()),
     rescaleIntercept: () =>
       dp.rescaleIntercept() ? parseFloat(dp.rescaleIntercept()) : dp.rescaleIntercept(),
@@ -31,3 +31,5 @@ export const parseDicom = (arrayBuffer: ArrayBuffer): FullDicom => {
     clearBuffer: () => dp.clearBuffer(),
   };
 };
+
+export * from './types';
