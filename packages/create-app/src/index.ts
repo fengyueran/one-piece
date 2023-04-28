@@ -2,7 +2,7 @@ import inquirer from 'inquirer';
 
 import { makeProject, CodeType, Config, Template } from './make-project';
 
-const Templates = [Template.React, Template.Node];
+const Templates = [Template.React, Template.ViteLib, Template.Node];
 
 const Options = [
   {

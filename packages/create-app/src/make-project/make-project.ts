@@ -34,6 +34,7 @@ export const makeProject = async (config: Config) => {
   ].filter((p) => p);
 
   const appCode = await execPlugin(plugins as Plugin[]);
-
-  generateAppFile(appCode, savePath);
+  if (appCode) {
+    generateAppFile(appCode, savePath);
+  }
 };

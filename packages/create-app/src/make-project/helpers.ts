@@ -20,6 +20,7 @@ export enum CodeType {
 
 export enum Template {
   React = 'react-app-ts-template',
+  ViteLib = 'vite-lib-ts-template',
   Node = 'node-app-ts-template',
 }
 
