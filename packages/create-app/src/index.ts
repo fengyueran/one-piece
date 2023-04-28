@@ -41,6 +41,6 @@ inquirer
     },
   ])
   .then((answers: Config) => {
-    console.log(answers);
+    console.log('Answers is', answers);
     makeProject(answers);
   });

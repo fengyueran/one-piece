@@ -74,6 +74,8 @@ const addAntdDependencies = async (project: string) => {
 };
 
 export class AddAntdCodePlugin extends Plugin {
+  getName = () => 'AddAntdCodePlugin';
+
   createAppCode = (appCode: string) => {
     const code = addAntdCodeToAppCode(appCode);
     return code;

@@ -80,6 +80,8 @@ const addReduxDependencies = async (project: string) => {
 };
 
 export class AddReduxCodePlugin extends Plugin {
+  getName = () => 'AddReduxCodePlugin';
+
   createAppCode = (appCode: string) => {
     const code = addReduxCodeToAppCode(appCode);
     return code;

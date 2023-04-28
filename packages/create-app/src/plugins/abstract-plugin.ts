@@ -4,4 +4,5 @@ export abstract class Plugin {
   }
   abstract createAppCode(appCode?: string): string;
   abstract addDependencies(): void;
+  abstract getName(): string;
 }

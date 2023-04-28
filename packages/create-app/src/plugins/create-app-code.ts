@@ -17,6 +17,7 @@ export const readAppCode = (project: string) => {
 };
 
 export class CreateAppCodePlugin extends Plugin {
+  getName = () => 'CreateAppCodePlugin';
   createAppCode = () => {
     const code = readAppCode(this.projectPath);
     return code;

@@ -1,9 +1,18 @@
 import path from 'path';
 import shell from 'shelljs';
 import fs from 'fs-extra';
+import chalk from 'chalk';
 
 import { exec } from '../utils';
 import { Plugin } from '../plugins';
+
+export const blueLog = (log: string) => {
+  console.log(chalk.blue(`****************** ${log} start ******************`));
+};
+
+export const greenLog = (log: string) => {
+  console.log(chalk.green(`****************** ${log} ******************`));
+};
 
 export const checkGit = () => {
   try {
@@ -46,6 +55,7 @@ export const execPlugin = async (plugins: Plugin[]) => {
   while (plugins.length) {
     const p = plugins.shift();
     if (p) {
+      blueLog(p.getName());
       appCode = p.createAppCode(appCode);
       await p.addDependencies();
     }
@@ -113,7 +123,6 @@ const makeAppFileCode = (validCodelines: string[]) => {
 export const generateAppFile = async (appCode: string, saveDir: string) => {
   const lines = appCode.split('\n');
   const appFileCode = makeAppFileCode(lines);
-  console.log('appFileCode', appFileCode);
   const target = path.join(saveDir, 'src/app.tsx');
   await fs.writeFile(target, appFileCode);
 };
