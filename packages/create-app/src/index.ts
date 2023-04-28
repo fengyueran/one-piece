@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import inquirer from 'inquirer';
 
 import { makeProject, CodeType, Config, Template } from './make-project';
