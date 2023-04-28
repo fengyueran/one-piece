@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "ts-node --project ./tsconfig.json src/index.ts",
-    "build": "rm -rf lib && tsc -p tsconfig.build.json",
+    "build": "rm -rf lib && tsc -p tsconfig.build.json && cp -r src/assets lib/",
     "prepublishOnly": "yarn build"
   },
   "bugs": {

@@ -7,5 +7,5 @@
     "noImplicitAny": true
   },
   "include": ["src"],
-  "exclude": ["src/redux-code"]
+  "exclude": ["src/assets"]
 }
