@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "skipLibCheck": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "outDir": "lib"
+  },
+  "include": ["src"],
+  "exclude": ["src/examples"]
+}
