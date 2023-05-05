@@ -1420,7 +1420,7 @@
     uuid "^8.3.0"
     vtk.js "^15.5.2"
 
-"@cc/viewers-dvtool@1.0.17":
+"@cc/viewers-dvtool@1.0.17", "@cc/viewers-dvtool@^1.0.17":
   version "1.0.17"
   resolved "http://sinopia.curacloudplatform.com:4873/@cc%2fviewers-dvtool/-/viewers-dvtool-1.0.17.tgz#cb06188ad4acc7277af927414ab555f0e1934d50"
   integrity sha512-lbGvul/4SPbFqTN22nsb4K/sPz4aUsn4N/amx2dq5ZyQ+LHdikToBvEw37m+eDfd3QyBoOK1OJ1tMQ+oUndzfg==
@@ -7481,6 +7481,11 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "2.1.1"
 
+fflate@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.7.4.tgz#61587e5d958fdabb5a9368a302c25363f4f69f50"
+  integrity sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==
+
 figures@3.2.0, figures@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/figures/-/figures-3.2.0.tgz#625c18bd293c604dc4a8ddb2febf0c88341746af"
@@ -9385,6 +9390,11 @@ js-sdsl@^4.1.4:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
+
+js-untar@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/js-untar/-/js-untar-2.0.0.tgz#b452d28dedd3b0be92c2ac9a7d70f612a93c7453"
+  integrity sha512-7CsDLrYQMbLxDt2zl9uKaPZSdmJMvGGQ7wo9hoB3J+z/VcO2w63bXFgHVnjF1+S9wD3zAu8FBVj7EYWjTQ3Z7g==
 
 js-yaml@4.1.0, js-yaml@^4.1.0:
   version "4.1.0"

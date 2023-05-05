@@ -1,5 +1,5 @@
 {
-  "name": "dicom-viewer",
+  "name": "@xinghunm/dicom-viewer",
   "version": "0.0.0",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -31,7 +31,12 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "fflate": "^0.7.4",
+    "js-untar": "^2.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
+  },
+  "dependencies": {
+    "@cc/viewers-dvtool": "^1.0.17"
   }
 }
