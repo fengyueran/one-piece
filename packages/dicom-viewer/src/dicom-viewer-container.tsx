@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { uicomponents } from '@cc/viewers-dvtool';
+import * as ccloader from '@cc/loader';
 import { DicomViewer } from './dicom-viewer';
 
-import { dicomManager, GetDicom, State } from './dicom-manager';
+import { dicomManager, GetDicom, State, DicomInfo } from './dicom-manager';
 
 interface Props {
   getDicom: GetDicom;
@@ -16,21 +17,51 @@ const getOverlayData = () => {
   return overlayData;
 };
 
+const scaleStyle = {
+  right: '8px',
+  bottom: '4px',
+  zIndex: 5,
+  position: 'absolute',
+};
+
 export const DicomViewerContainer: React.FC<Props> = (props) => {
+  const dicomInfoRef = useRef({});
   const [viewerReady, setViewerReady] = useState(false);
+  const [crosshair, setCrosshair] =
+    useState<ccloader.image.SliceIndexAndCoords2D>({
+      sliceIndex: 0,
+      indexCoords: [0, 0],
+    });
   const [physicalPerPixel, setPhysicalPerPixel] = useState<number>();
 
   const { getDicom } = props;
 
+  const scrollBarProps = useMemo(() => {
+    const basicInfo = dicomInfoRef.current as DicomInfo;
+    return {
+      crosshair,
+      count: basicInfo.spaceInfo?.count,
+    };
+  }, [crosshair]);
+
   useEffect(() => {
     const start = async () => {
       const handlerMap = {
+        [State.Init]: (data: { state: State; value?: object }) => {
+          dicomInfoRef.current = data.value as DicomInfo;
+        },
         [State.Ready]: () => setViewerReady(true),
         [State.PhysicalPerPixel]: (data: { state: State; value?: number }) =>
           setPhysicalPerPixel(data.value),
+        [State.Crosshair]: (data: {
+          state: State;
+          value?: ccloader.image.SliceIndexAndCoords2D;
+        }) => {
+          setCrosshair(data.value as ccloader.image.SliceIndexAndCoords2D);
+        },
       };
       dicomManager.render(getDicom, (data) => {
-        const handler = handlerMap[data.state];
+        const handler = handlerMap[data.state as keyof typeof handlerMap];
         if (handler) {
           handler(data);
         }
@@ -51,13 +82,6 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
     return renderBackgroud();
   }
 
-  const scaleStyle = {
-    right: '8px',
-    bottom: '4px',
-    zIndex: 5,
-    position: 'absolute',
-  };
-
   return (
     <DicomViewer
       attachParent={dicomManager.attachParent}
@@ -67,13 +91,8 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
       scaleStyle={scaleStyle}
       overlayData={getOverlayData()}
       physicalPerPixel={physicalPerPixel}
-      scrollBarProps={{
-        crosshair: { sliceIndex: 10, indexCoords: [10, 10] },
-        count: 100,
-      }}
-      setCrosshair={() => {
-        console.log('99');
-      }}
+      scrollBarProps={scrollBarProps}
+      setCrosshair={dicomManager.setCrosshair}
     />
   );
 };
