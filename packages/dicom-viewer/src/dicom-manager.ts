@@ -1,4 +1,4 @@
-import { events } from '@cc/viewers-dvtool';
+import { components, events } from '@cc/viewers-dvtool';
 import * as ccloader from '@cc/loader';
 
 import {
@@ -110,7 +110,12 @@ export class DicomManager {
   private basicInfo: object = {};
   private dicomSceneModel?: DicomSceneModel;
   private onStateChange?: OnStateChange;
-  private crosshair = [0, 0, 0];
+
+  crosshair = [0, 0, 0];
+  window = {
+    windowWidth: 300,
+    windowCenter: 1000,
+  };
 
   private static singleton: DicomManager;
 
@@ -177,6 +182,9 @@ export class DicomManager {
             value: coords2D,
           });
         }
+      },
+      [events.windowChangedEvent]: (e: components.LUTWindow) => {
+        this.window = e;
       },
     };
 

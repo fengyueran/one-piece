@@ -11,12 +11,6 @@ interface Props {
 
 const { OverlayDirection } = uicomponents;
 
-const getOverlayData = () => {
-  const overlayData: any = { directionData: [] };
-  overlayData.directionData[OverlayDirection.RightTop] = [`kVp: ${'-'}`];
-  return overlayData;
-};
-
 const scaleStyle = {
   right: '8px',
   bottom: '4px',
@@ -25,7 +19,8 @@ const scaleStyle = {
 };
 
 export const DicomViewerContainer: React.FC<Props> = (props) => {
-  const dicomInfoRef = useRef({});
+  const { getDicom } = props;
+  const dicomInfoRef = useRef<DicomInfo>();
   const [viewerReady, setViewerReady] = useState(false);
   const [crosshair, setCrosshair] =
     useState<ccloader.image.SliceIndexAndCoords2D>({
@@ -34,9 +29,29 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
     });
   const [physicalPerPixel, setPhysicalPerPixel] = useState<number>();
 
-  const { getDicom } = props;
+  const getOverlayData = () => {
+    if (!dicomInfoRef.current) return { directionData: [] };
+    const d: uicomponents.OverlayData = {
+      directionData: [],
+    };
+    const basicInfo = dicomInfoRef.current as DicomInfo;
+    const window = dicomManager.window;
+
+    const WW_WL = `WW/WL: ${window.windowWidth}/${window.windowCenter}`;
+    const image = `Image: ${crosshair.sliceIndex + 1}/${
+      basicInfo.spaceInfo.count
+    }`;
+    const { spacing } = basicInfo.spaceInfo;
+
+    const thickness = `Thickness: ${spacing ? spacing[2]?.toFixed(1) : '-'}mm`;
+
+    d.directionData[OverlayDirection.LeftTop] = [WW_WL, image, thickness];
+
+    return d;
+  };
 
   const scrollBarProps = useMemo(() => {
+    if (!dicomInfoRef.current) return { count: 1, crosshair };
     const basicInfo = dicomInfoRef.current as DicomInfo;
     return {
       crosshair,
