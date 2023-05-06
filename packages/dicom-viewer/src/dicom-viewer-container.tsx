@@ -18,13 +18,21 @@ const getOverlayData = () => {
 
 export const DicomViewerContainer: React.FC<Props> = (props) => {
   const [viewerReady, setViewerReady] = useState(false);
+  const [physicalPerPixel, setPhysicalPerPixel] = useState<number>();
+
   const { getDicom } = props;
 
   useEffect(() => {
     const start = async () => {
+      const handlerMap = {
+        [State.Ready]: () => setViewerReady(true),
+        [State.PhysicalPerPixel]: (data: { state: State; value?: number }) =>
+          setPhysicalPerPixel(data.value),
+      };
       dicomManager.render(getDicom, (data) => {
-        if (data.state === State.Ready) {
-          setViewerReady(true);
+        const handler = handlerMap[data.state];
+        if (handler) {
+          handler(data);
         }
       });
     };
@@ -43,7 +51,12 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
     return renderBackgroud();
   }
 
-  const scaleStyle = {};
+  const scaleStyle = {
+    right: '8px',
+    bottom: '4px',
+    zIndex: 5,
+    position: 'absolute',
+  };
 
   return (
     <DicomViewer
@@ -53,7 +66,7 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
       detachInput={dicomManager.detachInput}
       scaleStyle={scaleStyle}
       overlayData={getOverlayData()}
-      // physicalPerPixel={overlayVisible ? physicalPerPixel : undefined}
+      physicalPerPixel={physicalPerPixel}
       scrollBarProps={{
         crosshair: { sliceIndex: 10, indexCoords: [10, 10] },
         count: 100,

@@ -8,10 +8,11 @@ import {
 } from './helpers';
 
 export type GetDicom = () => Promise<ArrayBuffer[]>;
-type OnStateChange = (s: { state: State; value?: unknown }) => void;
+type OnStateChange = (s: { state: State; value?: any }) => void;
 
 export enum State {
   Ready,
+  PhysicalPerPixel,
 }
 
 export class DicomManager {
@@ -44,19 +45,30 @@ export class DicomManager {
     this.dicomSceneModel?.detachInputDom();
   };
 
-  subscribeAfterUpdateEvent = () => {
+  subscribeEvents = () => {
+    if (!this.dicomSceneModel) return;
+
+    const onStateChange = (state: { state: State; value?: unknown }) => {
+      if (this.onStateChange) {
+        this.onStateChange(state);
+      }
+    };
     const sendReadyEvent = () => {
       if (this.ready) {
         this.dicomSceneModel?.off(events.afterUpdateEvent, sendReadyEvent);
       } else {
         this.ready = true;
-        if (this.onStateChange) {
-          this.onStateChange({ state: State.Ready });
-        }
+        onStateChange({ state: State.Ready });
       }
     };
 
-    this.dicomSceneModel?.nc.on(events.afterUpdateEvent, sendReadyEvent);
+    this.dicomSceneModel.nc.on(events.afterUpdateEvent, sendReadyEvent);
+    this.dicomSceneModel.nc.on(events.cameraChangedEvent, () => {
+      onStateChange({
+        state: State.PhysicalPerPixel,
+        value: this.dicomSceneModel?.getPhysicalPerPixel(),
+      });
+    });
   };
 
   render = async (getDicom: GetDicom, onStateChange?: OnStateChange) => {
@@ -71,7 +83,7 @@ export class DicomManager {
       }
     );
     this.onStateChange = onStateChange;
-    this.subscribeAfterUpdateEvent();
+    this.subscribeEvents();
   };
 }
 
