@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { uicomponents } from '@cc/viewers-dvtool';
 import { DicomViewer } from './dicom-viewer';
 
 import { dicomManager, GetDicom, State } from './dicom-manager';
@@ -6,6 +7,15 @@ import { dicomManager, GetDicom, State } from './dicom-manager';
 interface Props {
   getDicom: GetDicom;
 }
+
+const { OverlayDirection } = uicomponents;
+
+const getOverlayData = () => {
+  const overlayData: any = { directionData: [] };
+  overlayData.directionData[OverlayDirection.RightTop] = [`kVp: ${'-'}`];
+  return overlayData;
+};
+
 export const DicomViewerContainer: React.FC<Props> = (props) => {
   const [viewerReady, setViewerReady] = useState(false);
   const { getDicom } = props;
@@ -42,7 +52,7 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
       detachParent={dicomManager.detachParent}
       detachInput={dicomManager.detachInput}
       scaleStyle={scaleStyle}
-      // overlayData={overlayVisible ? overlayData : undefined}
+      overlayData={getOverlayData()}
       // physicalPerPixel={overlayVisible ? physicalPerPixel : undefined}
       scrollBarProps={{
         crosshair: { sliceIndex: 10, indexCoords: [10, 10] },
