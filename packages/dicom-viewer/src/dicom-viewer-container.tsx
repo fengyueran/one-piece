@@ -83,6 +83,10 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
       });
     };
     start();
+
+    return () => {
+      dicomManager.destroy();
+    };
   }, [getDicom]);
 
   const renderBackgroud = () => {

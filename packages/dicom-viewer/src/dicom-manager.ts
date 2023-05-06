@@ -214,6 +214,16 @@ export class DicomManager {
     this.onStateChange = onStateChange;
     this.subscribeEvents();
   };
+
+  destroy = () => {
+    this.dicomSceneModel?.detachParentDom();
+    this.dicomSceneModel?.detachInputDom();
+    this.dicomSceneModel?.destroy();
+    this.dicomSceneModel = undefined;
+    this.basicInfo = {};
+    this.onStateChange = undefined;
+    this.ready = false;
+  };
 }
 
 export const dicomManager = DicomManager.getInstance();
