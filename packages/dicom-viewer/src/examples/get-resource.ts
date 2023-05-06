@@ -36,7 +36,7 @@ export const getValidBufferList = async (fileList: UntarFile[]) => {
   return bufferList;
 };
 
-export const getDicom = async () => {
+export const getSeriesDicom = async () => {
   const DICOM_TAR_URL = `${HOST}/1.2.392.200036.9116.2.1796265536.1658726928.7.1288600003.1.tgz`;
   const arrayBuffer = await fetchFile(DICOM_TAR_URL);
 

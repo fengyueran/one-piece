@@ -1,12 +1,18 @@
 import { useState } from 'react';
+import styled from 'styled-components';
 
-import { getDicom } from './get-resource';
-import { DicomViewerContainer } from '../dicom-viewer-container';
+import { getSeriesDicom } from './get-resource';
+import { MPR, Plane } from '../';
+
+const Container = styled.div`
+  width: calc(100vw - 100px);
+  height: calc(100vh - 100px);
+`;
 
 export const App = () => {
   const [visible, setVisible] = useState(true);
   return (
-    <div>
+    <Container>
       <button
         onClick={() => {
           setVisible(true);
@@ -21,9 +27,13 @@ export const App = () => {
       >
         unload
       </button>
-      <div style={{ width: '500px', height: '500px', margin: 50 }}>
-        {visible && <DicomViewerContainer getDicom={getDicom} />}
-      </div>
-    </div>
+
+      {visible && (
+        <MPR
+          planes={[Plane.Axial, Plane.Sagittal, Plane.Coronal]}
+          getSeriesDicom={getSeriesDicom}
+        />
+      )}
+    </Container>
   );
 };
