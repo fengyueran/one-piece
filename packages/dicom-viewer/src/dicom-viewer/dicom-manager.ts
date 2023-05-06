@@ -124,12 +124,14 @@ export class DicomManager {
 
   getReady = () => this.ready;
   getPlane = () => this.plane;
-  getCrosshair = () =>
+  getCrosshair = () => this.crosshair;
+  get2DCrosshair = () =>
     this.dicomSceneModel?.info.coords3DTo2D(this.crosshair) || {
       sliceIndex: 0,
       indexCoords: [0, 0],
     };
   getBasicInfo = () => this.basicInfo as DicomInfo;
+  getDicomSceneModel = () => this.dicomSceneModel;
 
   attachParent = (dom: HTMLElement) => {
     this.dicomSceneModel?.attachParentDom(dom);

@@ -22,7 +22,9 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
   const { dicomManager } = props;
   const [viewerReady, setViewerReady] = useState(dicomManager.getReady());
   const [crosshair, setCrosshair] =
-    useState<ccloader.image.SliceIndexAndCoords2D>(dicomManager.getCrosshair());
+    useState<ccloader.image.SliceIndexAndCoords2D>(
+      dicomManager.get2DCrosshair()
+    );
   const [physicalPerPixel, setPhysicalPerPixel] = useState<number>();
 
   const getOverlayData = () => {
