@@ -3,7 +3,7 @@ import * as ccloader from '@cc/loader';
 
 import { Plane, DicomSceneModel, createDicomSceneModel } from '../helpers';
 
-type OnStateChange = (s: { state: State; value?: any }) => void;
+type OnStateChange = (s: { state: State; value: unknown }) => void;
 
 export enum State {
   Ready,
@@ -102,6 +102,7 @@ export class DicomManager {
   private ready = false;
   private basicInfo: object = {};
   private dicomSceneModel?: DicomSceneModel;
+  private listeners: OnStateChange[] = [];
 
   onStateChange?: OnStateChange;
 
@@ -152,12 +153,6 @@ export class DicomManager {
   subscribeEvents = () => {
     if (!this.dicomSceneModel) return;
 
-    const onStateChange = (state: { state: State; value?: unknown }) => {
-      if (this.onStateChange) {
-        this.onStateChange(state);
-      }
-    };
-
     const handlerMap = {
       [events.afterUpdateEvent]: () => {
         if (this.ready) {
@@ -167,11 +162,11 @@ export class DicomManager {
           );
         } else {
           this.ready = true;
-          onStateChange({ state: State.Ready });
+          this.notify({ state: State.Ready, value: true });
         }
       },
       [events.cameraChangedEvent]: () => {
-        onStateChange({
+        this.notify({
           state: State.PhysicalPerPixel,
           value: this.dicomSceneModel?.getPhysicalPerPixel(),
         });
@@ -184,9 +179,9 @@ export class DicomManager {
         ) {
           this.crosshair = e;
           const coords2D = this.dicomSceneModel?.info.coords3DTo2D(e);
-          onStateChange({
+          this.notify({
             state: State.Crosshair,
-            value: coords2D,
+            value: { coords2D, coords3D: e },
           });
         }
       },
@@ -201,8 +196,14 @@ export class DicomManager {
     });
   };
 
-  registerEventHandler = (onStateChange: OnStateChange) => {
-    this.onStateChange = onStateChange;
+  subcribeStateChange = (onStateChange: OnStateChange) => {
+    this.listeners.push(onStateChange);
+  };
+
+  notify = (data: { state: State; value: unknown }) => {
+    this.listeners.forEach((onStateChange) => {
+      onStateChange(data);
+    });
   };
 
   setCrosshair = (crosshair: ccloader.image.SliceIndexAndCoords2D) => {
@@ -216,7 +217,7 @@ export class DicomManager {
     this.dicomSceneModel?.destroy();
     this.dicomSceneModel = undefined;
     this.basicInfo = {};
-    this.onStateChange = undefined;
+    this.listeners = [];
     this.ready = false;
   };
 }

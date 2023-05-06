@@ -3,30 +3,35 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MPR } from './mpr';
 import { Plane } from '../helpers';
 import { DicomViewer } from '../dicom-viewer';
-import { MPRManager, getSeriesDicom, State } from './mpr-manager';
+import { MPRManager, getSeriesDicom, OnStateChange } from './mpr-manager';
 
 interface Props {
   planes?: Plane[];
   getSeriesDicom: getSeriesDicom;
+  onStateChange?: OnStateChange;
 }
 
 export const MPRContainer: React.FC<Props> = (props) => {
-  const { getSeriesDicom } = props;
+  const { getSeriesDicom, onStateChange } = props;
 
   const planes = useMemo(() => {
     return props.planes || [Plane.Axial, Plane.Sagittal, Plane.Coronal];
   }, [props.planes]);
 
   const mprManagerRef = useRef(new MPRManager());
-  const [viewerReady, setViewerReady] = useState(false);
   const [, forceUpdate] = useState<object>();
 
   useEffect(() => {
     const start = async () => {
-      const handlerMap = {
-        [State.Ready]: () => setViewerReady(true),
-      };
-      await mprManagerRef.current.createDicomManagers(planes, getSeriesDicom);
+      await mprManagerRef.current.createDicomManagers(
+        planes,
+        getSeriesDicom,
+        (data) => {
+          if (onStateChange) {
+            onStateChange(data);
+          }
+        }
+      );
       forceUpdate({});
     };
     start();
@@ -36,7 +41,7 @@ export const MPRContainer: React.FC<Props> = (props) => {
     return () => {
       mprManager.destroy();
     };
-  }, [planes, getSeriesDicom]);
+  }, [planes, getSeriesDicom, onStateChange]);
 
   const renderViewers = () =>
     [Plane.Axial, Plane.Sagittal, Plane.Coronal].map((plane) => {

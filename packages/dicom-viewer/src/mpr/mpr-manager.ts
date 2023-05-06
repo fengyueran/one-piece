@@ -1,63 +1,73 @@
-import { components, events } from '@cc/viewers-dvtool';
 import { Plane, makeImg3DByDicomBufferList } from '../helpers';
-import { DicomManager } from '../dicom-viewer';
+import { DicomManager, State } from '../dicom-viewer';
 
-export type getSeriesDicom = () => Promise<ArrayBuffer[]>;
-type OnStateChange = (s: { state: State; value?: any }) => void;
-
-export enum State {
-  Init,
+export enum MprState {
   Ready,
-  PhysicalPerPixel,
-  Crosshair,
 }
+export type getSeriesDicom = () => Promise<ArrayBuffer[]>;
+export type OnStateChange = (s: { state: MprState; value?: any }) => void;
 
 export class MPRManager {
-  private ready = false;
+  private dicomReayCount = 0;
   private dicomManagers: DicomManager[] = [];
   private onStateChange?: OnStateChange;
 
   createDicomManagers = async (
     planes: Plane[],
-    getSeriesDicom: getSeriesDicom
+    getSeriesDicom: getSeriesDicom,
+    onStateChange?: OnStateChange
   ) => {
     const bufferList = await getSeriesDicom();
     const image = await makeImg3DByDicomBufferList(bufferList);
     planes.forEach((plane) => {
       this.dicomManagers.push(new DicomManager(plane, image));
     });
+    this.onStateChange = onStateChange;
     this.subscribeEvents();
   };
 
   subscribeEvents = () => {
-    const onStateChange = (state: { state: State; value?: unknown }) => {
+    const onStateChange = (state: { state: MprState; value?: unknown }) => {
       if (this.onStateChange) {
         this.onStateChange(state);
       }
     };
 
     const handlerMap = {
-      [events.crosshairChangedEvent]: (e: [number, number, number]) => {
+      [State.Crosshair]: (data: {
+        state: State;
+        value: { coords3D: [number, number, number] };
+      }) => {
         this.dicomManagers.forEach((dm) => {
           const crosshair = dm.getCrosshair();
+          const value = data.value.coords3D;
+
           if (
-            e[0] !== crosshair[0] ||
-            e[1] !== crosshair[1] ||
-            e[2] !== crosshair[2]
+            value[0] !== crosshair[0] ||
+            value[1] !== crosshair[1] ||
+            value[2] !== crosshair[2]
           ) {
             const model = dm.getDicomSceneModel();
-            model?.setCrosshair(e);
+            model?.setCrosshair(value);
           }
         });
       },
+      [State.Ready]: () => {
+        this.dicomReayCount++;
+        if (this.dicomReayCount === this.dicomManagers.length) {
+          onStateChange({ state: MprState.Ready, value: true });
+        }
+      },
+    };
+    const handleStateChange = (data: { state: State; value: any }) => {
+      const handler = handlerMap[data.state as keyof typeof handlerMap];
+      if (handler) {
+        handler(data);
+      }
     };
 
-    Object.keys(handlerMap).forEach((event) => {
-      const handler = handlerMap[event as keyof typeof handlerMap];
-      this.dicomManagers.forEach((dm) => {
-        const model = dm.getDicomSceneModel();
-        model?.nc.on(event, handler);
-      });
+    this.dicomManagers.forEach((dm) => {
+      dm.subcribeStateChange(handleStateChange);
     });
   };
 
@@ -73,5 +83,6 @@ export class MPRManager {
       dm.destroy();
     });
     this.dicomManagers = [];
+    this.onStateChange = undefined;
   };
 }

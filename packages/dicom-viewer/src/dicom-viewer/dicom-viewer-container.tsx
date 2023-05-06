@@ -58,19 +58,19 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
   useEffect(() => {
     const handlerMap = {
       [State.Ready]: () => setViewerReady(true),
-      [State.PhysicalPerPixel]: (data: { state: State; value?: number }) =>
+      [State.PhysicalPerPixel]: (data: { state: State; value: number }) =>
         setPhysicalPerPixel(data.value),
       [State.Crosshair]: (data: {
         state: State;
-        value?: ccloader.image.SliceIndexAndCoords2D;
+        value: { coords2D: ccloader.image.SliceIndexAndCoords2D };
       }) => {
-        setCrosshair(data.value as ccloader.image.SliceIndexAndCoords2D);
+        setCrosshair(data.value.coords2D);
       },
     };
-    dicomManager.registerEventHandler((data) => {
+    dicomManager.subcribeStateChange((data) => {
       const handler = handlerMap[data.state as keyof typeof handlerMap];
       if (handler) {
-        handler(data);
+        handler(data as any);
       }
     });
 
