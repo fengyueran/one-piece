@@ -1,11 +1,17 @@
 import { Plane, makeImg3DByDicomBufferList } from '../helpers';
-import { DicomManager, State } from '../dicom-viewer';
+import { DicomManager, DicomEvent, DicomState } from '../dicom-viewer';
 
-export enum MprState {
+export enum MprEvent {
   Ready,
 }
+
+export interface MprState {
+  event: MprEvent;
+  value?: any;
+}
+
 export type getSeriesDicom = () => Promise<ArrayBuffer[]>;
-export type OnStateChange = (s: { state: MprState; value?: any }) => void;
+export type OnStateChange = (s: MprState) => void;
 
 export class MPRManager {
   private dicomReayCount = 0;
@@ -27,15 +33,14 @@ export class MPRManager {
   };
 
   subscribeEvents = () => {
-    const onStateChange = (state: { state: MprState; value?: unknown }) => {
+    const onStateChange = (state: MprState) => {
       if (this.onStateChange) {
         this.onStateChange(state);
       }
     };
 
     const handlerMap = {
-      [State.Crosshair]: (data: {
-        state: State;
+      [DicomEvent.Crosshair]: (data: {
         value: { coords3D: [number, number, number] };
       }) => {
         this.dicomManagers.forEach((dm) => {
@@ -52,22 +57,22 @@ export class MPRManager {
           }
         });
       },
-      [State.Ready]: () => {
+      [DicomEvent.Ready]: () => {
         this.dicomReayCount++;
         if (this.dicomReayCount === this.dicomManagers.length) {
-          onStateChange({ state: MprState.Ready, value: true });
+          onStateChange({ event: MprEvent.Ready, value: true });
         }
       },
     };
-    const handleStateChange = (data: { state: State; value: any }) => {
-      const handler = handlerMap[data.state as keyof typeof handlerMap];
+    const handleDicomStateChange = (data: DicomState) => {
+      const handler = handlerMap[data.event as keyof typeof handlerMap];
       if (handler) {
         handler(data);
       }
     };
 
     this.dicomManagers.forEach((dm) => {
-      dm.subcribeStateChange(handleStateChange);
+      dm.subcribeStateChange(handleDicomStateChange);
     });
   };
 

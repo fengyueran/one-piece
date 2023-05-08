@@ -3,13 +3,18 @@ import * as ccloader from '@cc/loader';
 
 import { Plane, DicomSceneModel, createDicomSceneModel } from '../helpers';
 
-type OnStateChange = (s: { state: State; value: unknown }) => void;
-
-export enum State {
+export enum DicomEvent {
   Ready,
   PhysicalPerPixel,
   Crosshair,
 }
+
+export interface DicomState {
+  event: DicomEvent;
+  value: any;
+}
+
+type OnStateChange = (s: DicomState) => void;
 
 const getTags = (image: ccloader.dicom.Image3DFromDicom<Int16Array>) => {
   const tags =
@@ -162,12 +167,12 @@ export class DicomManager {
           );
         } else {
           this.ready = true;
-          this.notify({ state: State.Ready, value: true });
+          this.notify({ event: DicomEvent.Ready, value: true });
         }
       },
       [events.cameraChangedEvent]: () => {
         this.notify({
-          state: State.PhysicalPerPixel,
+          event: DicomEvent.PhysicalPerPixel,
           value: this.dicomSceneModel?.getPhysicalPerPixel(),
         });
       },
@@ -180,7 +185,7 @@ export class DicomManager {
           this.crosshair = e;
           const coords2D = this.dicomSceneModel?.info.coords3DTo2D(e);
           this.notify({
-            state: State.Crosshair,
+            event: DicomEvent.Crosshair,
             value: { coords2D, coords3D: e },
           });
         }
@@ -200,7 +205,7 @@ export class DicomManager {
     this.listeners.push(onStateChange);
   };
 
-  notify = (data: { state: State; value: unknown }) => {
+  notify = (data: DicomState) => {
     this.listeners.forEach((onStateChange) => {
       onStateChange(data);
     });

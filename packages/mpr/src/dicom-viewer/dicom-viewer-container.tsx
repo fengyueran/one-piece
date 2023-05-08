@@ -3,7 +3,7 @@ import { uicomponents } from '@cc/viewers-dvtool';
 import * as ccloader from '@cc/loader';
 import { DicomViewer } from './dicom-viewer';
 
-import { State, DicomManager } from './dicom-manager';
+import { DicomEvent, DicomManager } from './dicom-manager';
 
 interface Props {
   dicomManager: DicomManager;
@@ -57,18 +57,20 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const handlerMap = {
-      [State.Ready]: () => setViewerReady(true),
-      [State.PhysicalPerPixel]: (data: { state: State; value: number }) =>
-        setPhysicalPerPixel(data.value),
-      [State.Crosshair]: (data: {
-        state: State;
+      [DicomEvent.Ready]: () => setViewerReady(true),
+      [DicomEvent.PhysicalPerPixel]: (data: {
+        state: DicomEvent;
+        value: number;
+      }) => setPhysicalPerPixel(data.value),
+      [DicomEvent.Crosshair]: (data: {
+        state: DicomEvent;
         value: { coords2D: ccloader.image.SliceIndexAndCoords2D };
       }) => {
         setCrosshair(data.value.coords2D);
       },
     };
     dicomManager.subcribeStateChange((data) => {
-      const handler = handlerMap[data.state as keyof typeof handlerMap];
+      const handler = handlerMap[data.event as keyof typeof handlerMap];
       if (handler) {
         handler(data as any);
       }
