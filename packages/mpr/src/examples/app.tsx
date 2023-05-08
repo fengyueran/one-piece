@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getSeriesDicom } from './get-resource';
-import { MPR, Plane } from '../';
+import { showLoading, destroyLoading } from './loading';
+import { MPR, Plane, MprState } from '../';
 
 const Container = styled.div`
   width: calc(100vw - 100px);
@@ -11,6 +12,17 @@ const Container = styled.div`
 
 export const App = () => {
   const [visible, setVisible] = useState(true);
+
+  const onStateChange = useCallback((data: any) => {
+    if (data.state === MprState.Ready) {
+      destroyLoading();
+    }
+  }, []);
+
+  useEffect(() => {
+    showLoading();
+  }, []);
+
   return (
     <Container>
       <button
@@ -30,8 +42,9 @@ export const App = () => {
 
       {visible && (
         <MPR
-          planes={[Plane.Axial, Plane.Sagittal, Plane.Coronal]}
+          // planes={[Plane.Axial]}
           getSeriesDicom={getSeriesDicom}
+          onStateChange={onStateChange}
         />
       )}
     </Container>
