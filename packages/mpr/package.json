@@ -12,7 +12,7 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "tsc --noEmit && vite",
     "preview": "vite preview",
     "build:commonjs": "rm -rf lib && tsc -p tsconfig.build.commonjs.json",
     "build:es": "rm -rf es && tsc -p tsconfig.build.es.json",
