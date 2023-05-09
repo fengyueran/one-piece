@@ -3,14 +3,16 @@ import { image, nifti, dicom } from '@cc/loader';
 import { FullDicomCache } from './full-dicom-cache';
 
 export const makeImg3DByNiftiBuffer = async (
-  niftiBuffer: ArrayBuffer,
+  niftiBuffer: ArrayBuffer
 ): Promise<image.Image3D<Int16Array>> => {
-  const { buffer, info, header } = await nifti.parseNiftiWithWorker(niftiBuffer);
+  const { buffer, info, header } = await nifti.parseNiftiWithWorker(
+    niftiBuffer
+  );
 
   const img3 = new image.Image3D<Int16Array>(
     info,
     new nifti.NiftiCache(buffer as Int16Array, info),
-    Int16Array,
+    Int16Array
   );
   (img3 as any).niftiHeader = header;
 
@@ -40,7 +42,8 @@ const readImagePositionPatient = (d: dicom.FullDicom) => {
 
 const readSliceLocation = (d: dicom.FullDicom) => {
   const SliceLocation = d.getTag('SliceLocation') || 0;
-  const ReconstructionTargetCenterPatient = d.getTag('ReconstructionTargetCenterPatient') || 0;
+  const ReconstructionTargetCenterPatient =
+    d.getTag('ReconstructionTargetCenterPatient') || 0;
   const ImagePositionPatient = readImagePositionPatient(d);
   return [
     SliceLocation,
@@ -72,7 +75,9 @@ const makeSlices = (dicomList: Array<dicom.FullDicom>) => {
   return slices;
 };
 
-const checkMultiFrames = (slices: { SliceLocation: any[]; dicom: dicom.FullDicom }[]) => {
+const checkMultiFrames = (
+  slices: { SliceLocation: any[]; dicom: dicom.FullDicom }[]
+) => {
   if (slices.length === 1) {
     const firstSlice = slices[0].dicom;
     const numberOfFrames = Number(firstSlice.getTag('NumberOfFrames'));
@@ -91,7 +96,9 @@ const parseSeries = (dicomList: Array<dicom.FullDicom>) => {
   const height = Number(firstSlice.getTag('Rows'));
   const pixelSpacing = firstSlice.getTag('PixelSpacing');
 
-  const spacing = pixelSpacing ? (pixelSpacing.split('\\').map(Number) as Array<number>) : [1, 1];
+  const spacing = pixelSpacing
+    ? (pixelSpacing.split('\\').map(Number) as Array<number>)
+    : [1, 1];
 
   const seriesUID = firstSlice.getTag('SeriesInstanceUID');
   dicomList.forEach((d) => {
@@ -104,7 +111,9 @@ const parseSeries = (dicomList: Array<dicom.FullDicom>) => {
   const numberOfFrames = Number(slices[0].dicom.getTag('NumberOfFrames'));
 
   const sliceInterval =
-    slices.length > 1 ? diffSliceLocation(slices[1].SliceLocation, slices[0].SliceLocation) : 1;
+    slices.length > 1
+      ? diffSliceLocation(slices[1].SliceLocation, slices[0].SliceLocation)
+      : 1;
 
   return {
     origin: readImagePositionPatient(slices[0].dicom),
@@ -123,24 +132,36 @@ const makeImage3 = async (series: ReturnType<typeof parseSeries>) => {
     spacing: series.spacing,
   };
   const isMultiFrames = checkMultiFrames(series.slices);
-  const numberOfFrames = Number(series.slices[0].dicom.getTag('NumberOfFrames'));
+  const numberOfFrames = Number(
+    series.slices[0].dicom.getTag('NumberOfFrames')
+  );
   const layerSize = imageInfo.size[0] * imageInfo.size[1];
   const layerCount = isMultiFrames ? numberOfFrames : imageInfo.size[2];
   const buffer = new Int16Array(layerSize * layerCount);
 
   const fillBuffer = (layer: number) =>
-    new Promise((reslove) => {
+    new Promise((reslove, reject) => {
       setTimeout(() => {
-        let start = isMultiFrames ? (layerCount - layer - 1) * layerSize : layer * layerSize;
-        const targetSlice = isMultiFrames ? series.slices[0].dicom : series.slices[layer].dicom;
-        const rescaleIntercept = Number(targetSlice.getTag('RescaleIntercept') || 0);
-        const rescaleSlope = Number(targetSlice.getTag('RescaleSlope') || 1);
-        const srcBuffer = targetSlice.pixelData(isMultiFrames ? layer : 0);
+        try {
+          let start = isMultiFrames
+            ? (layerCount - layer - 1) * layerSize
+            : layer * layerSize;
+          const targetSlice = isMultiFrames
+            ? series.slices[0].dicom
+            : series.slices[layer].dicom;
+          const rescaleIntercept = Number(
+            targetSlice.getTag('RescaleIntercept') || 0
+          );
+          const rescaleSlope = Number(targetSlice.getTag('RescaleSlope') || 1);
+          const srcBuffer = targetSlice.pixelData(isMultiFrames ? layer : 0);
 
-        for (let i = 0; i < layerSize; i++, start++) {
-          buffer[start] = srcBuffer[i] * rescaleSlope + rescaleIntercept;
+          for (let i = 0; i < layerSize; i++, start++) {
+            buffer[start] = srcBuffer[i] * rescaleSlope + rescaleIntercept;
+          }
+          reslove(1);
+        } catch (error) {
+          reject(error);
         }
-        reslove(1);
       }, 0);
     });
 
@@ -154,13 +175,19 @@ const makeImage3 = async (series: ReturnType<typeof parseSeries>) => {
     (index: number, tagName: string) =>
       isMultiFrames
         ? series.slices[0].dicom.getTag(tagName)
-        : series.slices[index].dicom.getTag(tagName),
+        : series.slices[index].dicom.getTag(tagName)
   );
-  const r = new dicom.Image3DFromDicom<Int16Array>(imageInfo, cache, Int16Array);
+  const r = new dicom.Image3DFromDicom<Int16Array>(
+    imageInfo,
+    cache,
+    Int16Array
+  );
   return r;
 };
 
-export const makeImg3DByDicomBufferList = async (dicomFileBufferList: ArrayBuffer[]) => {
+export const makeImg3DByDicomBufferList = async (
+  dicomFileBufferList: ArrayBuffer[]
+) => {
   const dicomParsedResList = parseDicom(dicomFileBufferList);
   const series = parseSeries(dicomParsedResList);
   const image = await makeImage3(series);
