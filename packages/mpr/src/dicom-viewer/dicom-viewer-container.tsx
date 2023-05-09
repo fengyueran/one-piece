@@ -38,9 +38,10 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
     const image = `Image: ${crosshair.sliceIndex + 1}/${
       basicInfo.spaceInfo.count
     }`;
-    const { spacing } = basicInfo.spaceInfo;
 
-    const thickness = `Thickness: ${spacing ? spacing[2]?.toFixed(1) : '-'}mm`;
+    const Thickness = basicInfo.tags.SliceThickness;
+
+    const thickness = `Thickness: ${Thickness ? Thickness?.toFixed(1) : '-'}mm`;
 
     d.directionData[OverlayDirection.LeftTop] = [WW_WL, image, thickness];
 

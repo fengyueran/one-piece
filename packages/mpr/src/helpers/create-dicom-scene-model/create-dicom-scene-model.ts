@@ -84,7 +84,9 @@ const getTags = (image: ccloader.dicom.Image3DFromDicom<Int16Array>) => {
       'PersonName',
       'Columns',
       'ImageType',
+      'SliceThickness',
     ]);
+
   return tags || {};
 };
 
@@ -97,20 +99,20 @@ export const getBasicInfo = (
   const physicalSizeY =
     dicomSceneModel.info.size[1] * dicomSceneModel.info.spacing[1];
 
-  const getInstanceNumbers = () => {
-    const instanceNumbers = [];
-    for (let i = 0; i < dicomSceneModel.info.count; i += 1) {
-      try {
-        const tagMap = (image as any).getSliceInfo(i, ['InstanceNumber']);
-        instanceNumbers.push(tagMap.InstanceNumber);
-      } catch (error) {
-        instanceNumbers.push('');
-      }
-    }
-    return instanceNumbers;
-  };
+  // const getInstanceNumbers = () => {
+  //   const instanceNumbers = [];
+  //   for (let i = 0; i < dicomSceneModel.info.count; i += 1) {
+  //     try {
+  //       const tagMap = (image as any).getSliceInfo(i, ['InstanceNumber']);
+  //       instanceNumbers.push(tagMap.InstanceNumber);
+  //     } catch (error) {
+  //       instanceNumbers.push('');
+  //     }
+  //   }
+  //   return instanceNumbers;
+  // };
 
-  const instanceNumbers = getInstanceNumbers();
+  // const instanceNumbers = getInstanceNumbers();
   const tags = getTags(image as any);
   const coords3D = [
     Math.floor(image.size[0] / 2),
@@ -135,7 +137,7 @@ export const getBasicInfo = (
       anatomicalSystem: dicomSceneModel.info.anatomicalSystem,
     },
     physicalPerPixel: dicomSceneModel.getPhysicalPerPixel(),
-    instanceNumbers,
+    // instanceNumbers,
   };
 
   return basicInfo;
