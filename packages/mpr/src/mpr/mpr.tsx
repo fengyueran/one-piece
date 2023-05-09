@@ -11,13 +11,9 @@ const Col = styled.div`
   flex-direction: column;
 `;
 
-const CONTAINER_PADDING_LEFT = 14;
-const CONTAINER_PADDING_RIGHT = 14;
-
 const Container = styled(Row)`
   width: 100%;
   height: 100%;
-  padding: 20px ${CONTAINER_PADDING_RIGHT}px 20px ${CONTAINER_PADDING_LEFT}px;
   background: #000;
   display: grid;
   grid-template-columns: 63% 37%;

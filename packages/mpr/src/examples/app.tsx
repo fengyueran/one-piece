@@ -11,8 +11,18 @@ import {
 } from '../';
 
 const Container = styled.div`
-  width: calc(100vw - 100px);
-  height: calc(100vh - 100px);
+  width: 100vw;
+  height: 100vh;
+`;
+
+const Toolbar = styled.div`
+  width: 100%;
+  height: 40px;
+`;
+
+const MPRWrapper = styled.div`
+  width: 100%;
+  height: calc(100% - 40px);
 `;
 
 export const App = () => {
@@ -21,6 +31,8 @@ export const App = () => {
   const onStateChange = useCallback((state: MprState) => {
     if (state.event === MprEvent.Ready) {
       destroyLoading();
+    } else if (state.event === MprEvent.Error) {
+      console.error(state.value);
     }
   }, []);
 
@@ -30,28 +42,31 @@ export const App = () => {
 
   return (
     <Container>
-      <button
-        onClick={() => {
-          setVisible(true);
-        }}
-      >
-        load
-      </button>
-      <button
-        onClick={() => {
-          setVisible(false);
-        }}
-      >
-        unload
-      </button>
-
-      {visible && (
-        <MPR
-          // planes={[Plane.Axial]}
-          getSeriesDicom={getSeriesDicom}
-          onStateChange={onStateChange}
-        />
-      )}
+      <Toolbar>
+        <button
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          load
+        </button>
+        <button
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          unload
+        </button>
+      </Toolbar>
+      <MPRWrapper>
+        {visible && (
+          <MPR
+            // planes={[Plane.Axial]}
+            getSeriesDicom={getSeriesDicom}
+            onStateChange={onStateChange}
+          />
+        )}
+      </MPRWrapper>
     </Container>
   );
 };

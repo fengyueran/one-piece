@@ -3,6 +3,7 @@ import { DicomManager, DicomEvent, DicomState } from '../dicom-viewer';
 
 export enum MprEvent {
   Ready,
+  Error,
 }
 
 export interface MprState {
@@ -23,13 +24,24 @@ export class MPRManager {
     getSeriesDicom: getSeriesDicom,
     onStateChange?: OnStateChange
   ) => {
-    const bufferList = await getSeriesDicom();
-    const image = await makeImg3DByDicomBufferList(bufferList);
-    planes.forEach((plane) => {
-      this.dicomManagers.push(new DicomManager(plane, image));
-    });
-    this.onStateChange = onStateChange;
-    this.subscribeEvents();
+    try {
+      this.onStateChange = onStateChange;
+      const bufferList = await getSeriesDicom();
+      const image = await makeImg3DByDicomBufferList(bufferList);
+      planes.forEach((plane) => {
+        this.dicomManagers.push(new DicomManager(plane, image));
+      });
+
+      this.subscribeEvents();
+    } catch (error) {
+      console.error('createDicomManagers error', error);
+      if (this.onStateChange) {
+        this.onStateChange({
+          event: MprEvent.Error,
+          value: (error as Error).message,
+        });
+      }
+    }
   };
 
   subscribeEvents = () => {
