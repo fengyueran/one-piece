@@ -101,5 +101,6 @@ export class MPRManager {
     });
     this.dicomManagers = [];
     this.onStateChange = undefined;
+    this.dicomReayCount = 0;
   };
 }
