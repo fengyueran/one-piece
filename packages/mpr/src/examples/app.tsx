@@ -8,6 +8,7 @@ import {
   //  Plane,
   MprEvent,
   MprState,
+  OpType,
 } from '../';
 
 const Container = styled.div`
@@ -25,8 +26,13 @@ const MPRWrapper = styled.div`
   height: calc(100% - 40px);
 `;
 
+const wwAndwc = { windowWidth: 1500, windowCenter: 500 };
+
 export const App = () => {
   const [visible, setVisible] = useState(true);
+  const [reset, setReset] = useState<boolean>();
+  const [opType, setOpType] = useState<OpType>();
+  const [window, setWindow] = useState<any>();
 
   const onStateChange = useCallback((state: MprState) => {
     if (state.event === MprEvent.Ready) {
@@ -57,10 +63,41 @@ export const App = () => {
         >
           unload
         </button>
+        <button
+          onClick={() => {
+            setOpType(OpType.Slice);
+          }}
+        >
+          crosshair
+        </button>
+        <button
+          onClick={() => {
+            setOpType(OpType.Move);
+          }}
+        >
+          move
+        </button>
+        <button
+          onClick={() => {
+            setReset(!reset);
+          }}
+        >
+          reset
+        </button>
+        <button
+          onClick={() => {
+            setWindow(wwAndwc);
+          }}
+        >
+          window
+        </button>
       </Toolbar>
       <MPRWrapper>
         {visible && (
           <MPR
+            reset={reset}
+            opType={opType}
+            window={window}
             // planes={[Plane.Axial]}
             getSeriesDicom={getSeriesDicom}
             onStateChange={onStateChange}

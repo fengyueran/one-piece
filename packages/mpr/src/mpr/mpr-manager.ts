@@ -1,9 +1,17 @@
+import { components } from '@cc/viewers-dvtool';
 import { Plane, makeImg3DByDicomBufferList } from '../helpers';
 import { DicomManager, DicomEvent, DicomState } from '../dicom-viewer';
 
 export enum MprEvent {
   Ready,
   Error,
+}
+
+export enum OpType {
+  None,
+  Slice,
+  Move,
+  Zoom,
 }
 
 export interface MprState {
@@ -14,6 +22,10 @@ export interface MprState {
 export type getSeriesDicom = () => Promise<ArrayBuffer[]>;
 export type OnStateChange = (s: MprState) => void;
 
+const defaultValues = {
+  window: { windowWidth: 1000, windowCenter: 300 },
+  opType: OpType.Slice,
+};
 export class MPRManager {
   private dicomReayCount = 0;
   private dicomManagers: DicomManager[] = [];
@@ -85,6 +97,27 @@ export class MPRManager {
 
     this.dicomManagers.forEach((dm) => {
       dm.subcribeStateChange(handleDicomStateChange);
+    });
+  };
+
+  setOpType = (type: OpType) => {
+    this.dicomManagers.forEach((dm) => {
+      const model = dm.getDicomSceneModel();
+      model?.setOpType(type);
+    });
+  };
+
+  setWindow = (window: components.LUTWindow) => {
+    this.dicomManagers.forEach((dm) => {
+      const model = dm.getDicomSceneModel();
+      model?.setLUTWindow(window);
+    });
+  };
+
+  reset = () => {
+    this.dicomManagers.forEach((dm) => {
+      const model = dm.getDicomSceneModel();
+      model?.reset();
     });
   };
 

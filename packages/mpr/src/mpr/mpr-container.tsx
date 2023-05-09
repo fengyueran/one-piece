@@ -1,18 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { components } from '@cc/viewers-dvtool';
 
 import { MPR } from './mpr';
 import { Plane } from '../helpers';
 import { DicomViewer } from '../dicom-viewer';
-import { MPRManager, getSeriesDicom, OnStateChange } from './mpr-manager';
+import {
+  MPRManager,
+  getSeriesDicom,
+  OnStateChange,
+  OpType,
+} from './mpr-manager';
 
 interface Props {
+  reset?: boolean;
+  opType?: OpType;
   planes?: Plane[];
+  window?: components.LUTWindow;
   getSeriesDicom: getSeriesDicom;
   onStateChange?: OnStateChange;
 }
 
 export const MPRContainer: React.FC<Props> = (props) => {
-  const { getSeriesDicom, onStateChange } = props;
+  const { opType, reset, window, getSeriesDicom, onStateChange } = props;
 
   const planes = useMemo(() => {
     return props.planes || [Plane.Axial, Plane.Sagittal, Plane.Coronal];
@@ -20,6 +29,25 @@ export const MPRContainer: React.FC<Props> = (props) => {
 
   const mprManagerRef = useRef(new MPRManager());
   const [, forceUpdate] = useState<object>();
+
+  useEffect(() => {
+    if (opType) {
+      mprManagerRef.current.setOpType(opType);
+    }
+  }, [opType]);
+
+  useEffect(() => {
+    if (reset !== undefined) {
+      mprManagerRef.current.reset();
+    }
+  }, [reset]);
+
+  useEffect(() => {
+    if (window) {
+      mprManagerRef.current.setWindow(window);
+    }
+    // eslint-disable-next-line
+  }, [window?.windowCenter, window?.windowWidth]);
 
   useEffect(() => {
     const start = async () => {

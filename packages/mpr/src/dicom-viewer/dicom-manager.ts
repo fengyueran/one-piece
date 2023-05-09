@@ -12,6 +12,7 @@ export enum DicomEvent {
   Ready,
   PhysicalPerPixel,
   Crosshair,
+  Window,
 }
 
 export interface DicomState {
@@ -33,8 +34,8 @@ export class DicomManager {
 
   crosshair: [number, number, number] = [0, 0, 0];
   window = {
-    windowWidth: 300,
-    windowCenter: 1000,
+    windowWidth: 1000,
+    windowCenter: 300,
   };
 
   constructor(
@@ -112,6 +113,10 @@ export class DicomManager {
       },
       [events.windowChangedEvent]: (e: components.LUTWindow) => {
         this.window = e;
+        this.notify({
+          event: DicomEvent.Window,
+          value: e,
+        });
       },
     };
 

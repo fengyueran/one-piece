@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { uicomponents } from '@cc/viewers-dvtool';
+import { components, uicomponents } from '@cc/viewers-dvtool';
 import * as ccloader from '@cc/loader';
 import { DicomViewer } from './dicom-viewer';
 
@@ -26,13 +26,13 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
       dicomManager.get2DCrosshair()
     );
   const [physicalPerPixel, setPhysicalPerPixel] = useState<number>();
+  const [window, setWindow] = useState(dicomManager.window);
 
   const getOverlayData = () => {
     const d: uicomponents.OverlayData = {
       directionData: [],
     };
     const basicInfo = dicomManager.getBasicInfo();
-    const window = dicomManager.window;
 
     const WW_WL = `WW/WL: ${window.windowWidth}/${window.windowCenter}`;
     const image = `Image: ${crosshair.sliceIndex + 1}/${
@@ -70,6 +70,12 @@ export const DicomViewerContainer: React.FC<Props> = (props) => {
         value: { coords2D: ccloader.image.SliceIndexAndCoords2D };
       }) => {
         setCrosshair(data.value.coords2D);
+      },
+      [DicomEvent.Window]: (data: {
+        state: DicomEvent;
+        value: components.LUTWindow;
+      }) => {
+        setWindow(data.value);
       },
     };
     dicomManager.subcribeStateChange((data) => {
