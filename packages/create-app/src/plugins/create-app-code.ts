@@ -11,7 +11,7 @@ export const installPackage = (project: string) => {
 };
 
 export const readAppCode = (project: string) => {
-  const appCodePath = path.join(project, 'src', 'app.tsx');
+  const appCodePath = path.join(project, 'src', 'app', 'app.tsx');
   const appCode = fs.readFileSync(appCodePath, 'utf-8');
   return appCode;
 };

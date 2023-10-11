@@ -121,6 +121,6 @@ const makeAppFileCode = (validCodelines: string[]) => {
 export const generateAppFile = async (appCode: string, saveDir: string) => {
   const lines = appCode.split('\n');
   const appFileCode = makeAppFileCode(lines);
-  const target = path.join(saveDir, 'src/app.tsx');
+  const target = path.join(saveDir, 'src/app/app.tsx');
   await fs.writeFile(target, appFileCode);
 };

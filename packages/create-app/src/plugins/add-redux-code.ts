@@ -65,12 +65,12 @@ const addReduxCodeToAppCode = (appCode: string) => {
 
 const installReduxDependencies = (project: string) => {
   shell.cd(project);
-  exec('yarn add redux redux-persist');
+  exec('yarn add redux redux-persist react-redux @reduxjs/toolkit');
 };
 
 const copyReduxSource = (project: string) => {
   const storeFile = path.join(__dirname, '../assets/redux-code/store.ts');
-  const dist = path.join(project, 'src/store.ts');
+  const dist = path.join(project, 'src/app/store.ts');
   exec(`cp ${storeFile} ${dist}`);
 };
 
