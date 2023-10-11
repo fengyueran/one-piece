@@ -1,18 +1,15 @@
 import path from 'path';
+import chalk from 'chalk';
 import shell from 'shelljs';
 import fs from 'fs-extra';
-import chalk from 'chalk';
 
 import { exec } from '../utils';
 import { Plugin } from '../plugins';
 
-export const blueLog = (log: string) => {
-  console.log(chalk.blue(`****************** ${log} start ******************`));
-};
+const fillStrWithStar = (log: string) => `****************** ${log} ******************`;
 
-export const greenLog = (log: string) => {
-  console.log(chalk.green(`****************** ${log} ******************`));
-};
+export const blueLog = (log: string) => console.log(chalk.blue(fillStrWithStar(log)));
+export const greenLog = (log: string) => console.log(chalk.green(fillStrWithStar(log)));
 
 export const checkGit = () => {
   try {
@@ -45,6 +42,7 @@ export const cloneTemplate = (templateName: string, projectPath: string) => {
 export const formatProjectPath = (project: string) => {
   const isAbsolutePath = path.isAbsolute(project);
   if (isAbsolutePath) return project;
+
   const pwd = shell.pwd().toString();
   const projectPath = path.join(pwd, project);
   return projectPath;

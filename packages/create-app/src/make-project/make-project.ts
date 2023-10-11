@@ -1,5 +1,6 @@
 import {
   blueLog,
+  greenLog,
   checkGit,
   CodeType,
   Template,
@@ -7,7 +8,6 @@ import {
   cloneTemplate,
   generateAppFile,
   formatProjectPath,
-  greenLog,
 } from './helpers';
 import { CreateAppCodePlugin, AddAntdCodePlugin, AddReduxCodePlugin, Plugin } from '../plugins';
 
@@ -18,14 +18,14 @@ export interface Config {
 }
 
 export const makeProject = async (config: Config) => {
-  blueLog('Make project');
+  blueLog('Creating project');
 
   checkGit();
 
   const { projectPath, template, options } = config;
   const savePath = formatProjectPath(projectPath);
 
-  blueLog('Clone template');
+  blueLog('Cloning template');
 
   await cloneTemplate(template, savePath);
 
