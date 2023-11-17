@@ -42,7 +42,7 @@ export enum Trigger {
   Hover,
 }
 
-interface ItemProps {
+export interface ItemProps {
   label: string;
   [key: string]: unknown;
 }
@@ -93,7 +93,7 @@ export const Dropdown = (props: DropdownProps) => {
   const renderMenuList = () => {
     return (
       visible && (
-        <MenusWrapper className="menus-wrapper">
+        <MenusWrapper>
           {options.map((item) => {
             return (
               <MenuItem

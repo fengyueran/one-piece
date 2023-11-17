@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Dropdown, Trigger } from '../components';
+import { Dropdown, Trigger, ItemProps } from '../components';
 import { useState } from 'react';
 
 const Container = styled.div`
@@ -22,9 +22,10 @@ export const App = () => {
     { label: 'SaaS化平台，交互友好', value: '4' },
   ];
 
-  const onSelect = (item: { label: string }) => {
+  const onSelect = (item: ItemProps) => {
     console.log('Selected item', item);
-    setSelected(item.label);
+
+    setSelected(item.value as string);
   };
 
   return (
