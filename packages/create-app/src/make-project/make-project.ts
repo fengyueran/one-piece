@@ -1,48 +1,63 @@
+import fs from 'fs-extra';
 import {
-  blueLog,
-  greenLog,
-  checkGit,
-  CodeType,
-  Template,
-  execPlugin,
-  cloneTemplate,
-  generateAppFile,
-  formatProjectPath,
+  // checkGit,
+  // CodeType,
+  // Template,
+  // execPlugin,
+  // cloneTemplate,
+  // generateAppFile,
+  // getDirName,
+  getProjectInfo,
+  rmProjectDir,
 } from './helpers';
-import { CreateAppCodePlugin, AddAntdCodePlugin, AddReduxCodePlugin, Plugin } from '../plugins';
+import { blueLog, greenLog } from '../helpers';
+
+// import { CreateAppCodePlugin, AddAntdCodePlugin, AddReduxCodePlugin, Plugin } from '../plugins';
+import { ViteReactTSCreator } from '../creators';
 
 export interface Config {
   projectPath: string;
   template: string;
   options?: string[];
+  confirm: boolean;
+  reWrite: boolean;
 }
 
 export const makeProject = async (config: Config) => {
   blueLog('Creating project');
 
-  checkGit();
+  // checkGit();
 
-  const { projectPath, template, options } = config;
-  const savePath = formatProjectPath(projectPath);
+  const { projectPath, template, reWrite } = config;
+  const { projectName, saveDir, projectAbsolutePath } = getProjectInfo(projectPath);
 
-  blueLog('Cloning template');
-
-  await cloneTemplate(template, savePath);
-
-  const shouldAddAntd = options?.includes(CodeType.Antd);
-  const shouldAddRedux = options?.includes(CodeType.Redux);
-  const shouldAddAppFile = template === Template.React;
-
-  const plugins = [
-    shouldAddAppFile && new CreateAppCodePlugin(savePath),
-    shouldAddAntd && new AddAntdCodePlugin(savePath),
-    shouldAddRedux && new AddReduxCodePlugin(savePath),
-  ].filter((p) => p);
-
-  const appCode = await execPlugin(plugins as Plugin[]);
-  if (appCode) {
-    generateAppFile(appCode, savePath);
+  if (reWrite) {
+    rmProjectDir(projectAbsolutePath);
   }
+
+  await fs.mkdir(saveDir, { recursive: true });
+
+  const viteReactTSCreator = new ViteReactTSCreator();
+  await viteReactTSCreator.create({ template, projectName, saveDir });
+
+  // blueLog('Cloning template');
+
+  // await cloneTemplate(template, savePath);
+
+  // const shouldAddAntd = options?.includes(CodeType.Antd);
+  // const shouldAddRedux = options?.includes(CodeType.Redux);
+  // const shouldAddAppFile = template === Template.React;
+
+  // const plugins = [
+  //   shouldAddAppFile && new CreateAppCodePlugin(savePath),
+  //   shouldAddAntd && new AddAntdCodePlugin(savePath),
+  //   shouldAddRedux && new AddReduxCodePlugin(savePath),
+  // ].filter((p) => p);
+
+  // const appCode = await execPlugin(plugins as Plugin[]);
+  // if (appCode) {
+  //   generateAppFile(appCode, savePath);
+  // }
 
   greenLog('Congratulations, generate template success!!!');
 };

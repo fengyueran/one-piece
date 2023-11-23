@@ -1,15 +1,10 @@
 import path from 'path';
-import chalk from 'chalk';
 import shell from 'shelljs';
 import fs from 'fs-extra';
 
 import { exec } from '../utils';
+import { blueLog } from '../helpers';
 import { Plugin } from '../plugins';
-
-const fillStrWithStar = (log: string) => `****************** ${log} ******************`;
-
-export const blueLog = (log: string) => console.log(chalk.blue(fillStrWithStar(log)));
-export const greenLog = (log: string) => console.log(chalk.green(fillStrWithStar(log)));
 
 export const checkGit = () => {
   try {
@@ -25,6 +20,7 @@ export enum CodeType {
 }
 
 export enum Template {
+  ViteApp = 'vite-react-ts-template',
   React = 'react-app-ts-template',
   ViteLib = 'vite-lib-ts-template',
   Node = 'node-app-ts-template',
@@ -39,13 +35,18 @@ export const cloneTemplate = (templateName: string, projectPath: string) => {
   }
 };
 
-export const formatProjectPath = (project: string) => {
-  const isAbsolutePath = path.isAbsolute(project);
-  if (isAbsolutePath) return project;
+export const getAbosolutePath = (projectPath: string) => {
+  const newProjectPath = projectPath.trim();
+  const isAbsolutePath = path.isAbsolute(newProjectPath);
+  if (isAbsolutePath) return newProjectPath;
 
   const pwd = shell.pwd().toString();
-  const projectPath = path.join(pwd, project);
-  return projectPath;
+  const absolutePath = path.join(pwd, projectPath);
+  return absolutePath;
+};
+
+export const getDirName = (project: string) => {
+  return path.dirname(project);
 };
 
 export const execPlugin = async (plugins: Plugin[]) => {
@@ -123,4 +124,16 @@ export const generateAppFile = async (appCode: string, saveDir: string) => {
   const appFileCode = makeAppFileCode(lines);
   const target = path.join(saveDir, 'src/app/app.tsx');
   await fs.writeFile(target, appFileCode);
+};
+
+export const getProjectInfo = (projectPath: string) => {
+  const projectAbsolutePath = getAbosolutePath(projectPath);
+  const projectName = path.basename(projectAbsolutePath);
+  const saveDir = path.join(projectAbsolutePath, '../');
+
+  return { projectName, projectAbsolutePath, saveDir };
+};
+
+export const rmProjectDir = (projectPath: string) => {
+  exec(`rm -rf ${projectPath}`);
 };
