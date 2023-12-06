@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-import {
-  Dropdown,
-  Trigger,
-  ItemProps,
-  // Loading
-} from '../components';
+import { Dropdown, Trigger, ItemProps, Loading } from '../components';
 import { useState } from 'react';
 
 const Container = styled.div`
@@ -45,7 +40,7 @@ export const App = () => {
           <h3>Dropdown</h3>
         </Menu>
       </Dropdown>
-      {/* <Loading /> */}
+      <Loading />
     </Container>
   );
 };
