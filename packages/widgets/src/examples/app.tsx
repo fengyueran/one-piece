@@ -16,7 +16,7 @@ const Menu = styled.div`
 export const App = () => {
   const [selected, setSelected] = useState<string>();
   const products = [
-    { label: '算法自创，代码自研', value: '1' },
+    { label: '算法自创，代码自研', value: '11' },
     { label: '硬件加速，国产适配', value: '2' },
     { label: '代码开源，平台开放', value: '3' },
     { label: 'SaaS化平台，交互友好', value: '4' },
