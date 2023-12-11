@@ -4,9 +4,7 @@ import shell from 'shelljs';
 
 import { Creator, Request } from './abstract-creator';
 import { exec } from '../utils';
-import { blueLog } from '../helpers';
-
-const TempalteName = 'vite-react-ts-template';
+import { blueLog, Template } from '../helpers';
 
 const createProjectByVite = (projectName: string) => {
   try {
@@ -17,14 +15,14 @@ const createProjectByVite = (projectName: string) => {
 };
 
 const cpTemplateFilesToProjectDir = (projectName: string) => {
-  const antdSourceDir = path.join(__dirname, '../assets/vite/*');
-  exec(`cp -r ${antdSourceDir} ${projectName}`);
+  const viteSourceDir = path.join(__dirname, '../assets/vite/.');
+  exec(`cp -r ${viteSourceDir} ${projectName}`);
 };
 
 const installDependencies = (projectName: string) => {
   shell.cd(projectName);
   exec(
-    'yarn add vite-plugin-svgr vite-plugin-html rollup-plugin-bundle-analyzer babel-plugin-styled-components-px2vw --dev',
+    'yarn add vite-plugin-svgr vite-plugin-html rollup-plugin-bundle-analyzer babel-plugin-styled-components-px2vw @types/node --dev',
   );
 };
 
@@ -38,10 +36,13 @@ const addCommandToPackageJSON = async () => {
 };
 
 export class ViteReactTSCreator extends Creator {
-  private _process = async (projectName: string, saveDir: string) => {
+  private _process = async (projectName: string, saveDir: string, template: Template) => {
     shell.cd(saveDir);
     blueLog('Create project by vite');
     await createProjectByVite(projectName);
+
+    if (template === Template.ViteBasicApp) return;
+
     await cpTemplateFilesToProjectDir(projectName);
 
     blueLog('install dependencies');
@@ -51,10 +52,10 @@ export class ViteReactTSCreator extends Creator {
 
   public async create(request: Request) {
     const { template, projectName, saveDir } = request;
-    const shouldProcess = template === TempalteName;
+    const shouldProcess = template === Template.ViteApp || template === Template.ViteBasicApp;
 
     if (shouldProcess) {
-      await this._process(projectName, saveDir);
+      await this._process(projectName, saveDir, template);
     }
 
     this.passRequest(request);

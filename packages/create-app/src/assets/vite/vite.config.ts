@@ -8,6 +8,22 @@ import bundleAnalyzer from 'rollup-plugin-bundle-analyzer';
 
 const loading = fs.readFileSync(path.join(__dirname, 'vendor/loading.html'));
 
+const packageInfo = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'package.json'), {
+    encoding: 'utf8',
+  }),
+);
+
+const stringToPort = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+  }
+
+  const port = Math.abs(hash % 9000) + 1000;
+  return port;
+};
+
 export default defineConfig({
   // https://vitejs.dev/config/
   resolve: {
@@ -46,6 +62,7 @@ export default defineConfig({
     }),
   ],
   server: {
+    port: stringToPort(packageInfo.name),
     host: '0.0.0.0',
   },
 });

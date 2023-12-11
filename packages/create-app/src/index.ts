@@ -2,9 +2,16 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
 
-import { makeProject, CodeType, Config, Template } from './make-project';
+import { Template } from './helpers';
+import { makeProject, CodeType, Config } from './make-project';
 
-const Templates = [Template.ViteApp, Template.React, Template.ViteLib, Template.Node];
+const Templates = [
+  Template.ViteApp,
+  Template.ViteBasicApp,
+  Template.React,
+  Template.ViteLib,
+  Template.Node,
+];
 
 const Options = [
   {
