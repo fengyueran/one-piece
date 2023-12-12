@@ -9,7 +9,7 @@ import { blueLog, Template } from '../helpers';
 
 const createProjectByVite = (projectName: string) => {
   try {
-    execSync(`yarn create vite ${projectName}  -- --template react-ts`);
+    execSync(`yarn create vite ${projectName}  -- --template react-ts -s`);
   } catch (error) {
     throw new Error('通过vite创建项目失败');
   }
