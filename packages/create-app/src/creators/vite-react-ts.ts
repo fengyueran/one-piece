@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import shell from 'shelljs';
+import { execSync } from 'child_process';
 
 import { Creator, Request } from './abstract-creator';
 import { exec } from '../utils';
@@ -8,7 +9,7 @@ import { blueLog, Template } from '../helpers';
 
 const createProjectByVite = (projectName: string) => {
   try {
-    exec(`npm create vite@latest ${projectName}  -- --template react-ts`);
+    execSync(`yarn create vite ${projectName}  -- --template react-ts`);
   } catch (error) {
     throw new Error('通过vite创建项目失败');
   }
@@ -39,14 +40,14 @@ export class ViteReactTSCreator extends Creator {
   private _process = async (projectName: string, saveDir: string, template: Template) => {
     shell.cd(saveDir);
     blueLog('Create project by vite');
-    await createProjectByVite(projectName);
+    createProjectByVite(projectName);
 
     if (template === Template.ViteBasicApp) return;
 
-    await cpTemplateFilesToProjectDir(projectName);
+    cpTemplateFilesToProjectDir(projectName);
 
     blueLog('install dependencies');
-    await installDependencies(projectName);
+    installDependencies(projectName);
     await addCommandToPackageJSON();
   };
 
