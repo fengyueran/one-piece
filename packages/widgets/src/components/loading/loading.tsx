@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import styled from 'styled-components';
 
 import { Spin } from './spin';
@@ -30,4 +32,19 @@ export const Loading = (props: Props) => {
       {tip && <Tip>{tip}</Tip>}
     </RootContainer>
   );
+};
+
+export const openLoading = () => {
+  const container = document.createElement('div');
+  container.id = '__loading-container__';
+  document.body.appendChild(container);
+  const Node = ReactDOM.createPortal(<Loading />, container);
+  ReactDOMClient.createRoot(container).render(Node);
+};
+
+export const closeLoading = () => {
+  const container = document.getElementById('__loading-container__');
+  if (container) {
+    document.body.removeChild(container);
+  }
 };
