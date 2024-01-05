@@ -16,8 +16,8 @@ const createProjectByVite = (projectName: string) => {
 };
 
 const cpTemplateFilesToProjectDir = (projectName: string) => {
-  const viteSourceDir = path.join(__dirname, '../assets/vite/.');
-  exec(`cp -r ${viteSourceDir} ${projectName}`);
+  const viteSourceDir = path.join(__dirname, '../assets/vite');
+  exec(`cp -r ${viteSourceDir}/. ${projectName}`);
 };
 
 const installDependencies = (projectName: string) => {
