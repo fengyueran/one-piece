@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { DropdownExample } from './dropdown';
-import { LoadingExample } from './loading';
+// import { LoadingExample } from './loading';
 import { UseAsyncExample } from './use-async';
 import { UseAsyncFnExample } from './use-async-fn';
 

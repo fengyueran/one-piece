@@ -11,12 +11,12 @@ const RootContainer = styled.div`
 
 const TriggerWrapper = styled.div``;
 
-const MenusWrapper = styled(Col)`
+const MenusContainer = styled(Col)`
   position: absolute;
   left: 0;
   z-index: 1;
   top: 100%;
-  padding: 0.5rem 0.2rem;
+  padding: 0.5rem 0;
   background-color: #fff;
   background-clip: padding-box;
   border-radius: 8px;
@@ -93,20 +93,22 @@ export const Dropdown = (props: DropdownProps) => {
   const renderMenuList = () => {
     return (
       visible && (
-        <MenusWrapper>
+        <MenusContainer className="menus-container">
           {options.map((item) => {
+            const { label } = item;
             return (
               <MenuItem
+                className="menu-item"
                 onClick={() => {
                   handleMenuClick(item);
                 }}
-                key={item.label}
+                key={label}
               >
-                <span>{item.label}</span>
+                <span>{label}</span>
               </MenuItem>
             );
           })}
-        </MenusWrapper>
+        </MenusContainer>
       )
     );
   };
@@ -114,6 +116,7 @@ export const Dropdown = (props: DropdownProps) => {
   return (
     <RootContainer>
       <TriggerWrapper
+        className="trigger-wrapper"
         ref={menuTriggerRef}
         {...hoverEventMap}
         onClick={isTriggerByHover ? undefined : toggleMenusVisible}
