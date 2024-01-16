@@ -5,6 +5,11 @@ const Container = styled.div`
   .tab-name {
     color: #000;
   }
+  .indicator {
+    &[data-highlight='true'] {
+      width: calc(100% + 20px);
+    }
+  }
 `;
 
 const tabs = [
@@ -15,7 +20,7 @@ const tabs = [
   { label: '社会科学' },
 ];
 
-const onTabChange = (item: { label: string }) => {
+const onTabChange = (item: { label: string; id: string }) => {
   console.log('item', item);
 };
 
