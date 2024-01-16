@@ -6,7 +6,7 @@ const RootContainer = styled(Row)``;
 
 const Tab = styled(Col)<{ 'data-highlight': boolean }>`
   box-sizing: border-box;
-  padding: 0px 20px 14px 20px;
+  padding: 0px 20px 0 20px;
   cursor: pointer;
   color: ${(props) => (props['data-highlight'] ? '#1677ff' : '#ffffff')};
   align-items: center;
@@ -52,6 +52,7 @@ export const Tabs = (props: Props) => {
         const selected = index === selectedIndex;
         return (
           <Tab
+            className="tab"
             key={label}
             data-highlight={selected}
             onClick={() => {
