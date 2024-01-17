@@ -20,14 +20,14 @@ const tabs = [
   { label: '社会科学' },
 ];
 
-const onTabChange = (item: { label: string; id: string }) => {
+const onTabChange = (item: { label: string; id?: string }) => {
   console.log('item', item);
 };
 
 export const TabsExample = () => {
   return (
     <Container>
-      <Tabs tabs={tabs} onTabChange={onTabChange} />
+      <Tabs tabs={tabs} onTabChange={onTabChange} defaultSelectedIndex={1} />
     </Container>
   );
 };

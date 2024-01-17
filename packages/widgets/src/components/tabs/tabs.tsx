@@ -36,12 +36,13 @@ interface Item {
 
 interface Props {
   tabs: Item[];
+  defaultSelectedIndex?: number;
   onTabChange: (item: Item) => void;
 }
 
 export const Tabs = (props: Props) => {
-  const { tabs, onTabChange } = props;
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { tabs, onTabChange, defaultSelectedIndex = 0 } = props;
+  const [selectedIndex, setSelectedIndex] = useState(defaultSelectedIndex);
   const onClick = (index: number, item: Item) => {
     setSelectedIndex(index);
     onTabChange(item);
