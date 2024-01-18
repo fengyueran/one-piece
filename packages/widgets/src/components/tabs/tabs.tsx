@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Row, Col } from '../flex-box';
 
@@ -36,34 +36,54 @@ interface Item {
 
 interface Props {
   tabs: Item[];
+  selectedIndex?: number;
   defaultSelectedIndex?: number;
-  onTabChange: (item: Item) => void;
+  onTabClick?: (index: number, item: Item) => void;
+  onTabChange?: (item: Item) => void;
 }
 
 export const Tabs = (props: Props) => {
-  const { tabs, onTabChange, defaultSelectedIndex = 0 } = props;
-  const [selectedIndex, setSelectedIndex] = useState(defaultSelectedIndex);
+  const {
+    tabs,
+    selectedIndex,
+    onTabClick,
+    onTabChange,
+    defaultSelectedIndex = 0,
+  } = props;
+  const [selected, setSelected] = useState(defaultSelectedIndex);
   const onClick = (index: number, item: Item) => {
-    setSelectedIndex(index);
-    onTabChange(item);
+    if (onTabClick) {
+      onTabClick(index, item);
+    } else {
+      setSelected(index);
+    }
+    if (onTabChange) {
+      onTabChange(item);
+    }
   };
+
+  useEffect(() => {
+    if (selectedIndex !== undefined) {
+      setSelected(selectedIndex);
+    }
+  }, [selectedIndex]);
 
   return (
     <RootContainer>
       {tabs.map((tab, index) => {
         const { label } = tab;
-        const selected = index === selectedIndex;
+        const isHighlight = index === selected;
         return (
           <Tab
             className="tab"
             key={label}
-            data-highlight={selected}
+            data-highlight={isHighlight}
             onClick={() => {
               onClick(index, tab);
             }}
           >
             <TabName className="tab-name">{label}</TabName>
-            <Indicator className="indicator" data-highlight={selected} />
+            <Indicator className="indicator" data-highlight={isHighlight} />
           </Tab>
         );
       })}

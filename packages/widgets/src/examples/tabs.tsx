@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Tabs } from '../components';
+import { useState } from 'react';
 
 const Container = styled.div`
   .tab-name {
@@ -25,9 +26,33 @@ const onTabChange = (item: { label: string; id?: string }) => {
 };
 
 export const TabsExample = () => {
+  const [selectedIndex, setSelectedIndex] = useState<number>();
+
   return (
     <Container>
-      <Tabs tabs={tabs} onTabChange={onTabChange} defaultSelectedIndex={1} />
+      <button
+        onClick={() => {
+          setSelectedIndex(1);
+        }}
+      >
+        切换到tab2
+      </button>
+      <button
+        onClick={() => {
+          setSelectedIndex(2);
+        }}
+      >
+        切换到tab3
+      </button>
+      <Tabs
+        tabs={tabs}
+        onTabClick={(index) => {
+          setSelectedIndex(index);
+        }}
+        selectedIndex={selectedIndex}
+        onTabChange={onTabChange}
+        defaultSelectedIndex={1}
+      />
     </Container>
   );
 };
