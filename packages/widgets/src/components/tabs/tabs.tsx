@@ -29,17 +29,17 @@ const TabName = styled.span`
   line-height: 20px;
 `;
 
-interface Item {
+export interface TabItem {
   label: string;
   [key: string]: unknown;
 }
 
 interface Props {
-  tabs: Item[];
+  tabs: TabItem[];
   selectedIndex?: number;
   defaultSelectedIndex?: number;
-  onTabClick?: (index: number, item: Item) => void;
-  onTabChange?: (item: Item) => void;
+  onTabClick?: (index: number, item: TabItem) => void;
+  onTabChange?: (item: TabItem) => void;
 }
 
 export const Tabs = (props: Props) => {
@@ -51,7 +51,7 @@ export const Tabs = (props: Props) => {
     defaultSelectedIndex = 0,
   } = props;
   const [selected, setSelected] = useState(defaultSelectedIndex);
-  const onClick = (index: number, item: Item) => {
+  const onClick = (index: number, item: TabItem) => {
     if (onTabClick) {
       onTabClick(index, item);
     } else {
