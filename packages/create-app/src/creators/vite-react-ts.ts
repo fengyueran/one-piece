@@ -23,7 +23,7 @@ const cpTemplateFilesToProjectDir = (projectName: string) => {
 const installDependencies = (projectName: string) => {
   shell.cd(projectName);
   exec(
-    'yarn add vite-plugin-svgr vite-plugin-html rollup-plugin-bundle-analyzer babel-plugin-styled-components-px2vw @types/node --dev',
+    'yarn add vite-plugin-svgr git-describe vite-plugin-html rollup-plugin-bundle-analyzer babel-plugin-styled-components-px2vw @types/node --dev',
   );
 };
 

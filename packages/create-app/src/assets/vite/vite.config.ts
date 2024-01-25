@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+import git from 'git-describe';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import bundleAnalyzer from 'rollup-plugin-bundle-analyzer';
 
@@ -26,6 +27,10 @@ const stringToPort = (str) => {
 
 export default defineConfig({
   // https://vitejs.dev/config/
+  define: {
+    VERSION: JSON.stringify(packageInfo.version),
+    COMMIT: JSON.stringify(git.gitDescribeSync().hash),
+  },
   resolve: {
     alias: {
       src: path.resolve(__dirname, 'src'),
