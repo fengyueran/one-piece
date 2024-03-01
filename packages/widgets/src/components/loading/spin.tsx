@@ -36,9 +36,28 @@ const RootContainer = styled.div`
   }
 `;
 
-export const Spin = () => {
+export enum Size {
+  Small,
+  Default,
+  Large,
+}
+
+interface Props {
+  size?: Size;
+}
+
+export const Spin = (props: Props) => {
+  const { size = Size.Default } = props;
+
+  const scaleBySize = {
+    [Size.Small]: 0.5,
+    [Size.Default]: 1,
+    [Size.Large]: 1.5,
+  };
+  const scale = scaleBySize[size];
+
   return (
-    <RootContainer>
+    <RootContainer style={{ transform: `scale(${scale})` }}>
       {Array.from({ length: 5 }).map((_, index) => (
         <span key={index} />
       ))}
