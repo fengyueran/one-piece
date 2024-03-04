@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const RootContainer = styled.div`
+  height: 40px;
   @keyframes load {
     0%,
     100% {
