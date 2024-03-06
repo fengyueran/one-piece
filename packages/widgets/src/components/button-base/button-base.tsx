@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const ButtonBase = (props: Props) => {
-  const { hasRipple = true, className, children } = props;
+  const { hasRipple = true, className, children, ...res } = props;
   const rippleRef = useRef<Handlers>();
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -37,9 +37,9 @@ export const ButtonBase = (props: Props) => {
       rippleRef.current.stop(e);
     }
   };
-
   return (
     <StyledButtonBase
+      {...res}
       className={className}
       onMouseLeave={handleMouseUp}
       onMouseUp={handleMouseUp}

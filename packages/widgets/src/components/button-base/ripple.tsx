@@ -37,24 +37,32 @@ const createChildLeavingStyle = (duration: number) => {
   `;
 };
 
-const StyledRipple = styled.span<{ visible: boolean; duration: number }>`
+const StyledRipple = styled.span<{
+  'data-visible': boolean;
+  'data-duration': number;
+}>`
   width: 50;
   height: 50;
   left: 0;
   top: 0;
   opacity: 0;
   position: absolute;
-  ${(props) => props.visible && createRippleVisibleStyle(props.duration)};
+  ${(props) =>
+    props['data-visible'] && createRippleVisibleStyle(props['data-duration'])};
 `;
 
-const RippleChild = styled.span<{ leaving: boolean; duration: number }>`
+const RippleChild = styled.span<{
+  'data-leaving': boolean;
+  'data-duration': number;
+}>`
   opacity: 1;
   display: block;
   width: 100%;
   height: 100%;
   border-radius: 50%;
   background-color: currentColor;
-  ${(props) => props.leaving && createChildLeavingStyle(props.duration)};
+  ${(props) =>
+    props['data-leaving'] && createChildLeavingStyle(props['data-duration'])};
 `;
 
 export type RippleType = {
@@ -104,11 +112,11 @@ export const Ripple = (props: Props) => {
   return (
     <Transition {...res} onEnter={handleEnter} onExit={handleExit}>
       <StyledRipple
-        visible={visible}
+        data-visible={visible}
         style={rippleStyles}
-        duration={res.timeout.enter}
+        data-duration={res.timeout.enter}
       >
-        <RippleChild leaving={leaving} duration={res.timeout.exit} />
+        <RippleChild data-leaving={leaving} data-duration={res.timeout.exit} />
       </StyledRipple>
     </Transition>
   );

@@ -9,5 +9,13 @@ const ButtonContainer = styled(Button)`
 `;
 
 export const RippleExample = () => {
-  return <ButtonContainer>Ripple btn</ButtonContainer>;
+  return (
+    <ButtonContainer
+      onClick={() => {
+        alert('888');
+      }}
+    >
+      Ripple btn
+    </ButtonContainer>
+  );
 };
