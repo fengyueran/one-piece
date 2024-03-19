@@ -5,6 +5,7 @@ import styled from 'styled-components';
 // import { UseAsyncFnExample } from './use-async-fn';
 // import { TabsExample } from './tabs';
 import { RippleExample } from './ripple';
+import { CircularSpinExample } from './circular-spin';
 
 const Container = styled.div`
   width: 100vw;
@@ -21,6 +22,7 @@ export const App = () => {
       <UseAsyncFnExample />
       <UseAsyncExample /> */}
       <RippleExample />
+      <CircularSpinExample />
     </Container>
   );
 };
