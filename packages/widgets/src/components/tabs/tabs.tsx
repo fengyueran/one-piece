@@ -5,21 +5,20 @@ import { Row, Col } from '../flex-box';
 const RootContainer = styled(Row)``;
 
 const Padding = 10;
-const Tab = styled(Col)<{ 'data-highlight': boolean }>`
+const Tab = styled(Col)<{ $highlight: boolean }>`
   box-sizing: border-box;
   padding: 0px ${Padding}px;
   cursor: pointer;
-  color: ${(props) => (props['data-highlight'] ? '#1677ff' : '#ffffff')};
+  color: ${(props) => (props['$highlight'] ? '#1677ff' : '#ffffff')};
   align-items: center;
 `;
 
-const Indicator = styled.div<{ 'data-highlight': boolean }>`
+const Indicator = styled.div<{ $highlight: boolean }>`
   height: 4px;
   margin-top: 14px;
   width: ${(props) =>
-    props['data-highlight'] ? `calc(100% + ${Padding * 2}px)` : 0};
-  background: ${(props) =>
-    props['data-highlight'] ? '#1677ff' : 'transparent'};
+    props['$highlight'] ? `calc(100% + ${Padding * 2}px)` : 0};
+  background: ${(props) => (props['$highlight'] ? '#1677ff' : 'transparent')};
   transition: all 0.4s ease;
 `;
 
@@ -77,13 +76,13 @@ export const Tabs = (props: Props) => {
           <Tab
             className="tab"
             key={label}
-            data-highlight={isHighlight}
+            $highlight={isHighlight}
             onClick={() => {
               onClick(index, tab);
             }}
           >
             <TabName className="tab-name">{label}</TabName>
-            <Indicator className="indicator" data-highlight={isHighlight} />
+            <Indicator className="indicator" $highlight={isHighlight} />
           </Tab>
         );
       })}

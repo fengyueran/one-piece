@@ -6,11 +6,6 @@ const Container = styled.div`
   .tab-name {
     color: #000;
   }
-  .indicator {
-    &[data-highlight='true'] {
-      width: calc(100% + 20px);
-    }
-  }
 `;
 
 const tabs = [

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ButtonBase } from '../button-base';
 
-const ButtonContainer = styled(ButtonBase)<{ hasHover: boolean }>`
+const ButtonContainer = styled(ButtonBase)<{ $hasHover: boolean }>`
   min-width: 64px;
   min-height: 36px;
   padding: 8px 16px;
@@ -22,7 +22,7 @@ const ButtonContainer = styled(ButtonBase)<{ hasHover: boolean }>`
   box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   &:hover {
-    ${(props) => props.hasHover && `background-color: rgba(0, 0, 0, 0.2)`}
+    ${(props) => props['$hasHover'] && `background-color: rgba(0, 0, 0, 0.2)`}
   }
 `;
 
@@ -50,7 +50,7 @@ export const Button = (props: Props) => {
     <ButtonContainer
       className={className}
       hasRipple={hasRipple}
-      hasHover={hasHover}
+      $hasHover={hasHover}
       {...res}
     >
       <Container>{children}</Container>
