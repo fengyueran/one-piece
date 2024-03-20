@@ -11,8 +11,9 @@ const ButtonContainer = styled(Button)`
 export const RippleExample = () => {
   return (
     <ButtonContainer
+      loading
       onClick={() => {
-        alert('888');
+        console.log('Ripple btn click');
       }}
     >
       Ripple btn

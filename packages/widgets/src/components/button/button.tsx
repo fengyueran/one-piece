@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ButtonBase } from '../button-base';
+import { Spin } from './spin';
 
 const ButtonContainer = styled(ButtonBase)<{ $hasHover: boolean }>`
   min-width: 64px;
@@ -27,13 +28,14 @@ const ButtonContainer = styled(ButtonBase)<{ $hasHover: boolean }>`
 `;
 
 const Container = styled.span`
-  width: 100%;
+  padding-right: 12px;
 `;
 
 interface Props {
   hasRipple?: boolean;
   hasHover?: boolean;
   className?: string;
+  loading?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
 }
@@ -42,6 +44,7 @@ export const Button = (props: Props) => {
   const {
     hasRipple = true,
     hasHover = true,
+    loading = false,
     children,
     className,
     ...res
@@ -54,6 +57,7 @@ export const Button = (props: Props) => {
       {...res}
     >
       <Container>{children}</Container>
+      {loading && <Spin className="button-spin" />}
     </ButtonContainer>
   );
 };
