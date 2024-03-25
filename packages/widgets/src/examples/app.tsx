@@ -6,11 +6,16 @@ import styled from 'styled-components';
 // import { TabsExample } from './tabs';
 import { RippleExample } from './ripple';
 import { CircularSpinExample } from './circular-spin';
+import { ModalExample } from './modal';
 
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
-  margin: 10vw 0 0 10vw;
+  padding: 10vw 0 0 10vw;
+  box-sizing: border-box;
+  * {
+    box-sizing: border-box;
+  }
 `;
 
 export const App = () => {
@@ -23,6 +28,7 @@ export const App = () => {
       <UseAsyncExample /> */}
       <RippleExample />
       <CircularSpinExample />
+      <ModalExample />
     </Container>
   );
 };

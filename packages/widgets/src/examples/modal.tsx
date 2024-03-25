@@ -1,0 +1,26 @@
+import { useState } from 'react';
+// import styled from 'styled-components';
+
+import { Modal } from '../components';
+
+export const ModalExample = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  return (
+    <div>
+      <button onClick={openModal}>Open Modal</button>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h2>Modal Title</h2>
+        <p>This is a modal window. You can do anything here, like:</p>
+        <ul>
+          <li>Display a message</li>
+          <li>Show a form</li>
+          <li>Or anything else.</li>
+        </ul>
+      </Modal>
+    </div>
+  );
+};
