@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
 
 const fadeIn = css`
@@ -12,7 +13,7 @@ const fadeOut = css`
   transition: visibility 0s linear 500ms, opacity 500ms;
 `;
 
-const RootContainer = styled.div<{ $show: boolean }>`
+const RootContainer = styled.div<{ $visible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -22,10 +23,10 @@ const RootContainer = styled.div<{ $show: boolean }>`
   justify-content: center;
   align-items: center;
   transition: opacity 500ms, visibility 500ms;
-  ${(props) => (props.$show ? fadeIn : fadeOut)}
+  ${(props) => (props.$visible ? fadeIn : fadeOut)}
 `;
 
-const ModalContent = styled.div<{ $show: boolean }>`
+const ModalContent = styled.div<{ $visible: boolean }>`
   background: white;
   padding: 20px;
   border-radius: 4px;
@@ -33,7 +34,7 @@ const ModalContent = styled.div<{ $show: boolean }>`
   width: 100%;
   transition: transform 500ms;
   ${(props) =>
-    props.$show
+    props.$visible
       ? `  transform: translateY(0)`
       : `  transform: translateY(-20px)`}
 `;
@@ -47,16 +48,17 @@ interface Props {
 export const Modal = (props: Props) => {
   const { isOpen, onClose, children } = props;
 
-  return (
-    <RootContainer $show={isOpen} className="modal-overlay" onClick={onClose}>
-      <ModalContent
-        className="modal-content"
-        $show={isOpen}
-        // onClick={(e) => e.stopPropagation()}
-      >
+  return ReactDOM.createPortal(
+    <RootContainer
+      $visible={isOpen}
+      className="modal-overlay"
+      onClick={onClose}
+    >
+      <ModalContent className="modal-content" $visible={isOpen}>
         {children}
         <button onClick={onClose}>Close</button>
       </ModalContent>
-    </RootContainer>
+    </RootContainer>,
+    document.body
   );
 };
