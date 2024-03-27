@@ -62,12 +62,13 @@ const CloseButton = styled(StyledButton)`
 
 export interface ModalBaseProps {
   isOpen: boolean;
+  footer?: React.ReactNode;
   children?: React.ReactNode;
   onClose: () => void;
 }
 
 export const BaseModal = (props: ModalBaseProps) => {
-  const { isOpen, onClose, children } = props;
+  const { isOpen, footer, onClose, children } = props;
 
   return (
     <RootContainer
