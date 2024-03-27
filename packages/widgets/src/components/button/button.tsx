@@ -6,7 +6,7 @@ import { Spin } from './spin';
 
 const ButtonContainer = styled(ButtonBase)<{ $hasHover: boolean }>`
   min-width: 64px;
-  min-height: 36px;
+  min-height: 32px;
   padding: 8px 16px;
   border-radius: 2px;
   margin: 8px;
@@ -18,21 +18,22 @@ const ButtonContainer = styled(ButtonBase)<{ $hasHover: boolean }>`
   line-height: 1.5;
   border-radius: 4px;
   letter-spacing: 0.02857em;
-  background-color: #e0e0e0;
-  color: rgba(0, 0, 0, 0.87);
+  background-color: #186bcc;
+  color: #fff;
   box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   &:hover {
-    ${(props) => props['$hasHover'] && `background-color: rgba(0, 0, 0, 0.2)`}
+    ${(props) => props['$hasHover'] && `background-color: rgba(0, 0, 0, 0.1)`}
   }
 `;
 
-const Container = styled.span`
-  padding-right: 12px;
+const SpinWrapper = styled.span`
+  padding-left: 12px;
 `;
 
 interface Props {
   hasRipple?: boolean;
+  style?: React.CSSProperties;
   hasHover?: boolean;
   className?: string;
   loading?: boolean;
@@ -56,8 +57,12 @@ export const Button = (props: Props) => {
       $hasHover={hasHover}
       {...res}
     >
-      <Container>{children}</Container>
-      {loading && <Spin className="button-spin" />}
+      {children}
+      {loading && (
+        <SpinWrapper>
+          <Spin className="button-spin" />
+        </SpinWrapper>
+      )}
     </ButtonContainer>
   );
 };
