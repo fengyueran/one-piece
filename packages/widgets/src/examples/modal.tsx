@@ -2,6 +2,7 @@ import { useState } from 'react';
 // import styled from 'styled-components';
 
 import { Modal } from '../components';
+import { modalInfo } from '../components/modal/modal-factory';
 
 export const ModalExample = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,6 +12,16 @@ export const ModalExample = () => {
 
   return (
     <div>
+      <button
+        onClick={() => {
+          modalInfo({
+            title: 'Info',
+            content: 'This is an info modal',
+          });
+        }}
+      >
+        Modal.info
+      </button>
       <button onClick={openModal}>Open Modal</button>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2>Modal Title</h2>
