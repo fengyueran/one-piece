@@ -6,6 +6,13 @@ import { Row } from '../flex-box';
 
 export const AnimationDruation = 500; //ms
 
+const RootContainer = styled.div<{ $visible: boolean }>`
+  position: fixed;
+  inset: 0;
+  transition: opacity ${AnimationDruation}ms, visibility ${AnimationDruation}ms;
+  ${(props) => (props.$visible ? fadeIn : fadeOut)}
+`;
+
 const fadeIn = css`
   opacity: 1;
   visibility: visible;
@@ -18,18 +25,14 @@ const fadeOut = css`
     opacity ${AnimationDruation}ms;
 `;
 
-const RootContainer = styled.div<{ $visible: boolean }>`
+const Mask = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  transition: opacity ${AnimationDruation}ms, visibility ${AnimationDruation}ms;
-  ${(props) => (props.$visible ? fadeIn : fadeOut)}
 `;
 
 const ModalContent = styled.div<{ $visible: boolean }>`
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 6px;
   max-width: 500px;
@@ -62,28 +65,30 @@ const CloseButton = styled(StyledButton)`
 
 export interface ModalBaseProps {
   isOpen: boolean;
+  maskVisible?: boolean;
   footer?: React.ReactNode;
   children?: React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export const BaseModal = (props: ModalBaseProps) => {
-  const { isOpen, footer, onClose, children } = props;
+  const { isOpen, maskVisible = true, footer, onClose, children } = props;
 
   return (
-    <RootContainer
-      $visible={isOpen}
-      className="modal-overlay"
-      onClick={onClose}
-    >
+    <RootContainer className="modal-root" $visible={isOpen}>
+      {maskVisible && <Mask className="modal-overlay" onClick={onClose} />}
       <ModalContent className="modal-content" $visible={isOpen}>
         {children}
-        <Footer>
-          <CloseButton onClick={onClose}>Close</CloseButton>
-          <StyledButton onClick={onClose} style={{ marginLeft: 12 }}>
-            Ok
-          </StyledButton>
-        </Footer>
+        {footer === undefined ? (
+          <Footer>
+            <CloseButton onClick={onClose}>Close</CloseButton>
+            <StyledButton onClick={onClose} style={{ marginLeft: 12 }}>
+              Ok
+            </StyledButton>
+          </Footer>
+        ) : (
+          footer
+        )}
       </ModalContent>
     </RootContainer>
   );

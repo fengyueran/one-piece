@@ -1,10 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { AnimatedModal } from './animated-modal';
-import { ModalBaseProps } from './base-modal';
+import { AnimatedModal, AnimatedModalProps } from './animated-modal';
 
-interface ModalFuncProps extends ModalBaseProps {
+interface ModalFuncProps extends Omit<AnimatedModalProps, 'isOpen'> {
   title?: React.ReactNode;
   content?: React.ReactNode;
 }
@@ -42,11 +41,17 @@ export enum ModalType {
   Message,
 }
 
-class ModalFactory {
+type ToasterProps = Omit<ModalFuncProps, 'isOpen'>;
+export class ModalFactory {
   static createModal(type: ModalType) {
     if (type === ModalType.Message) {
-      return (props: ModalFuncProps) => {
-        renderModal({ ...props, footer: null });
+      return (props: ToasterProps) => {
+        renderModal({
+          ...props,
+          footer: null,
+          maskVisible: false,
+          duration: 1000,
+        });
       };
     } else {
       throw new Error(`Modal type '${type}' is not supported by the factory.`);

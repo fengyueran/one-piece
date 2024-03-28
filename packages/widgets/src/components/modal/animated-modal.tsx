@@ -3,13 +3,14 @@ import { Transition } from 'react-transition-group';
 
 import { BaseModal, ModalBaseProps, AnimationDruation } from './base-modal';
 
-interface ModalFuncProps extends ModalBaseProps {
+export interface AnimatedModalProps extends ModalBaseProps {
   duration?: number; //ms
   title?: React.ReactNode;
   content?: React.ReactNode;
+  onClose: () => void;
 }
 
-export const AnimatedModal = (props: ModalFuncProps) => {
+export const AnimatedModal = (props: AnimatedModalProps) => {
   const { duration, content, onClose: destroyModal, ...res } = props;
   const [visible, setVisible] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
