@@ -3,26 +3,26 @@ import fs from 'fs';
 import inquirer from 'inquirer';
 
 import { Template } from './helpers';
-import { makeProject, CodeType, Config } from './make-project';
+import { makeProject, Config } from './make-project';
 
 const Templates = [
   Template.ViteApp,
   Template.ViteBasicApp,
-  Template.React,
-  Template.ViteLib,
+  // Template.React,
+  // Template.ViteLib,
   Template.Node,
 ];
 
-const Options = [
-  {
-    name: CodeType.Redux,
-    checked: true,
-  },
-  {
-    name: CodeType.Antd,
-    checked: true,
-  },
-];
+// const Options = [
+//   {
+//     name: CodeType.Redux,
+//     checked: true,
+//   },
+//   {
+//     name: CodeType.Antd,
+//     checked: true,
+//   },
+// ];
 
 inquirer
   .prompt([
@@ -52,16 +52,16 @@ inquirer
         return answers.confirm === undefined || answers.confirm;
       },
     },
-    {
-      type: 'checkbox',
-      name: 'options',
-      message: '选项',
-      choices: Options,
-      default: [0, 1],
-      when: (answers) => {
-        return answers.template === Template.React;
-      },
-    },
+    // {
+    //   type: 'checkbox',
+    //   name: 'options',
+    //   message: '选项',
+    //   choices: Options,
+    //   default: [0, 1],
+    //   when: (answers) => {
+    //     return answers.template === Template.React;
+    //   },
+    // },
   ])
   .then((answers: Config) => {
     const shouldCreate = answers.confirm === undefined || answers.confirm;
