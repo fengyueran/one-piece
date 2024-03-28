@@ -7,7 +7,6 @@ export interface AnimatedModalProps extends ModalBaseProps {
   duration?: number; //ms
   title?: React.ReactNode;
   content?: React.ReactNode;
-  onClose: () => void;
 }
 
 export const AnimatedModal = (props: AnimatedModalProps) => {
@@ -20,7 +19,9 @@ export const AnimatedModal = (props: AnimatedModalProps) => {
   };
 
   const onExited = () => {
-    destroyModal();
+    if (destroyModal) {
+      destroyModal();
+    }
   };
 
   useEffect(() => {
