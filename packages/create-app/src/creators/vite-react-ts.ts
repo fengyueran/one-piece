@@ -11,6 +11,7 @@ const createProjectByVite = (projectName: string) => {
   try {
     execSync(`yarn create vite ${projectName}  -- --template react-ts -s`);
   } catch (error) {
+    console.error('createProjectByVite error', error);
     throw new Error('通过vite创建项目失败');
   }
 };

@@ -27,15 +27,6 @@ export enum Template {
   Node = 'node-app-ts-template',
 }
 
-export const cloneTemplate = (templateName: string, projectPath: string) => {
-  try {
-    const REPOSITORY = 'https://github.com/fengyueran';
-    exec(`git clone ${REPOSITORY}/${templateName}.git ${projectPath}`);
-  } catch (error) {
-    throw new Error('git clone 失败');
-  }
-};
-
 export const getAbosolutePath = (projectPath: string) => {
   const newProjectPath = projectPath.trim();
   const isAbsolutePath = path.isAbsolute(newProjectPath);
