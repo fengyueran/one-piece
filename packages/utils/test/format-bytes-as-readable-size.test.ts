@@ -1,7 +1,7 @@
 import { formatBytesAsReadableSize } from '../src';
 
 test('should format 10 bytes as "10 B"', () => {
-  expect(formatBytesAsReadableSize(10)).toBe('102 B');
+  expect(formatBytesAsReadableSize(10)).toBe('10 B');
 });
 
 test('should format 1028 bytes as "1 KB"', () => {
