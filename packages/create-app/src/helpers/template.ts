@@ -11,7 +11,8 @@ export enum Template {
 export const cloneTemplate = (templateName: string, projectPath: string) => {
   try {
     const REPOSITORY = 'https://github.com/fengyueran';
-    exec(`git clone ${REPOSITORY}/${templateName}.git ${projectPath}`);
+    exec(`git clone --depth=1 ${REPOSITORY}/${templateName}.git ${projectPath}`);
+    exec(`rm -rf ${projectPath}/.git`);
   } catch (error) {
     throw new Error('git clone 失败');
   }
