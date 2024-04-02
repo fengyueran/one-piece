@@ -5,7 +5,7 @@ export enum ReadAsType {
   'ArrayBuffer',
 }
 
-export const readFile = (file: File, readAs = ReadAsType.Text): Promise<string | ArrayBuffer> =>
+export const readFile = (file: File, readAs = ReadAsType.Text) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
 
