@@ -4,7 +4,7 @@ import styled from 'styled-components';
 // import { UseAsyncExample } from './use-async';
 // import { UseAsyncFnExample } from './use-async-fn';
 // import { TabsExample } from './tabs';
-import { RippleExample } from './ripple';
+import { ButtonExample } from './button';
 import { CircularSpinExample } from './circular-spin';
 import { ModalExample } from './modal';
 
@@ -26,7 +26,7 @@ export const App = () => {
       {/* <DropdownExample />
       <UseAsyncFnExample />
       <UseAsyncExample /> */}
-      <RippleExample />
+      <ButtonExample />
       <CircularSpinExample />
       <ModalExample />
     </Container>

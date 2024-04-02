@@ -19,6 +19,7 @@ const StyledButtonBase = styled.button`
 interface Props {
   hasRipple?: boolean;
   className?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 

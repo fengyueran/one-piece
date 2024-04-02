@@ -8,6 +8,7 @@ export default defineConfig({
     global: {},
   },
   server: {
+    port: 1230,
     host: '0.0.0.0',
   },
 });
