@@ -1,4 +1,4 @@
-import { readFileAsString } from '../src';
+import { readFile } from '../src';
 
 // 模拟 FileReader
 // eslint-disable-next-line
@@ -25,12 +25,12 @@ global.FileReader = jest.fn().mockImplementation(() => ({
 describe('readFileAsString', () => {
   it('should read a file and return its content as a string', async () => {
     const mockFile = new Blob(['file content'], { type: 'text/plain' });
-    const content = await readFileAsString(mockFile as File);
+    const content = await readFile(mockFile as File);
     expect(content).toBe('file content');
   });
 
   it('should reject if reading fails', async () => {
     // eslint-disable-next-line
-    await expect(readFileAsString('' as any)).rejects.toThrow('Error reading file');
+    await expect(readFile('' as any)).rejects.toThrow('Error reading file');
   });
 });
