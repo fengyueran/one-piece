@@ -3,7 +3,7 @@ import styled from 'styled-components';
 // import { LoadingExample } from './loading';
 // import { UseAsyncExample } from './use-async';
 // import { UseAsyncFnExample } from './use-async-fn';
-// import { TabsExample } from './tabs';
+import { TabsExample } from './tabs';
 import { ButtonExample } from './button';
 import { CircularSpinExample } from './circular-spin';
 import { ModalExample } from './modal';
@@ -21,7 +21,7 @@ const Container = styled.div`
 export const App = () => {
   return (
     <Container>
-      {/* <TabsExample /> */}
+      <TabsExample />
       {/* <LoadingExample /> */}
       {/* <DropdownExample />
       <UseAsyncFnExample />
