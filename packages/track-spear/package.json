@@ -1,0 +1,41 @@
+{
+  "name": "@xinghunm/track-spear",
+  "version": "0.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "sideEffects": false,
+  "files": [
+    "es",
+    "lib",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "dev": "ts-node src/index.ts",
+    "ts-node": "ts-node",
+    "build:commonjs": "rm -rf lib && tsc -p tsconfig.build.commonjs.json",
+    "build:es": "rm -rf es && tsc -p tsconfig.build.es.json",
+    "build": "yarn build:commonjs && yarn build:es",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "keywords": [],
+  "author": "xinghunm",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^24.0.0",
+    "ts-jest": "^29.1.2"
+  }
+}
