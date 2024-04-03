@@ -1,1 +1,1 @@
-export * from './track-spear';
+export * from './core';
