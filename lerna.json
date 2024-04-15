@@ -5,7 +5,7 @@
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "ignoreChanges": ["packages/atomos-3d/**"]
+      "ignoreChanges": ["packages/atomos-3d/**", "packages/track-spear/**"]
     }
   }
 }
