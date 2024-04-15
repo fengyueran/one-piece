@@ -1,15 +1,22 @@
-import { getUniqueSelector, listenRouteChange, RouteInfo } from '../utils';
+import {
+  getUniqueSelector,
+  listenRouteChange,
+  RouteInfo,
+  getCookieByName,
+  setCookie,
+} from '../utils';
 
 export enum EventType {
   Click = 'Click',
   RouteChange = 'RouteChange',
+  NewVisitor = 'NewVisitor',
 }
 
 interface Event {
   type: EventType;
   userId: string;
   userName: string;
-  data: unknown;
+  data?: unknown;
 }
 
 export interface Config {
@@ -26,9 +33,10 @@ export class TrackSpear {
   constructor(private config: Config, private onEvent: (event: Event) => void) {
     listenRouteChange(this._onRouteChange);
     this._listenClickEvent();
+    this._trackUniqueVisitor();
   }
 
-  private _emitEvent = (event: { type: EventType; data: unknown }) => {
+  private _emitEvent = (event: { type: EventType; data?: unknown }) => {
     const events = this.config?.events;
     const shouldEmit = (!events || events.indexOf(event.type) >= 0) && this.onEvent;
     if (!shouldEmit) return;
@@ -68,5 +76,16 @@ export class TrackSpear {
       };
       this._emitEvent(event);
     });
+  };
+
+  private _trackUniqueVisitor = () => {
+    const visitorId = getCookieByName('visitorId');
+    if (visitorId) return;
+
+    setCookie('visitorId', 'newVisitorId');
+    const event = {
+      type: EventType.NewVisitor,
+    };
+    this._emitEvent(event);
   };
 }
