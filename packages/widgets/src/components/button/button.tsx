@@ -36,7 +36,7 @@ const ButtonContainer = styled(ButtonBase)<{
 `;
 
 const SpinWrapper = styled.span`
-  padding-left: 12px;
+  padding-right: 12px;
 `;
 
 interface Props {
@@ -67,12 +67,12 @@ export const Button = (props: Props) => {
       $disabled={!!res.disabled}
       {...res}
     >
-      {children}
       {loading && (
         <SpinWrapper>
           <Spin className="button-spin" />
         </SpinWrapper>
       )}
+      {children}
     </ButtonContainer>
   );
 };
