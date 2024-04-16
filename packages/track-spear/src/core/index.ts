@@ -1,1 +1,1 @@
-export * from './track-spear';
+export { default } from './track-spear';

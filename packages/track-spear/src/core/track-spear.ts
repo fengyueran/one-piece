@@ -1,3 +1,4 @@
+import { Config, EventType, Event } from '../types';
 import {
   getUniqueSelector,
   listenRouteChange,
@@ -6,27 +7,7 @@ import {
   setCookie,
 } from '../utils';
 
-export enum EventType {
-  Click = 'Click',
-  RouteChange = 'RouteChange',
-  NewVisitor = 'NewVisitor',
-}
-
-interface Event {
-  type: EventType;
-  userId: string;
-  userName?: string;
-  metaData?: unknown;
-}
-
-export interface Config {
-  rootId?: string;
-  userId: string;
-  userName?: string;
-  events?: EventType[];
-}
-
-export class TrackSpear {
+export default class TrackSpear {
   private _currentRoute = window.location.pathname;
   private _currentDate = Date.now(); //ms
 

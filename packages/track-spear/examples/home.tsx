@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Heatmap from 'heatmap.js';
 
-import { TrackSpear, EventType } from '../src';
+import TrackSpear, { EventType } from '../src';
 
 const RootContainer = styled.div`
   width: 100vw;
