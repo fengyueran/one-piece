@@ -5,7 +5,11 @@
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "ignoreChanges": ["packages/atomos-3d/**", "packages/track-spear/**"]
+      "ignoreChanges": [
+        "packages/atomos-3d/**",
+        "packages/track-spear-flow/**",
+        "packages/track-view-admin/**"
+      ]
     }
   }
 }
