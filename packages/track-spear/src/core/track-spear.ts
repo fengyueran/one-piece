@@ -15,8 +15,8 @@ export enum EventType {
 interface Event {
   type: EventType;
   userId: string;
-  userName: string;
-  data?: unknown;
+  userName?: string;
+  metaData?: unknown;
 }
 
 export interface Config {
@@ -36,7 +36,7 @@ export class TrackSpear {
     this._trackUniqueVisitor();
   }
 
-  private _emitEvent = (event: { type: EventType; data?: unknown }) => {
+  private _emitEvent = (event: { type: EventType; metaData?: unknown }) => {
     const events = this.config?.events;
     const shouldEmit = (!events || events.indexOf(event.type) >= 0) && this.onEvent;
     if (!shouldEmit) return;
@@ -55,7 +55,7 @@ export class TrackSpear {
     const to = info.targetRoute;
     const event = {
       type: EventType.RouteChange,
-      data: { from: this._currentRoute, to, duration: now - this._currentDate },
+      metaData: { from: this._currentRoute, to, duration: now - this._currentDate },
     };
     this._currentDate = now;
     this._currentRoute = to;
@@ -72,7 +72,7 @@ export class TrackSpear {
 
       const event = {
         type: EventType.Click,
-        data: { selectorPath, offsetX, offsetY },
+        metaData: { selectorPath, offsetX, offsetY },
       };
       this._emitEvent(event);
     });
