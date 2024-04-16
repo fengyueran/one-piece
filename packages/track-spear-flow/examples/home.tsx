@@ -15,10 +15,8 @@ const Toolbar = styled.div`
 `;
 
 const Content = styled.div`
-  width: 200vw;
   height: 300px;
   border: 1px solid;
-  overflow: auto;
 `;
 
 export const Home = () => {

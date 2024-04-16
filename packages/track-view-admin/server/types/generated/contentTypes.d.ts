@@ -374,10 +374,10 @@ export interface ApiEventEvent extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    type: Attribute.Enumeration<['Click', 'RouteChange', 'NewVisitor']>;
     metaData: Attribute.JSON;
     timestamp: Attribute.DateTime;
     userId: Attribute.String;
+    type: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

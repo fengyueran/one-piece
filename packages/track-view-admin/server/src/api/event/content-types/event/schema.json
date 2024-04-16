@@ -12,14 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "type": {
-      "type": "enumeration",
-      "enum": [
-        "Click",
-        "RouteChange",
-        "NewVisitor"
-      ]
-    },
     "metaData": {
       "type": "json"
     },
@@ -27,6 +19,9 @@
       "type": "datetime"
     },
     "userId": {
+      "type": "string"
+    },
+    "type": {
       "type": "string"
     }
   }

@@ -8,4 +8,4 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-export const createEvent = (data: {}): Promise<any> => axios.post(`/events`, {});
+export const createEvent = (data: object): Promise<any> => axios.post(`/events`, { data });
