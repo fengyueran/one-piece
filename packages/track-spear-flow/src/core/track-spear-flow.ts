@@ -1,4 +1,4 @@
-import { TrackSpear, Config } from '@xinghunm/track-spear';
+import TrackSpear, { Config } from '@xinghunm/track-spear';
 
 import * as apis from '../apis';
 

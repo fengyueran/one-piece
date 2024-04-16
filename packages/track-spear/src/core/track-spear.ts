@@ -15,6 +15,7 @@ export default class TrackSpear {
     listenRouteChange(this._onRouteChange);
     this._listenClickEvent();
     this._trackUniqueVisitor();
+    this._sendIframeDimensions();
   }
 
   private _emitEvent = (event: { type: EventType; metaData?: unknown }) => {
@@ -49,11 +50,25 @@ export default class TrackSpear {
     const root = document.getElementById(rootId) || document;
     root.addEventListener('click', (e: PointerEvent) => {
       const { offsetX, offsetY } = e;
-      const selectorPath = getUniqueSelector(e.target as Element);
+      const target = e.target as Element;
+      const scrollWidth = document.documentElement.scrollWidth;
+      const scrollHeight = document.documentElement.scrollHeight;
+
+      const selectorPath = getUniqueSelector(target);
+      const rect = target.getBoundingClientRect();
+      const offsetXPercent = offsetX / rect.width;
+      const offsetYPercent = offsetY / rect.height;
 
       const event = {
         type: EventType.Click,
-        metaData: { selectorPath, offsetX, offsetY },
+        metaData: {
+          selectorPath,
+          scrollWidth,
+          scrollHeight,
+          url: this._currentRoute,
+          offsetXPercent,
+          offsetYPercent,
+        },
       };
       this._emitEvent(event);
     });
@@ -68,5 +83,18 @@ export default class TrackSpear {
       type: EventType.NewVisitor,
     };
     this._emitEvent(event);
+  };
+
+  private _sendIframeDimensions = () => {
+    window.addEventListener('load', function () {
+      window.parent.postMessage(
+        {
+          type: 'iframeDimensions',
+          width: document.documentElement.scrollWidth,
+          height: document.documentElement.scrollHeight,
+        },
+        '*',
+      );
+    });
   };
 }

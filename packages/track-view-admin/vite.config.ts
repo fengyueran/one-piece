@@ -25,14 +25,25 @@ export default defineConfig({
   define: {
     global: {},
   },
+  resolve: {
+    alias: {
+      src: path.resolve(__dirname, 'src'),
+    },
+  },
   server: {
     port: stringToPort(packageInfo.name),
     host: '0.0.0.0',
     proxy: {
       '/track-spear-flow/api': {
-        target: 'http://127.0.0.1:1337',
+        target: 'http://localhost:1337',
         secure: false,
         changeOrigin: true,
+      },
+      '/iframe': {
+        // 假设 iframe 内的请求路径以 /api 开始
+        target: 'http://localhost:7917',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/iframe/, ''),
       },
     },
   },
