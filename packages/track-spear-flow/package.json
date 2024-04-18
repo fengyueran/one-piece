@@ -10,9 +10,7 @@
     "lib",
     "package.json"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "scripts": {
     "test": "jest",
     "dev": "vite",
