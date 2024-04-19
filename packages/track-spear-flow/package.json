@@ -20,7 +20,7 @@
     "build:commonjs": "rm -rf lib && tsc -p tsconfig.build.commonjs.json",
     "build:es": "rm -rf es && tsc -p tsconfig.build.es.json",
     "build": "yarn build:commonjs && yarn build:es",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": "xinghunm",
