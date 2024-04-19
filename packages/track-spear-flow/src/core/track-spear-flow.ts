@@ -8,3 +8,9 @@ export const init = (config: Config) => {
     apis.createEvent(event);
   });
 };
+
+export const reportEvent = (event: { type: string; metaData?: object }) => {
+  apis.createEvent(event);
+};
+
+export * from '@xinghunm/track-spear';

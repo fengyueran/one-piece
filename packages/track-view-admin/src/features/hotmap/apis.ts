@@ -5,7 +5,11 @@ export interface Event {
   type: string;
   userId: string;
   userName?: string;
-  metaData?: object;
+  metaData: {
+    selectorPath: string;
+    offsetXPercent: number;
+    offsetYPercent: number;
+  };
 }
 
 export const fetchClickEvents = (): Promise<

@@ -3,12 +3,14 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Heatmap from 'heatmap.js';
 
-import { Event } from '../src';
+import { Event, MessageType } from '../src';
+import { makeHotmapData } from './helper';
 
 const RootContainer = styled.div`
-  width: 800px;
-  height: 600px;
+  width: 100vw;
+  height: 100vh;
   position: relative;
+  overflow: hidden;
 `;
 
 const Iframe = styled.iframe`
@@ -41,49 +43,37 @@ export const Hotmap = () => {
   const [dimensions, setDimensions] = useState([]);
 
   useEffect(() => {
-    if (dimensions.length) {
-      const map = Heatmap.create({
-        container: canvas.current!,
-        radius: 20,
-        maxOpacity: 0.9,
-        minOpacity: 0,
-        blur: 1,
-        // gradient: {
-        //   '.1': '#32A933',
-        //   '.2': '#3ACB49',
-        //   '.4': '#94E149',
-        //   '.82': '#CDDE40',
-        //   '1': '#ED6B44',
-        // },
-      });
+    const run = async () => {
+      if (dimensions.length) {
+        const map = Heatmap.create({
+          container: canvas.current!,
+          radius: 20,
+          maxOpacity: 0.9,
+          minOpacity: 0,
+          blur: 1,
+          // gradient: {
+          //   '.1': '#32A933',
+          //   '.2': '#3ACB49',
+          //   '.4': '#94E149',
+          //   '.82': '#CDDE40',
+          //   '1': '#ED6B44',
+          // },
+        });
+        const data = await makeHotmapData(points);
 
-      const data: { x: number; y: number; value: number }[] = [];
-      points.map((event) => {
-        const { selectorPath, offsetXPercent, offsetYPercent } = event.metaData;
-        const iframe = document.getElementById('__hotmap_base__') as HTMLIFrameElement;
-        const targetElement = iframe.contentDocument.querySelector(selectorPath);
-
-        if (targetElement) {
-          const box = targetElement.getBoundingClientRect();
-          const { left, top, width, height } = box;
-          const x = left + width * offsetXPercent;
-          const y = top + height * offsetYPercent;
-
-          data.push({ x: +x.toFixed(0), y: +y.toFixed(0), value: 1 });
-        }
-      });
-
-      map.setData({
-        min: 1,
-        max: 1,
-        data,
-      });
-    }
+        map.setData({
+          min: 1,
+          max: 1,
+          data,
+        });
+      }
+    };
+    run();
   }, [dimensions]);
 
   useLayoutEffect(() => {
     window.addEventListener('message', function (event) {
-      if (event.data.type === 'iframeDimensions') {
+      if (event.data.type === MessageType.IframeDimensions) {
         const { width, height } = event.data;
         setDimensions([width, height]);
       }
@@ -92,7 +82,7 @@ export const Hotmap = () => {
 
   return (
     <RootContainer>
-      <Iframe id="__hotmap_base__" src="http://localhost:7122" />
+      <Iframe src="http://localhost:7122" />
       <CanvasWrapper>
         <Canvas ref={canvas} style={{ width: dimensions[0], height: dimensions[1] }} />
       </CanvasWrapper>

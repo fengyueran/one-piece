@@ -6,7 +6,7 @@ export enum EventType {
 
 export interface Event {
   type: EventType;
-  userId: string;
+  userId?: string;
   userName?: string;
   metaData?: unknown;
 }
@@ -16,4 +16,9 @@ export interface Config {
   userId: string;
   userName?: string;
   events?: EventType[];
+}
+
+export enum MessageType {
+  IframeDimensions = '__IframeDimensions__',
+  IframeElementBounds = '__IframeElementBounds__',
 }

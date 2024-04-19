@@ -10,16 +10,10 @@ const RootContainer = styled.div`
 `;
 
 const Toolbar = styled.div`
-  position: fixed;
-`;
-
-const Content = styled.div`
-  width: 200vw;
-  height: 800px;
-  border: 1px solid;
-  overflow: auto;
   padding: 100px;
 `;
+
+const Content = styled.div``;
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -37,7 +31,7 @@ export const Home = () => {
   return (
     <RootContainer className="home-container">
       <Toolbar>
-        <button>click me</button>
+        <button style={{ padding: 20 }}>click me</button>
         <button
           onClick={() => {
             navigate('page1');
@@ -62,9 +56,8 @@ export const Home = () => {
         </button>
       </Toolbar>
       <Content>
-        <div>点击测试区域</div>
-        <button>click me</button>
-        <button>click me</button>
+        <button>click me1</button>
+        <button>click me2</button>
       </Content>
     </RootContainer>
   );

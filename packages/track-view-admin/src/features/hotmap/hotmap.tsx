@@ -3,17 +3,12 @@ import styled from 'styled-components';
 import Heatmap from 'heatmap.js';
 
 const RootContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-`;
-
-const Iframe = styled.iframe`
-  width: 100vw;
-  height: 100vh;
+  width: 800px;
+  height: 600px;
   position: relative;
 `;
 
-const Canvas = styled.div`
+const Iframe = styled.iframe`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -21,12 +16,32 @@ const Canvas = styled.div`
   left: 0;
 `;
 
+const CanvasWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: auto;
+`;
+
+const Canvas = styled.div``;
+
+interface ClickEvent {
+  metaData: {
+    selectorPath: string;
+    offsetXPercent: number;
+    offsetYPercent: number;
+  };
+}
+
 interface Props {
+  dimensions: number[];
   data?: { x: number; y: number; value: number }[];
 }
 
 export const Hotmap = (props: Props) => {
-  const { data } = props;
+  const { data, dimensions } = props;
   const canvas = useRef(null);
 
   useEffect(() => {
@@ -45,26 +60,24 @@ export const Hotmap = (props: Props) => {
         //   '1': '#ED6B44',
         // },
       });
+
       map.setData({
-        min: 0,
-        max: 50,
+        min: 1,
+        max: 1,
         data,
       });
     }
   }, [data]);
 
   return (
-    <RootContainer ref={canvas}>
-      热力图区域
-      <Iframe
-        src="http://localhost:7917"
-        id="12123"
-        onLoad={(e) => {
-          console.log('11111', e.target.contentDocument);
-        }}
-      >
-        <Canvas />
-      </Iframe>
+    <RootContainer>
+      <Iframe id="__HotmapBase__" src="http://localhost:7917" />
+      <CanvasWrapper>
+        <Canvas
+          ref={canvas}
+          style={{ width: dimensions[0], height: dimensions[1] }}
+        />
+      </CanvasWrapper>
     </RootContainer>
   );
 };

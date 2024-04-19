@@ -1,4 +1,4 @@
-import { Config, EventType, Event } from '../types';
+import { Config, EventType, Event, MessageType } from '../types';
 import {
   getUniqueSelector,
   listenRouteChange,
@@ -16,6 +16,7 @@ export default class TrackSpear {
     this._listenClickEvent();
     this._trackUniqueVisitor();
     this._sendIframeDimensions();
+    this._relayIframeElementBounds();
   }
 
   private _emitEvent = (event: { type: EventType; metaData?: unknown }) => {
@@ -89,12 +90,35 @@ export default class TrackSpear {
     window.addEventListener('load', function () {
       window.parent.postMessage(
         {
-          type: 'iframeDimensions',
+          type: MessageType.IframeDimensions,
           width: document.documentElement.scrollWidth,
           height: document.documentElement.scrollHeight,
         },
         '*',
       );
+    });
+  };
+
+  private _relayIframeElementBounds = () => {
+    window.addEventListener('message', function (event) {
+      if (event.data.type === MessageType.IframeElementBounds) {
+        const selectorPaths = event.data.selectorPaths as string[];
+        const boxes = selectorPaths.map((selectorPath) => {
+          const targetElement = document.querySelector(selectorPath);
+          if (targetElement) {
+            const box = targetElement.getBoundingClientRect();
+            return box;
+          }
+        });
+
+        window.parent.postMessage(
+          {
+            type: MessageType.IframeElementBounds,
+            boxes,
+          },
+          '*',
+        );
+      }
     });
   };
 }
