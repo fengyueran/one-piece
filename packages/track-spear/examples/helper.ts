@@ -36,9 +36,12 @@ export const makeHotmapData = (
       }
     };
     window.addEventListener('message', onMessage);
-    iframe.contentWindow.postMessage({
-      type: MessageType.IframeElementBounds,
-      selectorPaths,
-    });
+    iframe.contentWindow.postMessage(
+      {
+        type: MessageType.IframeElementBounds,
+        selectorPaths,
+      },
+      '*',
+    );
   });
 };

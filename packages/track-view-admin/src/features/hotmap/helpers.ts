@@ -1,23 +1,50 @@
 import { Event } from './apis';
 
-export const makeHotmapData = (events: { id: string; attributes: Event }[]) => {
-  return events
-    .map((e) => {
-      const { selectorPath, offsetXPercent, offsetYPercent } =
-        e.attributes.metaData;
-      const iframe = document.getElementById(
-        '__hotmap_base__'
-      ) as HTMLIFrameElement;
-      const targetElement = iframe.contentDocument!.querySelector(selectorPath);
+export interface HotmapData {
+  x: number;
+  y: number;
+  value: number;
+}
 
-      if (targetElement) {
-        const box = targetElement.getBoundingClientRect();
-        const { left, top, width, height } = box;
-        const x = left + width * offsetXPercent;
-        const y = top + height * offsetYPercent;
+export const makeHotmapData = (
+  events: { id: string; attributes: Event }[]
+): Promise<HotmapData[]> => {
+  const iframe = document.querySelector('iframe') as HTMLIFrameElement;
+  const selectorPaths = events.map((e) => e.attributes.metaData.selectorPath);
 
-        return { x: +x.toFixed(0), y: +y.toFixed(0), value: 1 };
+  return new Promise((reslove) => {
+    const onMessage = (
+      event: MessageEvent<{
+        type: string;
+        boxes: { left: number; top: number; width: number; height: number }[];
+      }>
+    ) => {
+      if (event.data.type === '__IframeElementBounds__') {
+        console.log('event', event.data);
+        const points = event.data.boxes
+          .map((box, index) => {
+            if (box) {
+              const { left, top, width, height } = box;
+              const { offsetXPercent, offsetYPercent } =
+                events[index].attributes.metaData;
+              const x = left + width * offsetXPercent;
+              const y = top + height * offsetYPercent;
+
+              return { x: +x.toFixed(0), y: +y.toFixed(0), value: 1 };
+            }
+          })
+          .filter((v) => v) as HotmapData[];
+        window.removeEventListener('message', onMessage);
+        reslove(points);
       }
-    })
-    .filter((v) => v);
+    };
+    window.addEventListener('message', onMessage);
+    iframe.contentWindow!.postMessage(
+      {
+        type: '__IframeElementBounds__',
+        selectorPaths,
+      },
+      '*'
+    );
+  });
 };

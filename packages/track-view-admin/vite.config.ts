@@ -22,9 +22,6 @@ const stringToPort = (str) => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  define: {
-    global: {},
-  },
   resolve: {
     alias: {
       src: path.resolve(__dirname, 'src'),
@@ -38,12 +35,6 @@ export default defineConfig({
         target: 'http://localhost:1337',
         secure: false,
         changeOrigin: true,
-      },
-      '/iframe': {
-        // 假设 iframe 内的请求路径以 /api 开始
-        target: 'http://localhost:7917',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/iframe/, ''),
       },
     },
   },

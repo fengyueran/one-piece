@@ -27,14 +27,6 @@ const CanvasWrapper = styled.div`
 
 const Canvas = styled.div``;
 
-interface ClickEvent {
-  metaData: {
-    selectorPath: string;
-    offsetXPercent: number;
-    offsetYPercent: number;
-  };
-}
-
 interface Props {
   dimensions: number[];
   data?: { x: number; y: number; value: number }[];
@@ -71,7 +63,7 @@ export const Hotmap = (props: Props) => {
 
   return (
     <RootContainer>
-      <Iframe id="__HotmapBase__" src="http://localhost:7917" />
+      <Iframe src="http://localhost:7917" />
       <CanvasWrapper>
         <Canvas
           ref={canvas}
