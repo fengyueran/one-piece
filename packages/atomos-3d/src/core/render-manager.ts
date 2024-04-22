@@ -18,7 +18,7 @@ export class RenderManager {
   public scene: Scene;
   public renderer: WebGLRenderer;
   public camera: PerspectiveCamera;
-  public behaviourList: ObjectWithUpdate[] = [];
+  public objects: ObjectWithUpdate[] = [];
 
   constructor(dom: HTMLElement) {
     this.scene = new Scene();
@@ -53,11 +53,11 @@ export class RenderManager {
 
   add = (object3D: ObjectWithUpdate) => {
     this.scene.add(object3D.getMesh());
-    this.behaviourList.push(object3D);
+    this.objects.push(object3D);
   };
 
   render = () => {
-    this.behaviourList.forEach((b) => {
+    this.objects.forEach((b) => {
       b.update();
     });
     this.renderer.render(this.scene, this.camera);
