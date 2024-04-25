@@ -5,14 +5,15 @@ import { ObjectWithUpdate } from './render-manager';
 export class Atom implements ObjectWithUpdate {
   private mesh: THREE.Mesh;
   type?: string;
-
+  position = new THREE.Vector3();
   constructor(
     type: string,
-    private position: THREE.Vector3,
+    position: THREE.Vector3,
     private color: THREE.ColorRepresentation,
     private radius = 0.5
   ) {
     this.type = type;
+    this.position = new THREE.Vector3().copy(position);
     this.mesh = this.createMesh();
   }
 
@@ -25,6 +26,4 @@ export class Atom implements ObjectWithUpdate {
   }
 
   getMesh = () => this.mesh;
-
-  update = () => {};
 }

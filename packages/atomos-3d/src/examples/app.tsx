@@ -12,8 +12,8 @@ const Container = styled.div`
 `;
 
 const Canvas = styled.div`
-  width: 500px;
-  height: 300px;
+  width: 800px;
+  height: 800px;
   margin: auto;
   background: #6395c4;
 `;
@@ -29,11 +29,22 @@ export const App = () => {
 
   useEffect(() => {
     const start = async () => {
-      const data = await fetchFile('atom.pdb');
+      const data = await fetchFile('atoms.pdb');
       const container = canvasRef.current!;
 
       const viewer = new AtomosViewer(container, {});
       viewer.render(data);
+      viewer.zoomToFitScene();
+      setInterval(() => {
+        viewer.atoms.forEach((atom) => {
+          const mesh = atom.getMesh();
+          mesh.position.set(
+            atom.position.x + Math.random(),
+            atom.position.y + Math.random(),
+            atom.position.z + Math.random()
+          );
+        });
+      }, 500);
     };
     start();
   }, []);

@@ -112,6 +112,7 @@ const createPdbAtomMeshes = (pdbText: string) => {
   geometryAtoms.computeBoundingBox();
   geometryAtoms.boundingBox.getCenter(offset).negate();
 
+  //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
   geometryAtoms.translate(offset.x, offset.y, offset.z);
 
   const positions = geometryAtoms.getAttribute('position');
@@ -146,26 +147,23 @@ const createPdbAtomMeshes = (pdbText: string) => {
 };
 
 export class AtomosViewer {
+  atoms: Atom[] = [];
   private renderManager: RenderManager;
   constructor(element: HTMLElement, private config: AtomosViewerConfig) {
     this.renderManager = new RenderManager(element);
   }
 
   render = (data: string) => {
-    const atoms = createPdbAtomMeshes(data);
+    this.atoms = createPdbAtomMeshes(data);
 
-    // // 原子数据，通常这将通过解析PDB文件来获得
-    // const atoms = [
-    //   new Atom('S', new THREE.Vector3(-1.889, 1.63, -0.268), 0xffff00, 1.8),
-    //   new Atom('O', new THREE.Vector3(-0.564, 1.966, 0.871), 0xff0000, 1.52),
-    //   new Atom('O', new THREE.Vector3(-3.574, 1.62, 0.306), 0xff0000, 1.52),
-    // ];
-
-    // 创建并添加原子到场景
-    atoms.forEach((atom) => {
+    this.atoms.forEach((atom) => {
       this.renderManager.add(atom);
     });
 
     this.renderManager.render();
+  };
+
+  zoomToFitScene = () => {
+    this.renderManager.zoomToFitScene();
   };
 }
