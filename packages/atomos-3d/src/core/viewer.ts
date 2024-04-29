@@ -136,9 +136,60 @@ const createPdbAtomMeshes = (pdbText: string) => {
 
     const atom = new Atom(type, position, color, radius);
 
-    // object.position.copy(position);
-    // object.position.multiplyScalar(75);
-    // object.scale.multiplyScalar(25);
+    atoms.push(atom);
+  }
+
+  return atoms;
+};
+
+type AtomData = {
+  id: number;
+  element: string;
+  x: number;
+  y: number;
+  z: number;
+};
+
+const createAtoms = (atomInfos: AtomData[]) => {
+  const geometryAtoms = new THREE.BufferGeometry();
+
+  const count = atomInfos.length;
+  const positions = new Float32Array(count * 3);
+
+  for (let i = 0; i < count; i += 1) {
+    const atomInfo = atomInfos[i];
+    const current = i * 3;
+
+    positions[current] = atomInfo.x;
+    positions[current + 1] = atomInfo.y;
+    positions[current + 2] = atomInfo.z;
+  }
+
+  geometryAtoms.setAttribute(
+    'position',
+    new THREE.BufferAttribute(positions, 3)
+  );
+
+  const atoms = [] as Atom[];
+
+  const offset = new THREE.Vector3();
+
+  geometryAtoms.computeBoundingBox();
+  geometryAtoms.boundingBox.getCenter(offset).negate();
+
+  //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
+  geometryAtoms.translate(offset.x, offset.y, offset.z);
+
+  const color = new THREE.Color();
+
+  for (let i = 0; i < atomInfos.length; i += 1) {
+    const atomInfo = atomInfos[i];
+    const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
+
+    const type = atomInfo.element;
+    const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap];
+
+    const atom = new Atom(type, position, '#ffffff', radius);
 
     atoms.push(atom);
   }
@@ -153,14 +204,22 @@ export class AtomosViewer {
     this.renderManager = new RenderManager(element);
   }
 
-  render = (data: string) => {
-    this.atoms = createPdbAtomMeshes(data);
-
+  render = () => {
     this.atoms.forEach((atom) => {
       this.renderManager.add(atom);
     });
 
     this.renderManager.render();
+  };
+
+  addModal = (data: any, type: string) => {
+    if (type === 'lammpstrj') {
+      this.atoms = createAtoms(data);
+    }
+  };
+
+  addTrajectory = (data: any) => {
+    this.atoms = createAtoms(data);
   };
 
   zoomToFitScene = () => {

@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { AtomosViewer } from '../core';
+import { Reader } from './reader';
 
 const Container = styled.div`
   width: 100vw;
@@ -24,27 +25,65 @@ const fetchFile = async (url: string) => {
   return text;
 };
 
+type AtomData = {
+  id: number;
+  element: string;
+  x: number;
+  y: number;
+  z: number;
+};
+
+function convertToPDBFormat(atoms: AtomData[]): string[] {
+  return atoms.map((atom) => {
+    return (
+      `ATOM  ${atom.id.toString().padStart(5)}  ${atom.element.padEnd(
+        3
+      )} UNK A   1   ` +
+      `${atom.x.toFixed(3).padStart(8)}${atom.y.toFixed(3).padStart(8)}${atom.z
+        .toFixed(3)
+        .padStart(8)}  1.00  0.00`
+    );
+  });
+}
+
+const read = (url: string) =>
+  new Promise((reslove) => {
+    const reader = new Reader((frames) => {
+      reslove(frames);
+    });
+    reader.fetchAndStream(url);
+  });
+
 export const App = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const start = async () => {
-      const data = await fetchFile('atoms.pdb');
       const container = canvasRef.current!;
 
       const viewer = new AtomosViewer(container, {});
-      viewer.render(data);
-      viewer.zoomToFitScene();
-      setInterval(() => {
-        viewer.atoms.forEach((atom) => {
+
+      const frames = await read('dump.lammpstrj');
+      let frameIndex = 0;
+
+      const run = () => {
+        const newAtoms = frames[frameIndex];
+        viewer.atoms.forEach((atom, index) => {
           const mesh = atom.getMesh();
-          mesh.position.set(
-            atom.position.x + Math.random(),
-            atom.position.y + Math.random(),
-            atom.position.z + Math.random()
-          );
+          const newAtom = newAtoms[index];
+          mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
         });
-      }, 500);
+        frameIndex++;
+      };
+
+      setInterval(() => {
+        run();
+      }, 200);
+
+      viewer.addTrajectory(frames[0]);
+
+      viewer.render();
+      viewer.zoomToFitScene();
     };
     start();
   }, []);
