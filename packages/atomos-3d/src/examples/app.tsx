@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { AtomosViewer } from '../core';
-import { Reader } from './reader';
+import { AtomosViewer, Trajectory } from '../core';
 
 const Container = styled.div`
   width: 100vw;
@@ -19,41 +18,6 @@ const Canvas = styled.div`
   background: #6395c4;
 `;
 
-const fetchFile = async (url: string) => {
-  const res = await fetch(url);
-  const text = await res.text();
-  return text;
-};
-
-type AtomData = {
-  id: number;
-  element: string;
-  x: number;
-  y: number;
-  z: number;
-};
-
-function convertToPDBFormat(atoms: AtomData[]): string[] {
-  return atoms.map((atom) => {
-    return (
-      `ATOM  ${atom.id.toString().padStart(5)}  ${atom.element.padEnd(
-        3
-      )} UNK A   1   ` +
-      `${atom.x.toFixed(3).padStart(8)}${atom.y.toFixed(3).padStart(8)}${atom.z
-        .toFixed(3)
-        .padStart(8)}  1.00  0.00`
-    );
-  });
-}
-
-const read = (url: string) =>
-  new Promise((reslove) => {
-    const reader = new Reader((frames) => {
-      reslove(frames);
-    });
-    reader.fetchAndStream(url);
-  });
-
 export const App = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -63,27 +27,10 @@ export const App = () => {
 
       const viewer = new AtomosViewer(container, {});
 
-      const frames = await read('dump.lammpstrj');
-      let frameIndex = 0;
+      viewer.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
 
-      const run = () => {
-        const newAtoms = frames[frameIndex];
-        viewer.atoms.forEach((atom, index) => {
-          const mesh = atom.getMesh();
-          const newAtom = newAtoms[index];
-          mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
-        });
-        frameIndex++;
-      };
-
-      setInterval(() => {
-        run();
-      }, 200);
-
-      viewer.addTrajectory(frames[0]);
-
-      viewer.render();
-      viewer.zoomToFitScene();
+      // viewer.render();
+      // viewer.zoomToFitScene();
     };
     start();
   }, []);

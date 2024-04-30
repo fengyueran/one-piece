@@ -4,8 +4,13 @@ import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
 import { RenderManager } from './render-manager';
 import { Atom } from './atom';
 import { vdwRadiiMap } from './vdw-radii-map';
+import { LammpsTrjLoader } from '../loaders';
 
 export interface AtomosViewerConfig {}
+
+export enum Trajectory {
+  Lammps,
+}
 
 // const parsePdbText = (pdbText: string) => {
 //   const loader = new PDBLoader();
@@ -142,15 +147,15 @@ const createPdbAtomMeshes = (pdbText: string) => {
   return atoms;
 };
 
-type AtomData = {
+interface AtomInfo {
   id: number;
   element: string;
   x: number;
   y: number;
   z: number;
-};
+}
 
-const createAtoms = (atomInfos: AtomData[]) => {
+const createAtoms = (atomInfos: AtomInfo[]) => {
   const geometryAtoms = new THREE.BufferGeometry();
 
   const count = atomInfos.length;
@@ -199,6 +204,9 @@ const createAtoms = (atomInfos: AtomData[]) => {
 
 export class AtomosViewer {
   atoms: Atom[] = [];
+  private loader?: LammpsTrjLoader;
+  private firstFrameRendered = false;
+  private models: AtomInfo[][] = [];
   private renderManager: RenderManager;
   constructor(element: HTMLElement, private config: AtomosViewerConfig) {
     this.renderManager = new RenderManager(element);
@@ -212,14 +220,49 @@ export class AtomosViewer {
     this.renderManager.render();
   };
 
-  addModal = (data: any, type: string) => {
-    if (type === 'lammpstrj') {
+  addModel = (data: any, type: Trajectory) => {
+    if (type === Trajectory.Lammps) {
       this.atoms = createAtoms(data);
     }
   };
 
-  addTrajectory = (data: any) => {
-    this.atoms = createAtoms(data);
+  animateTrajectory = () => {
+    const nextFrame = () => {
+      const atoms = this.models.shift();
+
+      if (atoms && atoms.length === this.atoms.length) {
+        this.atoms.forEach((atom, index) => {
+          const mesh = atom.getMesh();
+          const newAtom = atoms[index];
+          mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
+        });
+        setTimeout(nextFrame, 0);
+      } else {
+        this.loader?.resume();
+        setTimeout(nextFrame, 0);
+      }
+    };
+
+    nextFrame();
+  };
+
+  addTrajectory = (url: string, type: Trajectory) => {
+    if (type === Trajectory.Lammps) {
+      this.loader = new LammpsTrjLoader({
+        onModel: (model: AtomInfo[]) => {
+          this.models.push(model);
+
+          if (!this.firstFrameRendered) {
+            this.firstFrameRendered = true;
+            this.addModel(model, Trajectory.Lammps);
+            this.render();
+            this.animateTrajectory();
+          }
+        },
+      });
+
+      this.loader.fetchAndStream(url);
+    }
   };
 
   zoomToFitScene = () => {
