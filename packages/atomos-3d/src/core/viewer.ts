@@ -238,8 +238,11 @@ export class AtomosViewer {
         });
         setTimeout(nextFrame, 0);
       } else {
-        this.loader?.resume();
         setTimeout(nextFrame, 0);
+      }
+
+      if (this.models.length < 100) {
+        this.loader?.resume();
       }
     };
 
