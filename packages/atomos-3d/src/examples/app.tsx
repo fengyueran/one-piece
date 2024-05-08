@@ -28,7 +28,7 @@ export const App = () => {
       const viewer = new AtomosViewer(container, {});
 
       viewer.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
-
+      viewer.play();
       // viewer.render();
       // viewer.zoomToFitScene();
     };

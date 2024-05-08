@@ -251,10 +251,11 @@ export class AtomosViewer {
   addTrajectory = (url: string, type: Trajectory) => {
     if (type === Trajectory.Lammps) {
       this.loader = new LammpsTrjLoader({
+        url,
         onModel: (model: AtomInfo[]) => {
-          this.models.push(model);
-
-          if (!this.firstFrameRendered) {
+          if (this.firstFrameRendered) {
+            this.models.push(model);
+          } else {
             this.firstFrameRendered = true;
             this.addModel(model, Trajectory.Lammps);
             this.render();
@@ -262,9 +263,11 @@ export class AtomosViewer {
           }
         },
       });
-
-      this.loader.fetchAndStream(url);
     }
+  };
+
+  play = () => {
+    this.loader?.fetchAndStream();
   };
 
   zoomToFitScene = () => {
