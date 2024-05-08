@@ -1,27 +1,26 @@
 import * as THREE from 'three';
 
+import { AtomType, getAtomColor } from 'src/helpers';
 import { ObjectWithUpdate } from './render-manager';
 
 export class Atom implements ObjectWithUpdate {
   private mesh: THREE.Mesh;
-  type?: string;
-  position = new THREE.Vector3();
-  constructor(
-    type: string,
-    position: THREE.Vector3,
-    private color: THREE.ColorRepresentation,
-    private radius = 0.5
-  ) {
-    this.type = type;
-    this.position = new THREE.Vector3().copy(position);
-    this.mesh = this.createMesh();
+
+  constructor(type: AtomType, position: THREE.Vector3, radius = 0.5) {
+    this.mesh = this.createMesh({ type, position, radius });
   }
 
-  createMesh() {
-    const geometry = new THREE.SphereGeometry(this.radius, 32, 32);
-    const material = new THREE.MeshPhongMaterial({ color: this.color });
+  createMesh(atomInfo: {
+    type: AtomType;
+    position: THREE.Vector3;
+    radius: number;
+  }) {
+    const { type, radius, position } = atomInfo;
+    const color = new THREE.Color(getAtomColor(type));
+    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+    const material = new THREE.MeshPhongMaterial({ color });
     this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.copy(this.position);
+    this.mesh.position.copy(position);
     return this.mesh;
   }
 

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
 
+import { AtomType } from 'src/helpers';
 import { RenderManager } from './render-manager';
 import { Atom } from './atom';
 import { vdwRadiiMap } from './vdw-radii-map';
@@ -185,16 +186,14 @@ const createAtoms = (atomInfos: AtomInfo[]) => {
   //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
   geometryAtoms.translate(offset.x, offset.y, offset.z);
 
-  const color = new THREE.Color();
-
   for (let i = 0; i < atomInfos.length; i += 1) {
     const atomInfo = atomInfos[i];
     const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
 
-    const type = atomInfo.element;
+    const type = atomInfo.element as AtomType;
     const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap];
 
-    const atom = new Atom(type, position, '#ffffff', radius);
+    const atom = new Atom(type, position, radius);
 
     atoms.push(atom);
   }
