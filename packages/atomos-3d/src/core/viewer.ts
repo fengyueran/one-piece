@@ -203,6 +203,7 @@ const createAtoms = (atomInfos: AtomInfo[]) => {
 
 export class AtomosViewer {
   atoms: Atom[] = [];
+  private _paused = false;
   private loader?: LammpsTrjLoader;
   private firstFrameRendered = false;
   private models: AtomInfo[][] = [];
@@ -227,6 +228,7 @@ export class AtomosViewer {
 
   animateTrajectory = () => {
     const nextFrame = () => {
+      if (this._paused) return;
       const atoms = this.models.shift();
 
       if (atoms && atoms.length === this.atoms.length) {
@@ -268,6 +270,20 @@ export class AtomosViewer {
 
   play = () => {
     this.loader?.fetchAndStream();
+  };
+
+  pause = () => {
+    if (!this._paused) {
+      this._paused = true;
+      this.loader?.pause();
+    }
+  };
+
+  resume = () => {
+    if (this._paused) {
+      this._paused = false;
+      this.animateTrajectory();
+    }
   };
 
   zoomToFitScene = () => {
