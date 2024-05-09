@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { Col } from '../flex-box';
@@ -51,11 +51,14 @@ interface DropdownProps {
   children: React.ReactNode;
   options: ItemProps[];
   triggers?: Array<Trigger>;
+  className?: string;
   onSelect: (item: ItemProps) => void;
+  dropdownItemRender?: (item: ItemProps) => ReactNode;
 }
 
 export const Dropdown = (props: DropdownProps) => {
-  const { children, triggers, options, onSelect } = props;
+  const { children, triggers, options, onSelect, dropdownItemRender, ...res } =
+    props;
 
   const isTriggerByHover = !triggers || triggers.includes(Trigger.Hover);
 
@@ -93,7 +96,7 @@ export const Dropdown = (props: DropdownProps) => {
   const renderMenuList = () => {
     return (
       visible && (
-        <MenusContainer className="menus-container">
+        <MenusContainer className="menus-container" {...res}>
           {options.map((item) => {
             const { label } = item;
             return (
@@ -104,7 +107,11 @@ export const Dropdown = (props: DropdownProps) => {
                 }}
                 key={label}
               >
-                <span>{label}</span>
+                {dropdownItemRender ? (
+                  dropdownItemRender(item)
+                ) : (
+                  <span>{label}</span>
+                )}
               </MenuItem>
             );
           })}

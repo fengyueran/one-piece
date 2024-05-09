@@ -9,7 +9,7 @@ import {
 const Container = styled.div`
   .trigger-wrapper {
     &:hover {
-      background-color: red;
+      background-color: blue;
     }
   }
   .menus-container {
@@ -100,6 +100,23 @@ export const DropdownExample = () => {
       {navItems.map(({ label, children }) => {
         return (
           <Dropdown key={label} options={children} onSelect={onSelect}>
+            <Menu>
+              <MenuTitle>{label}</MenuTitle>
+            </Menu>
+          </Dropdown>
+        );
+      })}
+
+      {navItems.map(({ label, children }) => {
+        return (
+          <Dropdown
+            key={label}
+            options={children}
+            onSelect={onSelect}
+            dropdownItemRender={({ label }) => {
+              return <div style={{ background: 'red' }}>{label}</div>;
+            }}
+          >
             <Menu>
               <MenuTitle>{label}</MenuTitle>
             </Menu>
