@@ -8,17 +8,18 @@ import {
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-export interface ObjectWithUpdate {
+export interface DynamicObj {
   getMesh: () => Object3D;
   update?: () => void;
 }
 
 export class RenderManager {
+  private _animationFrameId?: number;
   public scene: Scene;
   public renderer: WebGLRenderer;
   public camera: PerspectiveCamera;
   public orbitControls: OrbitControls;
-  public objects: ObjectWithUpdate[] = [];
+  public dynamicObjs: DynamicObj[] = [];
 
   constructor(dom: HTMLElement) {
     this.scene = new Scene();
@@ -48,9 +49,9 @@ export class RenderManager {
     );
   }
 
-  add = (object3D: ObjectWithUpdate) => {
+  add = (object3D: DynamicObj) => {
     this.scene.add(object3D.getMesh());
-    this.objects.push(object3D);
+    this.dynamicObjs.push(object3D);
   };
 
   zoomToFitScene = () => {
@@ -93,12 +94,22 @@ export class RenderManager {
   };
 
   render = () => {
-    this.objects.forEach((b) => {
+    this.dynamicObjs.forEach((b) => {
       if (b.update) {
         b.update();
       }
     });
     this.renderer.render(this.scene, this.camera);
-    requestAnimationFrame(this.render);
+    this._animationFrameId = requestAnimationFrame(this.render);
+  };
+
+  dispose = () => {
+    this.renderer?.domElement?.parentNode?.removeChild(
+      this.renderer?.domElement
+    );
+    if (this._animationFrameId) {
+      cancelAnimationFrame(this._animationFrameId);
+    }
+    this.renderer?.dispose();
   };
 }

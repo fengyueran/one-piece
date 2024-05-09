@@ -24,16 +24,15 @@ const Canvas = styled.div`
   height: 800px;
 `;
 
-const StopBtn = styled.button`
-  width: 100px;
-  height: 40px;
+const Tool = styled.div`
   position: absolute;
   top: 0;
-  right: -100px;
+  right: -400px;
 `;
 
-const ResumeBtn = styled(StopBtn)`
-  right: -210px;
+const Buttonn = styled.button`
+  width: 100px;
+  height: 40px;
 `;
 
 export const App = () => {
@@ -45,10 +44,9 @@ export const App = () => {
     const start = async () => {
       const container = canvasRef.current!;
 
-      const viewer = new AtomosViewer(container, {});
-      viewerRef.current = viewer;
-      viewer.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
-      viewer.play();
+      viewerRef.current = new AtomosViewer(container, {});
+      viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
+      viewerRef.current.play();
       // viewer.render();
       // viewer.zoomToFitScene();
     };
@@ -59,20 +57,31 @@ export const App = () => {
     <Container>
       <Content>
         <Canvas ref={canvasRef} />
-        <StopBtn
-          onClick={() => {
-            viewerRef.current?.pause();
-          }}
-        >
-          暂停
-        </StopBtn>
-        <ResumeBtn
-          onClick={() => {
-            viewerRef.current?.resume();
-          }}
-        >
-          播放
-        </ResumeBtn>
+        <Tool>
+          <Buttonn
+            onClick={() => {
+              viewerRef.current?.pause();
+            }}
+          >
+            暂停
+          </Buttonn>
+          <Buttonn
+            onClick={() => {
+              viewerRef.current?.resume();
+            }}
+          >
+            播放
+          </Buttonn>
+
+          <Buttonn
+            onClick={() => {
+              viewerRef.current?.dispose();
+              viewerRef.current = undefined;
+            }}
+          >
+            卸载
+          </Buttonn>
+        </Tool>
       </Content>
     </Container>
   );

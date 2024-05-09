@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 import { AtomType, getAtomColor } from 'src/helpers';
-import { ObjectWithUpdate } from './render-manager';
+import { DynamicObj } from './render-manager';
 
-export class Atom implements ObjectWithUpdate {
+export class Atom implements DynamicObj {
   private mesh: THREE.Mesh;
 
   constructor(type: AtomType, position: THREE.Vector3, radius = 0.5) {

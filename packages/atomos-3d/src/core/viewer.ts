@@ -14,8 +14,8 @@ export enum Trajectory {
 }
 
 // const parsePdbText = (pdbText: string) => {
-//   const loader = new PDBLoader();
-//   const pdb = loader.parse(pdbText);
+//   const _loader = new PDBLoader();
+//   const pdb = _loader.parse(pdbText);
 //   const offset = new THREE.Vector3();
 //   const lines = [] as THREE.Mesh[];
 //   const atoms = [] as THREE.Mesh[];
@@ -107,8 +107,8 @@ export enum Trajectory {
 // };
 
 const createPdbAtomMeshes = (pdbText: string) => {
-  const loader = new PDBLoader();
-  const pdb = loader.parse(pdbText);
+  const _loader = new PDBLoader();
+  const pdb = _loader.parse(pdbText);
   const offset = new THREE.Vector3();
 
   const atoms = [] as Atom[];
@@ -202,37 +202,35 @@ const createAtoms = (atomInfos: AtomInfo[]) => {
 };
 
 export class AtomosViewer {
-  atoms: Atom[] = [];
   private _paused = false;
-  private loader?: LammpsTrjLoader;
+  private _loader?: LammpsTrjLoader;
   private firstFrameRendered = false;
-  private models: AtomInfo[][] = [];
+  private _models: AtomInfo[][] = [];
   private renderManager: RenderManager;
   constructor(element: HTMLElement, private config: AtomosViewerConfig) {
     this.renderManager = new RenderManager(element);
   }
 
   render = () => {
-    this.atoms.forEach((atom) => {
-      this.renderManager.add(atom);
-    });
-
     this.renderManager.render();
   };
 
   addModel = (data: any, type: Trajectory) => {
     if (type === Trajectory.Lammps) {
-      this.atoms = createAtoms(data);
+      const atoms = createAtoms(data);
+      atoms.forEach((atom) => {
+        this.renderManager.add(atom);
+      });
     }
   };
 
   animateTrajectory = () => {
     const nextFrame = () => {
       if (this._paused) return;
-      const atoms = this.models.shift();
+      const atoms = this._models.shift();
 
-      if (atoms && atoms.length === this.atoms.length) {
-        this.atoms.forEach((atom, index) => {
+      if (atoms && atoms.length === this.renderManager.dynamicObjs.length) {
+        this.renderManager.dynamicObjs.forEach((atom, index) => {
           const mesh = atom.getMesh();
           const newAtom = atoms[index];
           mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
@@ -242,8 +240,8 @@ export class AtomosViewer {
         setTimeout(nextFrame, 0);
       }
 
-      if (this.models.length < 100) {
-        this.loader?.resume();
+      if (this._models.length < 100) {
+        this._loader?.resume();
       }
     };
 
@@ -252,11 +250,11 @@ export class AtomosViewer {
 
   addTrajectory = (url: string, type: Trajectory) => {
     if (type === Trajectory.Lammps) {
-      this.loader = new LammpsTrjLoader({
+      this._loader = new LammpsTrjLoader({
         url,
         onModel: (model: AtomInfo[]) => {
           if (this.firstFrameRendered) {
-            this.models.push(model);
+            this._models.push(model);
           } else {
             this.firstFrameRendered = true;
             this.addModel(model, Trajectory.Lammps);
@@ -269,13 +267,13 @@ export class AtomosViewer {
   };
 
   play = () => {
-    this.loader?.fetchAndStream();
+    this._loader?.fetchAndStream();
   };
 
   pause = () => {
     if (!this._paused) {
       this._paused = true;
-      this.loader?.pause();
+      this._loader?.pause();
     }
   };
 
@@ -288,5 +286,12 @@ export class AtomosViewer {
 
   zoomToFitScene = () => {
     this.renderManager.zoomToFitScene();
+  };
+
+  dispose = () => {
+    this.pause();
+    this._loader = undefined;
+    this._models = [];
+    this.renderManager.dispose();
   };
 }
