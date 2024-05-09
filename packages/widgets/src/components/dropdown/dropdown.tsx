@@ -96,8 +96,8 @@ export const Dropdown = (props: DropdownProps) => {
   const renderMenuList = () => {
     return (
       <MenusContainer
-        {...res}
         className="menus-container"
+        {...res}
         style={{ display: visible ? 'block' : 'none' }}
       >
         {options.map((item) => {
