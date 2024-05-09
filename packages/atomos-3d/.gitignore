@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 lib
 es
-dump.lammpstrj
+*.lammpstrj

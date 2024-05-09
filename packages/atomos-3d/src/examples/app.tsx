@@ -27,11 +27,11 @@ const Canvas = styled.div`
 const Tool = styled.div`
   position: absolute;
   top: 0;
-  right: -400px;
+  right: 0px;
 `;
 
 const Buttonn = styled.button`
-  width: 100px;
+  width: 60px;
   height: 40px;
 `;
 
@@ -45,7 +45,7 @@ export const App = () => {
       const container = canvasRef.current!;
 
       viewerRef.current = new AtomosViewer(container, {});
-      viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
+      viewerRef.current.addTrajectory('dump2.lammpstrj', Trajectory.Lammps);
       viewerRef.current.play();
       // viewer.render();
       // viewer.zoomToFitScene();
@@ -80,6 +80,13 @@ export const App = () => {
             }}
           >
             卸载
+          </Buttonn>
+          <Buttonn
+            onClick={() => {
+              viewerRef.current?.play();
+            }}
+          >
+            重播
           </Buttonn>
         </Tool>
       </Content>

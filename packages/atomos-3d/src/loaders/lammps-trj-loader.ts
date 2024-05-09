@@ -39,6 +39,7 @@ export class LammpsTrjLoader {
   private _buffer = ''; //缓冲区
   private _resumePromiseResolve?: (value: unknown) => void;
   private _onModel: (atomInfos: AtomInfo[]) => void;
+  loadFinished = false;
 
   constructor(config: {
     url: string;
@@ -51,6 +52,8 @@ export class LammpsTrjLoader {
 
   fetchAndStream = async () => {
     if (!this._url) return;
+
+    this.loadFinished = false;
 
     const response = await fetch(this._url);
 
@@ -76,6 +79,7 @@ export class LammpsTrjLoader {
       this.processBuffer();
       if (done) {
         console.log('Stream completed');
+        this.loadFinished = true;
         break;
       }
     }

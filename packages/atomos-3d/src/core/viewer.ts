@@ -204,22 +204,22 @@ const createAtoms = (atomInfos: AtomInfo[]) => {
 export class AtomosViewer {
   private _paused = false;
   private _loader?: LammpsTrjLoader;
-  private firstFrameRendered = false;
+  private _firstFrameRendered = false;
   private _models: AtomInfo[][] = [];
-  private renderManager: RenderManager;
+  private _renderManager: RenderManager;
   constructor(element: HTMLElement, private config: AtomosViewerConfig) {
-    this.renderManager = new RenderManager(element);
+    this._renderManager = new RenderManager(element);
   }
 
   render = () => {
-    this.renderManager.render();
+    this._renderManager.render();
   };
 
   addModel = (data: any, type: Trajectory) => {
     if (type === Trajectory.Lammps) {
       const atoms = createAtoms(data);
       atoms.forEach((atom) => {
-        this.renderManager.add(atom);
+        this._renderManager.add(atom);
       });
     }
   };
@@ -229,8 +229,8 @@ export class AtomosViewer {
       if (this._paused) return;
       const atoms = this._models.shift();
 
-      if (atoms && atoms.length === this.renderManager.dynamicObjs.length) {
-        this.renderManager.dynamicObjs.forEach((atom, index) => {
+      if (atoms && atoms.length === this._renderManager.dynamicObjs.length) {
+        this._renderManager.dynamicObjs.forEach((atom, index) => {
           const mesh = atom.getMesh();
           const newAtom = atoms[index];
           mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
@@ -253,10 +253,10 @@ export class AtomosViewer {
       this._loader = new LammpsTrjLoader({
         url,
         onModel: (model: AtomInfo[]) => {
-          if (this.firstFrameRendered) {
+          if (this._firstFrameRendered) {
             this._models.push(model);
           } else {
-            this.firstFrameRendered = true;
+            this._firstFrameRendered = true;
             this.addModel(model, Trajectory.Lammps);
             this.render();
             this.animateTrajectory();
@@ -267,6 +267,10 @@ export class AtomosViewer {
   };
 
   play = () => {
+    this._loader?.fetchAndStream();
+  };
+
+  replay = () => {
     this._loader?.fetchAndStream();
   };
 
@@ -285,13 +289,13 @@ export class AtomosViewer {
   };
 
   zoomToFitScene = () => {
-    this.renderManager.zoomToFitScene();
+    this._renderManager.zoomToFitScene();
   };
 
   dispose = () => {
     this.pause();
     this._loader = undefined;
     this._models = [];
-    this.renderManager.dispose();
+    this._renderManager.dispose();
   };
 }
