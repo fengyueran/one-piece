@@ -95,28 +95,30 @@ export const Dropdown = (props: DropdownProps) => {
 
   const renderMenuList = () => {
     return (
-      visible && (
-        <MenusContainer className="menus-container" {...res}>
-          {options.map((item) => {
-            const { label } = item;
-            return (
-              <MenuItem
-                className="menu-item"
-                onClick={() => {
-                  handleMenuClick(item);
-                }}
-                key={label}
-              >
-                {dropdownItemRender ? (
-                  dropdownItemRender(item)
-                ) : (
-                  <span>{label}</span>
-                )}
-              </MenuItem>
-            );
-          })}
-        </MenusContainer>
-      )
+      <MenusContainer
+        {...res}
+        className="menus-container"
+        style={{ display: visible ? 'block' : 'none' }}
+      >
+        {options.map((item) => {
+          const { label } = item;
+          return (
+            <MenuItem
+              className="menu-item"
+              onClick={() => {
+                handleMenuClick(item);
+              }}
+              key={label}
+            >
+              {dropdownItemRender ? (
+                dropdownItemRender(item)
+              ) : (
+                <span>{label}</span>
+              )}
+            </MenuItem>
+          );
+        })}
+      </MenusContainer>
     );
   };
 
