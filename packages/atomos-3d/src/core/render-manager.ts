@@ -94,6 +94,9 @@ export class RenderManager {
   };
 
   render = () => {
+    if (this._animationFrameId) {
+      cancelAnimationFrame(this._animationFrameId);
+    }
     this.dynamicObjs.forEach((b) => {
       if (b.update) {
         b.update();

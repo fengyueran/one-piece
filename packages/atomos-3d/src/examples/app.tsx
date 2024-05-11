@@ -45,7 +45,7 @@ export const App = () => {
       const container = canvasRef.current!;
 
       viewerRef.current = new AtomosViewer(container, {});
-      viewerRef.current.addTrajectory('dump2.lammpstrj', Trajectory.Lammps);
+      viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
       viewerRef.current.play();
       // viewer.render();
       // viewer.zoomToFitScene();

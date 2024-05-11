@@ -37,6 +37,7 @@ export class LammpsTrjLoader {
   private _paused = false;
   private _url?: string;
   private _buffer = ''; //缓冲区
+  private _controller?: AbortController;
   private _resumePromiseResolve?: (value: unknown) => void;
   private _onModel: (atomInfos: AtomInfo[]) => void;
   loadFinished = false;
@@ -51,36 +52,60 @@ export class LammpsTrjLoader {
   }
 
   fetchAndStream = async () => {
+    if (this._controller) {
+      console.log('1111');
+      this._controller.abort(); // 取消当前的fetch操作
+      this._controller = null;
+    }
+
+    this._controller = new AbortController();
+    const { signal } = this._controller;
     if (!this._url) return;
 
     this.loadFinished = false;
+    this._buffer = '';
+    this._paused = false;
 
-    const response = await fetch(this._url);
+    try {
+      const response = await fetch(this._url, { signal });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    // 获取 ReadableStream
-    const reader = response.body?.getReader();
-
-    if (!reader) {
-      throw new Error('reader was not ok');
-    }
-
-    // eslint-disable-next-line
-    while (true) {
-      if (this._paused) {
-        await new Promise((resolve) => (this._resumePromiseResolve = resolve));
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-      const { done, value } = await reader.read();
 
-      this._buffer += new TextDecoder().decode(value, { stream: true });
-      this.processBuffer();
-      if (done) {
-        console.log('Stream completed');
-        this.loadFinished = true;
-        break;
+      // 获取 ReadableStream
+      const reader = response.body?.getReader();
+
+      if (!reader) {
+        throw new Error('reader was not ok');
+      }
+
+      // eslint-disable-next-line
+      while (true) {
+        if (this._paused) {
+          await new Promise(
+            (resolve) => (this._resumePromiseResolve = resolve)
+          );
+        }
+        if (signal.aborted) {
+          console.log('Stream aborted');
+          break; // 如果检测到中断信号，则停止读取
+        }
+        const { done, value } = await reader.read();
+
+        this._buffer += new TextDecoder().decode(value, { stream: true });
+        this.processBuffer();
+        if (done) {
+          console.log('Stream completed');
+          this.loadFinished = true;
+          break;
+        }
+      }
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        console.error(error);
       }
     }
   };

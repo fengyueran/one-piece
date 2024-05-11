@@ -257,7 +257,10 @@ export class AtomosViewer {
             this._models.push(model);
           } else {
             this._firstFrameRendered = true;
-            this.addModel(model, Trajectory.Lammps);
+            if (!this._renderManager.dynamicObjs.length) {
+              this.addModel(model, Trajectory.Lammps);
+            }
+
             this.render();
             this.animateTrajectory();
           }
@@ -267,10 +270,9 @@ export class AtomosViewer {
   };
 
   play = () => {
-    this._loader?.fetchAndStream();
-  };
-
-  replay = () => {
+    this._paused = false;
+    this._firstFrameRendered = false;
+    this._models = [];
     this._loader?.fetchAndStream();
   };
 
