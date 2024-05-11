@@ -1,10 +1,3 @@
-const delay = () =>
-  new Promise((reslove, reject) => {
-    setTimeout(() => {
-      reslove(1);
-    }, 1000);
-  });
-
 interface AtomInfo {
   id: number;
   element: string;
@@ -33,11 +26,13 @@ const parseLammpsData = (frameStr: string) => {
   return atoms;
 };
 
+const FrameFlag = 'ITEM: TIMESTEP';
+
 export class LammpsTrjLoader {
   private _paused = false;
   private _url?: string;
   private _buffer = ''; //缓冲区
-  private _controller?: AbortController;
+  private _controller?: AbortController | null;
   private _resumePromiseResolve?: (value: unknown) => void;
   private _onModel: (atomInfos: AtomInfo[]) => void;
   loadFinished = false;
@@ -52,19 +47,18 @@ export class LammpsTrjLoader {
   }
 
   fetchAndStream = async () => {
-    if (this._controller) {
-      console.log('1111');
-      this._controller.abort(); // 取消当前的fetch操作
-      this._controller = null;
-    }
-
-    this._controller = new AbortController();
-    const { signal } = this._controller;
     if (!this._url) return;
 
-    this.loadFinished = false;
-    this._buffer = '';
-    this._paused = false;
+    if (this._controller) {
+      this._controller.abort(); // 取消当前的fetch操作
+    }
+
+    this.reset();
+
+    const currentController = new AbortController();
+    this._controller = currentController;
+
+    const { signal } = this._controller;
 
     try {
       const response = await fetch(this._url, { signal });
@@ -73,11 +67,10 @@ export class LammpsTrjLoader {
         throw new Error('Network response was not ok');
       }
 
-      // 获取 ReadableStream
       const reader = response.body?.getReader();
 
       if (!reader) {
-        throw new Error('reader was not ok');
+        throw new Error('Reader was not ok');
       }
 
       // eslint-disable-next-line
@@ -89,7 +82,7 @@ export class LammpsTrjLoader {
         }
         if (signal.aborted) {
           console.log('Stream aborted');
-          break; // 如果检测到中断信号，则停止读取
+          break;
         }
         const { done, value } = await reader.read();
 
@@ -98,24 +91,30 @@ export class LammpsTrjLoader {
         if (done) {
           console.log('Stream completed');
           this.loadFinished = true;
+          this._controller = null;
           break;
         }
       }
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if ((error as Error).name === 'AbortError') {
         console.log('Fetch aborted');
       } else {
-        console.error(error);
+        console.log('');
+        throw error;
+      }
+    } finally {
+      if (currentController === this._controller) {
+        this._controller = null;
       }
     }
   };
 
   processBuffer = () => {
     this.pause();
-    let start = this._buffer.indexOf('ITEM: TIMESTEP');
+    let start = this._buffer.indexOf(FrameFlag);
 
     while (start !== -1) {
-      const end = this._buffer.indexOf('ITEM: TIMESTEP', start + 1);
+      const end = this._buffer.indexOf(FrameFlag, start + 1);
       if (end === -1) break;
 
       // 处理完整的帧
@@ -125,7 +124,7 @@ export class LammpsTrjLoader {
 
       // 更新缓冲区
       this._buffer = this._buffer.substring(end);
-      start = this._buffer.indexOf('ITEM: TIMESTEP');
+      start = this._buffer.indexOf(FrameFlag);
     }
   };
 
@@ -140,5 +139,11 @@ export class LammpsTrjLoader {
         this._resumePromiseResolve(1);
       }
     }
+  };
+
+  reset = () => {
+    this.loadFinished = false;
+    this._buffer = '';
+    this._paused = false;
   };
 }

@@ -6,6 +6,7 @@ import {
   Color,
 } from 'three';
 import * as THREE from 'three';
+//@ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export interface DynamicObj {
@@ -93,17 +94,21 @@ export class RenderManager {
     this.render();
   };
 
-  render = () => {
-    if (this._animationFrameId) {
-      cancelAnimationFrame(this._animationFrameId);
-    }
+  startRendering = () => {
     this.dynamicObjs.forEach((b) => {
       if (b.update) {
         b.update();
       }
     });
     this.renderer.render(this.scene, this.camera);
-    this._animationFrameId = requestAnimationFrame(this.render);
+    if (this._animationFrameId) {
+      this._animationFrameId = requestAnimationFrame(this.startRendering);
+    }
+  };
+
+  render = () => {
+    if (this._animationFrameId) return;
+    this._animationFrameId = requestAnimationFrame(this.startRendering);
   };
 
   dispose = () => {
