@@ -45,7 +45,18 @@ export const App = () => {
       const container = canvasRef.current!;
 
       viewerRef.current = new AtomosViewer(container, {});
-      viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
+      // viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
+      viewerRef.current.addTrajectory(
+        'https://ksefile.hpccube.com:65241/efile/openapi/v2/file/download?path=/public/home/acavq4nvvq/download-test/dump.lammpstrj',
+        Trajectory.Lammps,
+        {
+          method: 'GET',
+          headers: {
+            token:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wdXRlVXNlciI6ImFjYXZxNG52dnEiLCJhY2NvdW50U3RhdHVzIjoiVHJpYWwiLCJjcmVhdG9yIjoiYWMiLCJyb2xlIjoiMSIsImV4cGlyZVRpbWUiOiIxNzE1Njk3OTYxNzU3IiwiY2x1c3RlcklkIjoiMTEyNTAiLCJpbnZva2VyIjoiMGQ1ZDEyNDFjOGVmMWE3NWVmMTBiNWY1MmM5OGEwNGMiLCJ1c2VyIjoieGluZ2h1bm0iLCJ1c2VySWQiOiIxMjYzMTI5MzI0MSJ9.1X1gmep8kUssr10bE_dfS8mQuaa3z8XbCblt488M2VY',
+          },
+        }
+      );
       viewerRef.current.play();
       // viewer.render();
       // viewer.zoomToFitScene();

@@ -31,6 +31,7 @@ const FrameFlag = 'ITEM: TIMESTEP';
 export class LammpsTrjLoader {
   private _paused = false;
   private _url?: string;
+  private _requestConfig: RequestInit = {};
   private _buffer = ''; //缓冲区
   private _controller?: AbortController | null;
   private _resumePromiseResolve?: (value: unknown) => void;
@@ -39,11 +40,15 @@ export class LammpsTrjLoader {
 
   constructor(config: {
     url: string;
+    requestConfig?: RequestInit;
     onModel: (atomInfos: AtomInfo[]) => void;
   }) {
-    const { url, onModel } = config;
+    const { url, requestConfig, onModel } = config;
     this._onModel = onModel;
     this._url = url;
+    if (requestConfig) {
+      this._requestConfig = requestConfig;
+    }
   }
 
   fetchAndStream = async () => {
@@ -61,7 +66,10 @@ export class LammpsTrjLoader {
     const { signal } = this._controller;
 
     try {
-      const response = await fetch(this._url, { signal });
+      const response = await fetch(this._url, {
+        signal,
+        ...this._requestConfig,
+      });
 
       if (!response.ok) {
         throw new Error('Network response was not ok');

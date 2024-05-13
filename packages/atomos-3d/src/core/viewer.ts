@@ -9,8 +9,9 @@ import { LammpsTrjLoader } from '../loaders';
 
 export interface AtomosViewerConfig {}
 
-export enum Trajectory {
-  Lammps,
+export enum ModelType {
+  Pdb,
+  LammpsTrajectory,
 }
 
 // const parsePdbText = (pdbText: string) => {
@@ -140,7 +141,7 @@ const createPdbAtomMeshes = (pdbText: string) => {
     const type = atomInfo[atomInfo.length - 1];
     const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap];
 
-    const atom = new Atom(type, position, color, radius);
+    const atom = new Atom(type, position, radius);
 
     atoms.push(atom);
   }
@@ -215,9 +216,14 @@ export class AtomosViewer {
     this._renderManager.render();
   };
 
-  addModel = (data: any, type: Trajectory) => {
-    if (type === Trajectory.Lammps) {
+  addModel = (data: any, type: ModelType) => {
+    if (type === ModelType.LammpsTrajectory) {
       const atoms = createAtoms(data, 0.3);
+      atoms.forEach((atom) => {
+        this._renderManager.add(atom);
+      });
+    } else if (type === ModelType.Pdb) {
+      const atoms = createPdbAtomMeshes(data);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
@@ -247,25 +253,30 @@ export class AtomosViewer {
     nextFrame();
   };
 
-  addTrajectory = (url: string, type: Trajectory) => {
-    if (type === Trajectory.Lammps) {
+  addTrajectory = (
+    url: string,
+    type: ModelType,
+    requestConfig?: RequestInit
+  ) => {
+    if (type === ModelType.LammpsTrajectory) {
       this._loader = new LammpsTrjLoader({
         url,
+        requestConfig,
         onModel: (model: AtomInfo[]) => {
           if (this._firstFrameRendered) {
             this._models.push(model);
           } else {
             this._firstFrameRendered = true;
             if (!this._renderManager.dynamicObjs.length) {
-              this.addModel(model, Trajectory.Lammps);
+              this.addModel(model, type);
               this._renderManager.zoomToFitScene();
             }
 
             this.render();
-            this.animateTrajectory();
           }
         },
       });
+      this.animateTrajectory();
     }
   };
 
