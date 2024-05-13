@@ -156,7 +156,7 @@ interface AtomInfo {
   z: number;
 }
 
-const createAtoms = (atomInfos: AtomInfo[]) => {
+const createAtoms = (atomInfos: AtomInfo[], scale = 1) => {
   const geometryAtoms = new THREE.BufferGeometry();
 
   const count = atomInfos.length;
@@ -191,7 +191,7 @@ const createAtoms = (atomInfos: AtomInfo[]) => {
     const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
 
     const type = atomInfo.element as AtomType;
-    const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap];
+    const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap] * scale;
 
     const atom = new Atom(type, position, radius);
 
@@ -217,7 +217,7 @@ export class AtomosViewer {
 
   addModel = (data: any, type: Trajectory) => {
     if (type === Trajectory.Lammps) {
-      const atoms = createAtoms(data);
+      const atoms = createAtoms(data, 0.3);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
@@ -231,9 +231,8 @@ export class AtomosViewer {
 
       if (atoms && atoms.length === this._renderManager.dynamicObjs.length) {
         this._renderManager.dynamicObjs.forEach((atom, index) => {
-          const mesh = atom.getMesh();
           const newAtom = atoms[index];
-          mesh.position.set(newAtom.x, newAtom.y, newAtom.z);
+          atom.position.set(newAtom.x, newAtom.y, newAtom.z);
         });
         setTimeout(nextFrame, 0);
       } else {
@@ -259,6 +258,7 @@ export class AtomosViewer {
             this._firstFrameRendered = true;
             if (!this._renderManager.dynamicObjs.length) {
               this.addModel(model, Trajectory.Lammps);
+              this._renderManager.zoomToFitScene();
             }
 
             this.render();

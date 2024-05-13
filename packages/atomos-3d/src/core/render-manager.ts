@@ -8,11 +8,7 @@ import {
 import * as THREE from 'three';
 //@ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
-export interface DynamicObj {
-  getMesh: () => Object3D;
-  update?: () => void;
-}
+import { DynamicObj } from './abstract-dynamic-obj';
 
 export class RenderManager {
   private _animationFrameId?: number;
@@ -50,9 +46,11 @@ export class RenderManager {
     );
   }
 
-  add = (object3D: DynamicObj) => {
-    this.scene.add(object3D.getMesh());
-    this.dynamicObjs.push(object3D);
+  add = (obj: Object3D | DynamicObj) => {
+    this.scene.add(obj);
+    if (obj instanceof DynamicObj) {
+      this.dynamicObjs.push(obj);
+    }
   };
 
   zoomToFitScene = () => {
