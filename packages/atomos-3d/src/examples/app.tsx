@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { AtomosViewer, Trajectory } from '../core';
+import { AtomosViewer, ModelType } from '../core';
 
 const Container = styled.div`
   width: 100vw;
@@ -46,18 +46,18 @@ export const App = () => {
 
       viewerRef.current = new AtomosViewer(container, {});
       // viewerRef.current.addTrajectory('dump.lammpstrj', Trajectory.Lammps);
-      viewerRef.current.addTrajectory(
-        'https://ksefile.hpccube.com:65241/efile/openapi/v2/file/download?path=/public/home/acavq4nvvq/download-test/dump.lammpstrj',
-        Trajectory.Lammps,
-        {
-          method: 'GET',
-          headers: {
-            token:
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wdXRlVXNlciI6ImFjYXZxNG52dnEiLCJhY2NvdW50U3RhdHVzIjoiVHJpYWwiLCJjcmVhdG9yIjoiYWMiLCJyb2xlIjoiMSIsImV4cGlyZVRpbWUiOiIxNzE1Njk3OTYxNzU3IiwiY2x1c3RlcklkIjoiMTEyNTAiLCJpbnZva2VyIjoiMGQ1ZDEyNDFjOGVmMWE3NWVmMTBiNWY1MmM5OGEwNGMiLCJ1c2VyIjoieGluZ2h1bm0iLCJ1c2VySWQiOiIxMjYzMTI5MzI0MSJ9.1X1gmep8kUssr10bE_dfS8mQuaa3z8XbCblt488M2VY',
-          },
-        }
-      );
-      viewerRef.current.play();
+      // viewerRef.current.addTrajectory(
+      //   'https://ksefile.hpccube.com:65241/efile/openapi/v2/file/download?path=/public/home/acavq4nvvq/download-test/dump.lammpstrj',
+      //   ModelType.LammpsTrajectory,
+      //   {
+      //     method: 'GET',
+      //     headers: {
+      //       token:
+      //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wdXRlVXNlciI6ImFjYXZxNG52dnEiLCJhY2NvdW50U3RhdHVzIjoiVHJpYWwiLCJjcmVhdG9yIjoiYWMiLCJyb2xlIjoiMSIsImV4cGlyZVRpbWUiOiIxNzE1Nzg0Nzk3NzU3IiwiY2x1c3RlcklkIjoiMTEyNTAiLCJpbnZva2VyIjoiMGQ1ZDEyNDFjOGVmMWE3NWVmMTBiNWY1MmM5OGEwNGMiLCJ1c2VyIjoieGluZ2h1bm0iLCJ1c2VySWQiOiIxMjYzMTI5MzI0MSJ9.EFAilSsUWSewW3grJX4WilGvgpDYxknUS05RYB0ISwg',
+      //     },
+      //   }
+      // );
+      // viewerRef.current.play();
       // viewer.render();
       // viewer.zoomToFitScene();
     };
@@ -98,6 +98,17 @@ export const App = () => {
             }}
           >
             重播
+          </Buttonn>
+          <Buttonn
+            onClick={async () => {
+              viewerRef.current?.dispose();
+              const data = await (await fetch('atom.pdb')).text();
+              viewerRef.current?.addModel(data, ModelType.Pdb);
+              viewerRef.current?.render();
+              // viewerRef.current?.zoomToFitScene();
+            }}
+          >
+            渲染PLB文件
           </Buttonn>
         </Tool>
       </Content>

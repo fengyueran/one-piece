@@ -11,7 +11,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { DynamicObj } from './abstract-dynamic-obj';
 
 export class RenderManager {
-  private _animationFrameId?: number;
+  private _animationFrameId?: number | null;
   public scene: Scene;
   public renderer: WebGLRenderer;
   public camera: PerspectiveCamera;
@@ -115,6 +115,7 @@ export class RenderManager {
     );
     if (this._animationFrameId) {
       cancelAnimationFrame(this._animationFrameId);
+      this._animationFrameId = null;
     }
     this.renderer?.dispose();
   };
