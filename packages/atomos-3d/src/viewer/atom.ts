@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { AtomType, getAtomColor } from 'src/helpers';
+import { AtomType, getAtomColor } from './helpers';
 import { DynamicObj } from '../core';
 
 export class Atom extends DynamicObj {

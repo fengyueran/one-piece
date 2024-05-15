@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { AtomosViewer, ModelType } from '../core';
+import { AtomosViewer, ModelType } from '../viewer';
 
 const Container = styled.div`
   width: 100vw;
