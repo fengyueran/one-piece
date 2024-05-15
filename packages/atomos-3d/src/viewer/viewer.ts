@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
 
-import { AtomType } from 'src/helpers';
-import { RenderManager } from './render-manager';
+import { RadiusKey, getAtomRadius } from 'src/helpers';
+import { RenderManager } from '../core';
 import { Atom } from './atom';
-import { vdwRadiiMap } from './vdw-radii-map';
 import { LammpsTrjLoader } from '../loaders';
 
 export interface AtomosViewerConfig {}
@@ -139,7 +138,7 @@ const createPdbAtomMeshes = (pdbText: string) => {
 
     const atomInfo = pdb.json.atoms[i];
     const type = atomInfo[atomInfo.length - 1];
-    const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap];
+    const radius = getAtomRadius(type);
 
     const atom = new Atom(type, position, radius);
 
@@ -191,8 +190,8 @@ const createAtoms = (atomInfos: AtomInfo[], scale = 1) => {
     const atomInfo = atomInfos[i];
     const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
 
-    const type = atomInfo.element as AtomType;
-    const radius = vdwRadiiMap[type as keyof typeof vdwRadiiMap] * scale;
+    const type = atomInfo.element as RadiusKey;
+    const radius = getAtomRadius(type) * scale;
 
     const atom = new Atom(type, position, radius);
 

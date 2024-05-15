@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { AtomType, getAtomColor } from 'src/helpers';
-import { DynamicObj } from './abstract-dynamic-obj';
+import { DynamicObj } from '../core';
 
 export class Atom extends DynamicObj {
   constructor(type: AtomType, position: THREE.Vector3, radius = 0.5) {
