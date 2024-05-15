@@ -35,7 +35,7 @@ export class RenderManager {
     directionalLight.position.set(10, 10, 10);
     this.scene.add(directionalLight);
 
-    this.camera.position.z = 120;
+    this.camera.position.z = 40;
     this.renderer.setSize(width, height);
     this.renderer.setClearColor(new Color(0x000));
 

@@ -33,5 +33,12 @@ export default defineConfig({
   server: {
     port: stringToPort(packageInfo.name),
     host: '0.0.0.0',
+    proxy: {
+      '/efile': {
+        target: 'https://ksefile.hpccube.com:65241',
+        secure: false,
+        changeOrigin: true,
+      },
+    },
   },
 });
