@@ -1,10 +1,10 @@
-import * as THREE from 'three';
-import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
-
-import { RadiusKey, getAtomRadius } from 'src/viewer/helpers';
+import {
+  createAtomsFromPdb,
+  createAtomsFromLammpsTrjFrame,
+  parseLammpsTrajectoryFrame,
+} from './helpers';
 import { RenderManager } from '../core';
-import { Atom } from './atom';
-import { LammpsTrjLoader } from '../loaders';
+import { LargeFileLoader } from '../loaders';
 
 export interface AtomosViewerConfig {}
 
@@ -12,141 +12,6 @@ export enum ModelType {
   Pdb,
   LammpsTrajectory,
 }
-
-// const parsePdbText = (pdbText: string) => {
-//   const _loader = new PDBLoader();
-//   const pdb = _loader.parse(pdbText);
-//   const offset = new THREE.Vector3();
-//   const lines = [] as THREE.Mesh[];
-//   const atoms = [] as THREE.Mesh[];
-
-//   const geometryAtoms = pdb.geometryAtoms;
-//   const geometryBonds = pdb.geometryBonds;
-//   // const json = pdb.json;
-
-//   const sphereGeometry = new THREE.SphereGeometry(2);
-
-//   geometryAtoms.computeBoundingBox();
-//   geometryAtoms.boundingBox.getCenter(offset).negate();
-
-//   geometryAtoms.translate(offset.x, offset.y, offset.z);
-//   geometryBonds.translate(offset.x, offset.y, offset.z);
-
-//   let positions = geometryAtoms.getAttribute('position');
-//   const colors = geometryAtoms.getAttribute('color');
-
-//   const position = new THREE.Vector3();
-//   const color = new THREE.Color();
-
-//   for (let i = 0; i < positions.count; i++) {
-//     position.x = positions.getX(i);
-//     position.y = positions.getY(i);
-//     position.z = positions.getZ(i);
-
-//     color.r = colors.getX(i);
-//     color.g = colors.getY(i);
-//     color.b = colors.getZ(i);
-
-//     const material = new THREE.MeshPhongMaterial({ color: color });
-
-//     const object = new THREE.Mesh(sphereGeometry, material);
-//     object.position.copy(position);
-//     // object.position.multiplyScalar(75);
-//     // object.scale.multiplyScalar(25);
-
-//     atoms.push(object);
-
-//     // const atom = json.atoms[i];
-
-//     // const text = document.createElement('div');
-//     // text.className = 'label';
-//     // text.style.color =
-//     //   'rgb(' + atom[3][0] + ',' + atom[3][1] + ',' + atom[3][2] + ')';
-//     // text.textContent = atom[4];
-
-//     // const label = new CSS2DObject(text);
-//     // label.position.copy(object.position);
-//     // root.add(label);
-//   }
-//   // root.add(atoms);
-
-//   //   positions = geometryBonds.getAttribute('position');
-
-//   //   const start = new THREE.Vector3();
-//   //   const end = new THREE.Vector3();
-
-//   //   const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-//   //   for (let i = 0; i < positions.count; i += 2) {
-//   //     start.x = positions.getX(i);
-//   //     start.y = positions.getY(i);
-//   //     start.z = positions.getZ(i);
-
-//   //     end.x = positions.getX(i + 1);
-//   //     end.y = positions.getY(i + 1);
-//   //     end.z = positions.getZ(i + 1);
-
-//   //     start.multiplyScalar(75);
-//   //     end.multiplyScalar(75);
-
-//   //     const object = new THREE.Mesh(
-//   //       boxGeometry,
-//   //       new THREE.MeshPhongMaterial({
-//   //         color: 0xffffff,
-//   //         transparent: true,
-//   //         opacity: 0,
-//   //       })
-//   //     );
-//   //     object.position.copy(start);
-//   //     object.position.lerp(end, 0.5);
-//   //     object.scale.set(5, 5, start.distanceTo(end));
-//   //     object.lookAt(end);
-//   //     lines.push(object);
-//   //   }
-
-//   return atoms;
-// };
-
-const createPdbAtomMeshes = (pdbText: string) => {
-  const _loader = new PDBLoader();
-  const pdb = _loader.parse(pdbText);
-  const offset = new THREE.Vector3();
-
-  const atoms = [] as Atom[];
-
-  const geometryAtoms = pdb.geometryAtoms;
-
-  geometryAtoms.computeBoundingBox();
-  geometryAtoms.boundingBox.getCenter(offset).negate();
-
-  //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
-  geometryAtoms.translate(offset.x, offset.y, offset.z);
-
-  const positions = geometryAtoms.getAttribute('position');
-  const colors = geometryAtoms.getAttribute('color');
-
-  const position = new THREE.Vector3();
-  const color = new THREE.Color();
-
-  for (let i = 0; i < pdb.json.atoms.length; i += 1) {
-    position.x = positions.getX(i);
-    position.y = positions.getY(i);
-    position.z = positions.getZ(i);
-
-    color.r = colors.getX(i);
-    color.g = colors.getY(i);
-    color.b = colors.getZ(i);
-
-    const atomInfo = pdb.json.atoms[i];
-    const type = atomInfo[atomInfo.length - 1];
-    const radius = getAtomRadius(type);
-
-    const atom = new Atom(type, position, radius);
-
-    atoms.push(atom);
-  }
-
-  return atoms;
-};
 
 interface AtomInfo {
   id: number;
@@ -156,54 +21,9 @@ interface AtomInfo {
   z: number;
 }
 
-const createAtoms = (atomInfos: AtomInfo[], scale = 1) => {
-  const geometryAtoms = new THREE.BufferGeometry();
-
-  const count = atomInfos.length;
-  const positions = new Float32Array(count * 3);
-
-  for (let i = 0; i < count; i += 1) {
-    const atomInfo = atomInfos[i];
-    const current = i * 3;
-
-    positions[current] = atomInfo.x;
-    positions[current + 1] = atomInfo.y;
-    positions[current + 2] = atomInfo.z;
-  }
-
-  geometryAtoms.setAttribute(
-    'position',
-    new THREE.BufferAttribute(positions, 3)
-  );
-
-  const atoms = [] as Atom[];
-
-  const offset = new THREE.Vector3();
-
-  geometryAtoms.computeBoundingBox();
-  geometryAtoms.boundingBox.getCenter(offset).negate();
-
-  debugger;
-  geometryAtoms.translate(offset.x, offset.y, offset.z);
-
-  for (let i = 0; i < atomInfos.length; i += 1) {
-    const atomInfo = atomInfos[i];
-    const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
-
-    const type = atomInfo.element as RadiusKey;
-    const radius = getAtomRadius(type) * scale;
-
-    const atom = new Atom(type, position, radius);
-
-    atoms.push(atom);
-  }
-
-  return atoms;
-};
-
 export class AtomosViewer {
   private _paused = false;
-  private _loader?: LammpsTrjLoader;
+  private _loader?: LargeFileLoader;
   private _firstFrameRendered = false;
   private _models: AtomInfo[][] = [];
   private _renderManager: RenderManager;
@@ -217,12 +37,12 @@ export class AtomosViewer {
 
   addModel = (data: any, type: ModelType) => {
     if (type === ModelType.LammpsTrajectory) {
-      const atoms = createAtoms(data, 0.3);
+      const atoms = createAtomsFromLammpsTrjFrame(data, 0.3);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
     } else if (type === ModelType.Pdb) {
-      const atoms = createPdbAtomMeshes(data);
+      const atoms = createAtomsFromPdb(data);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
@@ -258,16 +78,18 @@ export class AtomosViewer {
     requestConfig?: RequestInit
   ) => {
     if (type === ModelType.LammpsTrajectory) {
-      this._loader = new LammpsTrjLoader({
+      this._loader = new LargeFileLoader({
         url,
+        frameFlag: 'ITEM: TIMESTEP',
         requestConfig,
-        onModel: (model: AtomInfo[]) => {
+        onModel: (frameStr: string) => {
+          const model = parseLammpsTrajectoryFrame(frameStr);
           if (this._firstFrameRendered) {
             this._models.push(model);
           } else {
             this._firstFrameRendered = true;
             if (!this._renderManager.dynamicObjs.length) {
-              this.addModel(model, type);
+              this.addModel(frameStr, type);
               this._renderManager.zoomToFitScene();
             }
 

@@ -1,1 +1,1 @@
-export * from './lammps-trj-loader';
+export * from './large-file-loader';

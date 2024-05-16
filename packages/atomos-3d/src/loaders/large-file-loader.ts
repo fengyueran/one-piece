@@ -1,51 +1,24 @@
-interface AtomInfo {
-  id: number;
-  element: string;
-  x: number;
-  y: number;
-  z: number;
-}
-
-const parseLammpsData = (frameStr: string) => {
-  const parts = frameStr.split('TEM: ATOMS id element x y z');
-
-  const lines = parts[1].split('\n').slice(1, -1);
-  const atoms = lines.map((line) => {
-    const lineParts = line.split(' ');
-    return {
-      id: parseInt(lineParts[0]),
-      element: lineParts[1],
-      x: parseFloat(lineParts[2]),
-      y: parseFloat(lineParts[3]),
-      z: parseFloat(lineParts[4]),
-    };
-  });
-
-  console.log('atoms', atoms.length);
-
-  return atoms;
-};
-
-const FrameFlag = 'ITEM: TIMESTEP';
-
-export class LammpsTrjLoader {
+export class LargeFileLoader {
   private _paused = false;
   private _url?: string;
+  private _frameFlag: string;
   private _requestConfig: RequestInit = {};
   private _buffer = ''; //缓冲区
   private _controller?: AbortController | null;
   private _resumePromiseResolve?: (value: unknown) => void;
-  private _onModel: (atomInfos: AtomInfo[]) => void;
+  private _onModel: (frame: string) => void;
   loadFinished = false;
 
   constructor(config: {
     url: string;
+    frameFlag: string;
     requestConfig?: RequestInit;
-    onModel: (atomInfos: AtomInfo[]) => void;
+    onModel: (frame: string) => void;
   }) {
-    const { url, requestConfig, onModel } = config;
+    const { url, frameFlag, requestConfig, onModel } = config;
     this._onModel = onModel;
     this._url = url;
+    this._frameFlag = frameFlag;
     if (requestConfig) {
       this._requestConfig = requestConfig;
     }
@@ -119,20 +92,19 @@ export class LammpsTrjLoader {
 
   processBuffer = () => {
     this.pause();
-    let start = this._buffer.indexOf(FrameFlag);
+    let start = this._buffer.indexOf(this._frameFlag);
 
     while (start !== -1) {
-      const end = this._buffer.indexOf(FrameFlag, start + 1);
+      const end = this._buffer.indexOf(this._frameFlag, start + 1);
       if (end === -1) break;
 
       // 处理完整的帧
       const frameStr = this._buffer.substring(start, end);
-      const frameAtoms = parseLammpsData(frameStr);
-      this._onModel(frameAtoms);
+      this._onModel(frameStr);
 
       // 更新缓冲区
       this._buffer = this._buffer.substring(end);
-      start = this._buffer.indexOf(FrameFlag);
+      start = this._buffer.indexOf(this._frameFlag);
     }
   };
 

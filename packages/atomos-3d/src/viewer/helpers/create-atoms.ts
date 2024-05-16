@@ -1,10 +1,9 @@
 import * as THREE from 'three';
+//@ts-ignore
 import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
 
-import { RadiusKey, getAtomRadius } from 'src/viewer/helpers';
+import { RadiusKey, getAtomRadius } from './get-atom-radius';
 import { Atom } from '../atom';
-
-export interface AtomosViewerConfig {}
 
 export enum ModelType {
   Pdb,
@@ -140,15 +139,26 @@ export const createAtomsFromPdb = (pdbText: string) => {
   return atoms;
 };
 
-interface AtomInfo {
-  id: number;
-  element: string;
-  x: number;
-  y: number;
-  z: number;
-}
+export const parseLammpsTrajectoryFrame = (frameStr: string) => {
+  const parts = frameStr.split('TEM: ATOMS id element x y z');
 
-export const createAtomsFromInfos = (atomInfos: AtomInfo[], scale = 1) => {
+  const lines = parts[1].split('\n').slice(1, -1);
+  const atoms = lines.map((line) => {
+    const lineParts = line.split(' ');
+    return {
+      id: parseInt(lineParts[0]),
+      element: lineParts[1],
+      x: parseFloat(lineParts[2]),
+      y: parseFloat(lineParts[3]),
+      z: parseFloat(lineParts[4]),
+    };
+  });
+
+  return atoms;
+};
+
+export const createAtomsFromLammpsTrjFrame = (frameStr: string, scale = 1) => {
+  const atomInfos = parseLammpsTrajectoryFrame(frameStr);
   const atoms = atomInfos.map((atomInfo) => {
     const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
 
