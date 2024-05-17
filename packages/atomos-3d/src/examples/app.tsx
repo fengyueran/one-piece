@@ -31,8 +31,8 @@ const Tool = styled.div`
 `;
 
 const Buttonn = styled.button`
-  width: 60px;
-  height: 40px;
+  padding: 12px 16px;
+  margin: 0 2px;
 `;
 
 export const App = () => {
@@ -108,7 +108,7 @@ export const App = () => {
               const data = await (await fetch('atom.pdb')).text();
               viewerRef.current?.addModel(data, ModelType.Pdb);
               viewerRef.current?.render();
-              // viewerRef.current?.zoomToFitScene();
+              viewerRef.current?.zoomToFitScene();
             }}
           >
             渲染PLB文件

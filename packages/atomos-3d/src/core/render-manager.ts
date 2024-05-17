@@ -57,23 +57,20 @@ export class RenderManager {
     const boundingBox = new THREE.Box3();
 
     this.scene.traverse(function (object) {
-      if (object.isMesh) {
-        // 确保只计算网格对象
+      if ((object as THREE.Mesh).isMesh) {
         boundingBox.expandByObject(object);
       }
     });
 
-    const boxHelper = new THREE.Box3Helper(boundingBox, 0xffff00); // 使用黄色标识边界盒
+    const boxHelper = new THREE.Box3Helper(boundingBox, 0xffff00);
 
-    // 将边界盒helper添加到场景中
     this.scene.add(boxHelper);
 
-    // 计算包围盒中心
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
     const boundingSphere = new THREE.Sphere();
-    boundingBox.getBoundingSphere(boundingSphere); // 传递Sphere对象给getBoundingSphere
+    boundingBox.getBoundingSphere(boundingSphere);
     const radius = boundingSphere.radius;
 
     // 计算相机位置，使包围盒充满视图
@@ -82,12 +79,10 @@ export class RenderManager {
     const direction = this.camera.position.clone().sub(center).normalize();
     const newPosition = center.clone().add(direction.multiplyScalar(distance));
 
-    // 设置相机位置和视角
     this.camera.position.copy(newPosition);
     this.orbitControls.target.copy(center);
     this.camera.lookAt(center);
 
-    // 更新视图
     this.orbitControls.update();
     this.render();
   };
