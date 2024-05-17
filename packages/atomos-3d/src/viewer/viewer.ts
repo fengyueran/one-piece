@@ -3,10 +3,12 @@ import {
   createAtomsFromLammpsTrjFrame,
   parseLammpsTrajectoryFrame,
 } from './helpers';
-import { RenderManager } from '../core';
+import { RenderManager, CameraType } from '../core';
 import { LargeFileLoader } from '../loaders';
 
-export interface AtomosViewerConfig {}
+export interface AtomosViewerConfig {
+  camera?: CameraType;
+}
 
 export enum ModelType {
   Pdb,
