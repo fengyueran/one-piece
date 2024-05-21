@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { AtomosViewer, ModelType } from '../viewer';
+import { AtomosViewer, ModelType, CameraType } from '../viewer';
 
 const Container = styled.div`
   width: 100vw;
@@ -44,7 +44,9 @@ export const App = () => {
     const start = async () => {
       const container = canvasRef.current!;
 
-      viewerRef.current = new AtomosViewer(container, {});
+      viewerRef.current = new AtomosViewer(container, {
+        camera: CameraType.Perspective,
+      });
       viewerRef.current.addTrajectory(
         'dump.lammpstrj',
         ModelType.LammpsTrajectory
@@ -104,7 +106,9 @@ export const App = () => {
             onClick={async () => {
               viewerRef.current?.dispose();
               const container = canvasRef.current!;
-              viewerRef.current = new AtomosViewer(container, {});
+              viewerRef.current = new AtomosViewer(container, {
+                camera: CameraType.Perspective,
+              });
               const data = await (await fetch('atom.pdb')).text();
               viewerRef.current?.addModel(data, ModelType.Pdb);
               viewerRef.current?.render();

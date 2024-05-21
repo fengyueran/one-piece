@@ -63,10 +63,10 @@ export class RenderManager {
     const near = 1;
     const far = 1000;
     const camera = new THREE.OrthographicCamera(
-      -width / 2,
-      width / 2,
-      height / 2,
-      -height / 2,
+      -width,
+      width,
+      height,
+      -height,
       near,
       far
     );
@@ -87,7 +87,7 @@ export class RenderManager {
     }
   };
 
-  zoomToFitScene = () => {
+  private calcBoundingBox = () => {
     const boundingBox = new THREE.Box3();
 
     this.scene.traverse(function (object) {
@@ -95,11 +95,17 @@ export class RenderManager {
         boundingBox.expandByObject(object);
       }
     });
+    return boundingBox;
+  };
 
+  addBoundingBox = () => {
+    const boundingBox = this.calcBoundingBox();
     const boxHelper = new THREE.Box3Helper(boundingBox, 0xffff00);
-
     this.scene.add(boxHelper);
+  };
 
+  private _zoomToFitScenePerspectiveCamera = () => {
+    const boundingBox = this.calcBoundingBox();
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
@@ -107,18 +113,62 @@ export class RenderManager {
     boundingBox.getBoundingSphere(boundingSphere);
     const radius = boundingSphere.radius;
 
+    const camera = this.camera as THREE.PerspectiveCamera;
     // 计算相机位置，使包围盒充满视图
-    const distance =
-      radius / Math.sin((Math.PI / 180.0) * this.camera.fov * 0.5);
-    const direction = this.camera.position.clone().sub(center).normalize();
+    const distance = radius / Math.sin((Math.PI / 180.0) * camera.fov * 0.5);
+    const direction = camera.position.clone().sub(center).normalize();
     const newPosition = center.clone().add(direction.multiplyScalar(distance));
 
-    this.camera.position.copy(newPosition);
+    camera.lookAt(center);
+    camera.position.copy(newPosition);
     this.orbitControls.target.copy(center);
-    this.camera.lookAt(center);
-
     this.orbitControls.update();
-    this.render();
+  };
+
+  private _zoomToFitSceneOrthographicCamera = () => {
+    const boundingBox = this.calcBoundingBox();
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size);
+
+    const camera = this.camera as THREE.OrthographicCamera;
+    const aspect = camera.right / camera.top;
+
+    //设置相机宽高是boundingBox的一倍
+    if (size.x / size.y > aspect) {
+      // Wider than tall
+      camera.right = size.x;
+      camera.left = -size.x;
+      camera.top = size.x / aspect;
+      camera.bottom = -size.x / aspect;
+    } else {
+      camera.top = size.y;
+      camera.bottom = -size.y;
+      camera.right = size.y * aspect;
+      camera.left = -size.y * aspect;
+    }
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const offset = maxDim * 1.5; // Ensure the camera is far enough to view the whole bounding box
+    const direction = camera.position.clone().sub(center).normalize();
+    const newPosition = center.clone().add(direction.multiplyScalar(offset));
+
+    camera.position.copy(newPosition);
+
+    camera.updateProjectionMatrix();
+    camera.lookAt(center);
+    this.orbitControls.target.copy(center);
+    this.orbitControls.update();
+  };
+
+  zoomToFitScene = () => {
+    if (this.camera instanceof THREE.PerspectiveCamera) {
+      this._zoomToFitScenePerspectiveCamera();
+    } else {
+      this._zoomToFitSceneOrthographicCamera();
+    }
   };
 
   startRendering = () => {

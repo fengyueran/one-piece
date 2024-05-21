@@ -29,8 +29,9 @@ export class AtomosViewer {
   private _firstFrameRendered = false;
   private _models: AtomInfo[][] = [];
   private _renderManager: RenderManager;
-  constructor(element: HTMLElement, private config: AtomosViewerConfig) {
-    this._renderManager = new RenderManager(element);
+  constructor(element: HTMLElement, config: AtomosViewerConfig) {
+    const { camera } = config;
+    this._renderManager = new RenderManager(element, { camera });
   }
 
   render = () => {
