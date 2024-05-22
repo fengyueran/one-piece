@@ -47,10 +47,11 @@ export const App = () => {
       viewerRef.current = new AtomosViewer(container, {
         camera: CameraType.Perspective,
       });
-      viewerRef.current.addTrajectory(
-        'dump.lammpstrj',
-        ModelType.LammpsTrajectory
-      );
+      const data = await (await fetch('atom.pdb')).text();
+      viewerRef.current?.addModel(data, ModelType.Pdb);
+      viewerRef.current?.render();
+      viewerRef.current?.zoomToFitScene();
+
       // viewerRef.current.addTrajectory(
       //   'https://ksefile.hpccube.com:65241/efile/openapi/v2/file/download?path=/public/home/acavq4nvvq/download-test/dump.lammpstrj',
       //   ModelType.LammpsTrajectory,
@@ -62,7 +63,6 @@ export const App = () => {
       //     },
       //   }
       // );
-      viewerRef.current.play();
     };
     start();
   }, []);

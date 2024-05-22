@@ -103,6 +103,40 @@ export enum ModelType {
 //   return atoms;
 // };
 
+const createLines = (geometryBonds: THREE.BufferGeometry) => {
+  const lines = [] as THREE.Mesh[];
+
+  const positions = geometryBonds.getAttribute('position');
+
+  const start = new THREE.Vector3();
+  const end = new THREE.Vector3();
+
+  const boxGeometry = new THREE.BoxGeometry(0.1, 0.1, 1);
+  for (let i = 0; i < positions.count; i += 2) {
+    start.x = positions.getX(i);
+    start.y = positions.getY(i);
+    start.z = positions.getZ(i);
+
+    end.x = positions.getX(i + 1);
+    end.y = positions.getY(i + 1);
+    end.z = positions.getZ(i + 1);
+
+    const object = new THREE.Mesh(
+      boxGeometry,
+      new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+      })
+    );
+    object.position.copy(start);
+    object.position.lerp(end, 0.5);
+    object.scale.set(1, 1, start.distanceTo(end));
+    object.lookAt(end);
+    lines.push(object);
+  }
+
+  return lines;
+};
+
 export const createAtomsFromPdb = (pdbText: string) => {
   const _loader = new PDBLoader();
   const pdb = _loader.parse(pdbText);
@@ -111,12 +145,14 @@ export const createAtomsFromPdb = (pdbText: string) => {
   const atoms = [] as Atom[];
 
   const geometryAtoms = pdb.geometryAtoms;
+  const geometryBonds = pdb.geometryBonds;
 
   geometryAtoms.computeBoundingBox();
   geometryAtoms.boundingBox?.getCenter(offset).negate();
 
   //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
   geometryAtoms.translate(offset.x, offset.y, offset.z);
+  geometryBonds.translate(offset.x, offset.y, offset.z);
 
   const positions = geometryAtoms.getAttribute('position');
 
@@ -129,14 +165,16 @@ export const createAtomsFromPdb = (pdbText: string) => {
 
     const atomInfo = pdb.json.atoms[i];
     const type = atomInfo[atomInfo.length - 1];
-    const radius = getAtomRadius(type);
+    const radius = getAtomRadius(type) * 0.4;
 
     const atom = new Atom(type, position, radius);
 
     atoms.push(atom);
   }
 
-  return atoms;
+  const lines = createLines(geometryBonds);
+
+  return { atoms, lines };
 };
 
 export const parseLammpsTrajectoryFrame = (frameStr: string) => {

@@ -45,8 +45,11 @@ export class AtomosViewer {
         this._renderManager.add(atom);
       });
     } else if (type === ModelType.Pdb) {
-      const atoms = createAtomsFromPdb(data);
+      const { atoms, lines } = createAtomsFromPdb(data);
       atoms.forEach((atom) => {
+        this._renderManager.add(atom);
+      });
+      lines.forEach((atom) => {
         this._renderManager.add(atom);
       });
     }
