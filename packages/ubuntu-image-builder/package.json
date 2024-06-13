@@ -1,0 +1,11 @@
+{
+  "name": "ubuntu-image-builder",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start:ubuntu": "sh scripts/start-ubuntu.sh",
+    "build:ubuntu": "sh scripts/build-ubuntu.sh",
+    "build:ubuntu-nginx": "sh scripts/build-ubuntu-nginx.sh"
+  },
+  "author": "xinghunm"
+}

@@ -5,7 +5,11 @@
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "ignoreChanges": ["packages/atomos-3d/**", "packages/track-view-admin/**"]
+      "ignoreChanges": [
+        "packages/atomos-3d/**",
+        "packages/track-view-admin/**",
+        "packages/ubuntu-image-builder/**"
+      ]
     }
   }
 }
