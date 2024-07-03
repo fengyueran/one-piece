@@ -1,3 +1,4 @@
+export * from './uuid';
 export * from './delay';
 export * from './save-as-file';
 export * from './read-file';
