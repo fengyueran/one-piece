@@ -39,7 +39,7 @@ const SpinWrapper = styled.span`
   padding-right: 12px;
 `;
 
-interface Props {
+export interface ButtonProps {
   hasRipple?: boolean;
   style?: React.CSSProperties;
   hasHover?: boolean;
@@ -50,7 +50,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export const Button = (props: Props) => {
+export const Button = (props: ButtonProps) => {
   const {
     hasRipple = true,
     hasHover = true,

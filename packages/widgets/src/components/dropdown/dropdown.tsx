@@ -42,12 +42,12 @@ export enum Trigger {
   Hover,
 }
 
-export interface ItemProps {
+interface ItemProps {
   label: string;
   [key: string]: unknown;
 }
 
-interface DropdownProps {
+export interface DropdownProps {
   children: React.ReactNode;
   options: ItemProps[];
   triggers?: Array<Trigger>;

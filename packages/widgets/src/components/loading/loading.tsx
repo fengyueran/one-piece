@@ -21,12 +21,12 @@ const Tip = styled.span`
   color: #3e7fee;
 `;
 
-interface Props {
+interface LoadingProps {
   tip?: string | React.ReactNode;
   spinSize?: Size;
 }
 
-export const Loading = (props: Props) => {
+export const Loading = (props: LoadingProps) => {
   const { tip, spinSize } = props;
   return (
     <RootContainer>
@@ -36,7 +36,7 @@ export const Loading = (props: Props) => {
   );
 };
 
-export const openLoading = (props: Props = {}) => {
+export const openLoading = (props: LoadingProps = {}) => {
   const container = document.createElement('div');
   container.id = '__loading-container__';
   document.body.appendChild(container);

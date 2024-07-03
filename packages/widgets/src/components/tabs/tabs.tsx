@@ -28,12 +28,12 @@ const TabName = styled.span`
   line-height: 20px;
 `;
 
-export interface TabItem {
+interface TabItem {
   label: string;
   [key: string]: unknown;
 }
 
-interface Props {
+export interface TabsProps {
   tabs: TabItem[];
   selectedIndex?: number;
   defaultSelectedIndex?: number;
@@ -41,7 +41,7 @@ interface Props {
   onTabChange?: (item: TabItem) => void;
 }
 
-export const Tabs = (props: Props) => {
+export const Tabs = (props: TabsProps) => {
   const {
     tabs,
     selectedIndex,

@@ -92,11 +92,11 @@ const RootContainer = styled.div<{ $size: number }>`
   }
 `;
 
-interface Props {
+export interface CircularSpinProps {
   size?: number;
 }
 
-export const CircularSpin = (props: Props) => {
+export const CircularSpin = (props: CircularSpinProps) => {
   const { size = BaseSize } = props;
   return (
     <RootContainer $size={size}>
