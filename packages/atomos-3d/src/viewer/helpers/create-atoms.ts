@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-//@ts-ignore
-import { PDBLoader } from 'three/examples/jsm/loaders/PDBLoader';
 
 import { RadiusKey, getAtomRadius } from './get-atom-radius';
 import { Atom } from '../atom';
+import { PDBLoader } from '../../loaders';
 
 export enum ModelType {
   Pdb,
@@ -103,35 +102,43 @@ export enum ModelType {
 //   return atoms;
 // };
 
-const createLines = (geometryBonds: THREE.BufferGeometry) => {
-  const lines = [] as THREE.Mesh[];
-
+const createLines = (geometryBonds: THREE.BufferGeometry, atoms: Atom[]) => {
+  const lines: THREE.Mesh[] = [];
   const positions = geometryBonds.getAttribute('position');
-
   const start = new THREE.Vector3();
   const end = new THREE.Vector3();
+  const mid = new THREE.Vector3();
 
-  const boxGeometry = new THREE.BoxGeometry(0.1, 0.1, 1);
+  const radius = 0.2; // 圆柱体的半径
+  const material1 = new THREE.MeshPhongMaterial({ color: 0xff0000 }); // 第一段线的颜色
+  const material2 = new THREE.MeshPhongMaterial({ color: 0x0000ff }); // 第二段线的颜色
+
   for (let i = 0; i < positions.count; i += 2) {
-    start.x = positions.getX(i);
-    start.y = positions.getY(i);
-    start.z = positions.getZ(i);
+    start.fromBufferAttribute(positions, i);
+    end.fromBufferAttribute(positions, i + 1);
 
-    end.x = positions.getX(i + 1);
-    end.y = positions.getY(i + 1);
-    end.z = positions.getZ(i + 1);
+    // 计算中点
+    mid.copy(start).lerp(end, 0.5);
 
-    const object = new THREE.Mesh(
-      boxGeometry,
-      new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-      })
-    );
-    object.position.copy(start);
-    object.position.lerp(end, 0.5);
-    object.scale.set(1, 1, start.distanceTo(end));
-    object.lookAt(end);
-    lines.push(object);
+    // 计算每段的高度
+    const height1 = start.distanceTo(mid);
+    const height2 = mid.distanceTo(end);
+
+    // 创建第一段圆柱体
+    const geometry1 = new THREE.CylinderGeometry(radius, radius, height1, 32);
+    const object1 = new THREE.Mesh(geometry1, material1);
+    object1.position.copy(start).lerp(mid, 0.5);
+    object1.lookAt(mid);
+    object1.rotateX(Math.PI / 2); // 使圆柱体垂直对齐
+    lines.push(object1);
+
+    // 创建第二段圆柱体
+    const geometry2 = new THREE.CylinderGeometry(radius, radius, height2, 32);
+    const object2 = new THREE.Mesh(geometry2, material2);
+    object2.position.copy(mid).lerp(end, 0.5);
+    object2.lookAt(end);
+    object2.rotateX(Math.PI / 2); // 使圆柱体垂直对齐
+    lines.push(object2);
   }
 
   return lines;
@@ -141,6 +148,7 @@ export const createAtomsFromPdb = (pdbText: string) => {
   const _loader = new PDBLoader();
   const pdb = _loader.parse(pdbText);
   const offset = new THREE.Vector3();
+  debugger; //eslint-disable-line
 
   const atoms = [] as Atom[];
 
@@ -165,14 +173,14 @@ export const createAtomsFromPdb = (pdbText: string) => {
 
     const atomInfo = pdb.json.atoms[i];
     const type = atomInfo[atomInfo.length - 1];
-    const radius = getAtomRadius(type) * 0.4;
+    const radius = getAtomRadius(type) * 0.53;
 
     const atom = new Atom(type, position, radius);
 
     atoms.push(atom);
   }
 
-  const lines = createLines(geometryBonds);
+  const lines = createLines(geometryBonds, atoms);
 
   return { atoms, lines };
 };
