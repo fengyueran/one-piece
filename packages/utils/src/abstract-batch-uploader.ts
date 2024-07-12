@@ -81,7 +81,7 @@ const makeFilesChunks = (files: File[], chunkSize: number) => {
   }, [] as Chunk[]);
 };
 
-export abstract class AbstractBatchUploader {
+export abstract class BaseBatchUploader {
   private _paused = true;
   private _uploadingChunks: Chunk[] = [];
   private _completedChunkCount = 0;
