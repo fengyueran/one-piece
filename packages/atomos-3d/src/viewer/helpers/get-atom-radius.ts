@@ -58,6 +58,7 @@ export const vdwRadiiMap = {
 
 export type RadiusKey = keyof typeof vdwRadiiMap;
 
-export const getAtomRadius = (type: RadiusKey) => {
-  return vdwRadiiMap[type] || 1;
+export const getAtomRadius = (type: string, scale = 0.5) => {
+  const r = vdwRadiiMap[type as RadiusKey] || 1;
+  return r * scale;
 };

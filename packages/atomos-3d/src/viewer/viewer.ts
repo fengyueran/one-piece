@@ -40,7 +40,7 @@ export class AtomosViewer {
 
   addModel = (data: any, type: ModelType) => {
     if (type === ModelType.LammpsTrajectory) {
-      const atoms = createAtomsFromLammpsTrjFrame(data, 0.3);
+      const atoms = createAtomsFromLammpsTrjFrame(data);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });

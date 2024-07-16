@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
-import { AtomType, getAtomColor } from './helpers';
+import { getAtomColor } from './helpers';
 import { DynamicObj } from '../core';
 
 export class Atom extends DynamicObj {
-  constructor(type: AtomType, position: THREE.Vector3, radius = 0.5) {
+  constructor(type: string, position: THREE.Vector3, radius = 0.5) {
     const color = new THREE.Color(getAtomColor(type));
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const material = new THREE.MeshPhongMaterial({ color });

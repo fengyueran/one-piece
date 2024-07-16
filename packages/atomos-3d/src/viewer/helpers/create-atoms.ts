@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { RadiusKey, getAtomRadius } from './get-atom-radius';
+import { getAtomColor } from './get-atom-color';
 import { Atom } from '../atom';
 import { PDBLoader } from '../../loaders';
 
@@ -102,43 +103,74 @@ export enum ModelType {
 //   return atoms;
 // };
 
-const createLines = (geometryBonds: THREE.BufferGeometry, atoms: Atom[]) => {
+interface Point {
+  atomType: string;
+  position: THREE.Vector3;
+}
+
+const createBondSegments = (startPoint: Point, endPoint: Point) => {
+  const radius = 0.15;
+  const visibleBondMid = new THREE.Vector3();
+  const startAtomRadius = getAtomRadius(startPoint.atomType);
+  const endAtomRadius = getAtomRadius(endPoint.atomType);
+
+  const distance = startPoint.position.distanceTo(endPoint.position);
+  const visibleBondLength = (distance - startAtomRadius - endAtomRadius) / 2;
+  const startPercent = (visibleBondLength + startAtomRadius) / distance;
+  visibleBondMid
+    .copy(startPoint.position)
+    .lerp(endPoint.position, startPercent);
+
+  const createCylinder = (
+    height: number,
+    atomType: string,
+    position: THREE.Vector3
+  ) => {
+    const material = new THREE.MeshPhongMaterial({
+      color: getAtomColor(atomType),
+    });
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+    const cylinder = new THREE.Mesh(geometry, material);
+    cylinder.position.copy(position).lerp(visibleBondMid, 0.5);
+    cylinder.lookAt(visibleBondMid);
+    cylinder.rotateX(Math.PI / 2);
+    return cylinder;
+  };
+
+  const height1 = startPoint.position.distanceTo(visibleBondMid);
+  const cylinder1 = createCylinder(
+    height1,
+    startPoint.atomType,
+    startPoint.position
+  );
+
+  const height2 = visibleBondMid.distanceTo(endPoint.position);
+  const cylinder2 = createCylinder(
+    height2,
+    endPoint.atomType,
+    endPoint.position
+  );
+
+  return [cylinder1, cylinder2];
+};
+
+const createLines = (geometryBonds: THREE.BufferGeometry, atoms: string[]) => {
   const lines: THREE.Mesh[] = [];
   const positions = geometryBonds.getAttribute('position');
   const start = new THREE.Vector3();
   const end = new THREE.Vector3();
-  const mid = new THREE.Vector3();
-
-  const radius = 0.2; // 圆柱体的半径
-  const material1 = new THREE.MeshPhongMaterial({ color: 0xff0000 }); // 第一段线的颜色
-  const material2 = new THREE.MeshPhongMaterial({ color: 0x0000ff }); // 第二段线的颜色
 
   for (let i = 0; i < positions.count; i += 2) {
     start.fromBufferAttribute(positions, i);
     end.fromBufferAttribute(positions, i + 1);
+    const segments = createBondSegments(
+      { position: start, atomType: atoms[i] },
+      { position: end, atomType: atoms[i + 1] }
+    );
 
-    // 计算中点
-    mid.copy(start).lerp(end, 0.5);
-
-    // 计算每段的高度
-    const height1 = start.distanceTo(mid);
-    const height2 = mid.distanceTo(end);
-
-    // 创建第一段圆柱体
-    const geometry1 = new THREE.CylinderGeometry(radius, radius, height1, 32);
-    const object1 = new THREE.Mesh(geometry1, material1);
-    object1.position.copy(start).lerp(mid, 0.5);
-    object1.lookAt(mid);
-    object1.rotateX(Math.PI / 2); // 使圆柱体垂直对齐
-    lines.push(object1);
-
-    // 创建第二段圆柱体
-    const geometry2 = new THREE.CylinderGeometry(radius, radius, height2, 32);
-    const object2 = new THREE.Mesh(geometry2, material2);
-    object2.position.copy(mid).lerp(end, 0.5);
-    object2.lookAt(end);
-    object2.rotateX(Math.PI / 2); // 使圆柱体垂直对齐
-    lines.push(object2);
+    segments.forEach((seg) => {
+      lines.push(seg);
+    });
   }
 
   return lines;
@@ -148,7 +180,6 @@ export const createAtomsFromPdb = (pdbText: string) => {
   const _loader = new PDBLoader();
   const pdb = _loader.parse(pdbText);
   const offset = new THREE.Vector3();
-  debugger; //eslint-disable-line
 
   const atoms = [] as Atom[];
 
@@ -172,15 +203,15 @@ export const createAtomsFromPdb = (pdbText: string) => {
     position.z = positions.getZ(i);
 
     const atomInfo = pdb.json.atoms[i];
-    const type = atomInfo[atomInfo.length - 1];
-    const radius = getAtomRadius(type) * 0.53;
+    const type = atomInfo[atomInfo.length - 1] as string;
+    const radius = getAtomRadius(type as RadiusKey);
 
     const atom = new Atom(type, position, radius);
 
     atoms.push(atom);
   }
 
-  const lines = createLines(geometryBonds, atoms);
+  const lines = createLines(geometryBonds, pdb.json.bondAtomTypes);
 
   return { atoms, lines };
 };
@@ -203,13 +234,13 @@ export const parseLammpsTrajectoryFrame = (frameStr: string) => {
   return atoms;
 };
 
-export const createAtomsFromLammpsTrjFrame = (frameStr: string, scale = 1) => {
+export const createAtomsFromLammpsTrjFrame = (frameStr: string) => {
   const atomInfos = parseLammpsTrajectoryFrame(frameStr);
   const atoms = atomInfos.map((atomInfo) => {
     const position = new THREE.Vector3(atomInfo.x, atomInfo.y, atomInfo.z);
 
     const type = atomInfo.element as RadiusKey;
-    const radius = getAtomRadius(type) * scale;
+    const radius = getAtomRadius(type);
 
     const atom = new Atom(type, position, radius);
     return atom;

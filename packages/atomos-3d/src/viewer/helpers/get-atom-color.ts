@@ -121,6 +121,6 @@ const ColorByAtomType = {
 
 export type AtomType = keyof typeof ColorByAtomType;
 
-export const getAtomColor = (type: AtomType) => {
-  return ColorByAtomType[type] || '#ffffff';
+export const getAtomColor = (type: string) => {
+  return ColorByAtomType[type as AtomType] || '#ffffff';
 };
