@@ -9,7 +9,8 @@ import {
 import * as THREE from 'three';
 //@ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { DynamicObj } from './abstract-dynamic-obj';
+import { DynamicObj, DynamicGroup } from './abstract-dynamic-obj';
+import { AxesHelper } from './axes-helper';
 
 export enum CameraType {
   Orthographic,
@@ -18,10 +19,19 @@ export enum CameraType {
 
 export interface RenderManagerConfig {
   camera?: CameraType;
+  axesHelper?: boolean;
+  boundingBox?: boolean;
 }
 
 export class RenderManager {
   private _animationFrameId?: number | null;
+
+  private _canvasWidth: number;
+  private _canvasHeight: number;
+  private _axesScene?: Scene;
+  private _axesHelper?: DynamicGroup;
+  private _axesCamera?: OrthographicCamera;
+
   public scene: Scene;
   public renderer: WebGLRenderer;
   public camera: PerspectiveCamera | OrthographicCamera;
@@ -35,12 +45,12 @@ export class RenderManager {
       antialias: true,
     });
 
-    const width = dom.clientWidth;
-    const height = dom.clientHeight;
+    this._canvasWidth = dom.clientWidth;
+    this._canvasHeight = dom.clientHeight;
     this.camera =
       config?.camera === CameraType.Perspective
-        ? this._createPerspectiveCamera(width, height)
-        : this._createOrthographicCamera(width, height);
+        ? this._createPerspectiveCamera(this._canvasWidth, this._canvasHeight)
+        : this._createOrthographicCamera(this._canvasWidth, this._canvasHeight);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(ambientLight);
@@ -49,15 +59,35 @@ export class RenderManager {
     this.scene.add(directionalLight);
 
     this.camera.position.z = 40;
-    this.renderer.setSize(width, height);
-    this.renderer.setClearColor(new Color(0x000));
+    this.renderer.setSize(this._canvasWidth, this._canvasHeight);
+
+    if (config?.axesHelper) {
+      this._addAxesHelper();
+    }
+
+    if (config?.boundingBox) {
+      this._addBoundingBox();
+    }
 
     dom.appendChild(this.renderer.domElement);
     this.orbitControls = new OrbitControls(
       this.camera,
       this.renderer.domElement
     );
+    this.orbitControls.minDistance = 2;
+    this.orbitControls.maxDistance = 40;
+    this.orbitControls.minZoom = 0.2;
+    this.orbitControls.maxZoom = 4;
   }
+
+  private _addAxesHelper = () => {
+    this._axesHelper = new AxesHelper(0.6);
+    this._axesScene = new THREE.Scene();
+    this._axesScene.add(this._axesHelper);
+
+    this._axesCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+    this._axesCamera.lookAt(this._axesScene.position);
+  };
 
   _createOrthographicCamera = (width: number, height: number) => {
     const near = 1;
@@ -98,7 +128,7 @@ export class RenderManager {
     return boundingBox;
   };
 
-  addBoundingBox = () => {
+  private _addBoundingBox = () => {
     const boundingBox = this.calcBoundingBox();
     const boxHelper = new THREE.Box3Helper(boundingBox, 0xffff00);
     this.scene.add(boxHelper);
@@ -171,13 +201,36 @@ export class RenderManager {
     }
   };
 
+  private renderAxesHelper = () => {
+    if (!this._axesScene || !this._axesCamera) return;
+
+    const axesViewportWidth = 120;
+    const axesViewportHeight = 120;
+
+    this.renderer.setViewport(0, 0, axesViewportWidth, axesViewportHeight);
+    this.renderer.setScissor(0, 0, axesViewportWidth, axesViewportHeight);
+    this.renderer.setScissorTest(true);
+    this._axesCamera.position.copy(this.camera.position);
+    this._axesCamera.quaternion.copy(this.camera.quaternion);
+
+    this.renderer.render(this._axesScene, this._axesCamera);
+    this.renderer.setScissorTest(false);
+  };
+
   startRendering = () => {
     this.dynamicObjs.forEach((b) => {
       if (b.update) {
         b.update();
       }
     });
+    this.renderer.setViewport(0, 0, this._canvasWidth, this._canvasHeight);
+    this.renderer.setScissor(0, 0, this._canvasWidth, this._canvasHeight);
+    this.renderer.setScissorTest(true);
+    this.renderer.clear();
     this.renderer.render(this.scene, this.camera);
+
+    this.renderAxesHelper();
+
     if (this._animationFrameId) {
       this._animationFrameId = requestAnimationFrame(this.startRendering);
     }

@@ -46,6 +46,8 @@ export const App = () => {
 
       viewerRef.current = new AtomosViewer(container, {
         camera: CameraType.Perspective,
+        axesHelper: true,
+        boundingBox: true,
       });
       const data = await (await fetch('atom.pdb')).text();
       viewerRef.current?.addModel(data, ModelType.Pdb);

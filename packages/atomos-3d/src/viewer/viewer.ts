@@ -3,12 +3,11 @@ import {
   createAtomsFromLammpsTrjFrame,
   parseLammpsTrajectoryFrame,
 } from './helpers';
-import { RenderManager, CameraType } from '../core';
+import { RenderManager, RenderManagerConfig } from '../core';
 import { LargeFileLoader } from '../loaders';
 
-export interface AtomosViewerConfig {
-  camera?: CameraType;
-}
+// eslint-disable-next-line
+export interface AtomosViewerConfig extends RenderManagerConfig {}
 
 export enum ModelType {
   Pdb,
@@ -30,8 +29,7 @@ export class AtomosViewer {
   private _models: AtomInfo[][] = [];
   private _renderManager: RenderManager;
   constructor(element: HTMLElement, config: AtomosViewerConfig) {
-    const { camera } = config;
-    this._renderManager = new RenderManager(element, { camera });
+    this._renderManager = new RenderManager(element, config);
   }
 
   render = () => {
@@ -49,8 +47,8 @@ export class AtomosViewer {
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
-      lines.forEach((atom) => {
-        this._renderManager.add(atom);
+      lines.forEach((line) => {
+        this._renderManager.add(line);
       });
     }
   };
