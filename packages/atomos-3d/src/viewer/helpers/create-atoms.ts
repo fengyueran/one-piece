@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 
 import { RadiusKey, getAtomRadius } from './get-atom-radius';
-import { getAtomColor } from './get-atom-color';
-import { Atom } from '../atom';
+import { Atom, Bone } from '../meshes';
 import { PDBLoader } from '../../loaders';
 
 export enum ModelType {
@@ -121,35 +120,23 @@ const createBondSegments = (startPoint: Point, endPoint: Point) => {
     .copy(startPoint.position)
     .lerp(endPoint.position, startPercent);
 
-  const createCylinder = (
-    height: number,
-    atomType: string,
-    position: THREE.Vector3
-  ) => {
-    const material = new THREE.MeshPhongMaterial({
-      color: getAtomColor(atomType),
-    });
-    const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
-    const cylinder = new THREE.Mesh(geometry, material);
-    cylinder.position.copy(position).lerp(visibleBondMid, 0.5);
-    cylinder.lookAt(visibleBondMid);
-    cylinder.rotateX(Math.PI / 2);
-    return cylinder;
-  };
-
   const height1 = startPoint.position.distanceTo(visibleBondMid);
-  const cylinder1 = createCylinder(
-    height1,
-    startPoint.atomType,
-    startPoint.position
-  );
+  const cylinder1 = new Bone({
+    height: height1,
+    type: startPoint.atomType,
+    position: startPoint.position,
+    visibleBondMid,
+    radius,
+  });
 
   const height2 = visibleBondMid.distanceTo(endPoint.position);
-  const cylinder2 = createCylinder(
-    height2,
-    endPoint.atomType,
-    endPoint.position
-  );
+  const cylinder2 = new Bone({
+    height: height2,
+    type: endPoint.atomType,
+    position: endPoint.position,
+    visibleBondMid,
+    radius,
+  });
 
   return [cylinder1, cylinder2];
 };
