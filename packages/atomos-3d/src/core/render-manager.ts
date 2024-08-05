@@ -18,6 +18,7 @@ export enum CameraType {
 }
 
 export interface RenderManagerConfig {
+  clearColor?: string;
   camera?: CameraType;
   axesHelper?: boolean;
   boundingBox?: boolean;
@@ -60,6 +61,8 @@ export class RenderManager {
 
     this.camera.position.z = 40;
     this.renderer.setSize(this._canvasWidth, this._canvasHeight);
+    const clearColor = config?.clearColor || '#000';
+    this.renderer.setClearColor(clearColor);
 
     if (config?.axesHelper) {
       this._addAxesHelper();
