@@ -22,6 +22,7 @@ export interface RenderManagerConfig {
   camera?: CameraType;
   axesHelper?: boolean;
   boundingBox?: boolean;
+  boundingBoxColor?: string;
 }
 
 export class RenderManager {
@@ -69,7 +70,8 @@ export class RenderManager {
     }
 
     if (config?.boundingBox) {
-      this._addBoundingBox();
+      const color = config?.boundingBoxColor || 'blue';
+      this._addBoundingBox(color);
     }
 
     dom.appendChild(this.renderer.domElement);
@@ -77,8 +79,8 @@ export class RenderManager {
       this.camera,
       this.renderer.domElement
     );
-    this.orbitControls.minDistance = 2;
-    this.orbitControls.maxDistance = 40;
+    // this.orbitControls.minDistance = 2;
+    // this.orbitControls.maxDistance = 40;
     this.orbitControls.minZoom = 0.2;
     this.orbitControls.maxZoom = 4;
   }
@@ -131,9 +133,9 @@ export class RenderManager {
     return boundingBox;
   };
 
-  private _addBoundingBox = () => {
+  private _addBoundingBox = (color: string) => {
     const boundingBox = this.calcBoundingBox();
-    const boxHelper = new THREE.Box3Helper(boundingBox, 0xffff00);
+    const boxHelper = new THREE.Box3Helper(boundingBox, color);
     this.scene.add(boxHelper);
   };
 

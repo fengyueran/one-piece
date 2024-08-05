@@ -22,6 +22,7 @@ const Content = styled.div`
 const Canvas = styled.div`
   width: 800px;
   height: 800px;
+  border: 1px solid;
 `;
 
 const Tool = styled.div`
@@ -48,7 +49,7 @@ export const App = () => {
         // camera: CameraType.Perspective,
         axesHelper: true,
         boundingBox: true,
-        // clearColor: '#fff',
+        clearColor: '#fff',
       });
       const data = await (await fetch('atom.pdb')).text();
       viewerRef.current?.addModel(data, ModelType.Pdb);
