@@ -51,7 +51,7 @@ export const App = () => {
         boundingBox: true,
         clearColor: '#fff',
       });
-      const data = await (await fetch('atom.pdb')).text();
+      const data = await (await fetch('atoms.pdb')).text();
       viewerRef.current?.addModel(data, ModelType.Pdb);
       viewerRef.current?.render();
       viewerRef.current?.zoomToFitScene();
@@ -114,7 +114,9 @@ export const App = () => {
               viewerRef.current?.dispose();
               const container = canvasRef.current!;
               viewerRef.current = new AtomosViewer(container, {
-                camera: CameraType.Perspective,
+                camera: CameraType.Orthographic,
+                axesHelper: true,
+                boundingBox: true,
               });
               viewerRef.current.addTrajectory(
                 'dump.lammpstrj',
