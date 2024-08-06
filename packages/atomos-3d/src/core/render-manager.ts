@@ -82,7 +82,7 @@ export class RenderManager {
     // this.orbitControls.minDistance = 2;
     // this.orbitControls.maxDistance = 40;
     this.orbitControls.minZoom = 0.2;
-    this.orbitControls.maxZoom = 4;
+    this.orbitControls.maxZoom = 10;
   }
 
   private _addAxesHelper = () => {

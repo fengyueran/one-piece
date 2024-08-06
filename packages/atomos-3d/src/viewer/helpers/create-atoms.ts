@@ -163,6 +163,39 @@ const createLines = (geometryBonds: THREE.BufferGeometry, atoms: string[]) => {
   return lines;
 };
 
+const createLinesByAtomDistance = (
+  atoms: [number, number, number, string][]
+) => {
+  const lines: THREE.Mesh[] = [];
+  const BondThreshold = 1.8;
+
+  for (let i = 0; i < atoms.length; i++) {
+    for (let j = i + 1; j < atoms.length; j++) {
+      const atom1 = atoms[i];
+      const atom2 = atoms[j];
+      const distance = Math.sqrt(
+        Math.pow(atom1[0] - atom2[0], 2) +
+          Math.pow(atom1[1] - atom2[1], 2) +
+          Math.pow(atom1[2] - atom2[2], 2)
+      );
+      if (distance < BondThreshold) {
+        const start = new THREE.Vector3(atom1[0], atom1[1], atom1[2]);
+        const end = new THREE.Vector3(atom2[0], atom2[1], atom2[2]);
+        const segments = createBondSegments(
+          { position: start, atomType: atom1[3] },
+          { position: end, atomType: atom2[3] }
+        );
+
+        segments.forEach((seg) => {
+          lines.push(seg);
+        });
+      }
+    }
+  }
+
+  return lines;
+};
+
 export const createAtomsFromPdb = (pdbText: string) => {
   const _loader = new PDBLoader();
   const pdb = _loader.parse(pdbText);
@@ -198,7 +231,18 @@ export const createAtomsFromPdb = (pdbText: string) => {
     atoms.push(atom);
   }
 
-  const lines = createLines(geometryBonds, pdb.json.bondAtomTypes);
+  const lines = pdb.json.bondAtomTypes.length
+    ? createLines(geometryBonds, pdb.json.bondAtomTypes)
+    : createLinesByAtomDistance(
+        pdb.json.atoms.map((atom) => {
+          return [
+            atom[0] + offset.x,
+            atom[1] + offset.y,
+            atom[2] + offset.y,
+            atom[3],
+          ];
+        })
+      );
 
   return { atoms, lines };
 };
