@@ -4,7 +4,6 @@ import {
   PerspectiveCamera,
   OrthographicCamera,
   Object3D,
-  Color,
 } from 'three';
 import * as THREE from 'three';
 //@ts-ignore
@@ -32,6 +31,7 @@ export class RenderManager {
   private _canvasHeight: number;
   private _axesScene?: Scene;
   private _axesHelper?: DynamicGroup;
+  private _boxHelper?: THREE.Box3Helper;
   private _axesCamera?: OrthographicCamera;
 
   public scene: Scene;
@@ -71,7 +71,7 @@ export class RenderManager {
 
     if (config?.boundingBox) {
       const color = config?.boundingBoxColor || 'blue';
-      this._addBoundingBox(color);
+      this._addBoxHelper(color);
     }
 
     dom.appendChild(this.renderer.domElement);
@@ -120,6 +120,7 @@ export class RenderManager {
     if (obj instanceof DynamicObj) {
       this.dynamicObjs.push(obj);
     }
+    this.updateBoundingBox();
   };
 
   private calcBoundingBox = () => {
@@ -133,10 +134,18 @@ export class RenderManager {
     return boundingBox;
   };
 
-  private _addBoundingBox = (color: string) => {
+  private updateBoundingBox = () => {
     const boundingBox = this.calcBoundingBox();
-    const boxHelper = new THREE.Box3Helper(boundingBox, color);
-    this.scene.add(boxHelper);
+
+    if (this._boxHelper) {
+      this._boxHelper.box.copy(boundingBox);
+    }
+  };
+
+  private _addBoxHelper = (color: string) => {
+    const boundingBox = this.calcBoundingBox();
+    this._boxHelper = new THREE.Box3Helper(boundingBox, color);
+    this.scene.add(this._boxHelper);
   };
 
   private _zoomToFitScenePerspectiveCamera = () => {
