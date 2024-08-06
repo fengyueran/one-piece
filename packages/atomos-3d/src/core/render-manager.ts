@@ -90,8 +90,14 @@ export class RenderManager {
     this._axesScene = new THREE.Scene();
     this._axesScene.add(this._axesHelper);
 
-    this._axesCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
-    this._axesCamera.lookAt(this._axesScene.position);
+    this._axesCamera = new THREE.OrthographicCamera(
+      -1,
+      1,
+      1,
+      -1,
+      this.camera.near,
+      this.camera.far
+    );
   };
 
   _createOrthographicCamera = (width: number, height: number) => {
