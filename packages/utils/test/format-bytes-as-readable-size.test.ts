@@ -27,3 +27,21 @@ it('formats bytes correctly with specified decimals', () => {
   expect(formatBytesAsReadableSize(1073741824, 4)).toBe('1.0000 GB');
   expect(formatBytesAsReadableSize(123456789, 3)).toBe('117.738 MB');
 });
+
+it('should correctly format when a numeric string is passed as input', () => {
+  //@ts-ignore
+  expect(formatBytesAsReadableSize('0')).toBe('0 B');
+  //@ts-ignore
+  expect(formatBytesAsReadableSize('1024')).toBe('1 KB');
+});
+
+it('should throw an error for negative byte values', () => {
+  expect(() => formatBytesAsReadableSize(-1)).toThrow('Byte size cannot be negative');
+});
+
+it('should throw an error for non-numeric inputs', () => {
+  //@ts-ignore
+  expect(() => formatBytesAsReadableSize('a')).toThrow(
+    'Invalid input: byte size must be a numeric value',
+  );
+});

@@ -1,13 +1,21 @@
 export const formatBytesAsReadableSize = (byte: number = 0, decimals = 0) => {
-  if (byte < 1024) return `${byte.toFixed(decimals)} B`;
+  const numberByte = Number(byte);
 
-  const kb = byte / 1024;
-  if (kb < 1024) return `${kb.toFixed(decimals)} KB`;
+  if (isNaN(numberByte)) {
+    throw new Error('Invalid input: byte size must be a numeric value');
+  }
+  if (byte < 0) {
+    throw new Error('Byte size cannot be negative');
+  }
 
-  const mb = kb / 1024;
-  if (mb < 1024) return `${mb.toFixed(decimals)} MB`;
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let index = 0;
+  let size = numberByte;
 
-  const gb = mb / 1024;
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024;
+    index++;
+  }
 
-  return `${gb.toFixed(decimals)} GB`;
+  return `${size.toFixed(decimals)} ${units[index]}`;
 };
