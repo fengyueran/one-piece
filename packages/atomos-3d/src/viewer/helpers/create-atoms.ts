@@ -210,8 +210,8 @@ export const createAtomsFromPdb = (pdbText: string) => {
   geometryAtoms.boundingBox?.getCenter(offset).negate();
 
   //将原子的几何结构沿着计算出的偏移量平移，使得模型的几何中心与坐标系的原点对齐
-  geometryAtoms.translate(offset.x, offset.y, offset.z);
-  geometryBonds.translate(offset.x, offset.y, offset.z);
+  // geometryAtoms.translate(offset.x, offset.y, offset.z);
+  // geometryBonds.translate(offset.x, offset.y, offset.z);
 
   const positions = geometryAtoms.getAttribute('position');
 
@@ -233,16 +233,7 @@ export const createAtomsFromPdb = (pdbText: string) => {
 
   const lines = pdb.json.bondAtomTypes.length
     ? createLines(geometryBonds, pdb.json.bondAtomTypes)
-    : createLinesByAtomDistance(
-        pdb.json.atoms.map((atom) => {
-          return [
-            atom[0] + offset.x,
-            atom[1] + offset.y,
-            atom[2] + offset.y,
-            atom[3],
-          ];
-        })
-      );
+    : createLinesByAtomDistance(pdb.json.atoms);
 
   return { atoms, lines };
 };
