@@ -42,14 +42,17 @@ export class AtomosViewer {
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
+      this._renderManager.updateBoundingBox();
     } else if (type === ModelType.Pdb) {
       const { atoms, lines } = createAtomsFromPdb(data);
       atoms.forEach((atom) => {
         this._renderManager.add(atom);
       });
+
       lines.forEach((line) => {
         this._renderManager.add(line);
       });
+      this._renderManager.updateBoundingBox();
     }
   };
 

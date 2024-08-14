@@ -126,10 +126,9 @@ export class RenderManager {
     if (obj instanceof DynamicObj) {
       this.dynamicObjs.push(obj);
     }
-    this.updateBoundingBox();
   };
 
-  private calcBoundingBox = () => {
+  private _calcBoundingBox = () => {
     const boundingBox = new THREE.Box3();
 
     this.scene.traverse(function (object) {
@@ -140,8 +139,8 @@ export class RenderManager {
     return boundingBox;
   };
 
-  private updateBoundingBox = () => {
-    const boundingBox = this.calcBoundingBox();
+  updateBoundingBox = () => {
+    const boundingBox = this._calcBoundingBox();
 
     if (this._boxHelper) {
       this._boxHelper.box.copy(boundingBox);
@@ -149,13 +148,13 @@ export class RenderManager {
   };
 
   private _addBoxHelper = (color: string) => {
-    const boundingBox = this.calcBoundingBox();
+    const boundingBox = this._calcBoundingBox();
     this._boxHelper = new THREE.Box3Helper(boundingBox, color);
     this.scene.add(this._boxHelper);
   };
 
   private _zoomToFitScenePerspectiveCamera = () => {
-    const boundingBox = this.calcBoundingBox();
+    const boundingBox = this._calcBoundingBox();
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
@@ -176,7 +175,7 @@ export class RenderManager {
   };
 
   private _zoomToFitSceneOrthographicCamera = () => {
-    const boundingBox = this.calcBoundingBox();
+    const boundingBox = this._calcBoundingBox();
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
