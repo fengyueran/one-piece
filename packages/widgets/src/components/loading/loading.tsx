@@ -22,14 +22,15 @@ const Tip = styled.span`
 `;
 
 interface LoadingProps {
+  className?: string;
   tip?: string | React.ReactNode;
   spinSize?: Size;
 }
 
 export const Loading = (props: LoadingProps) => {
-  const { tip, spinSize } = props;
+  const { tip, className, spinSize } = props;
   return (
-    <RootContainer>
+    <RootContainer className={className}>
       <Spin size={spinSize} />
       {tip && <Tip>{tip}</Tip>}
     </RootContainer>
