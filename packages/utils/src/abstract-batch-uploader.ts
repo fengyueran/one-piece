@@ -93,7 +93,7 @@ export abstract class BaseBatchUploader {
   private _chunkSize = 1024 * 1024 * 5; // 5MB 每片
 
   status = UploadStatus.Waiting;
-  errorReason = undefined;
+  errorReason?: string;
   totalSize = 0;
   uploadSpeed?: string;
   uploadPercent = 0;
