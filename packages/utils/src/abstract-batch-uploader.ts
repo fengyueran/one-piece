@@ -93,6 +93,7 @@ export abstract class BaseBatchUploader {
   private _chunkSize = 1024 * 1024 * 5; // 5MB 每片
 
   status = UploadStatus.Waiting;
+  errorReason = undefined;
   totalSize = 0;
   uploadSpeed?: string;
   uploadPercent = 0;
@@ -100,7 +101,7 @@ export abstract class BaseBatchUploader {
   chunksLoaded: number[] = [];
   speedMeasurements: { time: number; loaded: number }[] = [];
 
-  constructor(private _multipartEndpoint: string, files: File[]) {
+  constructor(private _multipartEndpoint: string, files: File[], private _token?: string) {
     this._chunks = makeFilesChunks(files, this._chunkSize);
     this._chunksCount = this._chunks.length;
     this.totalSize = calcTotalSize(files);
@@ -211,6 +212,7 @@ export abstract class BaseBatchUploader {
         axios
           .post(this._multipartEndpoint, formData, {
             headers: {
+              customToken: this._token,
               'Content-Type': 'multipart/form-data',
             },
             cancelToken: that._cancelTokenSource.token,
@@ -240,6 +242,7 @@ export abstract class BaseBatchUploader {
       console.error(error);
       this.pause();
       this.status = UploadStatus.Error;
+      this.errorReason = error.message;
       this.onStateChange(Event.BatchError);
     }
   };
