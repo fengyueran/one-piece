@@ -242,7 +242,7 @@ export abstract class BaseBatchUploader {
       console.error(error);
       this.pause();
       this.status = UploadStatus.Error;
-      this.errorReason = error.message;
+      this.errorReason = (error as Error).message;
       this.onStateChange(Event.BatchError);
     }
   };
