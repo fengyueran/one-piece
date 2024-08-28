@@ -1,6 +1,6 @@
 {
   "name": "@xinghunm/track-view-admin",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publishConfig": {
     "access": "public"
   },
@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@xinghunm/widgets": "^1.1.14",
+    "@xinghunm/widgets": "^1.1.15",
     "axios": "^1.6.8",
     "heatmap.js": "^2.0.5",
     "react": "^18.2.0",
