@@ -16,15 +16,25 @@ const StyledButtonBase = styled.button`
   background: transparent;
 `;
 
-interface Props {
+export interface ButtonBaseProps {
   hasRipple?: boolean;
   className?: string;
   disabled?: boolean;
+  rippleBgColor?: string;
+  rippleOpacity?: number;
   children: React.ReactNode;
 }
 
-export const ButtonBase = (props: Props) => {
-  const { hasRipple = true, className, children, ...res } = props;
+export const ButtonBase = (props: ButtonBaseProps) => {
+  const {
+    hasRipple = true,
+    className,
+    rippleBgColor,
+    rippleOpacity,
+    children,
+    ...res
+  } = props;
+
   const rippleRef = useRef<Handlers>();
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -47,7 +57,11 @@ export const ButtonBase = (props: Props) => {
       onMouseDown={handleMouseDown}
     >
       {children}
-      <TouchRipple ref={rippleRef} />
+      <TouchRipple
+        ref={rippleRef}
+        bgColor={rippleBgColor}
+        opacity={rippleOpacity}
+      />
     </StyledButtonBase>
   );
 };

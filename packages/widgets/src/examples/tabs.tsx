@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Tabs, TabItem } from '../components';
+import { Tabs, TabsProps } from '../components';
 import { useState } from 'react';
 
 const Container = styled.div`
@@ -16,7 +16,7 @@ const tabs = [
   { label: '社会科学' },
 ];
 
-const onTabChange = (item: TabItem) => {
+const onTabChange: TabsProps['onTabChange'] = (item) => {
   const value = item as { label: string; id: string };
   console.log('value', value);
 };

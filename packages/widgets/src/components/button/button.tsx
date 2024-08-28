@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ButtonBase } from '../button-base';
+import { ButtonBase, ButtonBaseProps } from '../button-base';
 import { Spin } from './spin';
 
 const ButtonContainer = styled(ButtonBase)<{
@@ -39,14 +39,10 @@ const SpinWrapper = styled.span`
   padding-right: 12px;
 `;
 
-export interface ButtonProps {
-  hasRipple?: boolean;
+export interface ButtonProps extends ButtonBaseProps {
   style?: React.CSSProperties;
   hasHover?: boolean;
-  className?: string;
   loading?: boolean;
-  disabled?: boolean;
-  children: React.ReactNode;
   onClick?: () => void;
 }
 

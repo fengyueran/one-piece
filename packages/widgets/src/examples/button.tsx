@@ -12,6 +12,9 @@ const ButtonContainer = styled(Button)`
 export const ButtonExample = () => {
   return (
     <RootContainer>
+      <ButtonContainer rippleBgColor="red" rippleOpacity={0.8}>
+        custom ripple bg color
+      </ButtonContainer>
       <ButtonContainer
         disabled
         onClick={() => {

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
   Dropdown,
   //  Trigger,
-  ItemProps,
+  DropdownProps,
 } from '../components';
 
 const Container = styled.div`
@@ -88,7 +88,7 @@ const navItems = [
 export const DropdownExample = () => {
   const [selected, setSelected] = useState<string>();
 
-  const onSelect = (item: ItemProps) => {
+  const onSelect: DropdownProps['onSelect'] = (item) => {
     console.log('Selected item', item);
 
     setSelected(item.value as string);

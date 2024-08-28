@@ -2,14 +2,14 @@ import { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { Transition } from 'react-transition-group';
 
-const rippleEnter = keyframes`
+const createRippleEnter = (opacity: number) => keyframes`
   0% {
     transform: scale(0);
     opacity: 0.1;
   }
   100% {
     transform: scale(1);
-    opacity: 0.3;
+    opacity: ${opacity};
   }
 `;
 
@@ -22,11 +22,13 @@ const rippleExit = keyframes`
   }
 `;
 
-const createRippleVisibleStyle = (duration: number) => {
+const createRippleVisibleStyle = (duration: number, opacity?: number) => {
+  const newOpacity = opacity || 0.3;
   return css`
-    opacity: 0.3;
+    opacity: ${newOpacity};
     transform: scale(1);
-    animation: ${rippleEnter} ${duration}ms cubic-bezier(0.4, 0, 0.2, 1);
+    animation: ${createRippleEnter(newOpacity)} ${duration}ms
+      cubic-bezier(0.4, 0, 0.2, 1);
   `;
 };
 
@@ -40,6 +42,7 @@ const createChildLeavingStyle = (duration: number) => {
 const StyledRipple = styled.span<{
   $visible: boolean;
   $duration: number;
+  $opacity?: number;
 }>`
   width: 50;
   height: 50;
@@ -48,19 +51,21 @@ const StyledRipple = styled.span<{
   opacity: 0;
   position: absolute;
   ${(props) =>
-    props['$visible'] && createRippleVisibleStyle(props['$duration'])};
+    props['$visible'] &&
+    createRippleVisibleStyle(props.$duration, props.$opacity)};
 `;
 
 const RippleChild = styled.span<{
   $leaving: boolean;
   $duration: number;
+  $bgColor?: string;
 }>`
   opacity: 1;
   display: block;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: currentColor;
+  background-color: ${(props) => props.$bgColor || 'currentColor'};
   ${(props) =>
     props['$leaving'] && createChildLeavingStyle(props['$duration'])};
 `;
@@ -87,10 +92,12 @@ interface Props {
   enter?: boolean;
   exit?: boolean;
   in?: boolean;
+  bgColor?: string;
+  opacity?: number;
 }
 
 export const Ripple = (props: Props) => {
-  const { rippleX, rippleY, rippleSize, ...res } = props;
+  const { rippleX, rippleY, rippleSize, bgColor, opacity, ...res } = props;
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
@@ -113,10 +120,15 @@ export const Ripple = (props: Props) => {
     <Transition {...res} onEnter={handleEnter} onExit={handleExit}>
       <StyledRipple
         $visible={visible}
+        $opacity={opacity}
         style={rippleStyles}
         $duration={res.timeout.enter}
       >
-        <RippleChild $leaving={leaving} $duration={res.timeout.exit} />
+        <RippleChild
+          $bgColor={bgColor}
+          $leaving={leaving}
+          $duration={res.timeout.exit}
+        />
       </StyledRipple>
     </Transition>
   );
