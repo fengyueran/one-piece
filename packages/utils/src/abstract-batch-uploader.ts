@@ -40,6 +40,7 @@ export enum Event {
   BatchCanceled,
   BatchError,
   BatchCompleted,
+  ChunkCompleted,
 }
 
 const calcTotalSize = (files: File[]) => {
@@ -204,7 +205,7 @@ export abstract class BaseBatchUploader {
     this.onStateChange(Event.BatchUpdated);
   };
 
-  private _sendRequest = (formData: FormData, chunk: Chunk): Promise<void> =>
+  private _sendRequest = (formData: FormData, chunk: Chunk): Promise<unknown> =>
     new Promise((reslove, reject) => {
       {
         // eslint-disable-next-line
@@ -220,8 +221,8 @@ export abstract class BaseBatchUploader {
               that._onUploadProgress(progressEvent, chunk);
             },
           })
-          .then(() => {
-            reslove();
+          .then((data) => {
+            reslove(data);
           })
           .catch(function (thrown) {
             if (axios.isCancel(thrown)) {
@@ -236,8 +237,8 @@ export abstract class BaseBatchUploader {
   _uploadChunk = async (chunk: Chunk) => {
     try {
       const formData = this.generateFormData(chunk);
-      await this._sendRequest(formData, chunk);
-      this._onChunkUploadCompleted(chunk);
+      const data = await this._sendRequest(formData, chunk);
+      this._onChunkUploadCompleted(chunk, data);
     } catch (error) {
       console.error(error);
       this.pause();
@@ -247,7 +248,8 @@ export abstract class BaseBatchUploader {
     }
   };
 
-  _onChunkUploadCompleted = (chunk: Chunk) => {
+  _onChunkUploadCompleted = (chunk: Chunk, data: unknown) => {
+    this.onStateChange(Event.ChunkCompleted, data);
     this._completedChunkCount++;
     const index = this._uploadingChunks.findIndex((c) => c === chunk);
     if (index >= 0) {
@@ -261,5 +263,5 @@ export abstract class BaseBatchUploader {
   };
 
   protected abstract generateFormData: (chunk: Chunk) => FormData;
-  protected abstract onStateChange: (eventType: Event) => void;
+  protected abstract onStateChange: (eventType: Event, data?: unknown) => void;
 }
