@@ -58,7 +58,7 @@ const sum = (nums: number[]) => {
 const makeFilesChunks = (files: File[], chunkSize: number) => {
   let chunkIndexInBatch = -1;
   const makeFileChunks = (file: File) => {
-    const count = Math.ceil(file.size / chunkSize);
+    const count = Math.ceil(file.size / chunkSize) || 1;
     const chunks: Chunk[] = [];
 
     for (let i = 0; i < count; i++) {
