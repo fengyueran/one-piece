@@ -6,11 +6,11 @@ Three.js、WebGL、 OpenGL 和 Canvas 2D 之间的关系可以通过它们在图
 
 - OpenGL
 
-  OpenGL(Open Graphics Library)是一个跨平台的图形 API，由 Khronos Group 开发。它定义了一套函数，允许开发者在程序中进行 2D 和 3D 图形渲染。OpenGL 是在高性能计算和精细图形控制领域广泛使用的底层技术，支持多种操作系统和设备。
+  OpenGL(Open Graphics Library)是一个跨平台的图形 API，由 Khronos Group 开发。它定义了一套函数，允许开发者在程序中进行 2D 和 3D 图形渲染。OpenGL 是在高性能计算和精细图形控制领域广泛使用的**底层技术**，支持多种操作系统和设备。
 
 - WebGL
 
-  WebGL(Web Graphics Library)是一个为**网页**提供绘制 3D 图形的 API，它基于 OpenGL ES(Embedded Systems，一种为嵌入式系统，如手机和平板电脑设计的 **OpenGL 子集**)。WebGL 直接在浏览器中运行，无需任何插件，允许开发者使用 HTML5 的 `<canvas>` 元素来渲染图形。通过使用 JavaScript 与 WebGL API 交互，开发者可以在网页中创建和控制复杂的 3D 环境。
+  WebGL(Web Graphics Library)是一个为**网页**提供绘制 3D 图形的 API，它**基于 OpenGL ES**(Embedded Systems，一种为嵌入式系统，如手机和平板电脑设计的 **OpenGL 子集**)。WebGL 直接在浏览器中运行，无需任何插件，允许开发者使用 HTML5 的 `<canvas>` 元素来渲染图形。通过使用 JavaScript 与 WebGL API 交互，开发者可以在网页中创建和控制复杂的 3D 环境。
 
 - Three.js
 
@@ -44,7 +44,7 @@ Three.js、WebGL、 OpenGL 和 Canvas 2D 之间的关系可以通过它们在图
 
 #### 正交投影相机
 
-正交投影相机(Orthographic Camera)定义了一个长方体的空间，由相机的左、右、上、下、近、远六个裁剪面决定，在长方体内的物体会被渲染，在长方体外的会被裁剪掉。
+正交投影相机(Orthographic Camera)定义了一个长方体的空间，由相机的上、下、左、右、近、远六个裁剪面决定，在长方体内的物体会被渲染，在长方体外的会被裁剪掉。
 
 正交投影相机的主要特点是能够让**近处、远处的物体大小尺寸保持一致**，常适用于工程制图、建模软件等。
 
@@ -77,6 +77,8 @@ const camera = new THREE.OrthographicCamera(
 
 透视投影相机(Perspective Camera)是 Three.js 中最常用的相机类型之一，与正交相机不同，透视相机**模拟了人眼**观察物体的方式，使得离相机越近的物体看起来越大，离相机越远的物体看起来越小。
 
+![](http://blog-bed.oss-cn-beijing.aliyuncs.com/80.%E5%AE%9E%E7%8E%B0dicom-viewer/perspective-road.png)
+
 ```js
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -95,8 +97,6 @@ const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
 正交投影 vs 透视投影:
 ![](http://blog-bed.oss-cn-beijing.aliyuncs.com/80.%E5%AE%9E%E7%8E%B0dicom-viewer/per-vs-orth.png)
-
-#### 渲染器（renderer）
 
 #### 光(Light)
 
@@ -119,49 +119,120 @@ const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
   光线从一个点出发沿着圆椎体，随着光线照射的变远，光线圆锥体的尺寸也逐渐增大，类似手电筒产生的光源。
 
-#### 渲染器
+#### 渲染器(Renderer)
 
-在 Three.js 中，渲染器负责将你定义的场景（包括模型、光源等）和摄像机视图转换为在屏幕上显示的图像。Three.js 提供了几种不同类型的渲染器，允许开发者根据具体需求选择最适合的渲染器：
+Three.js 中的渲染器是用于将 3D 场景绘制到网页中的关键组件。它负责从场景中获取对象的几何信息、材质、光照等元素，并将其转换为能够在显示设备上呈现的二维图像。Three.js 提供了多种渲染器，其中最常用的渲染器是 WebGLRenderer。下面是几种常见的渲染器及其特点。Three.js 提供了几种不同类型的渲染器，允许开发者根据具体需求选择最适合的渲染器：
 
-    1.	WebGLRenderer：这是最常用的渲染器，它使用 WebGL API 进行渲染。WebGL 是一种允许在不需要插件的情况下在网页上进行3D渲染的技术。WebGLRenderer 支持硬件加速，能够创建复杂和高质量的3D视觉效果。
-    2.	CSS3DRenderer：这个渲染器允许你在3D空间中使用CSS3转换来渲染DOM元素。它不支持WebGL的渲染效果，但可以用来创建那些涉及DOM元素的3D效果，如3D界面。
-    3.	SVGRenderer：这是一个使用SVG格式渲染场景的渲染器。它不支持WebGL，并且通常用于较简单的3D图形或那些对性能要求不高的应用。
-    4.	CanvasRenderer：这个渲染器使用HTML的<canvas>元素来渲染3D图形，但不支持WebGL。由于WebGLRenderer的性能和功能通常更优越，CanvasRenderer的使用现在相对较少，并且在新版本的Three.js中已不再支持。
+##### WebGLRenderer
 
-WebGLRenderer 由于其强大的性能和广泛的功能支持，是最推荐使用的 Three.js 渲染器。这里是一个使用 WebGLRenderer 的基础示例：
+WebGLRenderer 是 Three.js 中最常用的渲染器，它基于 WebGL（Web Graphics Library），能够充分利用 GPU 的强大计算能力，以高效渲染 3D 场景。WebGLRenderer 适合用于现代浏览器中的复杂 3D 场景，并支持光影效果、材质、多重采样抗锯齿等高级功能。
+
+特点：
+
+- 高性能：利用 GPU 的硬件加速来处理复杂的几何体和效果。
+- 跨平台：在支持 WebGL 的所有设备和浏览器中运行，包括移动设备。
+- 可定制：支持通过着色器自定义渲染效果。
+- 渲染模式：可以通过 shadowMap 属性支持阴影渲染。
+- 抗锯齿：可以通过 antialias 属性开启抗锯齿。
 
 ```js
-// 创建场景
-const scene = new THREE.Scene();
-
-// 创建相机
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-
-// 创建渲染器
+// 创建 WebGLRenderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+```
 
-// 添加一个立方体
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+##### CanvasRenderer
 
-// 设置相机位置
-camera.position.z = 5;
+CanvasRenderer 是基于 HTML5 Canvas 技术的渲染器。相比 WebGLRenderer，CanvasRenderer 的性能较低，因为它不使用 GPU 进行渲染，只依赖 CPU。它通常用作不支持 WebGL 的浏览器的备选方案。
 
-// 渲染循环
+特点：
+
+- 兼容性强：可以在不支持 WebGL 的环境下使用。
+- 性能较低：由于只使用 CPU，无法提供与 WebGL 同级别的渲染效果。
+- 不支持高级效果：例如复杂的光照和阴影效果无法实现。
+
+```js
+// 创建 CanvasRenderer
+const renderer = new THREE.CanvasRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+```
+
+应用场景：
+CanvasRenderer 的应用场景主要集中在：
+
+- 旧设备或不支持 WebGL 的环境。
+- 简单的几何图形渲染，无需复杂光照和材质。
+- 作为 WebGLRenderer 的降级方案，确保兼容性。
+- 低性能或低功耗需求的应用。
+
+##### SVGRenderer
+
+SVGRenderer 基于 SVG（可缩放矢量图形）技术渲染 3D 场景。它将 Three.js 中的 3D 对象转化为矢量图形并输出为 SVG 格式。由于 SVG 本身是基于矢量的，因此放大或缩小不会失真，但它只适合渲染简单的场景，不适合复杂的 3D 渲染需求。
+
+特点：
+
+- 可缩放矢量图形：在放大时不会失去清晰度，非常适合用于生成图表或不需要动态交互的静态内容。
+- 性能较低：适合渲染简单的几何图形，复杂的场景和效果不适用。
+- 不支持高级效果：不支持阴影和复杂的光照。
+
+应用场景：
+
+- 需要高分辨率的矢量图输出。
+- 低性能设备或不支持 WebGL 的浏览器。
+- 技术文档或演示中需要简单几何图形的可视化。
+- 2D 或非常简单的 3D 场景，尤其是在需要保持可编辑性的情况下。
+
+```js
+// 创建 SVGRenderer，它输出的 3D 场景将以矢量图形的形式呈现，可以在浏览器中无损放大。
+const renderer = new THREE.SVGRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+```
+
+##### CSS3DRenderer
+
+使用 CSS3D 技术渲染 3D DOM 元素，可以在网页中嵌入 3D HTML 内容，如视频、图片等。这种渲染器能够与 WebGLRenderer 同时使用，从而将 DOM 元素与 WebGL 场景无缝集成。
+
+```js
+const scene = new THREE.Scene();
+
+// 创建 CSS3DRenderer
+const renderer = new THREE.CSS3DRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 创建一个 HTML 元素作为 3D 对象
+const element = document.createElement('div');
+element.className = 'css3d-box';
+element.innerHTML = 'Hello, 3D World!';
+
+// 将 HTML 元素转换为 Three.js 对象
+const css3dObject = new THREE.CSS3DObject(element);
+css3dObject.position.set(0, 0, 0); // 设置对象的初始位置
+scene.add(css3dObject);
+```
+
+应用场景：
+CSS3DRenderer 的应用场景主要集中在需要在 3D 空间中嵌入或操纵 HTML/CSS 元素的场合，适合以下情况：
+
+- 需要混合使用 3D 渲染与传统 HTML/CSS 内容（如 UI、文本、图表）。
+- 需要 3D 场景中的交互式或动态 HTML 内容（如按钮、表单、信息标签）。
+- 构建 3D 交互式界面或展示项目，如虚拟展览、数据可视化、翻页效果等。
+
+##### 渲染循环
+
+上述的渲染器需要在**动画循环中执行**，动画循环通常使用 requestAnimationFrame() 来实现。
+
+```js
 function animate() {
+  //每一帧重绘(屏幕刷新)之前调用指定的回调函数，这里是animate
   requestAnimationFrame(animate);
 
   // 旋转立方体
   cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
 
   // 渲染场景
   renderer.render(scene, camera);
@@ -170,38 +241,118 @@ function animate() {
 animate();
 ```
 
-这段代码创建了一个基本的 3D 场景，包括一个旋转的立方体和一个摄像机，然后使用 WebGLRenderer 来渲染这个场景。
+requestAnimationFrame() 是一个由浏览器提供的原生 API，它会将指定的回调函数(如 animate() 函数)放入下一次屏幕重绘之前的队列中。这意味着：
+
+- 浏览器每次准备绘制一帧时(绘制前)，都会先执行这个回调函数。
+- 这个函数的执行频率通常与显示器的刷新率一致（例如 60Hz 显示器每秒大约 60 帧），但如果刷新率不同或者计算量太大，实际帧率可能会变低。
+
+requestAnimationFrame() 的优点：
+
+- 平滑动画
+
+  由于 requestAnimationFrame() 自动与显示器的刷新率同步，它确保了动画的平滑度。如果动画更新与重绘不同步，例如使用 setInterval()，如果你设定的时间间隔小于浏览器的帧间隔时间，就会执行多次计算(更新 cube 旋转角度)，但这些计算并不会立即反映在屏幕上，或者 setInterval() 间隔时间大于浏览器的帧间隔时间，浏览器来不及在每次绘制时都更新动画(这个时候 cube 旋转角度还未更新)，导致动画卡顿或跳帧。
+
+- 节能效率
+
+  如果页面在后台或不可见，浏览器会自动降低 requestAnimationFrame() 的调用频率，节省系统资源。
+
+- 更适合动画的精确控制
+
+  与 setTimeout() 和 setInterval() 相比，requestAnimationFrame() 更适合动画开发，因为它避免了不必要的资源消耗，并且能更好地协调帧之间的渲染时间。
+
+上述的 animate() 创建了一个无限循环的动画更新机制，每次调用 animate() 时，立方体的旋转角度增加一些，调用 renderer.render() 会将更新后的场景渲染出来，显示旋转后的立方体，从而产生一个平滑的旋转动画。
 
 ### 物体
 
 #### 几何体(Geometry)
 
 在计算机世界中，图形的绘制都是通过点（顶点）来完成的，两个点构成一条线，三个点(不在一条线)构成一个三角面， 更复杂的图形通常也是三角面组合而成。
+这些点、线、面就构成了物体的几何体，也就是说几何体决定了物体的**形状**。每个几何体由顶点和面组成：
 
-几何体决定了物体的形状。Three.js 提供了多种几何体，例如 BoxGeometry、SphereGeometry、PlaneGeometry 等等。每个几何体由顶点和面组成：
+- 顶点（Vertices）几何体的点，它们用来定义物体的轮廓。
+- 面（Faces）：由顶点组成的三角形，定义了物体的表面。
 
-    •	顶点（Vertices）：几何体的点，它们用来定义物体的轮廓。
-    •	面（Faces）：由顶点组成的三角形，定义了物体的表面。
+Three.js 提供了多种几何体，例如 BoxGeometry、SphereGeometry、PlaneGeometry 等等。
 
-用户还可以通过自定义几何体创建更复杂的形状。
+![](https://blog-bed.oss-cn-beijing.aliyuncs.com/81.threejs3D%E6%B8%B2%E6%9F%93%E5%9F%BA%E7%A1%80/shape.webp)
 
-#### 材质（Material）
+用户还可以通过自定义几何体创建更复杂的形状，比如著名的斯坦福兔子，由 69,451 个三角形组成，当顶点越多，三角面越多，兔子的形状就更细腻真实。
+![](https://blog-bed.oss-cn-beijing.aliyuncs.com/81.threejs3D%E6%B8%B2%E6%9F%93%E5%9F%BA%E7%A1%80/stanford-bunny.webp)
+
+#### 材质(Material)
 
 材质决定了物体的外观和表面属性。它定义了物体如何反射光、显示颜色、透明度等特性。Three.js 提供了不同种类的材质，例如：
 
-    •	MeshBasicMaterial：不受光照影响的基础材质。
-    •	MeshLambertMaterial：基于光照的漫反射材质，适合非反光物体。
-    •	MeshPhongMaterial：支持高光反射，适合有光泽的物体。
-    •	MeshStandardMaterial 和 MeshPhysicalMaterial：物理基础渲染（PBR）材质，用于更真实的光照效果。
+- MeshBasicMaterial
 
-#### 网格模型（Mesh）
+  不受光照影响的基础材质。
 
-网格是几何体和材质的组合，通常是我们在场景中可见的物体。Mesh 类是一个三维物体，它包含几何体和材质，并可以通过变换（旋转、缩放、平移）进行操作。
+- MeshLambertMaterial
+
+  基于光照的漫反射材质，适合非反光物体。
+
+- MeshPhongMaterial
+
+  支持高光反射，适合有光泽的物体。
+
+- MeshStandardMaterial 和 MeshPhysicalMaterial
+
+  物理基础渲染（PBR）材质，用于更真实的光照效果。
+
+#### 网格模型(Mesh)
+
+网格是**几何体**和**材质**的组合，通常是我们在场景中可见的物体。Mesh 类是一个三维物体，它包含几何体和材质，并可以通过变换（旋转、缩放、平移）进行操作。
 
 ```js
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(geometry, material);
+```
+
+有了以上这些元素后，我们就能够进行基础地渲染了，下面是一个简单的例子:
+
+```js
+// 创建场景
+const scene = new THREE.Scene();
+
+// 创建相机 (透视相机)
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.z = 5;
+
+// 创建 WebGLRenderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 创建一个立方体几何体
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 }); // 使用 Phong 材质支持光照
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+// 添加光源
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5, 5, 5);
+scene.add(light);
+
+// 动画函数
+function animate() {
+  requestAnimationFrame(animate);
+
+  // 旋转立方体
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+
+  // 渲染场景
+  renderer.render(scene, camera);
+}
+
+animate();
 ```
 
 ### 坐标系
