@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { Transition } from 'react-transition-group';
 
@@ -100,7 +100,7 @@ export const Ripple = (props: Props) => {
   const { rippleX, rippleY, rippleSize, bgColor, opacity, ...res } = props;
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
-
+  const nodeRef = useRef(null);
   const handleEnter = () => {
     setVisible(true);
   };
@@ -117,8 +117,14 @@ export const Ripple = (props: Props) => {
   };
 
   return (
-    <Transition {...res} onEnter={handleEnter} onExit={handleExit}>
+    <Transition
+      {...res}
+      nodeRef={nodeRef}
+      onEnter={handleEnter}
+      onExit={handleExit}
+    >
       <StyledRipple
+        ref={nodeRef}
         $visible={visible}
         $opacity={opacity}
         style={rippleStyles}

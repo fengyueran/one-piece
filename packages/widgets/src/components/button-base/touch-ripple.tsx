@@ -32,6 +32,7 @@ export type Handlers = {
 export const TouchRipple = forwardRef(
   (props: { bgColor?: string; opacity?: number }, ref) => {
     const numRef = useRef(0);
+    const nodeRef = useRef(null);
     const [ripples, setRipples] = useState<(RippleType & { num: number })[]>(
       []
     );
