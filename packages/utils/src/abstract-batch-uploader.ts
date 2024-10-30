@@ -1,5 +1,6 @@
 import axios, { CancelTokenSource } from 'axios';
 
+import { generateUuid } from './uuid';
 import { formatBytesAsReadableSize } from './format-bytes-as-readable-size';
 
 const getRandomFloat = (min: number, max: number, decimalPlaces: number) => {
@@ -17,6 +18,7 @@ const generateSpeedWithCap = (speed: number) => {
 };
 
 export interface Chunk {
+  fileId: string;
   number: number;
   blob: Blob;
   filename: string;
@@ -58,6 +60,7 @@ const sum = (nums: number[]) => {
 const makeFilesChunks = (files: File[], chunkSize: number) => {
   let chunkIndexInBatch = -1;
   const makeFileChunks = (file: File) => {
+    const fileId = generateUuid();
     const count = Math.ceil(file.size / chunkSize) || 1;
     const chunks: Chunk[] = [];
 
@@ -65,6 +68,7 @@ const makeFilesChunks = (files: File[], chunkSize: number) => {
       const chunk = file.slice(i * chunkSize, (i + 1) * chunkSize);
       chunkIndexInBatch++;
       chunks.push({
+        fileId,
         blob: chunk,
         number: i + 1,
         filename: file.name,
