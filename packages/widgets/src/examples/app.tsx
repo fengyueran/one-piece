@@ -8,6 +8,7 @@ import { ButtonExample } from './button';
 import { CircularSpinExample } from './circular-spin';
 import { ModalExample } from './modal';
 import { UploadExample } from './upload';
+import { ProgressBarExample } from './progress-bar';
 
 const Container = styled.div`
   width: 100vw;
@@ -31,6 +32,7 @@ export const App = () => {
       <CircularSpinExample />
       <ModalExample />
       <UploadExample />
+      <ProgressBarExample />
     </Container>
   );
 };

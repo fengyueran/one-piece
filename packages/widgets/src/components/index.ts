@@ -8,3 +8,4 @@ export * from './button';
 export * from './button-base';
 export * from './dropdown';
 export * from './upload';
+export * from './progress-bar';
