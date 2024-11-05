@@ -1,2 +1,3 @@
 export * from './pdb-loader';
-export * from './large-file-loader';
+export * from './fetch-stream-loader';
+export * from './abstract-streaming-data-loader';

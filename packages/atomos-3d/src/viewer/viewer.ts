@@ -4,7 +4,7 @@ import {
   parseLammpsTrajectoryFrame,
 } from './helpers';
 import { RenderManager, RenderManagerConfig } from '../core';
-import { LargeFileLoader } from '../loaders';
+import { FetchStreamLoader, AbstractStreamingDataLoader } from '../loaders';
 
 // eslint-disable-next-line
 export interface AtomosViewerConfig extends RenderManagerConfig {}
@@ -24,7 +24,7 @@ interface AtomInfo {
 
 export class AtomosViewer {
   private _paused = false;
-  private _loader?: LargeFileLoader;
+  private _loader?: AbstractStreamingDataLoader;
   private _firstFrameRendered = false;
   private _models: AtomInfo[][] = [];
   private _renderManager: RenderManager;
@@ -84,27 +84,45 @@ export class AtomosViewer {
     type: ModelType,
     requestConfig?: RequestInit
   ) => {
-    if (type === ModelType.LammpsTrajectory) {
-      this._loader = new LargeFileLoader({
-        url,
-        frameFlag: 'ITEM: TIMESTEP',
-        requestConfig,
-        onModel: (frameStr: string) => {
-          const model = parseLammpsTrajectoryFrame(frameStr);
-          if (this._firstFrameRendered) {
-            this._models.push(model);
-          } else {
-            this._firstFrameRendered = true;
-            if (!this._renderManager.dynamicObjs.length) {
-              this.addModel(frameStr, type);
-              this._renderManager.zoomToFitScene();
-            }
+    this._loader = new FetchStreamLoader({
+      url,
+      frameFlag: 'ITEM: TIMESTEP',
+      requestConfig,
+      onFrame: (frameStr: string) => {
+        this.onFrame(frameStr, type);
+      },
+    });
+    this.animateTrajectory();
+  };
 
-            this.render();
-          }
-        },
-      });
-      this.animateTrajectory();
+  addTrajectoryByCustomLoader = (
+    type: ModelType,
+    loader: AbstractStreamingDataLoader
+  ) => {
+    this._loader = loader;
+    this._loader.setOnFrame((frameStr: string) => this.onFrame(frameStr, type));
+    this.animateTrajectory();
+  };
+
+  private parseFrame(frameStr: string, modelType: ModelType): AtomInfo[] {
+    if (modelType === ModelType.LammpsTrajectory) {
+      return parseLammpsTrajectoryFrame(frameStr);
+    }
+    throw new Error('Unsupported model type');
+  }
+
+  private onFrame = (frameStr: string, modelType: ModelType) => {
+    const model = this.parseFrame(frameStr, modelType);
+    if (this._firstFrameRendered) {
+      this._models.push(model);
+    } else {
+      this._firstFrameRendered = true;
+      if (!this._renderManager.dynamicObjs.length) {
+        this.addModel(frameStr, modelType);
+        this._renderManager.zoomToFitScene();
+      }
+
+      this.render();
     }
   };
 
@@ -112,7 +130,7 @@ export class AtomosViewer {
     this._paused = false;
     this._firstFrameRendered = false;
     this._models = [];
-    this._loader?.fetchAndStream();
+    this._loader?.startStreaming();
   };
 
   pause = () => {

@@ -1,22 +1,22 @@
-export class LargeFileLoader {
+import { AbstractStreamingDataLoader } from './abstract-streaming-data-loader';
+
+export class FetchStreamLoader extends AbstractStreamingDataLoader {
   private _paused = false;
   private _url?: string;
-  private _frameFlag: string;
   private _requestConfig: RequestInit = {};
-  private _buffer = ''; //缓冲区
   private _controller?: AbortController | null;
   private _resumePromiseResolve?: (value: unknown) => void;
-  private _onModel: (frame: string) => void;
   loadFinished = false;
 
   constructor(config: {
     url: string;
     frameFlag: string;
+    onFrame?: (frame: string) => void;
     requestConfig?: RequestInit;
-    onModel: (frame: string) => void;
   }) {
-    const { url, frameFlag, requestConfig, onModel } = config;
-    this._onModel = onModel;
+    const { url, frameFlag, requestConfig, onFrame } = config;
+    super({ frameFlag, onFrame });
+    this._onFrame = onFrame;
     this._url = url;
     this._frameFlag = frameFlag;
     if (requestConfig) {
@@ -24,11 +24,11 @@ export class LargeFileLoader {
     }
   }
 
-  fetchAndStream = async () => {
+  startStreaming = async () => {
     if (!this._url) return;
 
     if (this._controller) {
-      this._controller.abort(); // 取消当前的fetch操作
+      this._controller.abort();
     }
 
     this.reset();
@@ -90,24 +90,6 @@ export class LargeFileLoader {
     }
   };
 
-  processBuffer = () => {
-    this.pause();
-    let start = this._buffer.indexOf(this._frameFlag);
-
-    while (start !== -1) {
-      const end = this._buffer.indexOf(this._frameFlag, start + 1);
-      if (end === -1) break;
-
-      // 处理完整的帧
-      const frameStr = this._buffer.substring(start, end);
-      this._onModel(frameStr);
-
-      // 更新缓冲区
-      this._buffer = this._buffer.substring(end);
-      start = this._buffer.indexOf(this._frameFlag);
-    }
-  };
-
   pause = () => {
     this._paused = true;
   };
@@ -121,7 +103,7 @@ export class LargeFileLoader {
     }
   };
 
-  reset = () => {
+  private reset = () => {
     this.loadFinished = false;
     this._buffer = '';
     this._paused = false;

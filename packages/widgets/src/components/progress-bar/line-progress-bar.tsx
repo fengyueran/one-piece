@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+  width: 100%;
+  min-width: 20px;
   display: flex;
   align-items: center;
 `;
