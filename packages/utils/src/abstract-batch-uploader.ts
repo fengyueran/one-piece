@@ -75,7 +75,10 @@ const makeFilesChunks = (files: File[], chunkSize: number) => {
         count,
         chunkIndexInBatch,
         totalSize: file.size,
-        relativePath: file.webkitRelativePath || file.name,
+        relativePath:
+          file.webkitRelativePath ||
+          (file as unknown as { relativePath: string }).relativePath ||
+          file.name,
       });
     }
     return chunks;
