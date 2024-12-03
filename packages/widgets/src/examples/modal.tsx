@@ -17,6 +17,7 @@ export const ModalExample = () => {
           toaster.info({
             title: 'Info',
             content: 'This is an info modal',
+            style: { color: 'red' },
           });
         }}
       >

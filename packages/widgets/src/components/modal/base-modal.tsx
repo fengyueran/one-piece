@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 
 import { Button } from '../button';
@@ -68,14 +68,23 @@ export interface ModalBaseProps {
   maskVisible?: boolean;
   footer?: React.ReactNode;
   children?: React.ReactNode;
+  className?: string;
+  style?: CSSProperties;
   onClose?: () => void;
 }
 
 export const BaseModal = (props: ModalBaseProps) => {
-  const { isOpen, maskVisible = true, footer, onClose, children } = props;
+  const {
+    isOpen,
+    maskVisible = true,
+    footer,
+    onClose,
+    children,
+    ...res
+  } = props;
 
   return (
-    <RootContainer className="modal-root" $visible={isOpen}>
+    <RootContainer className="modal-root" $visible={isOpen} {...res}>
       {maskVisible && <Mask className="modal-overlay" onClick={onClose} />}
       <ModalContent className="modal-content" $visible={isOpen}>
         {children}
