@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, CSSProperties } from 'react';
 import styled from 'styled-components';
 import { Row, Col } from '../flex-box';
 
@@ -34,6 +34,8 @@ interface TabItem {
 }
 
 export interface TabsProps {
+  className?: string;
+  style?: CSSProperties;
   tabs: TabItem[];
   selectedIndex?: number;
   defaultSelectedIndex?: number;
@@ -48,6 +50,7 @@ export const Tabs = (props: TabsProps) => {
     onTabClick,
     onTabChange,
     defaultSelectedIndex = 0,
+    ...res
   } = props;
   const [selected, setSelected] = useState(defaultSelectedIndex);
   const onClick = (index: number, item: TabItem) => {
@@ -68,7 +71,7 @@ export const Tabs = (props: TabsProps) => {
   }, [selectedIndex]);
 
   return (
-    <RootContainer>
+    <RootContainer {...res}>
       {tabs.map((tab, index) => {
         const { label } = tab;
         const isHighlight = index === selected;
