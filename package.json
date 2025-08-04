@@ -1,0 +1,43 @@
+{
+  "name": "one-piece",
+  "version": "0.0.0",
+  "private": true,
+  "description": "个人开发者项目合集 - 组件库、工具库等",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build --filter=./packages/* && changeset publish",
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@turbo/gen": "^1.10.7",
+    "eslint": "^8.48.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.4",
+    "prettier": "^3.0.3",
+    "turbo": "^1.10.7",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "pnpm@8.6.10",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}

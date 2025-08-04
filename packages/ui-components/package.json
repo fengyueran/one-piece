@@ -1,0 +1,56 @@
+{
+  "name": "@one-piece/ui-components",
+  "version": "0.0.0",
+  "description": "React 组件库",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest",
+    "clean": "rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "ui",
+    "typescript"
+  ],
+  "author": "xinghunm",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "@one-piece/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.4.0",
+    "@storybook/addon-interactions": "^7.4.0",
+    "@storybook/addon-links": "^7.4.0",
+    "@storybook/blocks": "^7.4.0",
+    "@storybook/react": "^7.4.0",
+    "@storybook/react-vite": "^7.4.0",
+    "@storybook/testing-library": "^0.2.0",
+    "@types/jest": "^29.5.5",
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.7",
+    "jest": "^29.7.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.4.0",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+} 

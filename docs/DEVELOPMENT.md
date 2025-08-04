@@ -1,0 +1,183 @@
+# 开发指南
+
+## 项目架构
+
+One Piece 采用 Monorepo 架构，使用以下技术栈：
+
+- **包管理**: pnpm + workspace
+- **构建工具**: Turborepo + tsup
+- **版本管理**: Changesets
+- **语言**: TypeScript
+- **框架**: React (组件库)
+
+## 目录结构
+
+```
+one-piece/
+├── packages/           # 可复用的包
+│   ├── ui-components/ # React 组件库
+│   ├── utils/         # 工具库
+│   ├── hooks/         # React Hooks
+│   ├── icons/         # 图标库
+│   └── themes/        # 主题库
+├── apps/              # 应用
+│   ├── docs/          # 文档站点
+│   ├── playground/    # 组件演示
+│   └── examples/      # 示例应用
+├── tools/             # 开发工具
+│   ├── build/         # 构建配置
+│   ├── eslint-config/ # ESLint 配置
+│   └── tsconfig/      # TypeScript 配置
+└── docs/              # 项目文档
+```
+
+## 开发流程
+
+### 1. 环境准备
+
+```bash
+# 安装 pnpm
+npm install -g pnpm
+
+# 安装依赖
+pnpm install
+```
+
+### 2. 开发模式
+
+```bash
+# 启动所有包的开发模式
+pnpm dev
+
+# 启动特定包的开发模式
+pnpm --filter @one-piece/ui-components dev
+```
+
+### 3. 构建
+
+```bash
+# 构建所有包
+pnpm build
+
+# 构建特定包
+pnpm --filter @one-piece/utils build
+```
+
+### 4. 测试
+
+```bash
+# 运行所有测试
+pnpm test
+
+# 运行特定包的测试
+pnpm --filter @one-piece/utils test
+```
+
+## 添加新包
+
+### 1. 创建包目录
+
+```bash
+mkdir packages/new-package
+cd packages/new-package
+```
+
+### 2. 创建 package.json
+
+```json
+{
+  "name": "@one-piece/new-package",
+  "version": "0.0.0",
+  "description": "新包描述",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
+```
+
+### 3. 创建源码
+
+```bash
+mkdir src
+echo "export * from './main'" > src/index.ts
+```
+
+## 发布流程
+
+### 1. 创建变更集
+
+```bash
+pnpm changeset
+```
+
+### 2. 版本升级
+
+```bash
+pnpm version-packages
+```
+
+### 3. 发布
+
+```bash
+pnpm release
+```
+
+## 代码规范
+
+### 命名规范
+
+- **包名**: `@one-piece/package-name`
+- **文件名**: `kebab-case.ts`
+- **组件名**: `PascalCase`
+- **函数名**: `camelCase`
+- **常量名**: `UPPER_SNAKE_CASE`
+
+### 提交规范
+
+使用 Conventional Commits 规范：
+
+```
+feat: 新功能
+fix: 修复bug
+docs: 文档更新
+style: 代码格式调整
+refactor: 重构
+test: 测试相关
+chore: 构建/工具相关
+```
+
+## 最佳实践
+
+### 1. 包设计原则
+
+- **单一职责**: 每个包应该有明确的单一职责
+- **最小依赖**: 尽量减少外部依赖
+- **向后兼容**: API 变更需要考虑向后兼容性
+
+### 2. 代码质量
+
+- 使用 TypeScript 进行类型检查
+- 编写单元测试
+- 遵循 ESLint 规则
+- 添加适当的文档注释
+
+### 3. 性能考虑
+
+- Tree-shaking 友好的导出方式
+- 避免不必要的依赖
+- 合理的包大小控制 
