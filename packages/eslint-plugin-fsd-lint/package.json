@@ -1,0 +1,61 @@
+{
+  "name": "@xinghunm/eslint-plugin-fsd-lint",
+  "version": "1.0.0",
+  "description": "ESLint plugin for Frontend Project Structure validation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "frontend",
+    "project",
+    "structure",
+    "fsd",
+    "architecture",
+    "fsd",
+    "typescript"
+  ],
+  "author": "xinghunm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xinghunm/one-piece.git",
+    "directory": "packages/eslint-plugin-fsd-lint"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "jest",
+    "test:unit": "jest",
+    "test:integration": "pnpm run build && cd test-project && pnpm install && npx eslint src/",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.56.0",
+    "@types/estree": "^1.0.8",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ]
+}
