@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@one-piece/ui-components": "workspace:*",
+    "@xinghunm/compass-ui": "workspace:*",
     "@one-piece/utils": "workspace:*",
     "next": "^13.5.0",
     "react": "^18.2.0",
@@ -24,4 +24,4 @@
     "eslint-config-next": "^13.5.0",
     "typescript": "^5.2.2"
   }
-} 
+}
