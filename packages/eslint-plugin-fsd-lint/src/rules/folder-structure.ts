@@ -28,18 +28,17 @@ interface FolderStructureOptions extends BaseRuleOptions {
 function validateStructure(structure: ParsedFileStructure): ValidationResult {
   const errors: RuleError[] = []
 
-  if (structure.srcIndex === -1) {
-    errors.push(
-      createRuleError(RuleErrorType.FOLDER_STRUCTURE, 'File must be under a "src" directory'),
-    )
-    return createValidationResult(false, errors)
+  // If we cannot detect any FSD layer/root, do not force the file to be under a literal 'src' folder.
+  // Just skip validation to avoid false positives in non-standard layouts.
+  if (structure.srcIndex === -1 && structure.layerIndex === -1) {
+    return createValidationResult(true, [])
   }
 
-  // Check if this is a file directly in src root directory
+  // Check if this is a file directly in src (or detected fsd root) directory
   const isRootFile =
     structure.layerIndex === structure.srcIndex + 1 && structure.layer === structure.fileName
 
-  // Skip validation for files directly in src root
+  // Skip validation for files directly in root
   if (isRootFile) {
     return createValidationResult(true, [])
   }

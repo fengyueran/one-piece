@@ -1,6 +1,6 @@
 {
   "name": "@xinghunm/eslint-plugin-fsd-lint",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ESLint plugin for Frontend Project Structure validation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

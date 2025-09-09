@@ -99,6 +99,107 @@ export default [
   }
   ```
 
+## 全局配置选项
+
+插件支持通过 ESLint 的 `settings` 配置全局选项，这些选项会影响所有规则的行为：
+
+### `srcRootDir`
+
+指定 FSD 项目的根目录绝对路径。当你的项目结构不是标准的 `src/` 目录时，可以通过此选项指定实际的 FSD 根目录。
+
+```javascript
+// eslint.config.js
+export default [
+  {
+    plugins: {
+      '@xinghunm/fsd-lint': fsdLint,
+    },
+    settings: {
+      'fsd-lint': {
+        srcRootDir: '/absolute/path/to/your/fsd/root', // 例如：'/Users/username/project/apps/web/src'
+      },
+    },
+    rules: {
+      ...fsdLint.configs.recommended.rules,
+    },
+  },
+]
+```
+
+**使用场景：**
+
+- 项目使用非标准目录结构（如 `apps/web/src/`、`packages/frontend/src/` 等）
+- 多包项目中需要为不同包指定不同的 FSD 根目录
+- 项目根目录不叫 `src`（如 `source/`、`client/` 等）
+
+### `pathAliases`
+
+配置路径别名映射，用于解析 `@/` 或其他自定义别名的导入路径。
+
+```javascript
+// eslint.config.js
+export default [
+  {
+    plugins: {
+      '@xinghunm/fsd-lint': fsdLint,
+    },
+    settings: {
+      'fsd-lint': {
+        pathAliases: {
+          '@/': '/absolute/path/to/src', // 标准 @ 别名
+          '~/': '/absolute/path/to/src', // 自定义 ~ 别名
+          'components/': '/absolute/path/to/src/shared/ui', // 组件别名
+        },
+      },
+    },
+    rules: {
+      ...fsdLint.configs.recommended.rules,
+    },
+  },
+]
+```
+
+**使用场景：**
+
+- 项目使用 `@/` 别名指向 src 目录
+- 使用 Vite、Webpack 等构建工具的路径别名
+- 需要支持多个自定义别名的复杂项目
+
+### 完整配置示例
+
+```javascript
+// eslint.config.js
+import fsdLint from '@xinghunm/eslint-plugin-fsd-lint'
+import { resolve } from 'path'
+
+export default [
+  {
+    plugins: {
+      '@xinghunm/fsd-lint': fsdLint,
+    },
+    settings: {
+      'fsd-lint': {
+        // 指定 FSD 根目录
+        srcRootDir: resolve(__dirname, 'src'),
+        // 配置路径别名
+        pathAliases: {
+          '@/': resolve(__dirname, 'src'),
+        },
+      },
+    },
+    rules: {
+      ...fsdLint.configs.recommended.rules,
+    },
+  },
+]
+```
+
+**注意事项：**
+
+- `srcRootDir` 和 `pathAliases` 中的路径必须是绝对路径
+- 如果不配置这些选项，插件会自动检测项目结构（查找 `src` 目录或 FSD 层级目录）
+- 配置了 `srcRootDir` 后，插件将优先使用该路径而不是自动检测
+
 ## 规则详解
 
 本插件提供 5 个核心规则，确保你的项目严格遵循 FSD 架构原则：
@@ -413,10 +514,6 @@ export default [
 文件位置：src/features/user-auth/ui/LoginForm.tsx
 但 src/features/user-auth/ 目录中没有 index.ts 或 index.js
 错误信息：Missing required file: Module "user-auth" in layer "features" must have an index file for public API
-
-错误：文件不在 src 目录下
-文件位置：components/Button.tsx
-错误信息：Folder structure violation: File must be under a "src" directory
 ```
 
 ### `@xinghunm/fsd-lint/naming-convention`

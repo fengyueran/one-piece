@@ -107,17 +107,5 @@ ruleTester.run('folder-structure', rule, {
       ],
       options: [{ requirePublicApi: false, strictLayerStructure: true }],
     },
-    // File is not under the src directory
-    {
-      code: `export const NotInSrc = {};`,
-      filename: '/project/lib/utils.js',
-      errors: [
-        {
-          message: 'Folder structure violation: File must be under a "src" directory',
-          type: 'Program',
-        },
-      ],
-      options: [{ requirePublicApi: false, strictLayerStructure: true }],
-    },
   ],
 })
