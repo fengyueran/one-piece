@@ -66,7 +66,33 @@ alwaysApply: true
   }
   ```
 
-### 1.4 导出规范
+### 1.4 className 命名规范
+
+- **组件根元素必须添加标准化的 className**
+- className 格式：`compass-{component-name} compass-{component-name}--{variant} {customClassName}`
+- 组件名使用 kebab-case
+- variant 使用 kebab-case
+- 示例：
+
+  ```typescript
+  // Button 组件
+  className={`compass-button compass-button--${variant} ${className || ''}`}
+
+  // Progress 组件
+  className={`compass-progress compass-progress--${type} ${className || ''}`}
+
+  // InputField 组件
+  className={`compass-input-field compass-input-field--${size} ${className || ''}`}
+  ```
+
+- **规则说明：**
+  - 基础类名：`compass-{component-name}` - 用于基础样式和组件识别
+  - 变体类名：`compass-{component-name}--{variant}` - 用于不同变体的样式
+  - 自定义类名：`${className || ''}` - 支持用户传入的自定义类名
+  - 类名之间用空格分隔
+  - 如果没有 variant，可以省略变体类名
+
+### 1.5 导出规范
 
 - 每个组件目录的 `index.ts` 导出组件和类型
 - `src/index.ts` 统一导出所有公共 API
@@ -310,6 +336,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
 - [ ] 通过 lint 检查
 - [ ] 支持可访问性
 - [ ] Props 有 JSDoc 注释
+- [ ] 遵循 className 命名规范
 - [ ] 性能考虑合理
 - [ ] 错误处理完善
 

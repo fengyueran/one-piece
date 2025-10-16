@@ -7,6 +7,7 @@ Compass UI 组件库的完整 API 参考文档。
 ### 基础组件
 
 - **[Button](./api/Button.md)** - 按钮组件，用于触发操作和事件
+- **[Progress](./api/Progress.md)** - 进度条组件，显示任务完成状态
 
 ### 主题系统
 
