@@ -20,7 +20,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xinghunm/one-piece.git",
+    "url": "https://github.com/fengyueran/one-piece.git",
     "directory": "packages/eslint-plugin-fsd-lint"
   },
   "engines": {

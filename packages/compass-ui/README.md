@@ -123,13 +123,25 @@ function App() {
 }
 ```
 
+## 📖 Documentation
+
+- [API Documentation](./docs/API.md) - Complete API reference
+- [Development Guide](./docs/DEVELOPMENT.md) - Development workflow and standards
+- [Contributing Guide](./docs/CONTRIBUTING.md) - How to contribute
+- [Changelog](./CHANGELOG.md) - Version history
+
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](../../CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTING.md) for details on:
+
+- Reporting bugs
+- Suggesting features
+- Submitting pull requests
+- Development workflow
 
 ## 📄 License
 
-MIT © [xinghunm](https://github.com/xinghunm)
+MIT © [xinghunm](https://github.com/fengyueran)
 
 ---
 
