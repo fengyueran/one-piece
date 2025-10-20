@@ -320,25 +320,3 @@ export const CircleStrokeWidthVariations: Story = {
     </div>
   ),
 }
-
-// Interactive Examples
-export const InteractiveLinear: Story = {
-  args: {
-    type: 'line',
-    percent: 50,
-    size: 'medium',
-    status: 'normal',
-    showInfo: true,
-  },
-}
-
-export const InteractiveCircle: Story = {
-  args: {
-    type: 'circle',
-    percent: 50,
-    size: 'medium',
-    status: 'normal',
-    showInfo: true,
-    strokeWidth: 6,
-  },
-}

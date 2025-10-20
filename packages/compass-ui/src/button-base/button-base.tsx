@@ -24,7 +24,7 @@ export interface ButtonBaseProps {
   disabled?: boolean
   rippleBgColor?: string
   rippleOpacity?: number
-  children: React.ReactNode
+  children?: React.ReactNode
   onClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 

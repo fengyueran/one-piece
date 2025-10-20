@@ -325,4 +325,28 @@ describe('Button', () => {
       expect(spinner).toHaveAttribute('aria-hidden')
     })
   })
+
+  describe('Without ThemeProvider', () => {
+    it('should render with default fallback styles', () => {
+      render(<Button>Click me</Button>)
+      const button = screen.getByRole('button')
+      expect(button).toBeInTheDocument()
+
+      const styles = window.getComputedStyle(button)
+      expect(styles.height).toBe('32px')
+      expect(styles.fontSize).toBe('14px')
+      expect(styles.backgroundColor).toBe('rgb(255, 255, 255)') // #fff
+      expect(styles.borderColor).toBe('rgb(217, 217, 217)') // #d9d9d9
+      expect(styles.color).toBe('rgb(0, 0, 0)') // #000
+    })
+
+    it('should render primary variant with fallback styles', () => {
+      render(<Button variant="primary">Primary</Button>)
+      const button = screen.getByRole('button')
+      const styles = window.getComputedStyle(button)
+
+      expect(styles.backgroundColor).toBe('rgb(0, 123, 255)') // #007bff
+      expect(styles.color).toBe('rgb(255, 255, 255)') // #fff
+    })
+  })
 })

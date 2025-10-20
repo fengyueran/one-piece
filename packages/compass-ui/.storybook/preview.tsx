@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react'
+import type { Preview } from '@storybook/react-vite'
 import React from 'react'
 import { ThemeProvider } from '../src/theme'
 
@@ -20,14 +20,18 @@ const preview: Preview = {
     },
     docs: {
       toc: true,
+
       source: {
         state: 'open',
         excludeDecorators: true,
         type: 'code',
       },
+
       canvas: {
         sourceState: 'shown',
       },
+
+      codePanel: true,
     },
   },
 }

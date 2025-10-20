@@ -1,7 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import React from 'react'
 import Button from './button'
 import { ThemeProvider } from '../theme'
+
+// Common icon component for examples
+const PlusIcon = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+)
 
 const meta: Meta<typeof Button> = {
   title: 'Components/Button',
@@ -44,15 +51,15 @@ const meta: Meta<typeof Button> = {
     },
     hasRipple: {
       control: { type: 'boolean' },
-      description: '是否启用水波纹效果（来自 ButtonBase）',
+      description: '是否启用水波纹效果',
     },
     rippleBgColor: {
       control: { type: 'color' },
-      description: '水波纹背景色（来自 ButtonBase）',
+      description: '水波纹背景色',
     },
     rippleOpacity: {
       control: { type: 'range', min: 0, max: 1, step: 0.05 },
-      description: '水波纹不透明度（来自 ButtonBase）',
+      description: '水波纹不透明度',
     },
     onClick: {
       action: 'clicked',
@@ -167,7 +174,7 @@ export const Block: Story = {
 export const WithIcon: Story = {
   args: {
     variant: 'primary',
-    icon: <span>🚀</span>,
+    icon: PlusIcon,
     children: 'Button with Icon',
   },
   parameters: {
@@ -182,7 +189,7 @@ export const WithIcon: Story = {
 export const IconOnly: Story = {
   args: {
     variant: 'primary',
-    icon: <span>➕</span>,
+    icon: PlusIcon,
     children: '',
   },
   parameters: {
@@ -281,12 +288,10 @@ const AllVariants: React.FC = () => (
     </div>
 
     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <Button variant="primary" icon={<span>🚀</span>}>
+      <Button variant="primary" icon={PlusIcon}>
         With Icon
       </Button>
-      <Button variant="primary" icon={<span>➕</span>}>
-        Icon Only
-      </Button>
+      <Button variant="primary" icon={PlusIcon}></Button>
     </div>
   </div>
 )

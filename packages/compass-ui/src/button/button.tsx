@@ -32,11 +32,11 @@ const StyledButton = styled(ButtonBase)<{
   box-sizing: border-box;
   position: relative;
   white-space: nowrap;
-  font-weight: ${({ theme }) => theme.fontWeight.normal};
-  transition: ${({ theme }) => theme.transitions.normal};
+  font-weight: ${({ theme }) => theme?.fontWeight?.normal || '400'};
+  transition: ${({ theme }) => theme?.transitions?.normal || 'all 0.3s'};
 
   &:focus {
-    outline: 2px solid ${({ theme }) => theme.colors.primary}40;
+    outline: 2px solid ${({ theme }) => theme?.colors?.primary || '#007bff'};
     outline-offset: 2px;
   }
 
@@ -50,23 +50,23 @@ const StyledButton = styled(ButtonBase)<{
       case 'small':
         return `
           height: 24px;
-          padding: 0 ${theme.spacing.sm}px;
-          font-size: ${theme.fontSize.xs}px;
-          border-radius: ${theme.borderRadius.sm}px;
+          padding: 0 ${theme?.spacing?.sm || 8}px;
+          font-size: ${theme?.fontSize?.xs || 12}px;
+          border-radius: ${theme?.borderRadius?.sm || 4}px;
         `
       case 'large':
         return `
           height: 40px;
-          padding: 0 ${theme.spacing.md}px;
-          font-size: ${theme.fontSize.md}px;
-          border-radius: ${theme.borderRadius.lg}px;
+          padding: 0 ${theme?.spacing?.md || 16}px;
+          font-size: ${theme?.fontSize?.md || 16}px;
+          border-radius: ${theme?.borderRadius?.lg || 8}px;
         `
       default:
         return `
           height: 32px;
-          padding: 0 ${theme.spacing.md}px;
-          font-size: ${theme.fontSize.sm}px;
-          border-radius: ${theme.borderRadius.md}px;
+          padding: 0 ${theme?.spacing?.md || 16}px;
+          font-size: ${theme?.fontSize?.sm || 14}px;
+          border-radius: ${theme?.borderRadius?.md || 6}px;
         `
     }
   }}
@@ -75,61 +75,61 @@ const StyledButton = styled(ButtonBase)<{
     switch ($variant) {
       case 'primary':
         return `
-          background-color: ${theme.colors.primary};
-          border-color: ${theme.colors.primary};
+          background-color: ${theme?.colors?.primary || '#007bff'};
+          border-color: ${theme?.colors?.primary || '#007bff'};
           color: #fff;
           
           &:hover:not(:disabled) {
-            background-color: ${theme.colors.primaryHover};
-            border-color: ${theme.colors.primaryHover};
+            background-color: ${theme?.colors?.primaryHover || '#0056b3'};
+            border-color: ${theme?.colors?.primaryHover || '#0056b3'};
           }
           
           &:active:not(:disabled) {
-            background-color: ${theme.colors.primaryActive};
-            border-color: ${theme.colors.primaryActive};
+            background-color: ${theme?.colors?.primaryActive || '#004085'};
+            border-color: ${theme?.colors?.primaryActive || '#004085'};
           }
         `
       case 'dashed':
         return `
-          background-color: ${theme.colors.background};
-          border-color: ${theme.colors.border};
+          background-color: ${theme?.colors?.background || '#fff'};
+          border-color: ${theme?.colors?.border || '#d9d9d9'};
           border-style: dashed;
-          color: ${theme.colors.text};
+          color: ${theme?.colors?.text || '#000'};
           
           &:hover:not(:disabled) {
-            border-color: ${theme.colors.borderHover};
-            color: ${theme.colors.borderHover};
+            border-color: ${theme?.colors?.borderHover || '#40a9ff'};
+            color: ${theme?.colors?.borderHover || '#40a9ff'};
           }
         `
       case 'text':
         return `
           background-color: transparent;
           border-color: transparent;
-          color: ${theme.colors.text};
+          color: ${theme?.colors?.text || '#000'};
           
           &:hover:not(:disabled) {
-            background-color: ${theme.colors.backgroundTertiary};
+            background-color: ${theme?.colors?.backgroundTertiary || 'rgba(0, 0, 0, 0.018)'};
           }
         `
       case 'link':
         return `
           background-color: transparent;
           border-color: transparent;
-          color: ${theme.colors.primary};
+          color: ${theme?.colors?.primary || '#007bff'};
           
           &:hover:not(:disabled) {
-            color: ${theme.colors.primaryHover};
+            color: ${theme?.colors?.primaryHover || '#0056b3'};
           }
         `
       default:
         return `
-          background-color: ${theme.colors.background};
-          border-color: ${theme.colors.border};
-          color: ${theme.colors.text};
+          background-color: ${theme?.colors?.background || '#fff'};
+          border-color: ${theme?.colors?.border || '#d9d9d9'};
+          color: ${theme?.colors?.text || '#000'};
           
           &:hover:not(:disabled) {
-            border-color: ${theme.colors.borderHover};
-            color: ${theme.colors.borderHover};
+            border-color: ${theme?.colors?.borderHover || '#40a9ff'};
+            color: ${theme?.colors?.borderHover || '#40a9ff'};
           }
         `
     }
@@ -142,8 +142,8 @@ const StyledButton = styled(ButtonBase)<{
       ${
         $variant === 'primary'
           ? `
-        background-color: ${theme.colors.error};
-        border-color: ${theme.colors.error};
+        background-color: ${theme?.colors?.error || '#ff4d4f'};
+        border-color: ${theme?.colors?.error || '#ff4d4f'};
         
         &:hover:not(:disabled) {
           background-color: #ff7875;
@@ -151,8 +151,8 @@ const StyledButton = styled(ButtonBase)<{
         }
       `
           : `
-        border-color: ${theme.colors.error};
-        color: ${theme.colors.error};
+        border-color: ${theme?.colors?.error || '#ff4d4f'};
+        color: ${theme?.colors?.error || '#ff4d4f'};
         
         &:hover:not(:disabled) {
           ${
