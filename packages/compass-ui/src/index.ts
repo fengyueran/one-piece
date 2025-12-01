@@ -1,14 +1,10 @@
 export { default as Button } from './button'
 export type { ButtonProps } from './button'
-export { message } from './message'
+
+export { default as message } from './message'
 export type { MessageProps, MessageInstance } from './message'
-export {
-  Progress,
-  LinearProgress,
-  CircleProgress,
-  type ProgressProps,
-  type LinearProgressProps,
-  type CircleProgressProps,
-} from './progress'
+
+export { default as Progress } from './progress'
+export type { ProgressProps } from './progress'
 
 export { ThemeProvider, defaultTheme, type Theme } from './theme'

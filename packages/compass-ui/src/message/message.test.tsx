@@ -1,144 +1,195 @@
 import React from 'react'
 import { render, screen, act, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { message } from './index'
+import message from './index'
 
-describe('Message', () => {
+describe('Message Component', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
     jest.useFakeTimers()
   })
 
-  afterEach(() => {
-    message.destroy()
+  afterEach(async () => {
+    await act(async () => {
+      message.destroy()
+    })
     jest.useRealTimers()
   })
 
-  test('renders message correctly', async () => {
-    act(() => {
-      message.info('Test Message')
-      jest.advanceTimersByTime(20) // Advance time to flush queue
+  describe('Rendering', () => {
+    it('should render info message correctly', async () => {
+      act(() => {
+        message.info('Test Message')
+        jest.advanceTimersByTime(20)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Test Message')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'info' })).toBeInTheDocument()
+      })
     })
 
-    await waitFor(() => {
-      expect(screen.getByText('Test Message')).toBeInTheDocument()
-    })
-  })
+    it('should render success message correctly', async () => {
+      act(() => {
+        message.success('Success Message')
+        jest.advanceTimersByTime(20)
+      })
 
-  test('renders success message', async () => {
-    act(() => {
-      message.success('Success Message')
-      jest.advanceTimersByTime(20)
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText('Success Message')).toBeInTheDocument()
-    })
-  })
-
-  test('renders error message', async () => {
-    act(() => {
-      message.error('Error Message')
-      jest.advanceTimersByTime(20)
+      await waitFor(() => {
+        expect(screen.getByText('Success Message')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'success' })).toBeInTheDocument()
+      })
     })
 
-    await waitFor(() => {
-      expect(screen.getByText('Error Message')).toBeInTheDocument()
-    })
-  })
+    it('should render error message correctly', async () => {
+      act(() => {
+        message.error('Error Message')
+        jest.advanceTimersByTime(20)
+      })
 
-  test('renders warning message', async () => {
-    act(() => {
-      message.warning('Warning Message')
-      jest.advanceTimersByTime(20)
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText('Warning Message')).toBeInTheDocument()
-    })
-  })
-
-  test('renders loading message', async () => {
-    act(() => {
-      message.loading('Loading Message')
-      jest.advanceTimersByTime(20)
+      await waitFor(() => {
+        expect(screen.getByText('Error Message')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'error' })).toBeInTheDocument()
+      })
     })
 
-    await waitFor(() => {
-      expect(screen.getByText('Loading Message')).toBeInTheDocument()
-    })
-  })
+    it('should render warning message correctly', async () => {
+      act(() => {
+        message.warning('Warning Message')
+        jest.advanceTimersByTime(20)
+      })
 
-  test('auto closes after duration', async () => {
-    act(() => {
-      message.info('Auto Close Message', 1)
-      jest.advanceTimersByTime(20)
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText('Auto Close Message')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText('Warning Message')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'warning' })).toBeInTheDocument()
+      })
     })
 
-    act(() => {
-      jest.advanceTimersByTime(1500)
-    })
+    it('should render loading message correctly', async () => {
+      act(() => {
+        message.loading('Loading Message')
+        jest.advanceTimersByTime(20)
+      })
 
-    await waitFor(() => {
-      expect(screen.queryByText('Auto Close Message')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByText('Loading Message')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'loading' })).toBeInTheDocument()
+      })
     })
   })
 
-  test('calls onClose callback', async () => {
-    const onClose = jest.fn()
-    act(() => {
-      message.info('Callback Message', 1, onClose)
-      jest.advanceTimersByTime(20)
+  describe('Props', () => {
+    it('should support custom duration', async () => {
+      act(() => {
+        message.info('Auto Close Message', 1)
+        jest.advanceTimersByTime(20)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText('Auto Close Message')).toBeInTheDocument()
+      })
+
+      act(() => {
+        jest.advanceTimersByTime(1500)
+      })
+
+      await waitFor(() => {
+        expect(screen.queryByText('Auto Close Message')).not.toBeInTheDocument()
+      })
     })
 
-    const msgElement = await screen.findByText('Callback Message')
-    expect(msgElement).toBeInTheDocument()
+    it('should support custom className and style', async () => {
+      act(() => {
+        message.open({
+          content: 'Custom Style Message',
+          className: 'custom-test-class',
+          style: { color: 'red' },
+        })
+        jest.advanceTimersByTime(20)
+      })
 
-    act(() => {
-      jest.advanceTimersByTime(1500)
+      const msgText = await screen.findByText('Custom Style Message')
+      // Note: Accessing DOM element to verify className, though we prefer text location
+      const msgElement = msgText.closest('.compass-message')
+
+      expect(msgElement).toHaveClass('custom-test-class')
+      expect(msgElement).toHaveStyle({ color: 'rgb(255, 0, 0)' })
     })
-
-    await waitFor(() => {
-      expect(screen.queryByText('Callback Message')).not.toBeInTheDocument()
-    })
-
-    expect(onClose).toHaveBeenCalled()
   })
-  test('pauses auto close on hover', async () => {
-    act(() => {
-      message.info('Hover Message', 1)
-      jest.advanceTimersByTime(20)
+
+  describe('Interactions', () => {
+    it('should pause auto-close on hover', async () => {
+      act(() => {
+        message.info('Hover Message', 1)
+        jest.advanceTimersByTime(20)
+      })
+
+      const msgText = await screen.findByText('Hover Message')
+      const msgElement = msgText.closest('.compass-message')
+      expect(msgText).toBeInTheDocument()
+
+      // Simulate mouse hover
+      if (msgElement) {
+        fireEvent.mouseEnter(msgElement)
+      }
+
+      // Advance time past duration
+      act(() => {
+        jest.advanceTimersByTime(1500)
+      })
+
+      // Should still be visible
+      expect(screen.getByText('Hover Message')).toBeInTheDocument()
+
+      // Simulate mouse leave
+      if (msgElement) {
+        fireEvent.mouseLeave(msgElement)
+      }
+
+      // Advance time again
+      act(() => {
+        jest.advanceTimersByTime(1500)
+      })
+
+      // Should be closed now
+      await waitFor(() => {
+        expect(screen.queryByText('Hover Message')).not.toBeInTheDocument()
+      })
     })
 
-    const msgElement = await screen.findByText('Hover Message')
-    expect(msgElement).toBeInTheDocument()
+    it('should call onClose callback when closed', async () => {
+      const onClose = jest.fn()
+      act(() => {
+        message.info('Callback Message', 1, onClose)
+        jest.advanceTimersByTime(20)
+      })
 
-    // Hover over the message
-    fireEvent.mouseEnter(msgElement.closest('div')!)
+      expect(await screen.findByText('Callback Message')).toBeInTheDocument()
 
-    // Advance time past the duration
-    act(() => {
-      jest.advanceTimersByTime(1500)
+      act(() => {
+        jest.advanceTimersByTime(1500)
+      })
+
+      await waitFor(() => {
+        expect(screen.queryByText('Callback Message')).not.toBeInTheDocument()
+      })
+
+      expect(onClose).toHaveBeenCalledTimes(1)
     })
+  })
 
-    // Should still be visible
-    expect(screen.getByText('Hover Message')).toBeInTheDocument()
+  describe('Accessibility', () => {
+    it('icons should have correct aria-label', async () => {
+      act(() => {
+        message.info('A11y Test')
+        jest.advanceTimersByTime(20)
+      })
 
-    // Mouse leave
-    fireEvent.mouseLeave(msgElement.closest('div')!)
-
-    // Advance time again
-    act(() => {
-      jest.advanceTimersByTime(1500)
-    })
-
-    // Should be gone now
-    await waitFor(() => {
-      expect(screen.queryByText('Hover Message')).not.toBeInTheDocument()
+      await waitFor(() => {
+        const icon = screen.getByRole('img', { name: 'info' })
+        expect(icon).toBeInTheDocument()
+        expect(icon).toHaveAttribute('aria-label', 'info')
+      })
     })
   })
 })

@@ -4,7 +4,7 @@ import {
   StyledLinearProgress,
   StyledProgressBar,
   StyledProgressText,
-} from './styled-components'
+} from './progress.styles'
 
 import { LinearProgressProps } from './types'
 import { normalizePercent, useFinalStatus, usePercentText } from './progress-utils'

@@ -1,4 +1,5 @@
-export { Progress } from './progress'
-export { LinearProgress } from './linear-progress'
-export { CircleProgress } from './circle-progress'
-export type { ProgressProps, LinearProgressProps, CircleProgressProps } from './types'
+import { Progress } from './progress'
+
+export type { ProgressProps } from './types'
+
+export default Progress

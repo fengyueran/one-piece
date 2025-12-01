@@ -6,7 +6,7 @@ import {
   StyledCircleTrail,
   StyledCirclePath,
   StyledCircleText,
-} from './styled-components'
+} from './progress.styles'
 
 import { CircleProgressProps } from './types'
 import { normalizePercent, useFinalStatus, usePercentText } from './progress-utils'

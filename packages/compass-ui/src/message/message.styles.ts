@@ -1,8 +1,18 @@
 import styled from '@emotion/styled'
+import { keyframes, css } from '@emotion/react'
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 export const MessageContainer = styled.div`
   position: fixed;
-  top: 16px;
+  top: ${({ theme }) => theme.spacing?.md || 16}px;
   left: 0;
   width: 100%;
   pointer-events: none;
@@ -13,7 +23,7 @@ export const MessageContainer = styled.div`
 `
 
 export const MessageItem = styled.div`
-  padding: 8px;
+  padding: ${({ theme }) => theme.spacing?.sm || 8}px;
   text-align: center;
   pointer-events: all;
 
@@ -24,7 +34,7 @@ export const MessageItem = styled.div`
   &.compass-message-enter-active {
     opacity: 1;
     transform: translateY(0);
-    transition: all 0.3s ease-in-out;
+    transition: ${({ theme }) => theme.transitions?.slow || 'all 0.3s ease-in-out'};
   }
   &.compass-message-exit {
     opacity: 1;
@@ -33,42 +43,57 @@ export const MessageItem = styled.div`
   &.compass-message-exit-active {
     opacity: 0;
     transform: translateY(-100%);
-    transition: all 0.3s ease-in-out;
+    transition: ${({ theme }) => theme.transitions?.slow || 'all 0.3s ease-in-out'};
   }
 `
 
 export const MessageContent = styled.div`
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow:
-    0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 6px 16px 0 rgba(0, 0, 0, 0.08),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-  font-size: 14px;
-  line-height: 1.5715;
+  padding: ${({ theme }) => `${theme.spacing?.sm || 8}px ${theme.spacing?.md || 16}px`};
+  background: ${({ theme }) => theme.colors?.background || '#fff'};
+  border-radius: ${({ theme }) => theme.borderRadius?.lg || 8}px;
+  box-shadow: ${({ theme }) =>
+    theme.shadows?.lg ||
+    '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)'};
+  font-size: ${({ theme }) => theme.fontSize?.sm || 14}px;
+  line-height: ${({ theme }) => theme.lineHeight?.normal || 1.5715};
+  color: ${({ theme }) => theme.colors?.text || 'rgba(0, 0, 0, 0.88)'};
 `
 
 export const IconWrapper = styled.span<{ $type?: string }>`
-  margin-right: 8px;
+  margin-right: ${({ theme }) => theme.spacing?.sm || 8}px;
   display: inline-flex;
   align-items: center;
-  font-size: 16px;
+  font-size: ${({ theme }) => theme.fontSize?.md || 16}px;
+  line-height: 1;
 
   ${({ $type, theme }) => {
+    let color = theme?.colors?.primary || '#1890ff'
     switch ($type) {
       case 'success':
-        return `color: ${theme?.colors?.success || '#52c41a'};`
+        color = theme?.colors?.success || '#52c41a'
+        break
       case 'error':
-        return `color: ${theme?.colors?.error || '#ff4d4f'};`
+        color = theme?.colors?.error || '#ff4d4f'
+        break
       case 'warning':
-        return `color: ${theme?.colors?.warning || '#faad14'};`
-      case 'loading':
-        return `color: ${theme?.colors?.primary || '#1890ff'};`
-      default:
-        return `color: ${theme?.colors?.primary || '#1890ff'};`
+        color = theme?.colors?.warning || '#faad14'
+        break
     }
+
+    if ($type === 'loading') {
+      return css`
+        color: ${color};
+        .anticon {
+          display: inline-block;
+          animation: ${spin} 1s linear infinite;
+        }
+      `
+    }
+
+    return css`
+      color: ${color};
+    `
   }}
 `

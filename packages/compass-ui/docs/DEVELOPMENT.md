@@ -253,6 +253,45 @@ pnpm build
 - [ ] 更新 CHANGELOG.md
 - [ ] 更新版本号 (`package.json`)
 
+## 开发规范
+
+### 1. 主题适配 (Theme)
+
+- **必须使用主题变量**：所有组件样式必须基于 Theme System 开发，禁止硬编码颜色、间距、字体大小等值。
+- **样式分离**：建议将样式定义分离到 `*.styles.ts` 文件中，保持组件逻辑清晰。
+- **暗色模式**：确保组件通过主题变量自动适配 Light/Dark 模式。
+
+### 2. ClassName 与结构
+
+- **根元素支持**：所有组件的根元素必须支持传入 `className` 和 `style` 属性，并正确合并到 DOM 节点。
+- **语义化 ClassName**：组件的关键内部结构必须添加语义化的静态 ClassName，遵循 BEM 命名风格 `compass-[component]-[part]`。
+  - 示例：`compass-message`, `compass-message-content`, `compass-button-icon`
+- **Ref 转发**：所有基础组件必须使用 `forwardRef` 将 ref 转发到底层 DOM 节点，确保组件可被引用。
+
+### 3. 导出规范 (Export)
+
+- **统一入口**：每个组件目录必须包含 `index.ts` 文件。
+- **导出内容**：
+  - 导出组件本体（Default 或 Named Export）。
+  - 导出组件相关的 Props 类型定义 (`export * from './types'`)。
+- **示例** (`src/message/index.ts`)：
+  ```typescript
+  import message from './message'
+  export * from './types'
+  export default message
+  ```
+
+### 4. 文件结构
+
+每个组件应包含以下文件：
+
+- `index.ts`: 导出入口
+- `[component].tsx`: 组件实现
+- `[component].styles.ts`: 样式定义 (Emotion)
+- `types.ts`: 类型定义
+- `[component].stories.tsx`: Storybook 文档
+- `[component].test.tsx`: 单元测试
+
 ## 代码审查清单
 
 提交代码前，请确保：
