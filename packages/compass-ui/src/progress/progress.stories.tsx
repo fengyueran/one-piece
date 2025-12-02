@@ -66,10 +66,12 @@ const meta = {
     strokeColor: {
       control: 'color',
       description: '描边颜色',
+      type: 'string',
     },
     trailColor: {
       control: 'color',
       description: '轨道颜色（背景颜色）',
+      type: 'string',
     },
   },
 }

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import Button from './button'
 import { ThemeProvider } from '../theme'
@@ -56,10 +56,19 @@ const meta: Meta<typeof Button> = {
     rippleBgColor: {
       control: { type: 'color' },
       description: '水波纹背景色',
+      type: 'string',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'undefined' },
+      },
     },
     rippleOpacity: {
       control: { type: 'range', min: 0, max: 1, step: 0.05 },
       description: '水波纹不透明度',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: 'undefined' },
+      },
     },
     onClick: {
       action: 'clicked',
@@ -90,12 +99,21 @@ export const Primary: Story = {
     variant: 'primary',
     children: 'Primary Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**主要按钮**' },
+    },
+  },
 }
 
 export const Default: Story = {
   args: {
-    variant: 'default',
     children: 'Default Button',
+  },
+  parameters: {
+    docs: {
+      description: { story: '**默认按钮**' },
+    },
   },
 }
 
@@ -104,6 +122,11 @@ export const Dashed: Story = {
     variant: 'dashed',
     children: 'Dashed Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**虚线按钮**' },
+    },
+  },
 }
 
 export const Text: Story = {
@@ -111,12 +134,22 @@ export const Text: Story = {
     variant: 'text',
     children: 'Text Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**文本按钮**' },
+    },
+  },
 }
 
 export const Link: Story = {
   args: {
     variant: 'link',
     children: 'Link Button',
+  },
+  parameters: {
+    docs: {
+      description: { story: '**链接按钮**' },
+    },
   },
 }
 
@@ -126,6 +159,11 @@ export const Small: Story = {
     size: 'small',
     children: 'Small Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**小尺寸按钮**' },
+    },
+  },
 }
 
 export const Large: Story = {
@@ -133,6 +171,11 @@ export const Large: Story = {
     variant: 'primary',
     size: 'large',
     children: 'Large Button',
+  },
+  parameters: {
+    docs: {
+      description: { story: '**大尺寸按钮**' },
+    },
   },
 }
 
@@ -142,6 +185,11 @@ export const Disabled: Story = {
     disabled: true,
     children: 'Disabled Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**禁用状态**' },
+    },
+  },
 }
 
 export const Loading: Story = {
@@ -150,6 +198,11 @@ export const Loading: Story = {
     loading: true,
     children: 'Loading Button',
   },
+  parameters: {
+    docs: {
+      description: { story: '**加载状态**' },
+    },
+  },
 }
 
 export const Danger: Story = {
@@ -157,6 +210,11 @@ export const Danger: Story = {
     variant: 'primary',
     danger: true,
     children: 'Danger Button',
+  },
+  parameters: {
+    docs: {
+      description: { story: '**危险操作**' },
+    },
   },
 }
 
@@ -168,6 +226,9 @@ export const Block: Story = {
   },
   parameters: {
     layout: 'padded',
+    docs: {
+      description: { story: '**块级按钮**' },
+    },
   },
 }
 
@@ -180,7 +241,7 @@ export const WithIcon: Story = {
   parameters: {
     docs: {
       description: {
-        story: '按钮可以包含图标，图标会显示在文本前面。',
+        story: '**带图标的按钮**',
       },
     },
   },
@@ -195,7 +256,7 @@ export const IconOnly: Story = {
   parameters: {
     docs: {
       description: {
-        story: '只显示图标的按钮。',
+        story: '**仅图标按钮**',
       },
     },
   },
@@ -210,7 +271,7 @@ export const NoRipple: Story = {
   parameters: {
     docs: {
       description: {
-        story: '禁用水波纹效果。',
+        story: '**禁用水波纹效果**',
       },
     },
   },
@@ -219,8 +280,13 @@ export const NoRipple: Story = {
 export const RippleCustomColor: Story = {
   args: {
     variant: 'primary',
-    rippleBgColor: '#1677ff',
-    children: 'Ripple Color (#1677ff)',
+    rippleBgColor: 'red',
+    children: 'Ripple Color (red)',
+  },
+  parameters: {
+    docs: {
+      description: { story: '**自定义水波纹颜色**' },
+    },
   },
 }
 
@@ -230,6 +296,11 @@ export const RippleCustomOpacity: Story = {
     rippleOpacity: 0.6,
     children: 'Ripple Opacity 0.6',
   },
+  parameters: {
+    docs: {
+      description: { story: '**自定义水波纹透明度**' },
+    },
+  },
 }
 
 export const ClickAction: Story = {
@@ -237,72 +308,9 @@ export const ClickAction: Story = {
     variant: 'primary',
     children: 'Click Me',
   },
-}
-
-// 展示所有变体的组合示例
-const AllVariants: React.FC = () => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '16px',
-      padding: '20px',
-    }}
-  >
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <Button variant="primary">Primary</Button>
-      <Button variant="default">Default</Button>
-      <Button variant="dashed">Dashed</Button>
-      <Button variant="text">Text</Button>
-      <Button variant="link">Link</Button>
-    </div>
-
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <Button variant="primary" size="small">
-        Small
-      </Button>
-      <Button variant="primary" size="default">
-        Default
-      </Button>
-      <Button variant="primary" size="large">
-        Large
-      </Button>
-    </div>
-
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <Button variant="primary" disabled>
-        Disabled
-      </Button>
-      <Button variant="primary" loading>
-        Loading
-      </Button>
-      <Button variant="primary" danger>
-        Danger
-      </Button>
-    </div>
-
-    <div style={{ width: '200px' }}>
-      <Button variant="primary" block>
-        Block Button
-      </Button>
-    </div>
-
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-      <Button variant="primary" icon={PlusIcon}>
-        With Icon
-      </Button>
-      <Button variant="primary" icon={PlusIcon}></Button>
-    </div>
-  </div>
-)
-
-export const AllCombinations: Story = {
-  render: () => <AllVariants />,
   parameters: {
     docs: {
-      description: {
-        story: '展示按钮组件的所有变体和状态组合。',
-      },
+      description: { story: '**点击事件**' },
     },
   },
 }
