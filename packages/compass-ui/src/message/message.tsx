@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
+import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { MessageProps, MessageType } from './types'
@@ -51,15 +52,20 @@ interface MessageContainerProps {
   prefixCls?: string
 }
 
-interface MessageContainerRef {
+export interface MessageContainerRef {
   add: (message: MessageProps) => void
   remove: (key: string) => void
 }
 
-const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainerProps>(
+export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainerProps>(
   (props, ref) => {
     const [messages, setMessages] = useState<MessageProps[]>([])
     const nodeRefs = React.useRef(new Map<string, React.RefObject<HTMLDivElement>>())
+    const [container, setContainer] = useState<HTMLElement | null>(null)
+
+    useEffect(() => {
+      setContainer(document.body)
+    }, [])
 
     useImperativeHandle(ref, () => ({
       add: (message: MessageProps) => {
@@ -74,7 +80,9 @@ const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainer
       },
     }))
 
-    return (
+    if (!container) return null
+
+    return createPortal(
       <MessageContainer>
         <TransitionGroup component={null}>
           {messages.map((msg) => {
@@ -91,7 +99,8 @@ const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainer
             )
           })}
         </TransitionGroup>
-      </MessageContainer>
+      </MessageContainer>,
+      container,
     )
   },
 )
@@ -156,16 +165,36 @@ const open = (config: MessageProps) => {
 }
 
 export default {
-  info: (content: React.ReactNode, duration?: number, onClose?: () => void) =>
-    open({ content, duration, type: 'info', onClose }),
-  success: (content: React.ReactNode, duration?: number, onClose?: () => void) =>
-    open({ content, duration, type: 'success', onClose }),
-  error: (content: React.ReactNode, duration?: number, onClose?: () => void) =>
-    open({ content, duration, type: 'error', onClose }),
-  warning: (content: React.ReactNode, duration?: number, onClose?: () => void) =>
-    open({ content, duration, type: 'warning', onClose }),
-  loading: (content: React.ReactNode, duration?: number, onClose?: () => void) =>
-    open({ content, duration, type: 'loading', onClose }),
+  info: (content: React.ReactNode | MessageProps, duration?: number, onClose?: () => void) => {
+    if (typeof content === 'object' && content !== null && 'content' in content) {
+      return open({ ...content, type: 'info' })
+    }
+    return open({ content, duration, type: 'info', onClose })
+  },
+  success: (content: React.ReactNode | MessageProps, duration?: number, onClose?: () => void) => {
+    if (typeof content === 'object' && content !== null && 'content' in content) {
+      return open({ ...content, type: 'success' })
+    }
+    return open({ content, duration, type: 'success', onClose })
+  },
+  error: (content: React.ReactNode | MessageProps, duration?: number, onClose?: () => void) => {
+    if (typeof content === 'object' && content !== null && 'content' in content) {
+      return open({ ...content, type: 'error' })
+    }
+    return open({ content, duration, type: 'error', onClose })
+  },
+  warning: (content: React.ReactNode | MessageProps, duration?: number, onClose?: () => void) => {
+    if (typeof content === 'object' && content !== null && 'content' in content) {
+      return open({ ...content, type: 'warning' })
+    }
+    return open({ content, duration, type: 'warning', onClose })
+  },
+  loading: (content: React.ReactNode | MessageProps, duration?: number, onClose?: () => void) => {
+    if (typeof content === 'object' && content !== null && 'content' in content) {
+      return open({ ...content, type: 'loading' })
+    }
+    return open({ content, duration, type: 'loading', onClose })
+  },
   open,
   destroy: () => {
     if (containerRoot) {

@@ -13,12 +13,17 @@ export interface MessageProps {
   style?: React.CSSProperties
 }
 
+export interface TypeOpen {
+  (content: React.ReactNode, duration?: number, onClose?: () => void): void
+  (config: MessageProps): void
+}
+
 export interface MessageInstance {
-  info(content: React.ReactNode, duration?: number, onClose?: () => void): void
-  success(content: React.ReactNode, duration?: number, onClose?: () => void): void
-  error(content: React.ReactNode, duration?: number, onClose?: () => void): void
-  warning(content: React.ReactNode, duration?: number, onClose?: () => void): void
-  loading(content: React.ReactNode, duration?: number, onClose?: () => void): void
+  info: TypeOpen
+  success: TypeOpen
+  error: TypeOpen
+  warning: TypeOpen
+  loading: TypeOpen
   open(config: MessageProps): void
-  destroy(): void
+  destroy(key?: string): void
 }

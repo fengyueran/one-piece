@@ -192,4 +192,26 @@ describe('Message Component', () => {
       })
     })
   })
+  describe('Hooks', () => {
+    it('should work with useMessage hook', async () => {
+      const TestComponent = () => {
+        const [messageApi, contextHolder] = message.useMessage()
+        return (
+          <div>
+            {contextHolder}
+            <button onClick={() => messageApi.info('Hook Message')}>Show Message</button>
+          </div>
+        )
+      }
+
+      render(<TestComponent />)
+
+      const button = screen.getByText('Show Message')
+      fireEvent.click(button)
+
+      await waitFor(() => {
+        expect(screen.getByText('Hook Message')).toBeInTheDocument()
+      })
+    })
+  })
 })
