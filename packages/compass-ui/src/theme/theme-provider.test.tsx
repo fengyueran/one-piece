@@ -57,6 +57,58 @@ describe('ThemeProvider', () => {
       expect(getByTestId('spacing-md')).toHaveTextContent(String(defaultTheme.spacing.md))
     })
 
+    it('should apply lightTheme in light mode', () => {
+      const lightTheme = {
+        colors: {
+          primary: '#light-primary',
+        },
+      }
+      const darkTheme = {
+        colors: {
+          primary: '#dark-primary',
+        },
+      }
+      const { getByTestId } = render(
+        <ThemeProvider lightTheme={lightTheme} darkTheme={darkTheme} defaultMode="light">
+          <ThemeConsumer />
+        </ThemeProvider>,
+      )
+      expect(getByTestId('primary-color')).toHaveTextContent('#light-primary')
+    })
+
+    it('should apply darkTheme in dark mode', () => {
+      const lightTheme = {
+        colors: {
+          primary: '#light-primary',
+        },
+      }
+      const darkTheme = {
+        colors: {
+          primary: '#dark-primary',
+        },
+      }
+      const { getByTestId } = render(
+        <ThemeProvider lightTheme={lightTheme} darkTheme={darkTheme} defaultMode="dark">
+          <ThemeConsumer />
+        </ThemeProvider>,
+      )
+      expect(getByTestId('primary-color')).toHaveTextContent('#dark-primary')
+    })
+
+    it('should fallback to common theme if mode specific theme is missing', () => {
+      const commonTheme = {
+        colors: {
+          primary: '#common-primary',
+        },
+      }
+      const { getByTestId } = render(
+        <ThemeProvider theme={commonTheme} defaultMode="dark">
+          <ThemeConsumer />
+        </ThemeProvider>,
+      )
+      expect(getByTestId('primary-color')).toHaveTextContent('#common-primary')
+    })
+
     it('should merge custom spacing with default theme', () => {
       const customTheme = {
         spacing: {

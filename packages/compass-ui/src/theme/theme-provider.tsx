@@ -1,34 +1,85 @@
-import React from 'react'
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
-import { Theme as CompassTheme } from './types'
-import { defaultTheme } from './default-theme'
 
-export interface ThemeProviderProps {
-  children: React.ReactNode
-  theme?: Partial<CompassTheme>
+import { Theme as CompassTheme, ThemeMode, DeepPartial, ThemeProviderProps } from './types'
+import { defaultTheme } from './default-theme'
+import { darkTheme as builtinDarkTheme } from './dark-theme'
+
+interface ThemeContextType {
+  mode: ThemeMode
+  setMode: (mode: ThemeMode) => void
+  toggleTheme: () => void
+  theme: CompassTheme
 }
 
-const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, theme: customTheme }) => {
-  const mergedTheme: CompassTheme = React.useMemo(() => {
-    if (!customTheme) return defaultTheme
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-    return {
-      colors: { ...defaultTheme.colors, ...customTheme.colors },
-      spacing: { ...defaultTheme.spacing, ...customTheme.spacing },
-      borderRadius: {
-        ...defaultTheme.borderRadius,
-        ...customTheme.borderRadius,
-      },
-      fontSize: { ...defaultTheme.fontSize, ...customTheme.fontSize },
-      fontWeight: { ...defaultTheme.fontWeight, ...customTheme.fontWeight },
-      lineHeight: { ...defaultTheme.lineHeight, ...customTheme.lineHeight },
-      shadows: { ...defaultTheme.shadows, ...customTheme.shadows },
-      transitions: { ...defaultTheme.transitions, ...customTheme.transitions },
-      breakpoints: { ...defaultTheme.breakpoints, ...customTheme.breakpoints },
+const ThemeProvider: React.FC<ThemeProviderProps> = ({
+  children,
+  theme: commonTheme,
+  lightTheme: customLightTheme,
+  darkTheme: customDarkTheme,
+  defaultMode = 'light',
+}) => {
+  const [mode, setMode] = useState<ThemeMode>(defaultMode)
+
+  useEffect(() => {
+    setMode(defaultMode)
+  }, [defaultMode])
+
+  const mergedTheme: CompassTheme = useMemo(() => {
+    const baseTheme = mode === 'dark' ? builtinDarkTheme : defaultTheme
+    const modeTheme = mode === 'dark' ? customDarkTheme : customLightTheme
+
+    const mergeThemeObjects = (...themes: (DeepPartial<CompassTheme> | undefined)[]) => {
+      const result = { ...baseTheme }
+
+      themes.forEach((t) => {
+        if (!t) return
+        if (t.colors) result.colors = { ...result.colors, ...t.colors }
+        if (t.spacing) result.spacing = { ...result.spacing, ...t.spacing }
+        if (t.borderRadius) result.borderRadius = { ...result.borderRadius, ...t.borderRadius }
+        if (t.fontSize) result.fontSize = { ...result.fontSize, ...t.fontSize }
+        if (t.fontWeight) result.fontWeight = { ...result.fontWeight, ...t.fontWeight }
+        if (t.lineHeight) result.lineHeight = { ...result.lineHeight, ...t.lineHeight }
+        if (t.shadows) result.shadows = { ...result.shadows, ...t.shadows }
+        if (t.transitions) result.transitions = { ...result.transitions, ...t.transitions }
+        if (t.breakpoints) result.breakpoints = { ...result.breakpoints, ...t.breakpoints }
+      })
+
+      return result
     }
-  }, [customTheme])
 
-  return <EmotionThemeProvider theme={mergedTheme}>{children}</EmotionThemeProvider>
+    return mergeThemeObjects(commonTheme, modeTheme)
+  }, [mode, commonTheme, customLightTheme, customDarkTheme])
+
+  const toggleTheme = () => {
+    setMode((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
+
+  const value = useMemo(
+    () => ({
+      mode,
+      setMode,
+      toggleTheme,
+      theme: mergedTheme,
+    }),
+    [mode, mergedTheme],
+  )
+
+  return (
+    <ThemeContext.Provider value={value}>
+      <EmotionThemeProvider theme={mergedTheme}>{children}</EmotionThemeProvider>
+    </ThemeContext.Provider>
+  )
+}
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext)
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider')
+  }
+  return context
 }
 
 export default ThemeProvider

@@ -113,6 +113,13 @@ description: Compass UI Development Rules
   export type { ButtonProps } from './button-base'
   ```
 
+### 1.6 内部组件复用
+
+- **优先使用 Compass UI 内部组件**：在开发新组件或页面时，优先复用已有的 Compass UI 组件，而不是使用原生 HTML 标签或重复造轮子。
+- **保持一致性**：复用组件可以确保整个应用的设计风格和交互行为保持一致。
+- 示例：
+  - 需要按钮时，使用 `<Button />` 而不是 `<button>`。
+
 ## 3. 测试规范 ⚠️
 
 ### 3.1 测试覆盖率要求

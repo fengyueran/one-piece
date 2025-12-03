@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
-import { ThemeProvider, defaultTheme, type Theme } from './index'
+import { ThemeProvider, defaultTheme, darkTheme, useTheme, type Theme } from './index'
 import Button from '../button'
 
 const meta: Meta<typeof ThemeProvider> = {
@@ -10,16 +10,44 @@ const meta: Meta<typeof ThemeProvider> = {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          '主题提供者组件，为子组件提供主题上下文。支持自定义主题配置，未提供的配置项会使用默认主题。',
+        component: `
+主题提供者组件，为子组件提供主题上下文。
+
+### 内置主题
+Compass UI 内置了两套主题配置：
+- **Light Theme (默认)**: 适用于亮色背景的标准主题。
+- **Dark Theme**: 适用于暗色背景的主题，优化了对比度和阅读体验。
+
+### 主题配置
+你可以通过以下属性自定义主题：
+- \`theme\`: 通用主题配置，会覆盖 Light 和 Dark 模式下的共有配置（如圆角、间距）。
+- \`lightTheme\`: 仅在 Light 模式下生效的覆盖配置。
+- \`darkTheme\`: 仅在 Dark 模式下生效的覆盖配置。
+
+ThemeProvider 会自动根据当前的 \`mode\` (light/dark) 选择对应的内置主题作为基础，然后依次合并 \`theme\` 和对应模式的专属配置 (\`lightTheme\`/\`darkTheme\`)。
+`,
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
     theme: {
-      description: '自定义主题配置，支持部分覆盖',
+      description: '通用主题配置，会覆盖 Light 和 Dark 模式下的共有配置',
       control: { type: 'object' },
+    },
+    lightTheme: {
+      description: '仅在 Light 模式下生效的覆盖配置',
+      control: { type: 'object' },
+    },
+    darkTheme: {
+      description: '仅在 Dark 模式下生效的覆盖配置',
+      control: { type: 'object' },
+    },
+    defaultMode: {
+      description: '默认主题模式',
+      control: { type: 'radio' },
+      options: ['light', 'dark'],
+      defaultValue: 'light',
     },
     children: {
       description: '子组件',
@@ -89,19 +117,27 @@ export const Default: Story = {
 
 export const CustomColors: Story = {
   args: {
-    theme: {
+    lightTheme: {
       colors: {
         primary: '#ff6b35',
         primaryHover: '#ff8c69',
         primaryActive: '#e55a2b',
       },
-    } as Partial<Theme>,
+    },
+    darkTheme: {
+      colors: {
+        primary: '#d4380d',
+        primaryHover: '#ff6b35',
+        primaryActive: '#ad2102',
+      },
+    },
     children: <ThemeDemo />,
   },
   parameters: {
     docs: {
       description: {
-        story: '自定义主色调的示例。只需要提供需要覆盖的颜色配置，其他配色会使用默认值。',
+        story:
+          '自定义主色调的示例。使用 `lightTheme` 和 `darkTheme` 分别配置亮色和暗色模式下的主题。',
       },
     },
   },
@@ -109,34 +145,134 @@ export const CustomColors: Story = {
 
 export const DarkTheme: Story = {
   args: {
-    theme: {
-      colors: {
-        primary: '#4096ff',
-        primaryHover: '#69b1ff',
-        primaryActive: '#0958d9',
-        text: '#ffffff',
-        textSecondary: 'rgba(255, 255, 255, 0.85)',
-        textTertiary: 'rgba(255, 255, 255, 0.65)',
-        textDisabled: 'rgba(255, 255, 255, 0.25)',
-        background: '#141414',
-        backgroundSecondary: '#1f1f1f',
-        backgroundTertiary: '#262626',
-        border: '#434343',
-        borderSecondary: '#303030',
-        borderHover: '#4096ff',
-      },
-    } as Partial<Theme>,
+    defaultMode: 'dark',
     children: <ThemeDemo />,
   },
   parameters: {
     docs: {
       description: {
-        story: '暗色主题示例。展示了如何通过自定义颜色配置实现暗色主题。',
+        story: '内置暗色主题示例。通过设置 `defaultMode="dark"` 即可开启。',
       },
     },
     backgrounds: {
       default: 'dark',
       values: [{ name: 'dark', value: '#141414' }],
+    },
+  },
+}
+
+export const BuiltInThemes: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 20, flexDirection: 'column' }}>
+      <div>
+        <h4 style={{ margin: '0 0 10px' }}>Light Theme (Default)</h4>
+        <pre
+          style={{
+            background: '#f5f5f5',
+            padding: 10,
+            borderRadius: 4,
+            fontSize: 12,
+            overflow: 'auto',
+            maxHeight: 300,
+            border: '1px solid #eee',
+          }}
+        >
+          {JSON.stringify(defaultTheme, null, 2)}
+        </pre>
+      </div>
+      <div>
+        <h4 style={{ margin: '0 0 10px' }}>Dark Theme</h4>
+        <pre
+          style={{
+            background: '#141414',
+            color: '#e6e6e6',
+            padding: 10,
+            borderRadius: 4,
+            fontSize: 12,
+            overflow: 'auto',
+            maxHeight: 300,
+            border: '1px solid #333',
+          }}
+        >
+          {JSON.stringify(darkTheme, null, 2)}
+        </pre>
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '查看内置的 Light 和 Dark 主题的具体配置值。',
+      },
+      source: {
+        code: '/* Built-in themes configuration display */',
+      },
+    },
+  },
+}
+
+const ThemeSwitcher = () => {
+  const { mode, toggleTheme } = useTheme()
+  return (
+    <div
+      style={{
+        padding: 20,
+        background: mode === 'dark' ? '#141414' : '#fff',
+        color: mode === 'dark' ? '#fff' : '#000',
+        transition: 'all 0.3s',
+      }}
+    >
+      <div style={{ marginBottom: 16 }}>
+        <span style={{ marginRight: 16 }}>Current Mode: {mode}</span>
+        <Button onClick={toggleTheme}>Toggle Theme</Button>
+      </div>
+      <ThemeDemo />
+    </div>
+  )
+}
+
+export const Switching: Story = {
+  render: () => (
+    <ThemeProvider>
+      <ThemeSwitcher />
+    </ThemeProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '动态切换主题示例。使用 `useTheme` hook 获取当前模式并切换。',
+      },
+      source: {
+        code: `import React from 'react'
+import { ThemeProvider, useTheme, Button } from '@xinghunm/compass-ui'
+
+const ThemeSwitcher = () => {
+  const { mode, toggleTheme } = useTheme()
+  return (
+    <div
+      style={{
+        padding: 20,
+        background: mode === 'dark' ? '#141414' : '#fff',
+        color: mode === 'dark' ? '#fff' : '#000',
+        transition: 'all 0.3s',
+      }}
+    >
+      <div style={{ marginBottom: 16 }}>
+        <span style={{ marginRight: 16 }}>Current Mode: {mode}</span>
+        <Button onClick={toggleTheme}>Toggle Theme</Button>
+      </div>
+      {/* Your App Content */}
+    </div>
+  )
+}
+
+const App = () => (
+  <ThemeProvider>
+    <ThemeSwitcher />
+  </ThemeProvider>
+)
+`,
+      },
     },
   },
 }
@@ -181,53 +317,6 @@ export const CustomBorderRadius: Story = {
     docs: {
       description: {
         story: '自定义圆角配置的示例。可以创建更加方正或更加圆润的视觉风格。',
-      },
-    },
-  },
-}
-
-// 展示主题配置的工具组件
-const ThemeInspector: React.FC<{ theme: Partial<Theme> }> = ({ theme }) => {
-  const mergedTheme = { ...defaultTheme, ...theme }
-
-  return (
-    <div
-      style={{
-        fontFamily: 'monospace',
-        fontSize: '12px',
-        background: '#f5f5f5',
-        padding: '16px',
-        borderRadius: '4px',
-        maxHeight: '300px',
-        overflow: 'auto',
-      }}
-    >
-      <h4 style={{ margin: '0 0 12px 0' }}>当前主题配置:</h4>
-      <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
-        {JSON.stringify(mergedTheme, null, 2)}
-      </pre>
-    </div>
-  )
-}
-
-export const ThemeInspection: Story = {
-  args: {
-    theme: {
-      colors: {
-        primary: '#52c41a',
-      },
-    } as Partial<Theme>,
-    children: (
-      <div>
-        <ThemeDemo />
-        <ThemeInspector theme={{ colors: { primary: '#52c41a' } } as Partial<Theme>} />
-      </div>
-    ),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '主题配置检查器。展示了当前生效的完整主题配置，有助于调试和理解主题合并机制。',
       },
     },
   },

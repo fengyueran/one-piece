@@ -1,3 +1,5 @@
+import React from 'react'
+
 export interface Theme {
   colors: {
     primary: string
@@ -82,4 +84,18 @@ export interface Theme {
     lg: string
     xl: string
   }
+}
+
+export type ThemeMode = 'light' | 'dark'
+
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
+}
+
+export interface ThemeProviderProps {
+  children: React.ReactNode
+  theme?: DeepPartial<Theme>
+  lightTheme?: DeepPartial<Theme>
+  darkTheme?: DeepPartial<Theme>
+  defaultMode?: ThemeMode
 }
