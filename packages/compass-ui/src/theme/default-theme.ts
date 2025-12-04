@@ -128,5 +128,20 @@ export const defaultTheme: Theme = {
       infoColor: '#1890ff',
       fontSize: '14px',
     },
+    input: {
+      padding: {
+        sm: '4px 8px',
+        md: '6px 12px',
+        lg: '8px 16px',
+      },
+      fontSize: {
+        sm: '12px',
+        md: '14px',
+        lg: '16px',
+      },
+      borderRadius: '4px',
+      activeBorderColor: '#40a9ff',
+      hoverBorderColor: '#4096ff',
+    },
   },
 }

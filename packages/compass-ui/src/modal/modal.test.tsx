@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import Modal from './index'
 import { ThemeProvider, defaultTheme } from '../theme'
 
@@ -167,9 +167,13 @@ describe('Modal', () => {
     })
 
     it('should render confirm modal', async () => {
-      Modal.confirm({
-        title: 'Confirm Title',
-        content: 'Confirm Content',
+      await act(async () => {
+        Modal.confirm({
+          title: 'Confirm Title',
+          content: 'Confirm Content',
+        })
+        // Wait for setTimeout that triggers isOpen: true
+        await new Promise((resolve) => setTimeout(resolve, 20))
       })
 
       await waitFor(() => {
@@ -182,8 +186,12 @@ describe('Modal', () => {
     })
 
     it('should render info modal', async () => {
-      Modal.info({
-        title: 'Info Title',
+      await act(async () => {
+        Modal.info({
+          title: 'Info Title',
+        })
+        // Wait for setTimeout that triggers isOpen: true
+        await new Promise((resolve) => setTimeout(resolve, 20))
       })
 
       await waitFor(() => {

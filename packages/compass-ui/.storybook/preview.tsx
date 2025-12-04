@@ -140,6 +140,12 @@ const preview: Preview = {
           renderCode = renderCode.trim()
           if (!renderCode) return code
 
+          // 4.5 过滤掉空的 onChange 处理函数（如 onChange={() => {}}）
+          renderCode = renderCode.replace(/\s*onChange=\{\(\)\s*=>\s*\{\}\}/g, '')
+
+          // 4.5 过滤掉空的 onPressEnter 处理函数（如 onPressEnter={() => {}}）
+          renderCode = renderCode.replace(/\s*onPressEnter=\{\(\)\s*=>\s*\{\}\}/g, '')
+
           // 4. 二次检查：如果提取后的代码仍然像是一个 Story 对象（比如 render 提取失败），则不处理
           if (
             renderCode.startsWith('{') &&
@@ -157,7 +163,14 @@ const preview: Preview = {
           const importsByPackage: Record<string, string[]> = {}
           const uiPackage = '@xinghunm/compass-ui'
 
-          const componentsToCheck = ['Button', 'Modal', 'ThemeProvider', 'Progress', 'message']
+          const componentsToCheck = [
+            'Button',
+            'Modal',
+            'ThemeProvider',
+            'Progress',
+            'message',
+            'InputField',
+          ]
           componentsToCheck.forEach((component) => {
             if (renderCode.includes(`<${component}`) || renderCode.includes(`${component}.`)) {
               if (!importsByPackage[uiPackage]) importsByPackage[uiPackage] = []

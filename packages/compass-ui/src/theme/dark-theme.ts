@@ -52,5 +52,10 @@ export const darkTheme: Theme = {
       ...defaultTheme.components.progress,
       trackColor: '#303030',
     },
+    input: {
+      ...defaultTheme.components.input,
+      activeBorderColor: '#177ddc',
+      hoverBorderColor: '#177ddc',
+    },
   },
 }

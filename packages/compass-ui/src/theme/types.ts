@@ -90,6 +90,7 @@ export interface Theme {
     message: MessageTheme
     modal: ModalTheme
     progress: ProgressTheme
+    input: InputTheme
   }
 }
 
@@ -135,6 +136,22 @@ export interface ProgressTheme {
   warningColor: string
   infoColor: string
   fontSize: string
+}
+
+export interface InputTheme {
+  padding: {
+    sm: string
+    md: string
+    lg: string
+  }
+  fontSize: {
+    sm: string
+    md: string
+    lg: string
+  }
+  borderRadius: string
+  activeBorderColor: string
+  hoverBorderColor: string
 }
 
 export type ThemeMode = 'light' | 'dark'

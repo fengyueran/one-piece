@@ -7,6 +7,9 @@ export type { MessageProps, MessageInstance } from './message'
 export { default as Progress } from './progress'
 export type { ProgressProps } from './progress'
 
+export { InputField } from './input-field'
+export type { InputFieldProps } from './input-field'
+
 export { default as Modal } from './modal'
 export type { ModalProps } from './modal'
 

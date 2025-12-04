@@ -68,6 +68,20 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
             message: { ...result.components.message, ...t.components.message },
             modal: { ...result.components.modal, ...t.components.modal },
             progress: { ...result.components.progress, ...t.components.progress },
+            input: t.components.input
+              ? {
+                  ...result.components.input,
+                  ...t.components.input,
+                  padding: {
+                    ...result.components.input.padding,
+                    ...t.components.input.padding,
+                  },
+                  fontSize: {
+                    ...result.components.input.fontSize,
+                    ...t.components.input.fontSize,
+                  },
+                }
+              : result.components.input,
           }
         }
       })
