@@ -131,6 +131,58 @@ describe('Button', () => {
     })
   })
 
+  describe('Shapes', () => {
+    it('should render circle shape with correct styles', () => {
+      render(
+        <ThemeProvider>
+          <Button shape="circle" icon={<span>icon</span>} />
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      const styles = window.getComputedStyle(button)
+      expect(styles.borderRadius).toBe('50%')
+      expect(styles.padding).toBe('0px')
+      expect(styles.width).toBe('32px')
+      expect(styles.height).toBe('32px')
+    })
+
+    it('should render round shape with correct styles', () => {
+      render(
+        <ThemeProvider>
+          <Button shape="round">Round Button</Button>
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      const styles = window.getComputedStyle(button)
+      // For default size (height 32px), radius should be 32px (based on implementation logic)
+      expect(styles.borderRadius).toBe('32px')
+    })
+
+    it('should render small circle shape', () => {
+      render(
+        <ThemeProvider>
+          <Button size="small" shape="circle" icon={<span>icon</span>} />
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      const styles = window.getComputedStyle(button)
+      expect(styles.width).toBe('24px')
+      expect(styles.height).toBe('24px')
+    })
+
+    it('should render large circle shape', () => {
+      render(
+        <ThemeProvider>
+          <Button size="large" shape="circle" icon={<span>icon</span>} />
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      const styles = window.getComputedStyle(button)
+      expect(styles.width).toBe('40px')
+      expect(styles.height).toBe('40px')
+    })
+  })
+
   describe('States', () => {
     it('should apply disabled state', () => {
       render(

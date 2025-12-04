@@ -6,6 +6,7 @@ import { ButtonBase, ButtonBaseProps } from '../button-base'
 export interface ButtonProps extends ButtonBaseProps {
   variant?: 'primary' | 'default' | 'dashed' | 'text' | 'link'
   size?: 'small' | 'default' | 'large'
+  shape?: 'default' | 'circle' | 'round'
   disabled?: boolean
   loading?: boolean
   danger?: boolean
@@ -16,6 +17,7 @@ export interface ButtonProps extends ButtonBaseProps {
 const StyledButton = styled(ButtonBase)<{
   $variant: ButtonProps['variant']
   $size: ButtonProps['size']
+  $shape: ButtonProps['shape']
   $danger?: boolean
   $loading?: boolean
   $block?: boolean
@@ -45,28 +47,50 @@ const StyledButton = styled(ButtonBase)<{
     opacity: 0.6;
   }
 
-  ${({ $size, theme }) => {
+  ${({ $size, $shape, theme }) => {
+    const isCircle = $shape === 'circle'
     switch ($size) {
       case 'small':
         return `
           height: 24px;
-          padding: ${theme?.components?.button?.padding?.sm || `0 ${theme?.spacing?.sm || 8}px`};
+          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.sm || `0 ${theme?.spacing?.sm || 8}px`};
           font-size: ${theme?.components?.button?.fontSize?.sm || `${theme?.fontSize?.xs || 12}px`};
-          border-radius: ${theme?.components?.button?.borderRadius?.sm || `${theme?.borderRadius?.sm || 4}px`};
+          border-radius: ${
+            $shape === 'round'
+              ? '24px'
+              : isCircle
+                ? '50%'
+                : theme?.components?.button?.borderRadius?.sm || `${theme?.borderRadius?.sm || 4}px`
+          };
+          ${isCircle ? 'width: 24px; min-width: 24px;' : ''}
         `
       case 'large':
         return `
           height: 40px;
-          padding: ${theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
+          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
           font-size: ${theme?.components?.button?.fontSize?.lg || `${theme?.fontSize?.md || 16}px`};
-          border-radius: ${theme?.components?.button?.borderRadius?.lg || `${theme?.borderRadius?.lg || 8}px`};
+          border-radius: ${
+            $shape === 'round'
+              ? '40px'
+              : isCircle
+                ? '50%'
+                : theme?.components?.button?.borderRadius?.lg || `${theme?.borderRadius?.lg || 8}px`
+          };
+          ${isCircle ? 'width: 40px; min-width: 40px;' : ''}
         `
       default:
         return `
           height: 32px;
-          padding: ${theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
+          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
           font-size: ${theme?.components?.button?.fontSize?.md || `${theme?.fontSize?.sm || 14}px`};
-          border-radius: ${theme?.components?.button?.borderRadius?.md || `${theme?.borderRadius?.md || 6}px`};
+          border-radius: ${
+            $shape === 'round'
+              ? '32px'
+              : isCircle
+                ? '50%'
+                : theme?.components?.button?.borderRadius?.md || `${theme?.borderRadius?.md || 6}px`
+          };
+          ${isCircle ? 'width: 32px; min-width: 32px;' : ''}
         `
     }
   }}
@@ -217,6 +241,7 @@ const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'default',
   size = 'default',
+  shape = 'default',
   disabled = false,
   loading = false,
   danger = false,
@@ -238,6 +263,7 @@ const Button: React.FC<ButtonProps> = ({
       style={style}
       $variant={variant}
       $size={size}
+      $shape={shape}
       $danger={danger}
       $loading={loading}
       $block={block}

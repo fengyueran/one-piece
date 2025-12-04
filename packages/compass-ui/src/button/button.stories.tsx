@@ -65,31 +65,66 @@ const meta: Meta<typeof Button> = {
       control: { type: 'select' },
       options: ['primary', 'default', 'dashed', 'text', 'link'],
       description: '按钮样式变体',
+      table: {
+        type: { summary: "'primary' | 'default' | 'dashed' | 'text' | 'link'" },
+      },
+    },
+    shape: {
+      control: { type: 'select' },
+      options: ['default', 'circle', 'round'],
+      description: '按钮形状',
+      table: {
+        type: { summary: "'default' | 'circle' | 'round'" },
+        defaultValue: { summary: "'default'" },
+      },
     },
     size: {
       control: { type: 'select' },
       options: ['small', 'default', 'large'],
       description: '按钮尺寸',
+      table: {
+        type: { summary: "'small' | 'default' | 'large'" },
+      },
     },
     disabled: {
       control: { type: 'boolean' },
       description: '是否禁用',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
       description: '是否显示加载状态',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     danger: {
       control: { type: 'boolean' },
       description: '是否为危险操作样式',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     block: {
       control: { type: 'boolean' },
       description: '是否为块级按钮（占满父容器宽度）',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     hasRipple: {
       control: { type: 'boolean' },
       description: '是否启用水波纹效果',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
     },
     rippleBgColor: {
       control: { type: 'color' },
@@ -111,13 +146,22 @@ const meta: Meta<typeof Button> = {
     onClick: {
       action: 'clicked',
       description: '点击事件（展示于 Actions 面板）',
+      table: {
+        type: { summary: '(event: React.MouseEvent<HTMLButtonElement>) => void' },
+      },
     },
     children: {
       description: '按钮内容',
+      table: {
+        type: { summary: 'React.ReactNode' },
+      },
     },
     icon: {
       description: '按钮图标，显示在文本前面（React.ReactNode 类型）',
       control: { type: 'object' },
+      table: {
+        type: { summary: 'React.ReactNode' },
+      },
     },
   },
   decorators: [
@@ -287,14 +331,29 @@ export const WithIcon: Story = {
 
 export const IconOnly: Story = {
   args: {
-    variant: 'primary',
+    variant: 'text',
+    shape: 'circle',
     icon: PlusIcon,
-    children: '',
   },
   parameters: {
     docs: {
       description: {
-        story: '**仅图标按钮**',
+        story: '**仅图标按钮** (使用 `variant="text"` 和 `shape="circle"`)',
+      },
+    },
+  },
+}
+
+export const Round: Story = {
+  args: {
+    variant: 'primary',
+    shape: 'round',
+    children: 'Round Button',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**圆角按钮** (使用 `shape="round"`)',
       },
     },
   },
@@ -351,4 +410,13 @@ export const ClickAction: Story = {
       description: { story: '**点击事件**' },
     },
   },
+  render: () => (
+    <Button
+      onClick={(e: any) => {
+        console.log('用户点击')
+      }}
+    >
+      Click Me
+    </Button>
+  ),
 }
