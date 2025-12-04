@@ -154,8 +154,7 @@ describe('Button', () => {
       )
       const button = screen.getByRole('button')
       const styles = window.getComputedStyle(button)
-      // For default size (height 32px), radius should be 32px (based on implementation logic)
-      expect(styles.borderRadius).toBe('32px')
+      expect(styles.borderRadius).toBe('999px')
     })
 
     it('should render small circle shape', () => {

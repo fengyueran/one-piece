@@ -100,9 +100,14 @@ export const BaseModal = (props: ModalBaseProps) => {
           <Header className="compass-modal-header">
             <Title className="compass-modal-title">{title}</Title>
             {closable && (
-              <CloseBtn className="compass-modal-close" onClick={onCancel} aria-label="Close">
-                <CloseIcon />
-              </CloseBtn>
+              <CloseBtn
+                className="compass-modal-close"
+                onClick={onCancel}
+                aria-label="Close"
+                variant="text"
+                shape="circle"
+                icon={<CloseIcon />}
+              />
             )}
           </Header>
         )}

@@ -254,13 +254,13 @@ describe('Button', () => {
 
 ### 5.1 Storybook 文档
 
-- **每个组件必须有 Storybook stories**
-- Stories 文件命名：`component-name.stories.tsx`（kebab-case）
-- 必须包含：
-  - 默认示例
-  - 各种 props 变体
-  - 交互示例
-  - 使用说明
+为了确保文档的可读性、完整性与自动化能力，**每个组件的 Story
+文档必须遵循以下要求：**
+
+-   **必须完整描述组件的所有 Props**（用途、类型、默认值）
+-   **必须包含组件主题（Component
+    Theme）的说明**：组件可配置的主题字段、支持的主题变量
+-   **必须包含全局主题， 组件主题
 
 ### 5.2 代码注释
 

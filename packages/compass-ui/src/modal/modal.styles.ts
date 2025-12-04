@@ -58,22 +58,7 @@ export const Title = styled.div`
   line-height: 1.5;
 `
 
-export const CloseBtn = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-  color: ${(props) => props.theme.colors.textSecondary};
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-
-  &:hover {
-    color: ${(props) => props.theme.colors.text};
-  }
-`
+export const CloseBtn = styled(Button)``
 
 export const Footer = styled.div`
   display: flex;
