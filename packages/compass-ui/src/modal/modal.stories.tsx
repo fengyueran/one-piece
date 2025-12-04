@@ -11,8 +11,39 @@ const meta: Meta<typeof Modal> = {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          'A modal dialog component for displaying content that requires user interaction.',
+        component: `
+A modal dialog component for displaying content that requires user interaction.
+
+### 主题变量
+<details>
+<summary>组件 Token</summary>
+
+| 变量名称 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| components.modal.maskColor | 遮罩层背景色 | string | rgba(0, 0, 0, 0.45) |
+| components.modal.contentBg | 模态框背景色 | string | #ffffff |
+| components.modal.borderRadius | 模态框圆角 | string | 8px |
+| components.modal.boxShadow | 模态框阴影 | string | ... |
+| components.modal.headerPadding | 头部内边距 | string | 16px 24px |
+| components.modal.bodyPadding | 内容内边距 | string | 24px |
+| components.modal.footerPadding | 底部内边距 | string | 10px 16px |
+| components.modal.zIndex | 模态框层级 | number | 1000 |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名称 | 描述 | 类型 |
+| --- | --- | --- |
+| colors.text | 模态框文本颜色 | string |
+| colors.textSecondary | 模态框关闭按钮颜色 | string |
+| colors.textTertiary | 模态框关闭按钮悬停颜色 | string |
+| colors.border | 模态框边框颜色 | string |
+| transitions.normal | 模态框过渡效果 | string |
+
+</details>
+`,
       },
     },
   },

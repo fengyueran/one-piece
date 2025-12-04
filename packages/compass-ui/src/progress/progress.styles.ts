@@ -20,7 +20,8 @@ export const StyledProgressContainer = styled.div<StyledProgressProps>`
 
 export const StyledLinearProgress = styled.div<StyledProgressProps>`
   flex: 1;
-  background-color: ${({ theme }) => theme?.colors?.backgroundSecondary || '#fafafa'};
+  background-color: ${({ theme }) =>
+    theme?.components?.progress?.trackColor || theme?.colors?.backgroundSecondary || '#fafafa'};
   border-radius: ${({ theme }) => theme?.borderRadius?.xl || 12}px;
   overflow: hidden;
   height: ${({ size }) => {
@@ -63,13 +64,13 @@ export const StyledProgressBar = styled.div<StyledProgressBarProps>`
     if (strokeColor) return strokeColor
     switch (status) {
       case 'success':
-        return theme?.colors?.success || '#52c41a'
+        return theme?.components?.progress?.successColor || theme?.colors?.success || '#52c41a'
       case 'error':
-        return theme?.colors?.error || '#ff4d4f'
+        return theme?.components?.progress?.errorColor || theme?.colors?.error || '#ff4d4f'
       case 'warning':
-        return theme?.colors?.warning || '#faad14'
+        return theme?.components?.progress?.warningColor || theme?.colors?.warning || '#faad14'
       default:
-        return theme?.colors?.primary || '#1890ff'
+        return theme?.components?.progress?.infoColor || theme?.colors?.primary || '#1890ff'
     }
   }};
 `
@@ -121,7 +122,8 @@ interface StyledCirclePathProps {
 
 export const StyledCircleTrail = styled.circle`
   fill: none;
-  stroke: ${({ theme }) => theme?.colors?.backgroundSecondary || '#fafafa'};
+  stroke: ${({ theme }) =>
+    theme?.components?.progress?.trackColor || theme?.colors?.backgroundSecondary || '#fafafa'};
 `
 
 export const StyledCirclePath = styled.circle<StyledCirclePathProps>`
@@ -132,13 +134,13 @@ export const StyledCirclePath = styled.circle<StyledCirclePathProps>`
     if (strokeColor) return strokeColor
     switch (status) {
       case 'success':
-        return theme?.colors?.success || '#52c41a'
+        return theme?.components?.progress?.successColor || theme?.colors?.success || '#52c41a'
       case 'error':
-        return theme?.colors?.error || '#ff4d4f'
+        return theme?.components?.progress?.errorColor || theme?.colors?.error || '#ff4d4f'
       case 'warning':
-        return theme?.colors?.warning || '#faad14'
+        return theme?.components?.progress?.warningColor || theme?.colors?.warning || '#faad14'
       default:
-        return theme?.colors?.primary || '#1890ff'
+        return theme?.components?.progress?.infoColor || theme?.colors?.primary || '#1890ff'
     }
   }};
   stroke-linecap: round;

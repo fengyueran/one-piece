@@ -334,7 +334,7 @@ const partialTheme = {
 }
 ```
 
-### 2. 主题变量复用
+### 2. 主题变量（Design Token）复用
 
 ```tsx
 const colors = {

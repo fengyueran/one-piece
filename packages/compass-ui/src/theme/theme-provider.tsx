@@ -45,6 +45,31 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
         if (t.shadows) result.shadows = { ...result.shadows, ...t.shadows }
         if (t.transitions) result.transitions = { ...result.transitions, ...t.transitions }
         if (t.breakpoints) result.breakpoints = { ...result.breakpoints, ...t.breakpoints }
+        if (t.components) {
+          result.components = {
+            ...result.components,
+            button: t.components.button
+              ? {
+                  ...result.components.button,
+                  padding: {
+                    ...result.components.button.padding,
+                    ...t.components.button.padding,
+                  },
+                  fontSize: {
+                    ...result.components.button.fontSize,
+                    ...t.components.button.fontSize,
+                  },
+                  borderRadius: {
+                    ...result.components.button.borderRadius,
+                    ...t.components.button.borderRadius,
+                  },
+                }
+              : result.components.button,
+            message: { ...result.components.message, ...t.components.message },
+            modal: { ...result.components.modal, ...t.components.modal },
+            progress: { ...result.components.progress, ...t.components.progress },
+          }
+        }
       })
 
       return result

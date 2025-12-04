@@ -35,4 +35,22 @@ export const darkTheme: Theme = {
     lg: '0 4px 12px rgba(0, 0, 0, 0.4)',
     xl: '0 8px 24px rgba(0, 0, 0, 0.4)',
   },
+  components: {
+    ...defaultTheme.components,
+    modal: {
+      ...defaultTheme.components.modal,
+      contentBg: '#1f1f1f',
+      boxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.48), 0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 9px 28px 8px rgba(0, 0, 0, 0.2)',
+    },
+    message: {
+      ...defaultTheme.components.message,
+      boxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.48), 0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 9px 28px 8px rgba(0, 0, 0, 0.2)',
+    },
+    progress: {
+      ...defaultTheme.components.progress,
+      trackColor: '#303030',
+    },
+  },
 }

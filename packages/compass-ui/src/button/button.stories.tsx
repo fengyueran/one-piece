@@ -17,7 +17,45 @@ const meta: Meta<typeof Button> = {
     layout: 'centered',
     docs: {
       description: {
-        component: '基于 Emotion 的按钮组件，支持多种样式变体、尺寸和状态。',
+        component: `
+基于 Emotion 的按钮组件，支持多种样式变体、尺寸和状态。
+
+### 主题变量（Design Token）
+<details>
+<summary>组件 Token</summary>
+
+| 变量名称 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| components.button.fontSize.sm | 小号按钮字体大小 | string | 12px |
+| components.button.fontSize.md | 默认按钮字体大小 | string | 14px |
+| components.button.fontSize.lg | 大号按钮字体大小 | string | 16px |
+| components.button.padding.sm | 小号按钮内边距 | string | 0 8px |
+| components.button.padding.md | 默认/大号按钮内边距 | string | 0 16px |
+| components.button.borderRadius.sm | 小号按钮圆角 | string | 4px |
+| components.button.borderRadius.md | 默认按钮圆角 | string | 6px |
+| components.button.borderRadius.lg | 大号按钮圆角 | string | 8px |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名称 | 描述 | 类型 |
+| --- | --- | --- |
+| fontWeight.normal | 按钮字体粗细 | number |
+| transitions.normal | 按钮过渡效果 | string |
+| colors.primary | 主按钮背景色/边框色/文本色 | string |
+| colors.primaryHover | 主按钮悬停背景色/边框色 | string |
+| colors.primaryActive | 主按钮激活背景色/边框色 | string |
+| colors.background | 默认/虚线按钮背景色 | string |
+| colors.border | 默认/虚线按钮边框色 | string |
+| colors.text | 默认/虚线/文本按钮文本色 | string |
+| colors.borderHover | 默认/虚线按钮悬停边框色/文本色 | string |
+| colors.backgroundTertiary | 文本按钮悬停背景色 | string |
+| colors.error | 危险按钮颜色 | string |
+
+</details>
+`,
       },
     },
   },

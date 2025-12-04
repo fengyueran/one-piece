@@ -50,23 +50,23 @@ const StyledButton = styled(ButtonBase)<{
       case 'small':
         return `
           height: 24px;
-          padding: 0 ${theme?.spacing?.sm || 8}px;
-          font-size: ${theme?.fontSize?.xs || 12}px;
-          border-radius: ${theme?.borderRadius?.sm || 4}px;
+          padding: ${theme?.components?.button?.padding?.sm || `0 ${theme?.spacing?.sm || 8}px`};
+          font-size: ${theme?.components?.button?.fontSize?.sm || `${theme?.fontSize?.xs || 12}px`};
+          border-radius: ${theme?.components?.button?.borderRadius?.sm || `${theme?.borderRadius?.sm || 4}px`};
         `
       case 'large':
         return `
           height: 40px;
-          padding: 0 ${theme?.spacing?.md || 16}px;
-          font-size: ${theme?.fontSize?.md || 16}px;
-          border-radius: ${theme?.borderRadius?.lg || 8}px;
+          padding: ${theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
+          font-size: ${theme?.components?.button?.fontSize?.lg || `${theme?.fontSize?.md || 16}px`};
+          border-radius: ${theme?.components?.button?.borderRadius?.lg || `${theme?.borderRadius?.lg || 8}px`};
         `
       default:
         return `
           height: 32px;
-          padding: 0 ${theme?.spacing?.md || 16}px;
-          font-size: ${theme?.fontSize?.sm || 14}px;
-          border-radius: ${theme?.borderRadius?.md || 6}px;
+          padding: ${theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
+          font-size: ${theme?.components?.button?.fontSize?.md || `${theme?.fontSize?.sm || 14}px`};
+          border-radius: ${theme?.components?.button?.borderRadius?.md || `${theme?.borderRadius?.md || 6}px`};
         `
     }
   }}

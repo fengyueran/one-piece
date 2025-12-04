@@ -206,8 +206,8 @@ describe('Button', () => {
 - 使用 `@emotion/styled` 编写样式
 - 使用 `@emotion/react` 的 css prop（必要时）
 - 支持主题定制
-- **必须使用主题变量**：所有组件样式必须基于 Theme System 开发，禁止硬编码颜色、间距、字体大小等值。
-- **暗色模式**：确保组件通过主题变量自动适配 Light/Dark 模式。
+- **必须使用主题变量（Design Token）**：所有组件样式必须基于 Theme System 开发，禁止硬编码颜色、间距、字体大小等值。
+- **暗色模式**：确保组件通过主题变量（Design Token）自动适配 Light/Dark 模式。
 - **组件必须提供默认样式**：确保在没有 `ThemeProvider` 的情况下，组件也能正常显示，所有依赖主题的样式都必须有备用值。
 
 ### 4.2 样式文件

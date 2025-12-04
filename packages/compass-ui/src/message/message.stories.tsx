@@ -12,6 +12,38 @@ const meta: Meta = {
         component: `
 全局展示操作反馈信息。
 
+### 主题变量
+<details>
+<summary>组件 Token</summary>
+
+| 变量名称 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| components.message.contentPadding | 消息内容内边距 | string | 8px 16px |
+| components.message.borderRadius | 消息内容圆角 | string | 8px |
+| components.message.boxShadow | 消息阴影 | string | ... |
+| components.message.zIndex | 消息层级 | number | 1010 |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名称 | 描述 | 类型 |
+| --- | --- | --- |
+| spacing.md | 消息容器顶部距离 | number |
+| fontSize.sm | 消息文本字体大小 | number |
+| lineHeight.normal | 消息文本行高 | number |
+| fontSize.md | 图标字体大小 | number |
+| transitions.slow | 消息进出动画过渡 | string |
+| colors.background | 消息背景色 | string |
+| colors.text | 消息文本颜色 | string |
+| colors.primary | 信息图标颜色 | string |
+| colors.success | 成功图标颜色 | string |
+| colors.error | 错误图标颜色 | string |
+| colors.warning | 警告图标颜色 | string |
+
+</details>
+
 ### 何时使用
 
 - 可提供成功、警告和错误等反馈信息。

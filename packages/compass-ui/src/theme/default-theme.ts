@@ -84,4 +84,49 @@ export const defaultTheme: Theme = {
     lg: '992px',
     xl: '1200px',
   },
+
+  components: {
+    button: {
+      padding: {
+        sm: '0 8px',
+        md: '0 16px',
+      },
+      fontSize: {
+        sm: '12px',
+        md: '14px',
+        lg: '16px',
+      },
+      borderRadius: {
+        sm: '4px',
+        md: '6px',
+        lg: '8px',
+      },
+    },
+    message: {
+      contentPadding: '8px 16px',
+      borderRadius: '8px',
+      boxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+      zIndex: 1010,
+    },
+    modal: {
+      maskColor: 'rgba(0, 0, 0, 0.45)',
+      contentBg: '#ffffff',
+      borderRadius: '8px',
+      boxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+      headerPadding: '16px 24px',
+      bodyPadding: '24px',
+      footerPadding: '10px 16px',
+      zIndex: 1000,
+    },
+    progress: {
+      trackColor: '#f5f5f5',
+      successColor: '#52c41a',
+      errorColor: '#ff4d4f',
+      warningColor: '#faad14',
+      infoColor: '#1890ff',
+      fontSize: '14px',
+    },
+  },
 }

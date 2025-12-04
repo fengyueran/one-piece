@@ -6,25 +6,27 @@ export const AnimationDuration = 500 // ms
 export const RootContainer = styled.div<{ $visible: boolean }>`
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: ${(props) => props.theme?.components?.modal?.zIndex || 1000};
   pointer-events: ${(props) => (props.$visible ? 'auto' : 'none')};
 `
 
 export const Mask = styled.div<{ $visible?: boolean }>`
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: ${(props) => props.theme?.components?.modal?.maskColor || 'rgba(0, 0, 0, 0.3)'};
   backdrop-filter: blur(4px);
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity ${AnimationDuration}ms;
 `
 
 export const ModalContent = styled.div<{ $visible: boolean; $width?: string | number }>`
-  background: ${(props) => props.theme.colors.background};
-  padding: ${(props) => props.theme.spacing.lg}px;
-  border-radius: ${(props) => props.theme.borderRadius.md}px;
-  box-shadow: ${(props) => props.theme.shadows.lg};
-  box-shadow: ${(props) => props.theme.shadows.lg};
+  background: ${(props) =>
+    props.theme?.components?.modal?.contentBg || props.theme.colors.background};
+  padding: ${(props) =>
+    props.theme?.components?.modal?.bodyPadding || `${props.theme.spacing.lg}px`};
+  border-radius: ${(props) =>
+    props.theme?.components?.modal?.borderRadius || `${props.theme.borderRadius.md}px`};
+  box-shadow: ${(props) => props.theme?.components?.modal?.boxShadow || props.theme.shadows.lg};
   width: ${(props) =>
     props.$width
       ? typeof props.$width === 'number'

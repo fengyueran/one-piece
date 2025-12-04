@@ -10,8 +10,37 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          '用于显示任务完成状态的进度条组件。支持线性和圆形进度指示器。可以与 ThemeProvider 一起使用或单独使用 - 当不使用主题时，会回退到默认样式值。',
+        component: `
+用于显示任务完成状态的进度条组件。支持线性和圆形进度指示器。可以与 ThemeProvider 一起使用或单独使用 - 当不使用主题时，会回退到默认样式值。
+
+### 主题变量
+<details>
+<summary>组件 Token</summary>
+
+| 变量名称 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| components.progress.trackColor | 进度条轨道颜色 | string | #f5f5f5 |
+| components.progress.successColor | 成功状态颜色 | string | #52c41a |
+| components.progress.errorColor | 错误状态颜色 | string | #ff4d4f |
+| components.progress.warningColor | 警告状态颜色 | string | #faad14 |
+| components.progress.infoColor | 默认/信息状态颜色 | string | #1890ff |
+| components.progress.fontSize | 进度文本字体大小 | string | 14px |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名称 | 描述 | 类型 |
+| --- | --- | --- |
+| borderRadius.xl | 进度条圆角 | number |
+| transitions.normal | 进度条动画过渡 | string |
+| colors.text | 进度文本颜色 | string |
+| fontSize.xs | 小号进度文本字体大小 | number |
+| fontSize.md | 大号进度文本字体大小 | number |
+
+</details>
+`,
       },
     },
   },

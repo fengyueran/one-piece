@@ -84,6 +84,57 @@ export interface Theme {
     lg: string
     xl: string
   }
+
+  components: {
+    button: ButtonTheme
+    message: MessageTheme
+    modal: ModalTheme
+    progress: ProgressTheme
+  }
+}
+
+export interface ButtonTheme {
+  padding: {
+    sm: string
+    md: string
+  }
+  fontSize: {
+    sm: string
+    md: string
+    lg: string
+  }
+  borderRadius: {
+    sm: string
+    md: string
+    lg: string
+  }
+}
+
+export interface MessageTheme {
+  contentPadding: string
+  borderRadius: string
+  boxShadow: string
+  zIndex: number
+}
+
+export interface ModalTheme {
+  maskColor: string
+  contentBg: string
+  borderRadius: string
+  boxShadow: string
+  headerPadding: string
+  bodyPadding: string
+  footerPadding: string
+  zIndex: number
+}
+
+export interface ProgressTheme {
+  trackColor: string
+  successColor: string
+  errorColor: string
+  warningColor: string
+  infoColor: string
+  fontSize: string
 }
 
 export type ThemeMode = 'light' | 'dark'

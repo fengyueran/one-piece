@@ -16,7 +16,7 @@ export const MessageContainer = styled.div`
   left: 0;
   width: 100%;
   pointer-events: none;
-  z-index: 1010;
+  z-index: ${({ theme }) => theme?.components?.message?.zIndex || 1010};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,10 +50,14 @@ export const MessageItem = styled.div`
 export const MessageContent = styled.div`
   display: inline-flex;
   align-items: center;
-  padding: ${({ theme }) => `${theme.spacing?.sm || 8}px ${theme.spacing?.md || 16}px`};
+  padding: ${({ theme }) =>
+    theme?.components?.message?.contentPadding ||
+    `${theme.spacing?.sm || 8}px ${theme.spacing?.md || 16}px`};
   background: ${({ theme }) => theme.colors?.background || '#fff'};
-  border-radius: ${({ theme }) => theme.borderRadius?.lg || 8}px;
+  border-radius: ${({ theme }) =>
+    theme?.components?.message?.borderRadius || `${theme.borderRadius?.lg || 8}px`};
   box-shadow: ${({ theme }) =>
+    theme?.components?.message?.boxShadow ||
     theme.shadows?.lg ||
     '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)'};
   font-size: ${({ theme }) => theme.fontSize?.sm || 14}px;
