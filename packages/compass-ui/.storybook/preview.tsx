@@ -173,6 +173,7 @@ const preview: Preview = {
             'Progress',
             'message',
             'InputField',
+            'Steps',
           ]
           componentsToCheck.forEach((component) => {
             if (renderCode.includes(`<${component}`) || renderCode.includes(`${component}.`)) {

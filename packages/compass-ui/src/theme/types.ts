@@ -90,6 +90,7 @@ export interface Theme {
     message: MessageTheme
     modal: ModalTheme
     progress: ProgressTheme
+    steps: StepsTheme
     input: InputTheme
   }
 }
@@ -136,6 +137,28 @@ export interface ProgressTheme {
   warningColor: string
   infoColor: string
   fontSize: string
+}
+
+export interface StepsTheme {
+  descriptionColor: string
+  titleColor: string
+  subTitleColor: string
+  waitIconColor: string
+  processIconColor: string
+  finishIconColor: string
+  errorIconColor: string
+  waitTitleColor: string
+  processTitleColor: string
+  finishTitleColor: string
+  errorTitleColor: string
+  waitDescriptionColor: string
+  processDescriptionColor: string
+  finishDescriptionColor: string
+  errorDescriptionColor: string
+  iconSize: string
+  dotSize: string
+  titleFontSize: string
+  descriptionFontSize: string
 }
 
 export interface InputTheme {
