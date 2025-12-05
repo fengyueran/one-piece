@@ -596,3 +596,36 @@ export const ModalAsyncAuto: Story = {
     )
   },
 }
+
+export const CustomTheme: Story = {
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false)
+    return (
+      <ThemeProvider
+        theme={{
+          components: {
+            modal: {
+              borderRadius: '20px',
+              headerPadding: '20px 30px',
+              bodyPadding: '30px',
+              footerPadding: '15px 30px',
+              maskColor: 'rgba(100, 0, 100, 0.5)',
+            },
+          },
+        }}
+      >
+        <Button onClick={() => setIsOpen(true)}>Open Custom Theme Modal</Button>
+        <Modal isOpen={isOpen} onCancel={() => setIsOpen(false)} title="Custom Theme Modal">
+          <p>This modal uses custom theme tokens.</p>
+        </Modal>
+      </ThemeProvider>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题**',
+      },
+    },
+  },
+}

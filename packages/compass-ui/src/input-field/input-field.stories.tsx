@@ -270,33 +270,28 @@ export const WithOnPressEnter: Story = {
  * - `activeBorderColor`: 激活/聚焦时的边框颜色
  * - `hoverBorderColor`: 悬停时的边框颜色
  */
-export const ThemeCustomization: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '300px' }}>
-      {/* 默认主题 */}
-      <InputField label="默认主题" placeholder="Default Theme" />
-
-      {/* 自定义主题 */}
-      <ThemeProvider
-        theme={{
-          components: {
-            input: {
-              borderRadius: '20px',
-              activeBorderColor: '#722ed1',
-              hoverBorderColor: '#b37feb',
-              padding: {
-                md: '10px 20px',
-              },
+export const CustomTheme: Story = {
+  render: (args) => (
+    <ThemeProvider
+      theme={{
+        components: {
+          input: {
+            borderRadius: '20px',
+            activeBorderColor: '#722ed1',
+            hoverBorderColor: '#b37feb',
+            padding: {
+              md: '10px 20px',
             },
           },
-        }}
-      >
-        <InputField
-          label="自定义主题 (圆角 + 紫色)"
-          placeholder="Custom Theme"
-          helperText="修改了圆角和激活颜色"
-        />
-      </ThemeProvider>
-    </div>
+        },
+      }}
+    >
+      <InputField {...args} />
+    </ThemeProvider>
   ),
+  args: {
+    label: '自定义主题',
+    placeholder: 'Custom Theme',
+    helperText: '修改了圆角和激活颜色',
+  },
 }

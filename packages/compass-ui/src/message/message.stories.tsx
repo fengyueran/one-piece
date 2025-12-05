@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import message, { MessageProps } from './index'
 import Button from '../button'
+import { ThemeProvider } from '../theme'
 
 const meta: Meta = {
   title: 'Feedback/Message',
@@ -149,7 +150,7 @@ export const Basic: Story = {
     duration: 3,
     type: 'info',
   },
-  render: (args: MessageProps) => <BasicMessageWrapper {...args} />,
+  render: (args: any) => <BasicMessageWrapper {...args} />,
 }
 
 export const Types: Story = {
@@ -237,4 +238,41 @@ export const FullConfig: Story = {
       Display full config message
     </Button>
   ),
+}
+
+const CustomThemeWrapper = () => {
+  const [messageApi, contextHolder] = message.useMessage()
+  return (
+    <>
+      {contextHolder}
+      <Button onClick={() => messageApi.success('Custom Theme Message')}>
+        Display Custom Theme Message
+      </Button>
+    </>
+  )
+}
+
+export const CustomTheme: Story = {
+  render: () => (
+    <ThemeProvider
+      theme={{
+        components: {
+          message: {
+            contentPadding: '12px 24px',
+            borderRadius: '20px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          },
+        },
+      }}
+    >
+      <CustomThemeWrapper />
+    </ThemeProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题**',
+      },
+    },
+  },
 }

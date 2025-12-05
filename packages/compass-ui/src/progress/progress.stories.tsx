@@ -1,6 +1,7 @@
 // NOTE: Avoid importing Storybook type declarations to prevent TS resolution errors.
 // We keep typings minimal in this stories file.
 import { Progress } from './progress'
+import { ThemeProvider } from '../theme'
 
 const meta = {
   title: 'Components/Progress',
@@ -350,4 +351,34 @@ export const CircleStrokeWidthVariations: Story = {
       </div>
     </div>
   ),
+}
+
+export const CustomTheme: Story = {
+  render: () => (
+    <ThemeProvider
+      theme={{
+        components: {
+          progress: {
+            trackColor: '#e6f7ff',
+            infoColor: '#722ed1',
+            successColor: '#52c41a',
+            fontSize: '16px',
+          },
+        },
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '300px' }}>
+        <Progress percent={60} />
+        <Progress percent={100} status="success" />
+        <Progress type="circle" percent={75} />
+      </div>
+    </ThemeProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题**',
+      },
+    },
+  },
 }

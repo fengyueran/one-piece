@@ -420,3 +420,43 @@ export const ClickAction: Story = {
     </Button>
   ),
 }
+
+export const CustomTheme: Story = {
+  render: (args) => (
+    <ThemeProvider
+      theme={{
+        colors: {
+          primary: '#722ed1',
+          primaryHover: '#9254de',
+          primaryActive: '#531dab',
+        },
+        components: {
+          button: {
+            borderRadius: {
+              md: '20px',
+            },
+            padding: {
+              md: '0 30px',
+            },
+            fontSize: {
+              md: '16px',
+            },
+          },
+        },
+      }}
+    >
+      <Button {...args} />
+    </ThemeProvider>
+  ),
+  args: {
+    children: 'Custom Theme Button',
+    variant: 'primary',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题**',
+      },
+    },
+  },
+}
