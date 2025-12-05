@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import styled from '@emotion/styled'
 
 import { TouchRipple, Handlers } from './touch-ripple'
+import { ButtonBaseProps } from './types'
 
 const StyledButtonBase = styled.button`
   display: inline-flex;
@@ -16,17 +17,6 @@ const StyledButtonBase = styled.button`
   cursor: pointer;
   background: transparent;
 `
-
-export interface ButtonBaseProps {
-  hasRipple?: boolean
-  className?: string
-  style?: React.CSSProperties
-  disabled?: boolean
-  rippleBgColor?: string
-  rippleOpacity?: number
-  children?: React.ReactNode
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-}
 
 export const ButtonBase = (props: ButtonBaseProps) => {
   const { hasRipple = true, className, rippleBgColor, rippleOpacity, children, ...res } = props
