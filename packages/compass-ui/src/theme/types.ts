@@ -92,7 +92,18 @@ export interface Theme {
     progress: ProgressTheme
     steps: StepsTheme
     input: InputTheme
+    dropdown: DropdownTheme
+    menu: MenuTheme
   }
+}
+
+export interface MenuTheme {
+  itemHoverBg: string
+  itemColor: string
+  itemHeight: string
+  itemPadding: string
+  fontSize: string
+  borderRadius: string
 }
 
 export interface ButtonTheme {
@@ -175,6 +186,14 @@ export interface InputTheme {
   borderRadius: string
   activeBorderColor: string
   hoverBorderColor: string
+}
+
+export interface DropdownTheme {
+  zIndex: number
+  backgroundColor: string
+  boxShadow: string
+  borderRadius: string
+  padding: string
 }
 
 export type ThemeMode = 'light' | 'dark'

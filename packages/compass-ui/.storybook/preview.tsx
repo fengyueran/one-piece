@@ -36,6 +36,16 @@ const preview: Preview = {
             return code
           }
 
+          // 1.1 如果代码中包含手动指定的 source，则不进行转换
+          // 这是一个简单的启发式检查，如果代码看起来像是手动编写的完整示例（包含 import 和组件定义），则跳过转换
+          if (
+            cleanCode.includes('import ') &&
+            cleanCode.includes('from ') &&
+            cleanCode.includes('const App')
+          ) {
+            return code
+          }
+
           // 2. 检测是否为 Story 对象定义（非 JSX/TSX 渲染代码）
           // 如果代码以 { 开头，且包含 args: 或 parameters:，且不包含 render:，则认为是 Story 对象，直接返回
           if (
@@ -149,6 +159,12 @@ const preview: Preview = {
           // 3.3 过滤掉空的 onClick 处理函数（如 onClick={() => {}}）
           renderCode = renderCode.replace(/\s*onClick=\{\(\)\s*=>\s*\{\}\}/g, '')
 
+          // 3.4 修复对象属性中的 onClick 显示（如 Dropdown menu 中的 onClick）
+          renderCode = renderCode.replace(
+            /onClick:\s*\(\)\s*=>\s*\{\},?/g,
+            'onClick: (e, key) => alert(`Menu clicked! Key: ${key}`),',
+          )
+
           // 4. 二次检查：如果提取后的代码仍然像是一个 Story 对象（比如 render 提取失败），则不处理
           if (
             renderCode.startsWith('{') &&
@@ -174,6 +190,8 @@ const preview: Preview = {
             'message',
             'InputField',
             'Steps',
+            'Dropdown',
+            'Menu',
           ]
           componentsToCheck.forEach((component) => {
             if (renderCode.includes(`<${component}`) || renderCode.includes(`${component}.`)) {

@@ -85,6 +85,18 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
               : result.components.input,
           }
         }
+        if (t.components?.dropdown) {
+          result.components.dropdown = {
+            ...result.components.dropdown,
+            ...t.components.dropdown,
+          }
+        }
+        if (t.components?.menu) {
+          result.components.menu = {
+            ...result.components.menu,
+            ...t.components.menu,
+          }
+        }
       })
 
       return result

@@ -18,7 +18,7 @@ const StyledButtonBase = styled.button`
   background: transparent;
 `
 
-export const ButtonBase = (props: ButtonBaseProps) => {
+export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>((props, ref) => {
   const { hasRipple = true, className, rippleBgColor, rippleOpacity, children, ...res } = props
 
   const rippleRef = useRef<Handlers>()
@@ -36,6 +36,7 @@ export const ButtonBase = (props: ButtonBaseProps) => {
   }
   return (
     <StyledButtonBase
+      ref={ref}
       {...res}
       className={className}
       onMouseLeave={handleMouseUp}
@@ -46,4 +47,6 @@ export const ButtonBase = (props: ButtonBaseProps) => {
       <TouchRipple ref={rippleRef} bgColor={rippleBgColor} opacity={rippleOpacity} />
     </StyledButtonBase>
   )
-}
+})
+
+ButtonBase.displayName = 'ButtonBase'

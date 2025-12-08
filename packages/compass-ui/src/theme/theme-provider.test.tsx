@@ -57,6 +57,38 @@ describe('ThemeProvider', () => {
       expect(getByTestId('spacing-md')).toHaveTextContent(String(defaultTheme.spacing.md))
     })
 
+    it('should merge dropdown and menu component themes', () => {
+      const customTheme = {
+        components: {
+          dropdown: {
+            backgroundColor: 'red',
+          },
+          menu: {
+            itemHoverBg: 'blue',
+          },
+        },
+      }
+
+      const ComponentThemeConsumer: React.FC = () => {
+        const theme = useTheme() as Theme
+        return (
+          <div>
+            <span data-testid="dropdown-bg">{theme.components.dropdown.backgroundColor}</span>
+            <span data-testid="menu-hover-bg">{theme.components.menu.itemHoverBg}</span>
+          </div>
+        )
+      }
+
+      const { getByTestId } = render(
+        <ThemeProvider theme={customTheme}>
+          <ComponentThemeConsumer />
+        </ThemeProvider>,
+      )
+
+      expect(getByTestId('dropdown-bg')).toHaveTextContent('red')
+      expect(getByTestId('menu-hover-bg')).toHaveTextContent('blue')
+    })
+
     it('should apply lightTheme in light mode', () => {
       const lightTheme = {
         colors: {
