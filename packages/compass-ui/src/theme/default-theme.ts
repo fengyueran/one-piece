@@ -172,5 +172,13 @@ export const defaultTheme: Theme = {
       borderRadius: '4px',
       padding: '4px 0',
     },
+    menu: {
+      itemHoverBg: '#f5f5f5',
+      itemColor: 'rgba(0, 0, 0, 0.88)',
+      itemHeight: '32px',
+      itemPadding: '0 12px',
+      fontSize: '14px',
+      borderRadius: '4px',
+    },
   },
 }

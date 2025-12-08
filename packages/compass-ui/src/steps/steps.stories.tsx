@@ -100,30 +100,31 @@ const meta: Meta<typeof Steps> = {
       description: '自定义样式',
     },
     items: {
-      description: `
-\`\`\`ts
-interface StepProps {
+      control: 'object',
+      description: '步骤项配置 (数据驱动)',
+      table: {
+        type: {
+          summary: 'StepProps[]',
+          detail: `interface StepProps {
   /** 步骤标题 */
-  title?: React.ReactNode
+  title?: ReactNode
   /** 步骤子标题 */
-  subTitle?: React.ReactNode
+  subTitle?: ReactNode
   /** 步骤描述 */
-  description?: React.ReactNode
+  description?: ReactNode
   /** 步骤图标 */
-  icon?: React.ReactNode
+  icon?: ReactNode
   /** 步骤状态 */
-  status?: StepStatus
+  status?: 'wait' | 'process' | 'finish' | 'error'
   /** 是否禁用 */
   disabled?: boolean
   /** 自定义类名 */
   className?: string
   /** 自定义样式 */
   style?: React.CSSProperties
-  /** 点击事件 */
-  onClick?: () => void
-}
-\`\`\`
-`,
+}`,
+        },
+      },
     },
   },
   args: {

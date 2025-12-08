@@ -14,9 +14,12 @@ export { default as Modal } from './modal'
 export type { ModalProps } from './modal'
 
 export { Steps } from './steps'
-export type { StepsProps } from './steps'
+export type { StepsProps, StepProps } from './steps'
 
-export { Dropdown } from './dropdown'
+export { default as Dropdown } from './dropdown'
 export type { DropdownProps } from './dropdown'
+
+export { default as Menu } from './menu'
+export type { MenuProps, MenuItemProps, ItemType } from './menu'
 
 export { ThemeProvider, defaultTheme, type Theme } from './theme'

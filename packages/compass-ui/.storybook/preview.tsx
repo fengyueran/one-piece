@@ -84,6 +84,64 @@ const preview: Preview = {
                   return body.substring(0, endIndex + 1)
                 }
                 return body
+              } else if (body.startsWith('(')) {
+                // Implicit return wrapped in parens: find matching closing paren
+                let balance = 0
+                let endIndex = -1
+                for (let i = 0; i < body.length; i++) {
+                  if (body[i] === '(') balance++
+                  if (body[i] === ')') {
+                    balance--
+                    if (balance === 0) {
+                      endIndex = i
+                      break
+                    }
+                  }
+                }
+                if (endIndex !== -1) {
+                  // Remove the wrapping parentheses and return the inner content
+                  return body.substring(1, endIndex).trim()
+                }
+                return body
+              } else if (body.startsWith('<')) {
+                // JSX element: find the closing tag
+                // Extract the tag name
+                const tagMatch = body.match(/^<([A-Z][A-Za-z0-9]*)/)
+                if (tagMatch) {
+                  const tagName = tagMatch[1]
+                  const openTag = `<${tagName}`
+                  const closeTag = `</${tagName}>`
+
+                  let depth = 0
+                  let i = 0
+                  while (i < body.length) {
+                    if (body.substring(i).startsWith(openTag)) {
+                      // Check if it's a self-closing tag
+                      const nextGt = body.indexOf('>', i)
+                      if (nextGt !== -1 && body[nextGt - 1] === '/') {
+                        // Self-closing, don't increment depth
+                        i = nextGt + 1
+                        continue
+                      }
+                      depth++
+                      i += openTag.length
+                    } else if (body.substring(i).startsWith(closeTag)) {
+                      depth--
+                      if (depth === 0) {
+                        return body.substring(0, i + closeTag.length)
+                      }
+                      i += closeTag.length
+                    } else {
+                      i++
+                    }
+                  }
+                }
+                // Fallback: try to find the end by looking for comma followed by known Story properties
+                const storyPropMatch = body.match(/,\s*(args|parameters|decorators|play):\s*{/)
+                if (storyPropMatch && storyPropMatch.index !== undefined) {
+                  return body.substring(0, storyPropMatch.index).trim()
+                }
+                return body
               } else {
                 // Implicit return: remove trailing comma or closing brace of the Story object
                 let cleaned = body

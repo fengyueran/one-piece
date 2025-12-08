@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import Dropdown from './dropdown'
 import Button from '../button'
 import { ThemeProvider } from '../theme'
-import { Menu, MenuItem } from '../menu'
+import Menu from '../menu'
 
 const meta: Meta<typeof Dropdown> = {
   title: 'Components/Dropdown',
@@ -99,7 +99,8 @@ const meta: Meta<typeof Dropdown> = {
     },
     menu: {
       control: 'object',
-      description: '菜单配置 (数据驱动)',
+      description:
+        '菜单配置 (数据驱动)，详见 <a href="./?path=/docs/components-menu--docs" target="_top">Menu 组件</a>',
       table: {
         type: { summary: 'MenuProps' },
       },
@@ -119,9 +120,9 @@ type Story = StoryObj<typeof Dropdown>
 
 const MenuContent = (
   <Menu style={{ minWidth: 120 }}>
-    <MenuItem>Menu Item 1</MenuItem>
-    <MenuItem>Menu Item 2</MenuItem>
-    <MenuItem>Menu Item 3</MenuItem>
+    <Menu.Item>Menu Item 1</Menu.Item>
+    <Menu.Item>Menu Item 2</Menu.Item>
+    <Menu.Item>Menu Item 3</Menu.Item>
   </Menu>
 )
 
