@@ -248,10 +248,162 @@ describe('Button', () => {
 - **每个组件必须有 Storybook stories**
 - Stories 文件命名：`component-name.stories.tsx`（kebab-case）
 - 必须包含：
-  - 默认示例
-  - 各种 props 变体
-  - 交互示例
-  - 使用说明
+  - **组件描述和使用场景**
+  - **主题 Token 文档**（组件 Token 和全局 Token，使用折叠面板）
+  - **可交互的 Controls**（所有 props 配置 argTypes）
+  - **所有重要属性的 Story 示例**
+  - **交互示例**（如果适用）
+  - **CustomTheme Story**（展示如何自定义主题）
+
+#### 5.1.1 组件描述与主题 Token 文档
+
+在 `meta.parameters.docs.description.component` 中添加：
+
+```typescript
+const meta: Meta<typeof Steps> = {
+  title: 'Components/Steps',
+  component: Steps,
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+步骤条组件，用于引导用户按照流程完成任务。
+
+## 何时使用
+- 当任务复杂或者存在先后关系时，将其分解成一系列步骤，从而简化任务。
+
+## 主题变量 (Design Token)
+
+<details>
+<summary>组件 Token</summary>
+
+| Token Name | Description |
+| --- | --- |
+| \`components.steps.descriptionColor\` | 描述文字颜色 |
+| \`components.steps.titleColor\` | 标题文字颜色 |
+| \`components.steps.iconSize\` | 图标大小 |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| Token Name | Description |
+| --- | --- |
+| \`colors.borderSecondary\` | 次级边框颜色 |
+| \`colors.primary\` | 主色调 |
+
+</details>
+        `,
+      },
+    },
+  },
+}
+```
+
+#### 5.1.2 可交互的 Controls
+
+**所有属性必须配置 argTypes**：
+
+```typescript
+argTypes: {
+  variant: {
+    control: 'select',
+    options: ['primary', 'default', 'dashed'],
+    description: '按钮样式变体',
+    table: {
+      type: { summary: "'primary' | 'default' | 'dashed'" },
+      defaultValue: { summary: "'default'" },
+    },
+  },
+  disabled: {
+    control: 'boolean',
+    description: '是否禁用',
+  },
+}
+```
+
+**设置默认值**（推荐）：
+
+```typescript
+args: {
+  variant: 'default',
+  disabled: false,
+}
+```
+
+#### 5.1.3 所有属性的 Story 示例
+
+每个重要的 prop 都应该有对应的 Story：
+
+```typescript
+export const Primary: Story = {
+  args: { variant: 'primary', children: 'Primary Button' },
+}
+
+export const Disabled: Story = {
+  args: { disabled: true, children: 'Disabled Button' },
+}
+```
+
+#### 5.1.4 交互示例
+
+使用 `render` 函数实现状态管理：
+
+```typescript
+export const Clickable: Story = {
+  render: () => {
+    const [current, setCurrent] = React.useState(0)
+    return <Steps current={current} onChange={setCurrent} items={items} />
+  },
+}
+```
+
+#### 5.1.5 自定义主题示例
+
+**每个组件必须包含 CustomTheme Story**：
+
+```typescript
+export const CustomTheme: Story = {
+  render: (args) => (
+    <ThemeProvider
+      theme={{
+        colors: { primary: '#722ed1' },
+        components: {
+          button: {
+            borderRadius: { md: '20px' },
+            padding: { md: '0 30px' },
+          },
+        },
+      }}
+    >
+      <Button {...args} />
+    </ThemeProvider>
+  ),
+  args: { children: 'Custom Theme Button', variant: 'primary' },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量',
+      },
+    },
+  },
+}
+```
+
+#### 5.1.6 检查清单
+
+- [ ] 包含组件描述和使用场景
+- [ ] 包含组件 Token 和全局 Token 文档（折叠面板）
+- [ ] 所有 props 都配置了 argTypes
+- [ ] 每个重要 prop 都有对应的 Story
+- [ ] 包含交互示例（如果适用）
+- [ ] **包含 CustomTheme Story**
+- [ ] Story 描述清晰
+
+**参考示例**：`src/steps/steps.stories.tsx` 和 `src/button/button.stories.tsx`
+
 
 ### 5.2 代码注释
 

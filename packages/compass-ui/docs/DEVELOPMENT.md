@@ -157,6 +157,289 @@ pnpm test -- -u
 4. **独立测试**：每个测试应该独立，不依赖其他测试的执行顺序
 5. **清晰的描述**：测试描述应该清楚说明测试的目的
 
+## 文档编写
+
+### Storybook 文档规范
+
+#### 1. 基本要求
+
+**每个组件必须有 Storybook stories**，文件命名：`component-name.stories.tsx`（kebab-case）
+
+#### 2. 必须包含的内容
+
+##### 2.1 组件描述与主题 Token 文档
+
+在 `meta` 对象的 `parameters.docs.description.component` 中添加：
+
+- 组件简介和使用场景
+- **组件 Token 文档**（折叠面板）
+- **全局 Token 文档**（折叠面板）
+
+**示例：**
+
+```typescript
+const meta: Meta<typeof Steps> = {
+  title: 'Components/Steps',
+  component: Steps,
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+步骤条组件，用于引导用户按照流程完成任务。
+
+## 何时使用
+
+- 当任务复杂或者存在先后关系时，将其分解成一系列步骤，从而简化任务。
+
+## 主题变量 (Design Token)
+
+<details>
+<summary>组件 Token</summary>
+
+| Token Name | Description |
+| --- | --- |
+| \`components.steps.descriptionColor\` | 描述文字颜色 |
+| \`components.steps.titleColor\` | 标题文字颜色 |
+| \`components.steps.iconSize\` | 图标大小 |
+| \`components.steps.dotSize\` | 点状步骤条大小 |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| Token Name | Description |
+| --- | --- |
+| \`colors.borderSecondary\` | 次级边框颜色 |
+| \`colors.primary\` | 主色调 |
+| \`spacing.md\` | 中等间距 |
+
+</details>
+        `,
+      },
+    },
+  },
+}
+```
+
+##### 2.2 可交互的 Controls
+
+**所有属性必须配置 argTypes**，确保在 Storybook UI 中可以动态调整：
+
+```typescript
+argTypes: {
+  variant: {
+    control: 'select',
+    options: ['primary', 'default', 'dashed', 'text', 'link'],
+    description: '按钮样式变体',
+    table: {
+      type: { summary: "'primary' | 'default' | 'dashed' | 'text' | 'link'" },
+      defaultValue: { summary: "'default'" },
+    },
+  },
+  size: {
+    control: 'select',
+    options: ['small', 'default', 'large'],
+    description: '按钮尺寸',
+  },
+  disabled: {
+    control: 'boolean',
+    description: '是否禁用',
+  },
+  // ... 其他属性
+}
+```
+
+**设置默认值**（可选，但推荐）：
+
+```typescript
+args: {
+  variant: 'default',
+  size: 'default',
+  disabled: false,
+}
+```
+
+##### 2.3 所有属性的 Story 示例
+
+**每个重要的 prop 都应该有对应的 Story**：
+
+```typescript
+// 基础用法
+export const Basic: Story = {
+  args: {
+    children: 'Button',
+  },
+}
+
+// 不同 variant
+export const Primary: Story = {
+  args: {
+    variant: 'primary',
+    children: 'Primary Button',
+  },
+}
+
+export const Dashed: Story = {
+  args: {
+    variant: 'dashed',
+    children: 'Dashed Button',
+  },
+}
+
+// 不同 size
+export const Small: Story = {
+  args: {
+    size: 'small',
+    children: 'Small Button',
+  },
+}
+
+// 不同状态
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Disabled Button',
+  },
+}
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+    children: 'Loading Button',
+  },
+}
+```
+
+##### 2.4 交互示例
+
+对于需要状态管理的交互，使用 `render` 函数：
+
+```typescript
+export const Clickable: Story = {
+  render: () => {
+    const [current, setCurrent] = React.useState(0)
+    return (
+      <Steps
+        current={current}
+        onChange={setCurrent}
+        items={[
+          { title: '步骤 1', description: '可点击' },
+          { title: '步骤 2', description: '可点击' },
+          { title: '步骤 3', description: '可点击' },
+        ]}
+      />
+    )
+  },
+}
+```
+
+##### 2.5 自定义主题示例
+
+**每个组件必须包含 CustomTheme Story**，展示如何使用 `ThemeProvider` 自定义主题：
+
+```typescript
+export const CustomTheme: Story = {
+  render: (args) => (
+    <ThemeProvider
+      theme={{
+        // 全局 Token
+        colors: {
+          primary: '#722ed1',
+          primaryHover: '#9254de',
+          primaryActive: '#531dab',
+        },
+        // 组件 Token
+        components: {
+          button: {
+            borderRadius: {
+              md: '20px',
+            },
+            padding: {
+              md: '0 30px',
+            },
+            fontSize: {
+              md: '16px',
+            },
+          },
+        },
+      }}
+    >
+      <Button {...args} />
+    </ThemeProvider>
+  ),
+  args: {
+    children: 'Custom Theme Button',
+    variant: 'primary',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题** - 通过 ThemeProvider 覆盖全局和组件级别的主题变量',
+      },
+    },
+  },
+}
+```
+
+#### 3. Story 最佳实践
+
+##### 3.1 Story 命名
+
+- 使用 PascalCase
+- 名称清晰描述功能（如 `Primary`, `WithIcon`, `CustomTheme`）
+
+##### 3.2 Story 描述
+
+使用 `parameters.docs.description.story` 添加说明：
+
+```typescript
+export const Primary: Story = {
+  args: { variant: 'primary', children: 'Primary Button' },
+  parameters: {
+    docs: {
+      description: {
+        story: '**主要按钮** - 用于主要操作，具有最高视觉优先级',
+      },
+    },
+  },
+}
+```
+
+##### 3.3 布局控制
+
+根据需要调整 Story 布局：
+
+```typescript
+export const Block: Story = {
+  args: {
+    block: true,
+    children: 'Block Button',
+  },
+  parameters: {
+    layout: 'padded', // 'centered' | 'padded' | 'fullscreen'
+  },
+}
+```
+
+#### 4. 完整示例
+
+参考 `src/steps/steps.stories.tsx` 和 `src/button/button.stories.tsx` 作为标准模板。
+
+#### 5. 检查清单
+
+提交 Story 前确保：
+
+- [ ] 包含组件描述和使用场景
+- [ ] 包含组件 Token 和全局 Token 文档（折叠面板）
+- [ ] 所有 props 都配置了 argTypes
+- [ ] 每个重要 prop 都有对应的 Story
+- [ ] 包含交互示例（如果适用）
+- [ ] **包含 CustomTheme Story**
+- [ ] Story 描述清晰
+- [ ] 代码格式正确
+
 ## 样式开发
 
 ### 使用 Emotion Styled
