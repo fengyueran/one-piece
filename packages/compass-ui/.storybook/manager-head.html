@@ -1,0 +1,31 @@
+<style>
+  /* Target the brand link using the brandUrl defined in compass-theme.ts */
+  a[href="https://github.com/xinghunm/compass-ui"]
+  {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none !important;
+  }
+
+  /* Style the logo image (Icon) */
+  a[href="https://github.com/xinghunm/compass-ui"] img
+  {
+    max-height: 42px !important;
+    width: auto !important;
+    display: block;
+  }
+
+  /* Inject the text "Compass UI" */
+  a[href="https://github.com/xinghunm/compass-ui"]::after
+  {
+    content: 'Compass UI';
+    font-weight: 800;
+    font-size: 18px;
+    color: #333333; /* Dark text for light theme */
+    margin-top: 2px; /* Slight optical adjustment */
+  }
+
+  /* Attempt to handle dark mode if the body has a specific class, usually Storybook adds data-attributes or classes */
+  /* For now, we optimize for the light theme shown in screenshots. */
+</style>
