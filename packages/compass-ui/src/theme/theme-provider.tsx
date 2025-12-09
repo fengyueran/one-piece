@@ -97,6 +97,12 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
             ...t.components.menu,
           }
         }
+        if (t.components?.datePicker) {
+          result.components.datePicker = {
+            ...result.components.datePicker,
+            ...t.components.datePicker,
+          }
+        }
       })
 
       return result

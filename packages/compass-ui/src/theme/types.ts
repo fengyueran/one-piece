@@ -94,7 +94,33 @@ export interface Theme {
     input: InputTheme
     dropdown: DropdownTheme
     menu: MenuTheme
+    datePicker: DatePickerTheme
   }
+}
+
+export interface DatePickerTheme {
+  cellWidth: string
+  cellHeight: string
+  cellPadding: string
+  cellMargin: string
+  cellFontSize: string
+  cellBorderRadius: string
+
+  headerPadding: string
+  headerHeight: string
+  headerFontSize: string
+
+  weekDayFontSize: string
+
+  cellActiveBg: string
+  cellHoverBg: string
+  cellColor: string
+  cellActiveColor: string
+  cellDisabledColor: string
+
+  borderColor: string
+  boxShadow: string
+  zIndex: number
 }
 
 export interface MenuTheme {

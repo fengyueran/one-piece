@@ -180,5 +180,30 @@ export const defaultTheme: Theme = {
       fontSize: '14px',
       borderRadius: '4px',
     },
+    datePicker: {
+      cellWidth: '32px',
+      cellHeight: '32px',
+      cellPadding: '0',
+      cellMargin: '2px',
+      cellFontSize: '14px',
+      cellBorderRadius: '4px',
+
+      headerPadding: '12px 16px',
+      headerHeight: '40px',
+      headerFontSize: '14px',
+
+      weekDayFontSize: '12px',
+
+      cellActiveBg: '#1890ff',
+      cellHoverBg: '#40a9ff',
+      cellColor: 'rgba(0, 0, 0, 0.88)',
+      cellActiveColor: '#ffffff',
+      cellDisabledColor: 'rgba(0, 0, 0, 0.25)',
+
+      borderColor: 'rgba(0, 0, 0, 0.06)',
+      boxShadow:
+        '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+      zIndex: 1000,
+    },
   },
 }

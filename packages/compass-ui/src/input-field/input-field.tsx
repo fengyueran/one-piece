@@ -149,7 +149,15 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
           {...rest}
         />
         {allowClear && !disabled && (
-          <ClearButton type="button" visible={!!showClear} onClick={handleClear} tabIndex={-1}>
+          <ClearButton
+            type="button"
+            className="compass-input-clear-button"
+            visible={!!showClear}
+            $isHoverShow={true}
+            data-visible={!!showClear}
+            onClick={handleClear}
+            tabIndex={-1}
+          >
             <CloseCircleIcon />
           </ClearButton>
         )}

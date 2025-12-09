@@ -250,6 +250,7 @@ const preview: Preview = {
             'Steps',
             'Dropdown',
             'Menu',
+            'DatePicker',
           ]
           componentsToCheck.forEach((component) => {
             if (renderCode.includes(`<${component}`) || renderCode.includes(`${component}.`)) {
