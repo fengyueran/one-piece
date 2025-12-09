@@ -241,6 +241,7 @@ const preview: Preview = {
           const uiPackage = '@xinghunm/compass-ui'
 
           const componentsToCheck = [
+            'ConfigProvider',
             'Button',
             'Modal',
             'ThemeProvider',

@@ -15,6 +15,7 @@ import {
   ConfirmFooter,
 } from './confirm-styles'
 import Button from '../button'
+import defaultLocale from '../locale/zh_CN'
 
 export interface ModalFuncProps extends Omit<ModalBaseProps, 'isOpen' | 'children'> {
   title?: React.ReactNode
@@ -49,8 +50,8 @@ const confirmDialog = (config: ModalFuncProps) => {
       content,
       icon,
       type = 'confirm',
-      okText = 'OK',
-      cancelText = 'Cancel',
+      okText = defaultLocale.Modal.okText,
+      cancelText = defaultLocale.Modal.cancelText,
       closable = false,
       confirmLoading,
       ...modalProps

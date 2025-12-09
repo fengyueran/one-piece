@@ -4,6 +4,8 @@ import { ModalFuncProps } from './confirm'
 import { InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../icons'
 import Modal from './modal'
 import Button from '../button'
+import { useConfig } from '../config-provider'
+import defaultLocale from '../locale/zh_CN'
 
 import {
   ConfirmContent,
@@ -36,6 +38,12 @@ const HookModal: React.FC<HookModalProps> = ({
   ...modalProps
 }) => {
   const [loading, setLoading] = useState(false)
+
+  const { locale: contextLocale } = useConfig()
+  const locale = contextLocale?.Modal || defaultLocale.Modal
+
+  const mergedOkText = okText === 'OK' ? locale.okText : okText
+  const mergedCancelText = cancelText === 'Cancel' ? locale.cancelText : cancelText
 
   const handleOk = async () => {
     if (onOk) {
@@ -85,9 +93,9 @@ const HookModal: React.FC<HookModalProps> = ({
       onCancel={handleCancel}
       footer={
         <ConfirmFooter>
-          {type === 'confirm' ? <Button onClick={handleCancel}>{cancelText}</Button> : null}
+          {type === 'confirm' ? <Button onClick={handleCancel}>{mergedCancelText}</Button> : null}
           <Button variant="primary" onClick={handleOk} loading={confirmLoading || loading}>
-            {okText}
+            {mergedOkText}
           </Button>
         </ConfirmFooter>
       }

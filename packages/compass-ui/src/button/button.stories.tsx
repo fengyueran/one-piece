@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import Button from './button'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 
 // Common icon component for examples
 const PlusIcon = (
@@ -166,9 +166,9 @@ const meta: Meta<typeof Button> = {
   },
   decorators: [
     (Story) => (
-      <ThemeProvider>
+      <ConfigProvider>
         <Story />
-      </ThemeProvider>
+      </ConfigProvider>
     ),
   ],
 }
@@ -423,7 +423,7 @@ export const ClickAction: Story = {
 
 export const CustomTheme: Story = {
   render: (args) => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         colors: {
           primary: '#722ed1',
@@ -446,7 +446,7 @@ export const CustomTheme: Story = {
       }}
     >
       <Button {...args} />
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   args: {
     children: 'Custom Theme Button',

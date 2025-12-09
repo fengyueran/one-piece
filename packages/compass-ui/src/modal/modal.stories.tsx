@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react'
 import Modal, { ModalProps } from '.'
 import Button from '../button'
 import { useState, useEffect } from 'react'
-import { ThemeProvider, defaultTheme } from '../theme'
+import { defaultTheme } from '../theme'
+import { ConfigProvider } from '../config-provider'
 
 const meta: Meta<typeof Modal> = {
   title: 'Feedback/Modal',
@@ -483,7 +484,7 @@ export const DynamicTheme: Story = {
     }
 
     return (
-      <ThemeProvider theme={theme}>
+      <ConfigProvider theme={theme}>
         <div style={{ padding: 20, border: '1px solid #eee' }}>
           <h3>Dynamic Theme Context Test</h3>
           <div style={{ marginBottom: 16 }}>
@@ -496,7 +497,7 @@ export const DynamicTheme: Story = {
             <Button onClick={showInfo}>Open Modal</Button>
           </div>
         </div>
-      </ThemeProvider>
+      </ConfigProvider>
     )
   },
 }
@@ -601,7 +602,7 @@ export const CustomTheme: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
     return (
-      <ThemeProvider
+      <ConfigProvider
         theme={{
           components: {
             modal: {
@@ -618,7 +619,7 @@ export const CustomTheme: Story = {
         <Modal isOpen={isOpen} onCancel={() => setIsOpen(false)} title="Custom Theme Modal">
           <p>This modal uses custom theme tokens.</p>
         </Modal>
-      </ThemeProvider>
+      </ConfigProvider>
     )
   },
   parameters: {

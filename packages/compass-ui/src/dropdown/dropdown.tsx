@@ -16,7 +16,7 @@ import {
 
 import { DropdownProps } from './types'
 import { OverlayContainer } from './dropdown.styles'
-import { Menu } from '../menu'
+import Menu from '../menu'
 
 const Dropdown: React.FC<DropdownProps> = ({
   children,

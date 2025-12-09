@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import message, { MessageProps } from './index'
 import Button from '../button'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 
 const meta: Meta = {
   title: 'Feedback/Message',
@@ -254,7 +254,7 @@ const CustomThemeWrapper = () => {
 
 export const CustomTheme: Story = {
   render: () => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           message: {
@@ -266,7 +266,7 @@ export const CustomTheme: Story = {
       }}
     >
       <CustomThemeWrapper />
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   parameters: {
     docs: {

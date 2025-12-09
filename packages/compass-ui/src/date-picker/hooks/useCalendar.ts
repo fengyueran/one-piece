@@ -1,3 +1,4 @@
+import { useMemo, useState, useEffect } from 'react'
 import {
   startOfMonth,
   endOfMonth,
@@ -10,7 +11,6 @@ import {
   isSameDay,
   isToday,
 } from 'date-fns'
-import { useMemo, useState, useEffect } from 'react'
 
 export interface CalendarDay {
   date: Date
@@ -22,13 +22,11 @@ export interface CalendarDay {
 interface UseCalendarProps {
   value?: Date | null
   defaultValue?: Date | null
-  onChange?: (date: Date) => void
 }
 
-export const useCalendar = ({ value, defaultValue, onChange }: UseCalendarProps) => {
+export const useCalendar = ({ value, defaultValue }: UseCalendarProps) => {
   const [viewDate, setViewDate] = useState<Date>(value || defaultValue || new Date())
 
-  // Update viewDate when value changes
   useEffect(() => {
     if (value) {
       setViewDate((prev) => {

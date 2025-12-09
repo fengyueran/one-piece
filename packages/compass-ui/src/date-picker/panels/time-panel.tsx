@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { setHours, setMinutes, setSeconds } from 'date-fns'
+import { useConfig } from '../../config-provider/context'
 
 const StyledTimePanel = styled.div`
   display: flex;
@@ -90,6 +91,7 @@ const StyledTimeBody = styled.div`
 `
 
 export const TimePanel: React.FC<TimePanelProps> = ({ value, onChange }) => {
+  const { locale } = useConfig()
   const hours = Array.from({ length: 24 }, (_, i) => i)
   const minutes = Array.from({ length: 60 }, (_, i) => i)
   const seconds = Array.from({ length: 60 }, (_, i) => i)
@@ -111,9 +113,9 @@ export const TimePanel: React.FC<TimePanelProps> = ({ value, onChange }) => {
   return (
     <StyledTimePanel>
       <StyledTimeHeader>
-        <StyledHeaderCell>时</StyledHeaderCell>
-        <StyledHeaderCell>分</StyledHeaderCell>
-        <StyledHeaderCell>秒</StyledHeaderCell>
+        <StyledHeaderCell>{locale?.DatePicker.hour || '时'}</StyledHeaderCell>
+        <StyledHeaderCell>{locale?.DatePicker.minute || '分'}</StyledHeaderCell>
+        <StyledHeaderCell>{locale?.DatePicker.second || '秒'}</StyledHeaderCell>
       </StyledTimeHeader>
       <StyledTimeBody>
         <StyledColumn>

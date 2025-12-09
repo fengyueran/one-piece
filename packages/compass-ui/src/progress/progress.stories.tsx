@@ -1,7 +1,7 @@
 // NOTE: Avoid importing Storybook type declarations to prevent TS resolution errors.
 // We keep typings minimal in this stories file.
 import { Progress } from './progress'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 
 const meta = {
   title: 'Components/Progress',
@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component: `
-用于显示任务完成状态的进度条组件。支持线性和圆形进度指示器。可以与 ThemeProvider 一起使用或单独使用 - 当不使用主题时，会回退到默认样式值。
+用于显示任务完成状态的进度条组件。支持线性和圆形进度指示器。可以与 ConfigProvider 一起使用或单独使用 - 当不使用主题时，会回退到默认样式值。
 
 ### 主题变量
 <details>
@@ -355,7 +355,7 @@ export const CircleStrokeWidthVariations: Story = {
 
 export const CustomTheme: Story = {
   render: () => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           progress: {
@@ -372,7 +372,7 @@ export const CustomTheme: Story = {
         <Progress percent={100} status="success" />
         <Progress type="circle" percent={75} />
       </div>
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   parameters: {
     docs: {

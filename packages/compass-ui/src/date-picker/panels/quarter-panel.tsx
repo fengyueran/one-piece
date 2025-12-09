@@ -6,11 +6,11 @@ const StyledQuarterGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  padding: 24px 0;
+  padding: 24px 16px;
 `
 
 const StyledQuarterCell = styled.div<{ isSelected?: boolean }>`
-  padding: 16px 0;
+  padding: 16px 12px;
   text-align: center;
   cursor: pointer;
   border-radius: 4px;
@@ -20,7 +20,7 @@ const StyledQuarterCell = styled.div<{ isSelected?: boolean }>`
 
   &:hover {
     background: ${({ theme, isSelected }) =>
-      isSelected ? theme.colors.primary : theme.colors.backgroundSecondary};
+      isSelected ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)'};
   }
 `
 
@@ -34,7 +34,6 @@ export const QuarterPanel: React.FC<QuarterPanelProps> = ({ viewDate, onSelect, 
   const quarters = [1, 2, 3, 4]
 
   const handleSelect = (quarter: number) => {
-    // Set to the first month of the quarter
     const newDate = setMonth(viewDate, (quarter - 1) * 3)
     onSelect(newDate)
   }

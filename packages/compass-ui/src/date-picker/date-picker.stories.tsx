@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState, useEffect } from 'react'
 import DatePicker from './index'
-import ThemeProvider from '../theme/theme-provider'
+import { ConfigProvider } from '../config-provider'
 
 const meta: Meta<typeof DatePicker> = {
   title: 'Components/DatePicker',
@@ -119,6 +119,13 @@ const meta: Meta<typeof DatePicker> = {
       control: 'object',
       description: '自定义样式',
     },
+    fullWidth: {
+      control: 'boolean',
+      description: '是否撑满父容器宽度',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
   },
 }
 
@@ -147,7 +154,7 @@ export const Basic: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={(newDate) => {
           setDate(newDate)
           args.onChange?.(newDate)
@@ -162,8 +169,7 @@ export const Basic: Story = {
 
 export const UncontrolledDefaultValue: Story = {
   render: (args) => {
-    // Key ensures component remounts when defaultValue changes in controls
-    return <DatePicker key={args.defaultValue?.toString()} {...args} />
+    return <DatePicker {...args} />
   },
   args: {
     defaultValue: new Date('2024-01-01'),
@@ -180,7 +186,7 @@ export const UncontrolledDefaultValue: Story = {
 export const Format: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(new Date())
-    return <DatePicker {...args} value={date} onChange={setDate} format="yyyy/MM/dd" />
+    return <DatePicker {...args} value={date || undefined} onChange={setDate} format="yyyy/MM/dd" />
   },
   parameters: {
     docs: {
@@ -194,7 +200,14 @@ export const Format: Story = {
 export const CustomPlaceholder: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(null)
-    return <DatePicker {...args} value={date} onChange={setDate} placeholder="请选择您的生日" />
+    return (
+      <DatePicker
+        {...args}
+        value={date || undefined}
+        onChange={setDate}
+        placeholder="请选择您的生日"
+      />
+    )
   },
   parameters: {
     docs: {
@@ -208,7 +221,7 @@ export const CustomPlaceholder: Story = {
 export const WithClearable: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(new Date('2025-12-10'))
-    return <DatePicker {...args} value={date} onChange={setDate} />
+    return <DatePicker {...args} value={date || undefined} onChange={setDate} />
   },
   args: {
     clearable: true,
@@ -226,7 +239,7 @@ export const WithClearable: Story = {
 export const WithTime: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(null)
-    return <DatePicker {...args} value={date} onChange={setDate} showTime />
+    return <DatePicker {...args} value={date || undefined} onChange={setDate} showTime />
   },
   parameters: {
     docs: {
@@ -243,7 +256,7 @@ export const YearPicker: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={setDate}
         picker="year"
         placeholder="Select year"
@@ -265,7 +278,7 @@ export const MonthPicker: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={setDate}
         picker="month"
         placeholder="Select month"
@@ -287,7 +300,7 @@ export const QuarterPicker: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={setDate}
         picker="quarter"
         placeholder="Select quarter"
@@ -309,7 +322,7 @@ export const WeekPicker: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={setDate}
         picker="week"
         placeholder="Select week"
@@ -328,7 +341,7 @@ export const WeekPicker: Story = {
 export const Disabled: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(new Date())
-    return <DatePicker {...args} value={date} onChange={setDate} disabled />
+    return <DatePicker {...args} value={date || undefined} onChange={setDate} disabled />
   },
   parameters: {
     docs: {
@@ -345,7 +358,7 @@ export const CustomStyle: Story = {
     return (
       <DatePicker
         {...args}
-        value={date}
+        value={date || undefined}
         onChange={setDate}
         style={{ border: '1px dashed red', borderRadius: '4px' }}
         className="my-custom-class"
@@ -394,11 +407,52 @@ export const RangePickerWithTime: Story = {
   },
 }
 
+export const FullWidth: Story = {
+  render: () => {
+    const [date, setDate] = useState<Date | null>(null)
+    const [rangeDates, setRangeDates] = useState<[Date | null, Date | null]>([null, null])
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
+        <div style={{ width: '400px' }}>
+          <h4 style={{ marginBottom: 8 }}>Full Width DatePicker</h4>
+          <DatePicker
+            value={date || undefined}
+            onChange={setDate}
+            fullWidth
+            placeholder="Full Width DatePicker"
+          />
+        </div>
+        <div>
+          <h4 style={{ marginBottom: 8 }}>Full Width RangePicker</h4>
+          <DatePicker.RangePicker
+            value={rangeDates}
+            onChange={setRangeDates}
+            fullWidth
+            placeholder={['Start Date', 'End Date']}
+          />
+        </div>
+      </div>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**Full Width** - 设置 `fullWidth` 属性使选择器撑满父容器宽度。',
+      },
+    },
+  },
+}
+
+import enUS from '../locale/en_US'
+
+// ... existing imports ...
+
 export const CustomTheme: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date | null>(new Date())
     return (
-      <ThemeProvider
+      <ConfigProvider
         theme={{
           components: {
             datePicker: {
@@ -414,8 +468,8 @@ export const CustomTheme: Story = {
           },
         }}
       >
-        <DatePicker {...args} value={date} onChange={setDate} clearable />
-      </ThemeProvider>
+        <DatePicker {...args} value={date || undefined} onChange={setDate} clearable />
+      </ConfigProvider>
     )
   },
   args: {
@@ -424,7 +478,49 @@ export const CustomTheme: Story = {
   parameters: {
     docs: {
       description: {
-        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量。',
+        story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量。',
+      },
+    },
+  },
+}
+
+export const EnglishLocale: Story = {
+  render: () => {
+    const [date, setDate] = useState<Date | null>(null)
+    const [rangeDates, setRangeDates] = useState<[Date | null, Date | null]>([null, null])
+
+    return (
+      <ConfigProvider locale={enUS}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <h4 style={{ marginBottom: 8 }}>Basic DatePicker</h4>
+            <DatePicker value={date || undefined} onChange={setDate} />
+          </div>
+          <div>
+            <h4 style={{ marginBottom: 8 }}>With Time</h4>
+            <DatePicker value={date || undefined} onChange={setDate} showTime />
+          </div>
+          <div>
+            <h4 style={{ marginBottom: 8 }}>Month Picker</h4>
+            <DatePicker
+              value={date || undefined}
+              onChange={setDate}
+              picker="month"
+              placeholder="Select month"
+            />
+          </div>
+          <div>
+            <h4 style={{ marginBottom: 8 }}>Range Picker</h4>
+            <DatePicker.RangePicker value={rangeDates} onChange={setRangeDates} />
+          </div>
+        </div>
+      </ConfigProvider>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**English Locale** - 通过 ConfigProvider 切换为英文语言包，支持多种选择器形态。',
       },
     },
   },

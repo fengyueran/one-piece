@@ -1,9 +1,9 @@
 import styled from '@emotion/styled'
 
-export const StyledDatePicker = styled.div`
+export const StyledDatePicker = styled.div<{ fullWidth?: boolean }>`
   position: relative;
   display: inline-block;
-  width: 100%;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `
 
 export const StyledCalendar = styled.div`

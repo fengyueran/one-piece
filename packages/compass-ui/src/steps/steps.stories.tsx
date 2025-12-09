@@ -2,7 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Steps } from './steps'
 import { LoadingIcon, InfoIcon } from '../icons'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 
 /**
  * 步骤条组件，用于引导用户按照流程完成任务。
@@ -304,7 +304,7 @@ export const DotStyle: Story = {
  */
 export const CustomTheme: Story = {
   render: (args) => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           steps: {
@@ -332,7 +332,7 @@ export const CustomTheme: Story = {
       }}
     >
       <Steps {...args} />
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   args: {
     current: 1,

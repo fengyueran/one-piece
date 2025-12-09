@@ -11,6 +11,10 @@ import {
   FloatingFocusManager,
 } from '@floating-ui/react'
 import { format as formatDate, isSameDay, isWithinInterval, isBefore, isAfter } from 'date-fns'
+import styled from '@emotion/styled'
+import { useConfig } from '../config-provider/context'
+import defaultLocale from '../locale/zh_CN'
+
 import { DateRangePickerProps } from './types'
 import { useCalendar } from './hooks/useCalendar'
 import { TimePanel } from './panels'
@@ -41,7 +45,6 @@ import {
   StyledActiveBar,
   StyledSuffixIcon,
 } from './date-picker.styles'
-import styled from '@emotion/styled'
 
 const StyledFooter = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -62,10 +65,11 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
     showTime = false,
     format,
     disabled = false,
-    placeholder = ['开始日期', '结束日期'],
+    placeholder,
     clearable = false,
     className,
     style,
+    fullWidth = false,
     ...rest
   } = props
 
@@ -87,11 +91,12 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
 
   const { viewDate, days, nextMonth, prevMonth, nextYear, prevYear, setViewDate } = useCalendar({
     value: dates[0] || new Date(),
-    onChange: () => {},
   })
 
+  const { locale: contextLocale } = useConfig()
+  const locale = contextLocale?.DatePicker || defaultLocale.DatePicker
+
   const handleOpenChange = (open: boolean) => {
-    // 如果关闭且范围不完整，清空所有值
     if (!open && (!dates[0] || !dates[1])) {
       setDates([null, null])
       setSelecting(null)
@@ -113,9 +118,6 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
   const handleDateSelect = (date: Date) => {
     if (selecting === 'start') {
       const newDates: [Date | null, Date | null] = [date, dates[1]]
-      // If end date exists and start > end, swap them or clear end
-      // 这里我们选择清空 end，让用户重选，或者交换？
-      // Ant Design 是交换。但这里为了简单和安全，如果 start > end，我们清空 end。
       if (newDates[1] && isAfter(date, newDates[1])) {
         newDates[1] = null
       }
@@ -131,10 +133,8 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           setSelecting('end')
         }
       }
-      // showTime 模式下不自动切换，让用户可以调整时间
     } else if (selecting === 'end') {
       const newDates: [Date | null, Date | null] = [dates[0], date]
-      // If start date exists and end < start, swap them
       if (newDates[0] && isBefore(date, newDates[0])) {
         newDates[0] = date
         newDates[1] = dates[0]
@@ -151,7 +151,6 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           setSelecting('start')
         }
       } else {
-        // showTime 模式下，如果开始为空，自动切回 start
         if (!newDates[0]) {
           setSelecting('start')
         }
@@ -186,7 +185,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
   const handleInputClick = (type: 'start' | 'end') => {
     if (disabled) return
     setIsOpen(true)
-    isSecondSelection.current = false // 重置选择步骤
+    isSecondSelection.current = false
     setSelecting(type)
     if (type === 'start' && dates[0]) {
       setViewDate(dates[0])
@@ -224,13 +223,14 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
     return (dates[0] && isSameDay(date, dates[0])) || (dates[1] && isSameDay(date, dates[1]))
   }
 
-  const weekDays = ['一', '二', '三', '四', '五', '六', '日']
+  const weekDays = locale.shortWeekDays
 
   return (
     <StyledDatePicker
       ref={ref}
       className={`compass-date-range-picker ${className || ''}`}
       style={style}
+      fullWidth={fullWidth}
     >
       <div ref={refs.setReference} {...getReferenceProps()}>
         <StyledRangeWrapper
@@ -240,7 +240,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           onMouseLeave={() => setInputHover(false)}
         >
           <StyledRangeInput
-            placeholder={placeholder[0]}
+            placeholder={placeholder?.[0] || locale.startDate}
             value={dates[0] ? formatDate(dates[0], getFormat()) : ''}
             readOnly
             disabled={disabled}
@@ -248,7 +248,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           />
           <StyledSeparator>→</StyledSeparator>
           <StyledRangeInput
-            placeholder={placeholder[1]}
+            placeholder={placeholder?.[1] || locale.endDate}
             value={dates[1] ? formatDate(dates[1], getFormat()) : ''}
             readOnly
             disabled={disabled}
@@ -287,7 +287,11 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                       <LeftOutlined />
                     </StyledHeaderButton>
                   </StyledHeaderButtonGroup>
-                  <StyledHeaderTitle>{formatDate(viewDate, 'yyyy年 MM月')}</StyledHeaderTitle>
+                  <StyledHeaderTitle>
+                    {locale.monthBeforeYear
+                      ? `${formatDate(viewDate, locale.monthFormat)} ${formatDate(viewDate, locale.yearFormat)}`
+                      : `${formatDate(viewDate, locale.yearFormat)} ${formatDate(viewDate, locale.monthFormat)}`}
+                  </StyledHeaderTitle>
                   <StyledHeaderButtonGroup>
                     <StyledHeaderButton onClick={nextMonth}>
                       <RightOutlined />
@@ -339,7 +343,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                 {showTime && (
                   <StyledFooter>
                     <Button size="small" variant="primary" onClick={handleOk}>
-                      确定
+                      {locale.ok}
                     </Button>
                   </StyledFooter>
                 )}

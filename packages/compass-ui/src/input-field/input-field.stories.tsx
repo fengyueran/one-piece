@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import InputField from './input-field'
 import { InfoIcon } from '../icons'
-import ThemeProvider from '../theme/theme-provider'
+import { ConfigProvider } from '../config-provider'
 
 const meta: Meta<typeof InputField> = {
   title: 'Components/InputField',
@@ -261,7 +261,7 @@ export const WithOnPressEnter: Story = {
 }
 
 /**
- * 通过 ThemeProvider 自定义组件样式。
+ * 通过 ConfigProvider 自定义组件样式。
  *
  * InputField 支持以下主题变量：
  * - `padding`: 控制不同尺寸的内边距
@@ -272,7 +272,7 @@ export const WithOnPressEnter: Story = {
  */
 export const CustomTheme: Story = {
   render: (args) => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           input: {
@@ -287,7 +287,7 @@ export const CustomTheme: Story = {
       }}
     >
       <InputField {...args} />
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   args: {
     label: '自定义主题',

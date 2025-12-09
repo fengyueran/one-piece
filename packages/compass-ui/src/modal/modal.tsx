@@ -13,6 +13,8 @@ import {
 } from './modal.styles'
 import { ModalBaseProps } from './types'
 import { CloseIcon } from '../icons'
+import { useConfig } from '../config-provider'
+import defaultLocale from '../locale/zh_CN'
 
 export const BaseModal = (props: ModalBaseProps) => {
   const {
@@ -32,6 +34,12 @@ export const BaseModal = (props: ModalBaseProps) => {
     afterClose,
     ...res
   } = props
+
+  const { locale: contextLocale } = useConfig()
+  const locale = contextLocale?.Modal || defaultLocale.Modal
+
+  const mergedOkText = okText === '确定' ? locale.okText : okText
+  const mergedCancelText = cancelText === '取消' ? locale.cancelText : cancelText
 
   const [loading, setLoading] = React.useState(false)
 
@@ -115,7 +123,7 @@ export const BaseModal = (props: ModalBaseProps) => {
         {footer === undefined ? (
           <Footer className="compass-modal-footer">
             <StyledButton onClick={onCancel} aria-label="Close modal">
-              {cancelText}
+              {mergedCancelText}
             </StyledButton>
             <StyledButton
               onClick={handleOk}
@@ -123,7 +131,7 @@ export const BaseModal = (props: ModalBaseProps) => {
               variant="primary"
               loading={confirmLoading || loading}
             >
-              {okText}
+              {mergedOkText}
             </StyledButton>
           </Footer>
         ) : (

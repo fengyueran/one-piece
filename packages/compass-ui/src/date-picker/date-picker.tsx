@@ -17,6 +17,8 @@ import {
   isWithinInterval,
   getISOWeek,
 } from 'date-fns'
+import styled from '@emotion/styled'
+
 import InputField from '../input-field'
 import { DatePickerProps } from './types'
 import { useCalendar } from './hooks/useCalendar'
@@ -44,7 +46,8 @@ import {
   StyledDatePanel,
   StyledWeekNumber,
 } from './date-picker.styles'
-import styled from '@emotion/styled'
+import { useConfig } from '../config-provider'
+import defaultLocale from '../locale/zh_CN'
 
 type PanelMode = 'date' | 'month' | 'year' | 'quarter'
 
@@ -69,6 +72,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
     clearable = false,
     className,
     style,
+    fullWidth = false,
     ...rest
   } = props
 
@@ -76,6 +80,9 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   const [selectedDate, setSelectedDate] = useState<Date | null>(value || defaultValue || null)
   const [panelMode, setPanelMode] = useState<PanelMode>(picker === 'week' ? 'date' : picker)
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
+
+  const { locale: contextLocale } = useConfig()
+  const locale = contextLocale?.DatePicker || defaultLocale.DatePicker
 
   // Sync internal state with props
   useEffect(() => {
@@ -91,20 +98,10 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
     }
   }, [isOpen, picker])
 
-  const {
-    viewDate,
-    days,
-    nextMonth,
-    prevMonth,
-    nextYear,
-    prevYear,
-    setMonth,
-    setYear,
-    setViewDate,
-  } = useCalendar({
-    value: selectedDate,
-    onChange: (date) => handleDateSelect(date),
-  })
+  const { viewDate, days, nextMonth, prevMonth, nextYear, prevYear, setYear, setViewDate } =
+    useCalendar({
+      value: selectedDate,
+    })
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -143,7 +140,6 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
 
   const handleTimeChange = (date: Date) => {
     setSelectedDate(date)
-    // Don't close on time change
   }
 
   const handlePanelSelect = (date: Date, mode: PanelMode) => {
@@ -151,7 +147,6 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
     if (picker === mode) {
       handleDateSelect(date)
     } else {
-      // Navigate down
       if (mode === 'year') setPanelMode(picker === 'quarter' ? 'quarter' : 'month')
       else if (mode === 'month') setPanelMode('date')
     }
@@ -164,17 +159,17 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
 
   const getFormat = () => {
     if (format) return format
-    if (showTime && picker === 'date') return 'yyyy-MM-dd HH:mm:ss'
-    if (picker === 'year') return 'yyyy'
+    if (showTime && picker === 'date') return locale.dateTimeFormat || 'yyyy-MM-dd HH:mm:ss'
+    if (picker === 'year') return locale.yearFormat || 'yyyy'
     if (picker === 'month') return 'yyyy-MM'
-    if (picker === 'quarter') return 'yyyy-QQQ'
-    if (picker === 'week') return 'yyyy-wo周'
-    return 'yyyy-MM-dd'
+    if (picker === 'quarter') return locale.quarterFormat || 'yyyy-QQQ'
+    if (picker === 'week') return locale.weekFormat || 'yyyy-wo'
+    return locale.dateFormat || 'yyyy-MM-dd'
   }
 
   const inputValue = selectedDate ? formatDate(selectedDate, getFormat()) : ''
 
-  const weekDays = ['一', '二', '三', '四', '五', '六', '日']
+  const weekDays = locale.shortWeekDays
 
   const renderHeader = () => {
     switch (panelMode) {
@@ -199,7 +194,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
               <DoubleLeftOutlined />
             </StyledHeaderButton>
             <StyledHeaderTitle onClick={() => setPanelMode('year')}>
-              {formatDate(viewDate, 'yyyy')}
+              {formatDate(viewDate, locale.yearFormat)}
             </StyledHeaderTitle>
             <StyledHeaderButton onClick={nextYear}>
               <DoubleRightOutlined />
@@ -218,7 +213,9 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
               </StyledHeaderButton>
             </StyledHeaderButtonGroup>
             <StyledHeaderTitle onClick={() => setPanelMode('month')}>
-              {formatDate(viewDate, 'yyyy年 MM月')}
+              {locale.monthBeforeYear
+                ? `${formatDate(viewDate, locale.monthFormat)} ${formatDate(viewDate, locale.yearFormat)}`
+                : `${formatDate(viewDate, locale.yearFormat)} ${formatDate(viewDate, locale.monthFormat)}`}
             </StyledHeaderTitle>
             <StyledHeaderButtonGroup>
               <StyledHeaderButton onClick={nextMonth}>
@@ -322,10 +319,17 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   }
 
   return (
-    <StyledDatePicker ref={ref} className={`compass-date-picker ${className || ''}`} style={style}>
+    <StyledDatePicker
+      ref={ref}
+      className={`compass-date-picker ${className || ''}`}
+      style={style}
+      fullWidth={fullWidth}
+    >
       <div ref={refs.setReference} {...getReferenceProps()}>
         <InputField
-          placeholder={placeholder || 'Select date'}
+          {...rest}
+          fullWidth={fullWidth}
+          placeholder={placeholder || locale.dateSelect}
           value={inputValue}
           readOnly
           disabled={disabled}
@@ -361,7 +365,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
                   <StyledFooter>
                     <div /> {/* Spacer */}
                     <Button size="small" variant="primary" onClick={handleOk}>
-                      确定
+                      {locale.ok}
                     </Button>
                   </StyledFooter>
                 )}

@@ -2,7 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import Dropdown from './dropdown'
 import Button from '../button'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 import Menu from '../menu'
 
 const meta: Meta<typeof Dropdown> = {
@@ -330,7 +330,7 @@ export const Placements: Story = {
 
 export const CustomTheme: Story = {
   render: (args) => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           dropdown: {
@@ -342,7 +342,7 @@ export const CustomTheme: Story = {
       }}
     >
       <Dropdown {...args} />
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   args: {
     overlay: MenuContent,
@@ -351,7 +351,7 @@ export const CustomTheme: Story = {
   parameters: {
     docs: {
       description: {
-        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量',
+        story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量',
       },
     },
   },

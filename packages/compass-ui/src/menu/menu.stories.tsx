@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import Menu from './menu'
-import { ThemeProvider } from '../theme'
+import { ConfigProvider } from '../config-provider'
 import { SearchIcon, CloseIcon } from '../icons'
 
 const meta: Meta<typeof Menu> = {
@@ -271,7 +271,7 @@ export const DataDriven: Story = {
 
 export const CustomTheme: Story = {
   render: () => (
-    <ThemeProvider
+    <ConfigProvider
       theme={{
         components: {
           menu: {
@@ -288,12 +288,12 @@ export const CustomTheme: Story = {
           <Menu.Item>Custom Theme Item 2</Menu.Item>
         </Menu>
       </div>
-    </ThemeProvider>
+    </ConfigProvider>
   ),
   parameters: {
     docs: {
       description: {
-        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量',
+        story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量',
       },
     },
   },

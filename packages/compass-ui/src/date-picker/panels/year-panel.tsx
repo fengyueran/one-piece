@@ -6,11 +6,11 @@ const StyledYearGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  padding: 8px 0;
+  padding: 8px 16px;
 `
 
 const StyledYearCell = styled.div<{ isSelected?: boolean; isCurrent?: boolean }>`
-  padding: 8px 0;
+  padding: 8px 12px;
   text-align: center;
   cursor: pointer;
   border-radius: 4px;
@@ -21,7 +21,7 @@ const StyledYearCell = styled.div<{ isSelected?: boolean; isCurrent?: boolean }>
 
   &:hover {
     background: ${({ theme, isSelected }) =>
-      isSelected ? theme.colors.primary : theme.colors.backgroundSecondary};
+      isSelected ? theme.colors.primary : 'rgba(0, 0, 0, 0.08)'};
   }
 `
 

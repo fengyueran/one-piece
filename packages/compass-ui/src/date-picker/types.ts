@@ -23,6 +23,8 @@ export interface DatePickerProps {
   className?: string
   /** Custom style */
   style?: React.CSSProperties
+  /** Whether the picker should take up the full width of its container */
+  fullWidth?: boolean
 }
 
 export interface DateRangePickerProps {
@@ -48,4 +50,6 @@ export interface DateRangePickerProps {
   className?: string
   /** Custom style */
   style?: React.CSSProperties
+  /** Whether the picker should take up the full width of its container */
+  fullWidth?: boolean
 }
