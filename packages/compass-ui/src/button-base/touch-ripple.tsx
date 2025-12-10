@@ -50,14 +50,7 @@ export const TouchRipple = forwardRef((props: { bgColor?: string; opacity?: numb
     const element = containerRef.current
     if (!element) return
 
-    const rect = element
-      ? element.getBoundingClientRect()
-      : {
-          width: 0,
-          height: 0,
-          left: 0,
-          top: 0,
-        }
+    const rect = element.getBoundingClientRect()
 
     // Get the size of the ripple
     const clientX = event.clientX
@@ -65,17 +58,16 @@ export const TouchRipple = forwardRef((props: { bgColor?: string; opacity?: numb
     const rippleX = Math.round(clientX - rect.left)
     const rippleY = Math.round(clientY - rect.top)
 
-    const sizeX = Math.max(Math.abs((element ? element.clientWidth : 0) - rippleX), rippleX) * 2 + 2
-    const sizeY =
-      Math.max(Math.abs((element ? element.clientHeight : 0) - rippleY), rippleY) * 2 + 2
+    const sizeX = Math.max(Math.abs(element.clientWidth - rippleX), rippleX) * 2 + 2
+    const sizeY = Math.max(Math.abs(element.clientHeight - rippleY), rippleY) * 2 + 2
     const rippleSize = Math.sqrt(sizeX ** 2 + sizeY ** 2)
 
     startCommit({ rippleX, rippleY, rippleSize })
   }
 
   const stop = () => {
-    if (ripples && ripples.length) {
-      setRipples(ripples.slice(1))
+    if (ripples.length) {
+      setRipples((prev) => prev.slice(1)) // Use functional update for safety/correctness
     }
   }
 

@@ -5,7 +5,8 @@ import message from './index'
 
 describe('Message Component', () => {
   beforeEach(() => {
-    document.body.innerHTML = ''
+    // Rely on jest/testing-library cleanup or manual removal if strictly needed.
+    // document.body.innerHTML = '' // unsafe
     jest.useFakeTimers()
   })
 
@@ -74,6 +75,65 @@ describe('Message Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Loading Message')).toBeInTheDocument()
         expect(screen.getByRole('img', { name: 'loading' })).toBeInTheDocument()
+      })
+    })
+
+    it('should support object argument', async () => {
+      // Test info
+      act(() => {
+        // @ts-ignore
+        message.info({ content: 'Info Object Content', duration: 2 })
+        jest.advanceTimersByTime(20)
+      })
+      await waitFor(() => expect(screen.getByText('Info Object Content')).toBeInTheDocument())
+
+      // Test success
+      act(() => {
+        message.success({ content: 'Success Object Content' })
+        jest.advanceTimersByTime(20)
+      })
+      await waitFor(() => expect(screen.getByText('Success Object Content')).toBeInTheDocument())
+
+      // Test error
+      act(() => {
+        message.error({ content: 'Error Object Content' })
+        jest.advanceTimersByTime(20)
+      })
+      await waitFor(() => expect(screen.getByText('Error Object Content')).toBeInTheDocument())
+
+      // Test warning
+      act(() => {
+        message.warning({ content: 'Warning Object Content' })
+        jest.advanceTimersByTime(20)
+      })
+      await waitFor(() => expect(screen.getByText('Warning Object Content')).toBeInTheDocument())
+
+      // Test loading
+      act(() => {
+        message.loading({ content: 'Loading Object Content' })
+        jest.advanceTimersByTime(20)
+      })
+      await waitFor(() => expect(screen.getByText('Loading Object Content')).toBeInTheDocument())
+    })
+
+    it('should not auto close when duration is 0', async () => {
+      act(() => {
+        message.info('Permanent Message', 0)
+        jest.advanceTimersByTime(20)
+      })
+
+      const msg = await screen.findByText('Permanent Message')
+      expect(msg).toBeInTheDocument()
+
+      act(() => {
+        jest.advanceTimersByTime(10000)
+      })
+
+      expect(screen.getByText('Permanent Message')).toBeInTheDocument()
+
+      // Clean up manually
+      act(() => {
+        message.destroy()
       })
     })
   })
@@ -193,7 +253,7 @@ describe('Message Component', () => {
     })
   })
   describe('Hooks', () => {
-    it('should work with useMessage hook', async () => {
+    it('should work with useMessage hook (info)', async () => {
       const TestComponent = () => {
         const [messageApi, contextHolder] = message.useMessage()
         return (
@@ -211,6 +271,26 @@ describe('Message Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Hook Message')).toBeInTheDocument()
+      })
+    })
+
+    it('should work with useMessage hook (error)', async () => {
+      const TestComponent = () => {
+        const [messageApi, contextHolder] = message.useMessage()
+        return (
+          <div>
+            {contextHolder}
+            <button onClick={() => messageApi.error('Error Hook')}>Show Error</button>
+          </div>
+        )
+      }
+
+      render(<TestComponent />)
+      fireEvent.click(screen.getByText('Show Error'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Error Hook')).toBeInTheDocument()
+        expect(screen.getByRole('img', { name: 'error' })).toBeInTheDocument()
       })
     })
   })

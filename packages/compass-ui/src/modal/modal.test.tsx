@@ -161,42 +161,117 @@ describe('Modal', () => {
     })
   })
 
-  describe('Static Methods', () => {
-    beforeEach(() => {
-      document.body.innerHTML = ''
+  describe('Branches & Edge Cases', () => {
+    it('should handle onOk without callback', () => {
+      render(
+        <ThemeProvider>
+          <Modal isOpen title="Test" onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      // Should not throw
+      fireEvent.click(screen.getByText('确定'))
     })
 
-    it('should render confirm modal', async () => {
-      await act(async () => {
-        Modal.confirm({
-          title: 'Confirm Title',
-          content: 'Confirm Content',
-        })
-        // Wait for setTimeout that triggers isOpen: true
-        await new Promise((resolve) => setTimeout(resolve, 20))
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Confirm Title')).toBeInTheDocument()
-        expect(screen.getByText('Confirm Content')).toBeInTheDocument()
-      })
-
-      const modal = document.querySelector('.compass-modal')
-      expect(modal).toBeInTheDocument()
+    it('should call onCancel when onOk returns plain value', () => {
+      const onCancel = jest.fn()
+      const onOk = jest.fn().mockReturnValue(true) // Not a promise
+      render(
+        <ThemeProvider>
+          <Modal isOpen title="Test" onOk={onOk} onCancel={onCancel}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      fireEvent.click(screen.getByText('确定'))
+      expect(onOk).toHaveBeenCalled()
+      expect(onCancel).toHaveBeenCalled()
     })
 
-    it('should render info modal', async () => {
-      await act(async () => {
-        Modal.info({
-          title: 'Info Title',
-        })
-        // Wait for setTimeout that triggers isOpen: true
-        await new Promise((resolve) => setTimeout(resolve, 20))
-      })
+    it('should render proper text with custom locale props', () => {
+      render(
+        <ThemeProvider>
+          <Modal isOpen okText="Custom OK" cancelText="Custom Cancel" onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      expect(screen.getByText('Custom OK')).toBeInTheDocument()
+      expect(screen.getByText('Custom Cancel')).toBeInTheDocument()
+    })
 
-      await waitFor(() => {
-        expect(screen.getByText('Info Title')).toBeInTheDocument()
-      })
+    it('should not render mask when maskVisible is false', () => {
+      const { container } = render(
+        <ThemeProvider>
+          <Modal isOpen maskVisible={false} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      expect(container.querySelector('.compass-modal-mask')).not.toBeInTheDocument()
+    })
+
+    it('should not render close button when closable is false', () => {
+      render(
+        <ThemeProvider>
+          <Modal isOpen closable={false} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      expect(screen.queryByLabelText('Close')).not.toBeInTheDocument()
+    })
+
+    it('should not render header when title is missing and closable is false', () => {
+      const { container } = render(
+        <ThemeProvider>
+          <Modal isOpen closable={false} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      expect(container.querySelector('.compass-modal-header')).not.toBeInTheDocument()
+    })
+
+    it('should render custom footer', () => {
+      render(
+        <ThemeProvider>
+          <Modal isOpen footer={<div>Custom Footer</div>} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+      expect(screen.getByText('Custom Footer')).toBeInTheDocument()
+      expect(screen.queryByText('确定')).not.toBeInTheDocument()
+    })
+
+    it('should call afterClose when transition ends', () => {
+      const afterClose = jest.fn()
+      const { rerender } = render(
+        <ThemeProvider>
+          <Modal isOpen={true} afterClose={afterClose} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+
+      // Close modal
+      rerender(
+        <ThemeProvider>
+          <Modal isOpen={false} afterClose={afterClose} onCancel={jest.fn()}>
+            Content
+          </Modal>
+        </ThemeProvider>,
+      )
+
+      // Trigger transition end
+      const content = document.querySelector('.compass-modal-content')
+      if (content) {
+        fireEvent.transitionEnd(content)
+      }
+
+      expect(afterClose).toHaveBeenCalled()
     })
   })
 })

@@ -142,6 +142,30 @@ describe('Dropdown', () => {
     })
   })
 
+  describe('Branches', () => {
+    it('should not update internal state when controlled', async () => {
+      const user = userEvent.setup()
+      render(
+        <Dropdown overlay={overlay} visible={false}>
+          <Button>Trigger</Button>
+        </Dropdown>,
+      )
+      // Should remain closed even if hovered
+      await user.hover(screen.getByText('Trigger'))
+      expect(screen.queryByTestId('overlay')).not.toBeInTheDocument()
+    })
+
+    it('should render children only if no overlay/menu', () => {
+      const { container } = render(
+        <Dropdown>
+          <Button>Trigger</Button>
+        </Dropdown>,
+      )
+      expect(screen.getByText('Trigger')).toBeInTheDocument()
+      // Should not crash and just render trigger
+    })
+  })
+
   describe('Accessibility', () => {
     it('should have correct ARIA attributes', async () => {
       render(

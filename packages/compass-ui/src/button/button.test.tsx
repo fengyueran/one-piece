@@ -281,6 +281,16 @@ describe('Button', () => {
       expect(handleClick).toHaveBeenCalledTimes(1)
     })
 
+    it('should not crash when clicked without onClick handler', () => {
+      render(
+        <ThemeProvider>
+          <Button>Click me</Button>
+        </ThemeProvider>,
+      )
+      // Should not throw
+      fireEvent.click(screen.getByRole('button'))
+    })
+
     it('should not call onClick when disabled', () => {
       const handleClick = jest.fn()
       render(

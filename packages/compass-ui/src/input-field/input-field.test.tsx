@@ -165,6 +165,42 @@ describe('InputField', () => {
     })
   })
 
+  describe('Branches', () => {
+    it('should handle change when not controlled', () => {
+      renderWithTheme(<InputField defaultValue="init" />)
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'new' } })
+      expect(screen.getByRole('textbox')).toHaveValue('new')
+    })
+
+    it('should handle clear when controlled', () => {
+      const onChange = jest.fn()
+      renderWithTheme(<InputField value="controlled" allowClear onChange={onChange} />)
+      fireEvent.click(screen.getByRole('button'))
+
+      // Should call onChange with empty string
+      expect(onChange).toHaveBeenCalledTimes(1)
+      expect(onChange.mock.calls[0][0].target.value).toBe('')
+      // Value should NOT change because it is controlled and we didn't update prop
+      expect(screen.getByRole('textbox')).toHaveValue('controlled')
+    })
+
+    it('should handle key down other than enter', () => {
+      const onKeyDown = jest.fn()
+      renderWithTheme(<InputField onKeyDown={onKeyDown} />)
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'a' })
+      expect(onKeyDown).toHaveBeenCalled()
+    })
+
+    it('should render search with suffix', () => {
+      const { container } = renderWithTheme(
+        <InputField type="search" suffix={<span>Custom</span>} />,
+      )
+      expect(screen.getByText('Custom')).toBeInTheDocument()
+      // Search icon should NOT be rendered if suffix is provided
+      expect(container.querySelector('.anticon-search')).not.toBeInTheDocument()
+    })
+  })
+
   describe('Boundary', () => {
     it('should forward ref', () => {
       const ref = React.createRef<HTMLInputElement>()

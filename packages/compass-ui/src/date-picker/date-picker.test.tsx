@@ -122,6 +122,114 @@ describe('DatePicker', () => {
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label', 'Choose date')
     })
   })
+  describe('Date Picker Branches', () => {
+    it('should handle week picker mode', async () => {
+      renderWithTheme(<DatePicker picker="week" />)
+      const input = screen.getByRole('textbox')
+      await userEvent.click(input)
+
+      const day = screen.getAllByText('15')[0]
+      // Simulating hover
+      fireEvent.mouseEnter(day)
+      fireEvent.mouseLeave(day)
+
+      // Click to select
+      await userEvent.click(day)
+
+      // Should show week format
+      expect((input as HTMLInputElement).value).toMatch(/第\d+周/)
+    })
+
+    it('should handle month picker mode', async () => {
+      renderWithTheme(<DatePicker picker="month" />)
+      await userEvent.click(screen.getByRole('textbox'))
+
+      // Should show months panel directly (MonthPanel currently uses English format MMM by default)
+      expect(screen.getByText('Jan')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Mar'))
+
+      expect(screen.queryByText('Jan')).not.toBeInTheDocument() // Should close
+      expect((screen.getByRole('textbox') as HTMLInputElement).value).toMatch(/20\d\d-\d\d/)
+    })
+
+    it('should handle year picker mode', async () => {
+      renderWithTheme(<DatePicker picker="year" />)
+      await userEvent.click(screen.getByRole('textbox'))
+
+      // Year panel
+      const year = new Date().getFullYear()
+      fireEvent.click(screen.getByText(String(year)))
+
+      // Just check that onChange could be triggered or value format is reasonably correct (e.g. includes year)
+      await waitFor(() => {
+        expect((screen.getByRole('textbox') as HTMLInputElement).value).toMatch(
+          new RegExp(String(year)),
+        )
+      })
+    })
+
+    it('should handle quarter picker mode', async () => {
+      renderWithTheme(<DatePicker picker="quarter" />)
+      await userEvent.click(screen.getByRole('textbox'))
+
+      await userEvent.click(screen.getByText('Q1'))
+      // Matches "2025年第1季度" (zh-CN) or "2025-Q1" (fallback)
+      expect((screen.getByRole('textbox') as HTMLInputElement).value).toMatch(/(第\d+季度|Q\d)/)
+    })
+
+    it('should handle time selection', async () => {
+      const onChange = jest.fn()
+      renderWithTheme(<DatePicker showTime onChange={onChange} />)
+      await userEvent.click(screen.getByRole('textbox'))
+
+      const day = screen.getAllByText('15')[0]
+      await userEvent.click(day)
+
+      // Should not close yet (selecting date)
+      expect(screen.getByText('确定')).toBeInTheDocument()
+
+      // Click OK to confirm
+      await userEvent.click(screen.getByText('确定'))
+
+      expect(onChange).toHaveBeenCalled()
+      expect(screen.queryByText('确定')).not.toBeInTheDocument()
+    })
+
+    it('should switch panels', async () => {
+      renderWithTheme(<DatePicker />)
+      const input = screen.getByRole('textbox')
+      await userEvent.click(input)
+
+      // Go to month panel
+      const headerTitle = screen.getByText(/\d{4}年 \d{1,2}月/)
+      await userEvent.click(headerTitle)
+      expect(screen.getByText('Jan')).toBeInTheDocument()
+
+      // Go to year panel
+      const yearHeader = screen.getByText(/\d{4}年/)
+      await userEvent.click(yearHeader)
+      expect(screen.getByText(/\d{4}-\d{4}/)).toBeInTheDocument() // Decade range
+
+      // Select year -> Back to month
+      const year = new Date().getFullYear()
+      await userEvent.click(screen.getByText(String(year)))
+      expect(screen.getByText('Jan')).toBeInTheDocument()
+
+      // Select month -> Back to date
+      await userEvent.click(screen.getByText('Jan'))
+      expect(headerTitle).toBeInTheDocument()
+    })
+
+    it('should handle input change clearing', async () => {
+      const onChange = jest.fn()
+      renderWithTheme(<DatePicker value={new Date()} onChange={onChange} />)
+      const input = screen.getByRole('textbox')
+
+      // Use fireEvent.change for readOnly inputs to simulate programmatic change or clear behavior
+      fireEvent.change(input, { target: { value: '' } })
+      expect(onChange).toHaveBeenCalledWith(null)
+    })
+  })
 })
 
 describe('DateRangePicker', () => {
