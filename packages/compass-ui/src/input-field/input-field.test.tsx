@@ -80,7 +80,7 @@ describe('InputField', () => {
 
     it('should render search input', () => {
       const { container } = renderWithTheme(<InputField type="search" />)
-      expect(container.querySelector('.anticon-search')).toBeInTheDocument()
+      expect(container.querySelector('.compass-icon-search')).toBeInTheDocument()
     })
   })
 
@@ -197,7 +197,7 @@ describe('InputField', () => {
       )
       expect(screen.getByText('Custom')).toBeInTheDocument()
       // Search icon should NOT be rendered if suffix is provided
-      expect(container.querySelector('.anticon-search')).not.toBeInTheDocument()
+      expect(container.querySelector('.compass-icon-search')).not.toBeInTheDocument()
     })
   })
 

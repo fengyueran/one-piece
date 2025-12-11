@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const InfoIcon = () => (
-  <span role="img" aria-label="info" className="anticon anticon-info-circle">
+  <span role="img" aria-label="info" className="compass-icon compass-icon-info-circle">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -17,7 +17,7 @@ export const InfoIcon = () => (
 )
 
 export const SuccessIcon = () => (
-  <span role="img" aria-label="success" className="anticon anticon-check-circle">
+  <span role="img" aria-label="success" className="compass-icon compass-icon-check-circle">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -33,7 +33,7 @@ export const SuccessIcon = () => (
 )
 
 export const ErrorIcon = () => (
-  <span role="img" aria-label="error" className="anticon anticon-close-circle">
+  <span role="img" aria-label="error" className="compass-icon compass-icon-close-circle">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -49,7 +49,7 @@ export const ErrorIcon = () => (
 )
 
 export const WarningIcon = () => (
-  <span role="img" aria-label="warning" className="anticon anticon-exclamation-circle">
+  <span role="img" aria-label="warning" className="compass-icon compass-icon-exclamation-circle">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -65,7 +65,7 @@ export const WarningIcon = () => (
 )
 
 export const LoadingIcon = () => (
-  <span role="img" aria-label="loading" className="anticon anticon-loading">
+  <span role="img" aria-label="loading" className="compass-icon compass-icon-loading">
     <svg
       viewBox="0 0 1024 1024"
       focusable="false"
@@ -81,7 +81,7 @@ export const LoadingIcon = () => (
 )
 
 export const CloseIcon = () => (
-  <span role="img" aria-label="close" className="anticon anticon-close">
+  <span role="img" aria-label="close" className="compass-icon compass-icon-close">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -99,7 +99,7 @@ export const CloseIcon = () => (
 export const CloseOutlined = CloseIcon
 
 export const EyeIcon = () => (
-  <span role="img" aria-label="eye" className="anticon anticon-eye">
+  <span role="img" aria-label="eye" className="compass-icon compass-icon-eye">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -115,7 +115,7 @@ export const EyeIcon = () => (
 )
 
 export const EyeInvisibleIcon = () => (
-  <span role="img" aria-label="eye-invisible" className="anticon anticon-eye-invisible">
+  <span role="img" aria-label="eye-invisible" className="compass-icon compass-icon-eye-invisible">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -132,7 +132,7 @@ export const EyeInvisibleIcon = () => (
 )
 
 export const SearchIcon = () => (
-  <span role="img" aria-label="search" className="anticon anticon-search">
+  <span role="img" aria-label="search" className="compass-icon compass-icon-search">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -147,7 +147,7 @@ export const SearchIcon = () => (
   </span>
 )
 export const CloseCircleIcon = () => (
-  <span role="img" aria-label="close-circle" className="anticon anticon-close-circle">
+  <span role="img" aria-label="close-circle" className="compass-icon compass-icon-close-circle">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -162,7 +162,7 @@ export const CloseCircleIcon = () => (
   </span>
 )
 export const CheckIcon = () => (
-  <span role="img" aria-label="check" className="anticon anticon-check">
+  <span role="img" aria-label="check" className="compass-icon compass-icon-check">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -179,7 +179,7 @@ export const CheckIcon = () => (
 
 // Arrow icons for DatePicker
 export const LeftOutlined = () => (
-  <span role="img" aria-label="left" className="anticon anticon-left">
+  <span role="img" aria-label="left" className="compass-icon compass-icon-left">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -195,7 +195,7 @@ export const LeftOutlined = () => (
 )
 
 export const RightOutlined = () => (
-  <span role="img" aria-label="right" className="anticon anticon-right">
+  <span role="img" aria-label="right" className="compass-icon compass-icon-right">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -211,7 +211,7 @@ export const RightOutlined = () => (
 )
 
 export const DoubleLeftOutlined = () => (
-  <span role="img" aria-label="double-left" className="anticon anticon-double-left">
+  <span role="img" aria-label="double-left" className="compass-icon compass-icon-double-left">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -227,7 +227,7 @@ export const DoubleLeftOutlined = () => (
 )
 
 export const DoubleRightOutlined = () => (
-  <span role="img" aria-label="double-right" className="anticon anticon-double-right">
+  <span role="img" aria-label="double-right" className="compass-icon compass-icon-double-right">
     <svg
       viewBox="64 64 896 896"
       focusable="false"
@@ -243,3 +243,21 @@ export const DoubleRightOutlined = () => (
 )
 
 export { CalendarOutlined } from './calendar'
+
+export const DownIcon = () => (
+  <span role="img" aria-label="down" className="compass-icon compass-icon-down">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="down"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+    </svg>
+  </span>
+)
+
+export const DownOutlined = DownIcon

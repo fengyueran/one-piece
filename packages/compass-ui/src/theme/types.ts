@@ -95,6 +95,36 @@ export interface Theme {
     dropdown: DropdownTheme
     menu: MenuTheme
     datePicker: DatePickerTheme
+    select: SelectTheme
+  }
+}
+
+export interface SelectTheme {
+  borderRadius: string
+  backgroundColor: string
+  borderColor: string
+  hoverBorderColor: string
+  activeBorderColor: string
+  placeholderColor: string
+
+  optionSelectedBg: string
+  optionHoverBg: string
+  optionColor: string
+  optionSelectedColor: string
+
+  tagBg: string
+  tagColor: string
+  tagBorderColor: string
+
+  padding: {
+    sm: string
+    md: string
+    lg: string
+  }
+  fontSize: {
+    sm: string
+    md: string
+    lg: string
   }
 }
 
