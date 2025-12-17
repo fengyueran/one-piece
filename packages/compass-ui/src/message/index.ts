@@ -1,8 +1,7 @@
 import message from './message'
 import useMessage from './use-message'
 
-export * from './types'
-export { useMessage }
+export type { MessageProps } from './types'
 
 type MessageType = typeof message & {
   useMessage: typeof useMessage

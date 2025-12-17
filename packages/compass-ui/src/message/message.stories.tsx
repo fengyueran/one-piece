@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import message, { MessageProps } from './index'
 import Button from '../button'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 const meta: Meta = {
   title: 'Feedback/Message',

@@ -1,4 +1,4 @@
-import { ThemeProviderProps } from '../theme/types'
+import { Theme, DeepPartial, ThemeMode } from '../theme/types'
 
 export interface ModalLocale {
   okText: string
@@ -47,13 +47,41 @@ export interface DatePickerLocale {
   weekFormat: string
 }
 
+export interface PaginationLocale {
+  items_per_page: string
+  jump_to: string
+  jump_to_confirm: string
+  page: string
+  prev_page: string
+  next_page: string
+  prev_5: string
+  next_5: string
+  prev_3: string
+  next_3: string
+}
+
 export interface Locale {
   locale: string
   Modal: ModalLocale
   DatePicker: DatePickerLocale
+  Pagination: PaginationLocale
 }
 
-export interface ConfigProviderProps extends Partial<ThemeProviderProps> {
+export interface ThemeConfig {
+  token?: DeepPartial<Theme>
+  light?: DeepPartial<Theme>
+  dark?: DeepPartial<Theme>
+  defaultMode?: ThemeMode
+}
+
+export interface ConfigProviderProps {
+  /**
+   * The global configuration locale.
+   */
   locale?: Locale
+  /**
+   * Theme configuration.
+   */
+  theme?: ThemeConfig
   children?: React.ReactNode
 }

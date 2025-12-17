@@ -90,7 +90,7 @@ export const SelectTrigger = styled.div<{
   }
 `
 
-export const SelectedContent = styled.div`
+export const SelectedContent = styled.div<{ size?: 'small' | 'medium' | 'large' }>`
   position: relative;
   flex: 1;
   overflow: hidden;
@@ -101,7 +101,11 @@ export const SelectedContent = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
-  min-height: 26px;
+  min-height: ${({ size }) => {
+    if (size === 'small') return '20px'
+    if (size === 'large') return '26px'
+    return '24px' // medium
+  }};
 `
 
 export const Placeholder = styled.span`

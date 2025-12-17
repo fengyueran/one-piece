@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState, useEffect } from 'react'
 import DatePicker from './index'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 const meta: Meta<typeof DatePicker> = {
   title: 'Components/DatePicker',

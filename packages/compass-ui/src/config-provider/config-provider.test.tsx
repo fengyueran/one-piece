@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { render, screen } from '@testing-library/react'
-import { ConfigProvider, useConfig } from './index'
-import { ConfigContext } from './context'
+import ConfigProvider from './config-provider'
+import { useConfig } from './context'
 
 describe('ConfigProvider', () => {
   it('should provide default context when not used', () => {

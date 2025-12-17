@@ -2,7 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import Dropdown from './dropdown'
 import Button from '../button'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 import Menu from '../menu'
 
 const meta: Meta<typeof Dropdown> = {

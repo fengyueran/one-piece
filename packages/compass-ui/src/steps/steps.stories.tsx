@@ -2,7 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Steps } from './steps'
 import { LoadingIcon, InfoIcon } from '../icons'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 /**
  * 步骤条组件，用于引导用户按照流程完成任务。

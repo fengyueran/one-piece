@@ -1,7 +1,7 @@
 // NOTE: Avoid importing Storybook type declarations to prevent TS resolution errors.
 // We keep typings minimal in this stories file.
 import { Progress } from './progress'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 const meta = {
   title: 'Components/Progress',
@@ -102,6 +102,22 @@ const meta = {
       control: 'color',
       description: '轨道颜色（背景颜色）',
       type: 'string',
+    },
+    gapDegree: {
+      control: { type: 'range', min: 0, max: 295, step: 1 },
+      description: '圆形进度条缺口角度',
+      table: {
+        type: { summary: 'number' },
+      },
+    },
+    gapPosition: {
+      control: 'select',
+      options: ['top', 'bottom', 'left', 'right'],
+      description: '圆形进度条缺口位置',
+      table: {
+        type: { summary: "'top' | 'bottom' | 'left' | 'right'" },
+        defaultValue: { summary: "'top'" },
+      },
     },
   },
 }
@@ -378,6 +394,36 @@ export const CustomTheme: Story = {
     docs: {
       description: {
         story: '**自定义主题**',
+      },
+    },
+  },
+}
+
+export const CircleDashboard: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Dashboard (Bottom Gap)</h4>
+        <Progress type="circle" percent={75} gapDegree={75} gapPosition="bottom" />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Dashboard (Top Gap)</h4>
+        <Progress type="circle" percent={75} gapDegree={75} gapPosition="top" />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Dashboard (Left Gap)</h4>
+        <Progress type="circle" percent={75} gapDegree={75} gapPosition="left" />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <h4>Dashboard (Right Gap)</h4>
+        <Progress type="circle" percent={75} gapDegree={75} gapPosition="right" />
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**仪表盘** \n\n通过设置 `gapDegree` 和 `gapPosition` 可以实现仪表盘效果。',
       },
     },
   },

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import Menu from './menu'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 import { SearchIcon, CloseIcon } from '../icons'
 
 const meta: Meta<typeof Menu> = {

@@ -3,7 +3,7 @@ import Modal, { ModalProps } from '.'
 import Button from '../button'
 import { useState, useEffect } from 'react'
 import { defaultTheme } from '../theme'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 const meta: Meta<typeof Modal> = {
   title: 'Feedback/Modal',

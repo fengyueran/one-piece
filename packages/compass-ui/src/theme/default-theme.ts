@@ -86,6 +86,17 @@ export const defaultTheme: Theme = {
   },
 
   components: {
+    pagination: {
+      itemSize: '32px',
+      itemBg: '#ffffff',
+      itemActiveBg: '#ffffff',
+      itemBorderRadius: '4px',
+      itemColor: 'rgba(0, 0, 0, 0.88)',
+      itemActiveColor: '#1890ff',
+      itemHoverBg: '#ffffff',
+      itemHoverColor: '#1890ff',
+      fontSize: '14px',
+    },
     button: {
       padding: {
         sm: '0 8px',

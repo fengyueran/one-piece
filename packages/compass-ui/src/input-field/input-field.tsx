@@ -144,8 +144,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          // @ts-ignore
-          size={size}
+          $size={size}
           {...rest}
         />
         {allowClear && !disabled && (

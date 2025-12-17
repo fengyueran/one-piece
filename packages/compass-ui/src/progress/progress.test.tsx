@@ -289,4 +289,46 @@ describe('Progress', () => {
       expect(screen.getByText('0%')).toBeInTheDocument()
     })
   })
+
+  describe('Circle Variations', () => {
+    it('should invoke size logic for CircleProgress', () => {
+      const { rerender } = renderWithTheme(<Progress type="circle" size="small" percent={50} />)
+      // Just triggering rendering logic for coverage
+      rerender(
+        <ThemeProvider>
+          <Progress type="circle" size="medium" percent={50} />
+        </ThemeProvider>,
+      )
+      rerender(
+        <ThemeProvider>
+          <Progress type="circle" size="large" percent={50} />
+        </ThemeProvider>,
+      )
+      rerender(
+        <ThemeProvider>
+          <Progress type="circle" size={'invalid' as any} percent={50} />
+        </ThemeProvider>,
+      )
+    })
+
+    it('should handle strokeColor object for CircleProgress', () => {
+      const gradient = { from: '#108ee9', to: '#87d068' }
+      const { container } = renderWithTheme(
+        <Progress type="circle" strokeColor={gradient} percent={50} />,
+      )
+      expect(container.querySelector('defs')).toBeInTheDocument()
+      expect(container.querySelector('linearGradient')).toBeInTheDocument()
+    })
+  })
+
+  describe('Theme Fallback', () => {
+    it('should handle missing theme variables gracefully', () => {
+      render(
+        <ThemeProvider theme={{}}>
+          <Progress percent={50} status="normal" />
+        </ThemeProvider>,
+      )
+      expect(screen.getByText('50%')).toBeInTheDocument()
+    })
+  })
 })

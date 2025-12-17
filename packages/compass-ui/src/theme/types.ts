@@ -96,6 +96,7 @@ export interface Theme {
     menu: MenuTheme
     datePicker: DatePickerTheme
     select: SelectTheme
+    pagination: PaginationTheme
   }
 }
 
@@ -151,6 +152,18 @@ export interface DatePickerTheme {
   borderColor: string
   boxShadow: string
   zIndex: number
+}
+
+export interface PaginationTheme {
+  itemSize: string
+  itemBg: string
+  itemActiveBg: string
+  itemBorderRadius: string
+  itemColor: string
+  itemActiveColor: string
+  itemHoverBg: string
+  itemHoverColor: string
+  fontSize: string
 }
 
 export interface MenuTheme {

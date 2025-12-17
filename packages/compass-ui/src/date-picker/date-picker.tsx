@@ -336,7 +336,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
           onClick={() => !disabled && setIsOpen(!isOpen)}
           suffix={<CalendarOutlined />}
           allowClear={clearable}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (!e.target.value) {
               setSelectedDate(null)
               onChange?.(null)

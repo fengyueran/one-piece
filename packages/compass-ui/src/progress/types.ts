@@ -29,6 +29,10 @@ export interface ProgressProps {
   className?: string
   /** Custom style */
   style?: React.CSSProperties
+  /** Gap degree for circle progress */
+  gapDegree?: number
+  /** Gap position for circle progress */
+  gapPosition?: 'top' | 'bottom' | 'left' | 'right'
 }
 
 export interface LinearProgressProps extends Omit<ProgressProps, 'type' | 'strokeWidth'> {

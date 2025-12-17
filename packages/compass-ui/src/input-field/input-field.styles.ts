@@ -63,7 +63,7 @@ export const ClearButton = styled.button<{ visible?: boolean; $isHoverShow?: boo
   }
 `
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }>`
   flex: 1;
   border: none;
   outline: none;
@@ -71,10 +71,9 @@ export const StyledInput = styled.input`
   padding: 0;
   margin: 0;
   color: ${({ theme }) => (theme as Theme).colors.text};
-  font-size: ${({ theme, size }) => {
+  font-size: ${({ theme, $size }) => {
     const map = { small: 'sm', medium: 'md', large: 'lg' } as const
-    // @ts-ignore - size is passed to InputWrapper but not directly to input element in DOM, but here we access it from props
-    return (theme as Theme).components.input.fontSize[map[size || 'medium']]
+    return (theme as Theme).components.input.fontSize[map[$size || 'medium']]
   }};
   width: 100%;
 

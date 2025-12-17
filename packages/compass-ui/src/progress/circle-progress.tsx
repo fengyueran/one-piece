@@ -26,6 +26,8 @@ export const CircleProgress = React.forwardRef<HTMLDivElement, CircleProgressPro
       strokeColor,
       trailColor,
       success,
+      gapDegree,
+      gapPosition = 'top',
       className,
       style,
       ...props
@@ -59,8 +61,32 @@ export const CircleProgress = React.forwardRef<HTMLDivElement, CircleProgressPro
     const circumference = 2 * Math.PI * radius
     const strokeDasharray = circumference
     const strokeDashoffset = circumference - (normalizedPercent / 100) * circumference
-
     const gradientId = useId()
+
+    const isGradient = typeof strokeColor === 'object'
+
+    // Dashboard logic
+    const gapDeg = Math.max(0, Math.min(295, gapDegree || 0))
+    const totalLength = circumference * ((360 - gapDeg) / 360)
+    const dashArray = `${totalLength} ${circumference}`
+    const trailOffset = 0
+    const progressOffset = totalLength * (1 - normalizedPercent / 100)
+
+    // Rotation calculation
+    // Default SVG start is at 3 o'clock (0deg). StyledCircleSvg has rotate(-90deg) by default (12 o'clock).
+    // We override this transform based on gapPosition.
+    const getRotation = () => {
+      const baseRotation =
+        gapPosition === 'bottom'
+          ? 90
+          : gapPosition === 'left'
+            ? 180
+            : gapPosition === 'right'
+              ? 0
+              : -90 // top
+
+      return `rotate(${baseRotation + gapDeg / 2}deg)`
+    }
 
     return (
       <StyledCircleContainer
@@ -75,13 +101,15 @@ export const CircleProgress = React.forwardRef<HTMLDivElement, CircleProgressPro
         {...props}
       >
         <StyledCircleProgress width={circleDiameter}>
-          <StyledCircleSvg>
+          <StyledCircleSvg style={gapDegree ? { transform: getRotation() } : undefined}>
             {/* Background circle */}
             <StyledCircleTrail
               cx={circleDiameter / 2}
               cy={circleDiameter / 2}
               r={radius}
               strokeWidth={circleStrokeWidth}
+              strokeDasharray={gapDegree ? dashArray : undefined}
+              strokeDashoffset={gapDegree ? trailOffset : undefined}
               style={{ stroke: trailColor }}
             />
             {/* Progress circle */}
@@ -90,12 +118,14 @@ export const CircleProgress = React.forwardRef<HTMLDivElement, CircleProgressPro
               cy={circleDiameter / 2}
               r={radius}
               strokeWidth={circleStrokeWidth}
-              strokeDasharray={strokeDasharray}
-              strokeDashoffset={strokeDashoffset}
+              strokeDasharray={gapDegree ? dashArray : strokeDasharray}
+              strokeDashoffset={gapDegree ? progressOffset : strokeDashoffset}
               status={finalStatus}
               strokeColor={typeof strokeColor === 'string' ? strokeColor : undefined}
               style={{
-                stroke: typeof strokeColor === 'object' ? `url(#${gradientId})` : undefined,
+                stroke: isGradient ? `url(#${gradientId})` : undefined,
+                transition:
+                  'stroke-dashoffset 0.3s ease 0s, stroke-dasharray 0.3s ease 0s, stroke 0.3s',
               }}
             />
             {/* Gradient definition for object strokeColor */}

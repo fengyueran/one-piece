@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React, { useState } from 'react'
-import { ConfigProvider } from './index'
+import ConfigProvider from './index'
 import Button from '../button'
 import DatePicker from '../date-picker'
 import Modal from '../modal'
@@ -60,7 +60,7 @@ export const LocaleSwitching: Story = {
     }
 
     return (
-      <ConfigProvider locale={locale} defaultMode={themeMode}>
+      <ConfigProvider locale={locale} theme={{ defaultMode: themeMode }}>
         <Container
           style={{
             background: themeMode === 'dark' ? '#1f1f1f' : '#fff',

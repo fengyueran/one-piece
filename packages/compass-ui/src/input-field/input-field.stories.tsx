@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import InputField from './input-field'
 import { InfoIcon } from '../icons'
-import { ConfigProvider } from '../config-provider'
+import ConfigProvider from '../config-provider'
 
 const meta: Meta<typeof InputField> = {
   title: 'Components/InputField',

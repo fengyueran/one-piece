@@ -217,7 +217,13 @@ const preview: Preview = {
           // 3.3 过滤掉空的 onClick 处理函数（如 onClick={() => {}}）
           renderCode = renderCode.replace(/\s*onClick=\{\(\)\s*=>\s*\{\}\}/g, '')
 
-          // 3.4 修复对象属性中的 onClick 显示（如 Dropdown menu 中的 onClick）
+          // 3.4 过滤掉空的 onFocus 处理函数（如 onFocus={() => {}}）
+          renderCode = renderCode.replace(/\s*onFocus=\{\(\)\s*=>\s*\{\}\}/g, '')
+
+          // 3.5 过滤掉空的 onBlur 处理函数（如 onBlur={() => {}}）
+          renderCode = renderCode.replace(/\s*onBlur=\{\(\)\s*=>\s*\{\}\}/g, '')
+
+          // 3.6 修复对象属性中的 onClick 显示（如 Dropdown menu 中的 onClick）
           renderCode = renderCode.replace(
             /onClick:\s*\(\)\s*=>\s*\{\},?/g,
             'onClick: (e, key) => alert(`Menu clicked! Key: ${key}`),',
@@ -248,10 +254,12 @@ const preview: Preview = {
             'Progress',
             'message',
             'InputField',
+            'InputNumber',
             'Steps',
             'Dropdown',
             'Menu',
             'DatePicker',
+            'Pagination',
           ]
           componentsToCheck.forEach((component) => {
             if (renderCode.includes(`<${component}`) || renderCode.includes(`${component}.`)) {

@@ -362,7 +362,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
           status={status}
           className="compass-select-selector"
         >
-          <SelectedContent>{renderContent()}</SelectedContent>
+          <SelectedContent size={size}>{renderContent()}</SelectedContent>
           <SuffixIcon>
             {loading ? (
               <LoadingWrapper>
