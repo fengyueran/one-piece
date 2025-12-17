@@ -412,7 +412,7 @@ export const ClickAction: Story = {
   },
   render: () => (
     <Button
-      onClick={(e: any) => {
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
         console.log('用户点击')
       }}
     >
