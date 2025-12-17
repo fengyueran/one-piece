@@ -242,7 +242,21 @@ export const DoubleRightOutlined = () => (
   </span>
 )
 
-export { CalendarOutlined } from './calendar'
+export const CalendarOutlined = () => (
+  <span role="img" aria-label="calendar" className="compass-icon compass-icon-calendar">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="calendar"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zm-40 656H184V460h656v380zM184 392V256h128v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h256v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h128v136H184z"></path>
+    </svg>
+  </span>
+)
 
 export const DownIcon = () => (
   <span role="img" aria-label="down" className="compass-icon compass-icon-down">
@@ -261,3 +275,35 @@ export const DownIcon = () => (
 )
 
 export const DownOutlined = DownIcon
+
+export const MoreOutlined = () => (
+  <span role="img" aria-label="more" className="compass-icon compass-icon-more">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="more"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M456 231a56 56 0 10112 0 56 56 0 10-112 0zm0 280a56 56 0 10112 0 56 56 0 10-112 0zm0 280a56 56 0 10112 0 56 56 0 10-112 0z"></path>
+    </svg>
+  </span>
+)
+
+export const EllipsisOutlined = () => (
+  <span role="img" aria-label="ellipsis" className="compass-icon compass-icon-ellipsis">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="ellipsis"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M176 512a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
+    </svg>
+  </span>
+)
