@@ -9,21 +9,104 @@ export const extractBodyContent = (body: string): string => {
   const startChar = body[0]
   const isBlock = startChar === '{'
   const isParen = startChar === '('
+  const isJSX = startChar === '<'
 
-  if (isBlock || isParen) {
-    const endChar = isBlock ? '}' : ')'
+  if (isBlock || isParen || isJSX) {
+    const endChar = isBlock ? '}' : isParen ? ')' : '>'
     let balance = 0
+    let jsxDepth = 0
+    let inString: string | null = null
+    let inCommentLine = false
+    let inCommentBlock = false
 
     for (let i = 0; i < body.length; i++) {
-      if (body[i] === startChar) balance++
-      if (body[i] === endChar) {
+      const char = body[i]
+      const nextChar = body[i + 1] || ''
+
+      // If we are in a string, handle escape and closure
+      if (inString) {
+        if (char === '\\') {
+          i++ // skip next char (escaped)
+          continue
+        }
+        if (char === inString) {
+          inString = null
+        }
+        continue
+      }
+
+      // If we are in a comment
+      if (inCommentLine) {
+        if (char === '\n') inCommentLine = false
+        continue
+      }
+      if (inCommentBlock) {
+        if (char === '*' && nextChar === '/') {
+          inCommentBlock = false
+          i++
+        }
+        continue
+      }
+
+      // Start of comment?
+      if (char === '/' && nextChar === '/') {
+        inCommentLine = true
+        i++
+        continue
+      }
+      if (char === '/' && nextChar === '*') {
+        inCommentBlock = true
+        i++
+        continue
+      }
+
+      // Start of string?
+      if (char === '"' || char === "'" || char === '`') {
+        inString = char
+        continue
+      }
+
+      // Handle standard brackets
+      if (char === '{' || char === '(' || char === '[') {
+        balance++
+        continue
+      }
+      if (char === '}' || char === ')' || char === ']') {
         balance--
-        if (balance === 0) {
-          // If it's a block {}, include the braces. If it's (), unwrap them.
+        // For Block/Paren mode, check if we are done
+        if (!isJSX && balance === 0 && char === endChar) {
           return isBlock ? body.substring(0, i + 1) : body.substring(1, i).trim()
+        }
+        continue
+      }
+
+      // Handle JSX
+      if (isJSX && balance === 0) {
+        // Case 1: Closing Tag Start </...
+        if (char === '<' && nextChar === '/') {
+          jsxDepth--
+        }
+        // Case 2: Self-Closing End />
+        else if (char === '/' && nextChar === '>') {
+          jsxDepth--
+        }
+        // Case 3: Opening Tag Start <Tag or Fragment <>
+        else if (char === '<' && /[a-zA-Z0-9_$]/.test(nextChar || '')) {
+          jsxDepth++
+        } else if (char === '<' && nextChar === '>') {
+          // Fragment start
+          jsxDepth++
+        }
+
+        // Check for end of JSX
+        // The expression ends when jsxDepth is 0 AND we hit the closing '>'
+        if (jsxDepth === 0 && char === '>') {
+          // If Fragment end </>, we hit > here, jsxDepth is 0.
+          return body.substring(0, i + 1)
         }
       }
     }
+
     // If not balanced (shouldn't happen in valid code), return valid part or whole
     return body
   }
@@ -111,7 +194,7 @@ export const extractRenderInfo = (
 export const cleanEmptyHandlers = (code: string): string => {
   let result = code
   // Common handlers
-  const handlers = ['onChange', 'onPressEnter', 'onClick', 'onFocus', 'onBlur']
+  const handlers = ['onChange', 'onPressEnter', 'onClick', 'onFocus', 'onBlur', 'onVisibleChange']
 
   handlers.forEach((handler) => {
     const regex = new RegExp(`\\s*${handler}=\\{\\(\\)\\s*=>\\s*\\{\\}\\}`, 'g')
@@ -150,10 +233,16 @@ const KNOWN_COMPONENTS = [
  * Generate imports string
  */
 export const generateImports = (renderCode: string, functionArgs: string): { imports: string } => {
-  // 5. 构建 React import
-  const needsUseState = renderCode.includes('useState')
+  // 5. Build React import
+  const hooks = ['useState', 'useEffect', 'useRef', 'useCallback', 'useMemo']
   const reactImports = ['React']
-  if (needsUseState) reactImports.push('useState')
+
+  hooks.forEach((hook) => {
+    if (renderCode.includes(hook)) {
+      reactImports.push(hook)
+    }
+  })
+
   const reactImportLine = `import ${reactImports.length === 1 ? 'React' : `React, { ${reactImports.slice(1).join(', ')} }`} from 'react'`
 
   const importsByPackage: Record<string, string[]> = {}
@@ -248,14 +337,6 @@ export const transformSource = (code: string): string => {
   if (!renderCode) return code
 
   renderCode = cleanEmptyHandlers(renderCode)
-
-  //   // Double check
-  //   if (
-  //     renderCode.startsWith('{') &&
-  //     (renderCode.includes('args:') || renderCode.includes('parameters:'))
-  //   ) {
-  //     return code
-  //   }
 
   const { imports } = generateImports(renderCode, functionArgs)
 

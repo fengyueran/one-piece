@@ -41,7 +41,8 @@ describe('DatePicker', () => {
       // Note: compass-ui InputField usually shows clear button on hover or always if visible prop is handled.
       // Based on InputField implementation, it has .compass-input-clear-button.
       // We might need to query by class or role.
-      const clearBtn = screen.getByRole('button', { hidden: true }) // hidden because it might be physically hidden until hover
+      // Clear button is now CloseCircleIcon which has aria-label="close-circle"
+      const clearBtn = screen.getByLabelText('close-circle')
       expect(clearBtn).toBeInTheDocument()
 
       fireEvent.click(clearBtn)
@@ -277,8 +278,8 @@ describe('DateRangePicker', () => {
       const inputs = screen.getAllByRole('textbox')
       await userEvent.hover(inputs[0])
 
-      // The clear button is a <span> with ✕, inside StyledSuffixIcon
-      const clearBtn = screen.getByText('✕')
+      // The clear button is CloseCircleIcon with aria-label="close-circle", inside StyledSuffixIcon
+      const clearBtn = screen.getByLabelText('close-circle')
       await userEvent.click(clearBtn)
 
       expect(handleChange).toHaveBeenCalledWith([null, null])

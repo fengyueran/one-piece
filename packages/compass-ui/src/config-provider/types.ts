@@ -76,12 +76,17 @@ export interface ThemeConfig {
 
 export interface ConfigProviderProps {
   /**
-   * The global configuration locale.
+   * 国际化配置 (Locale)。
+   * 包含 Modal, DatePicker, Pagination 等组件的语言包。
    */
   locale?: Locale
   /**
-   * Theme configuration.
+   * 主题配置 (ThemeConfig)。
+   * 可以配置全局 token、深色/浅色模式覆盖以及默认主题模式。
    */
   theme?: ThemeConfig
+  /**
+   * 子元素
+   */
   children?: React.ReactNode
 }

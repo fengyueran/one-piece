@@ -107,22 +107,28 @@ describe('DateRangePicker Detailed', () => {
     renderWithTheme(<DateRangePicker showTime onChange={onChange} />)
     const inputs = screen.getAllByRole('textbox')
 
-    // Select Start
+    // Select Start date
     fireEvent.click(inputs[0])
     fireEvent.click(screen.getAllByText('10')[0])
 
-    // Manually switch to End input for the second date because showTime doesn't auto-advance in this impl
-    fireEvent.click(inputs[1])
+    // Now click OK to confirm Start date and switch to End date
+    const okBtn = screen.getByRole('button', { name: '确定' })
+    expect(okBtn).not.toBeDisabled()
+    fireEvent.click(okBtn)
 
-    // Select End
+    // Now we should be selecting End date, and since it is empty, OK should be disabled
+    // (Note: we need to re-query the button or check its state if re-rendered, but usually same element ref unless unmounted)
+    expect(okBtn).toBeDisabled()
+
+    // Select End date
     const day20 = screen.getAllByText('20')[0]
     fireEvent.click(day20)
 
-    // Now click OK to confirm everything
-    const okBtn = screen.getByText('确定')
+    // Now button should be enabled again
+    expect(okBtn).not.toBeDisabled()
     fireEvent.click(okBtn)
 
-    expect(onChange).toHaveBeenCalled()
+    expect(onChange).toHaveBeenCalledTimes(1)
   })
 
   it('should handle time panel changes', async () => {
@@ -161,7 +167,43 @@ describe('DateRangePicker Detailed', () => {
 
     // Reopen
     fireEvent.click(inputs[0])
-    // Should have cleared partial selection?
-    // handleOpenChange: if (!open && (!dates[0] || !dates[1])) setDates([null, null])
+  })
+
+  it('should not auto-switch to start when selecting end first with showTime', async () => {
+    const onChange = jest.fn()
+    const { container } = renderWithTheme(<DateRangePicker showTime onChange={onChange} />)
+    const inputs = screen.getAllByRole('textbox')
+
+    // Click End input to start selecting end date first
+    fireEvent.click(inputs[1])
+
+    // Select a date for End
+    const days = screen.getAllByText('15')
+    fireEvent.click(days[0])
+
+    // Should NOT switch to start automatically.
+    // We can verify this by checking if the active bar is still on the right (End).
+    // The active bar has `left: 50%` when selecting end.
+    // Or we can check if OK button is enabled (since end is selected).
+    // If it switched to start (which is empty), OK would be disabled.
+    const okBtn = screen.getByRole('button', { name: '确定' })
+    expect(okBtn).not.toBeDisabled()
+
+    // Now click OK
+    fireEvent.click(okBtn)
+
+    // Now it should have switched to Start.
+    // Since Start is empty, OK button should be disabled.
+    expect(okBtn).toBeDisabled()
+
+    // Select Start date
+    const day10 = screen.getAllByText('10')[0]
+    fireEvent.click(day10)
+
+    // Now OK is enabled again
+    expect(okBtn).not.toBeDisabled()
+    fireEvent.click(okBtn)
+
+    expect(onChange).toHaveBeenCalled()
   })
 })

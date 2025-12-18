@@ -2,9 +2,9 @@ import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'rea
 import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import { MessageProps, MessageType } from './types'
-import { MessageContainer, MessageItem, MessageContent, IconWrapper } from './message.styles'
 
+import { MessageProps } from './types'
+import { MessageContainer, MessageItem, MessageContent, IconWrapper } from './message.styles'
 import { InfoIcon, SuccessIcon, ErrorIcon, WarningIcon, LoadingIcon } from '../icons'
 
 const icons = {

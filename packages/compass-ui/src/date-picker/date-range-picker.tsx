@@ -25,6 +25,7 @@ import {
   RightOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
+  CloseCircleIcon,
 } from '../icons'
 import {
   StyledDatePicker,
@@ -150,10 +151,6 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           isSecondSelection.current = true
           setSelecting('start')
         }
-      } else {
-        if (!newDates[0]) {
-          setSelecting('start')
-        }
       }
     }
   }
@@ -256,7 +253,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
           />
           {clearable && inputHover && (dates[0] || dates[1]) ? (
             <StyledSuffixIcon onClick={handleClear} style={{ cursor: 'pointer' }}>
-              <span style={{ fontSize: 12 }}>✕</span>
+              <CloseCircleIcon />
             </StyledSuffixIcon>
           ) : (
             <StyledSuffixIcon>
@@ -319,10 +316,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                             isCurrentMonth={day.isCurrentMonth}
                             isToday={day.isToday}
                             isSelected={!!selected}
-                            style={{
-                              background:
-                                inRange && !selected ? 'rgba(24, 144, 255, 0.1)' : undefined,
-                            }}
+                            isInRange={inRange && !selected}
                             onClick={() => handleDateSelect(day.date)}
                             onMouseEnter={() => setHoverDate(day.date)}
                             onMouseLeave={() => setHoverDate(null)}
@@ -342,7 +336,12 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                 </StyledPickerBody>
                 {showTime && (
                   <StyledFooter>
-                    <Button size="small" variant="primary" onClick={handleOk}>
+                    <Button
+                      size="small"
+                      variant="primary"
+                      onClick={handleOk}
+                      disabled={selecting === 'start' ? !dates[0] : !dates[1]}
+                    >
                       {locale.ok}
                     </Button>
                   </StyledFooter>

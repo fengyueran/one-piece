@@ -30,6 +30,7 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   CalendarOutlined,
+  CloseCircleIcon,
 } from '../icons'
 import {
   StyledDatePicker,
@@ -45,6 +46,7 @@ import {
   StyledPickerBody,
   StyledDatePanel,
   StyledWeekNumber,
+  StyledSuffixIcon,
 } from './date-picker.styles'
 import { useConfig } from '../config-provider'
 import defaultLocale from '../locale/zh_CN'
@@ -80,6 +82,13 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   const [selectedDate, setSelectedDate] = useState<Date | null>(value || defaultValue || null)
   const [panelMode, setPanelMode] = useState<PanelMode>(picker === 'week' ? 'date' : picker)
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
+  const [inputHover, setInputHover] = useState(false)
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedDate(null)
+    onChange?.(null)
+  }
 
   const { locale: contextLocale } = useConfig()
   const locale = contextLocale?.DatePicker || defaultLocale.DatePicker
@@ -325,7 +334,12 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
       style={style}
       fullWidth={fullWidth}
     >
-      <div ref={refs.setReference} {...getReferenceProps()}>
+      <div
+        ref={refs.setReference}
+        {...getReferenceProps()}
+        onMouseEnter={() => setInputHover(true)}
+        onMouseLeave={() => setInputHover(false)}
+      >
         <InputField
           {...rest}
           fullWidth={fullWidth}
@@ -334,14 +348,31 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
           readOnly
           disabled={disabled}
           onClick={() => !disabled && setIsOpen(!isOpen)}
-          suffix={<CalendarOutlined />}
-          allowClear={clearable}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (!e.target.value) {
               setSelectedDate(null)
               onChange?.(null)
             }
           }}
+          suffix={
+            clearable && inputHover && inputValue ? (
+              <StyledSuffixIcon
+                onClick={handleClear}
+                style={{ cursor: 'pointer' }}
+                onMouseDown={(e) => {
+                  // Prevent input blur or opening picker if needed,
+                  // usually stopPropagation is enough in handleClear but onMouseDown helps too
+                  e.preventDefault()
+                }}
+              >
+                <CloseCircleIcon />
+              </StyledSuffixIcon>
+            ) : (
+              <StyledSuffixIcon>
+                <CalendarOutlined />
+              </StyledSuffixIcon>
+            )
+          }
         />
       </div>
 

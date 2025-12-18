@@ -376,10 +376,7 @@ export const CustomStyle: Story = {
 }
 
 export const RangePicker: Story = {
-  render: () => {
-    const [dates, setDates] = useState<[Date | null, Date | null]>([null, null])
-    return <DatePicker.RangePicker value={dates} onChange={setDates} />
-  },
+  render: () => <DatePicker.RangePicker />,
   parameters: {
     docs: {
       description: {
@@ -401,10 +398,7 @@ RangePicker 支持 DatePicker 的大多数属性，以下是主要差异：
 }
 
 export const RangePickerWithTime: Story = {
-  render: () => {
-    const [dates, setDates] = useState<[Date | null, Date | null]>([null, null])
-    return <DatePicker.RangePicker value={dates} onChange={setDates} showTime />
-  },
+  render: () => <DatePicker.RangePicker showTime clearable />,
 }
 
 export const FullWidth: Story = {
@@ -454,16 +448,18 @@ export const CustomTheme: Story = {
     return (
       <ConfigProvider
         theme={{
-          components: {
-            datePicker: {
-              cellActiveBg: '#722ed1',
-              cellHoverBg: '#b37feb',
-              borderColor: '#722ed1',
-              headerFontSize: '16px',
-            },
-            input: {
-              activeBorderColor: '#722ed1',
-              hoverBorderColor: '#b37feb',
+          token: {
+            components: {
+              datePicker: {
+                cellActiveBg: '#722ed1',
+                cellHoverBg: '#b37feb',
+                borderColor: '#722ed1',
+                headerFontSize: '16px',
+              },
+              input: {
+                activeBorderColor: '#722ed1',
+                hoverBorderColor: '#b37feb',
+              },
             },
           },
         }}

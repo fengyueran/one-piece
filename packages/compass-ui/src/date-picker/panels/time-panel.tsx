@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { setHours, setMinutes, setSeconds } from 'date-fns'
 import { useConfig } from '../../config-provider/context'
+import { getThemeColors } from '../../theme/utils'
 
 const StyledTimePanel = styled.div`
   display: flex;
@@ -35,11 +36,11 @@ const StyledColumn = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.border};
+    background: ${({ theme }) => getThemeColors(theme).border};
     border-radius: 3px;
 
     &:hover {
-      background: ${({ theme }) => theme.colors.textSecondary};
+      background: ${({ theme }) => getThemeColors(theme).textSecondary};
     }
   }
 `
@@ -50,16 +51,17 @@ const StyledTimeCell = styled.div<{ isSelected?: boolean }>`
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  background: ${({ theme, isSelected }) => (isSelected ? theme.colors.primary : 'transparent')};
-  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : theme.colors.text)};
+  background: ${({ theme, isSelected }) =>
+    isSelected ? getThemeColors(theme).primary : 'transparent'};
+  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : getThemeColors(theme).text)};
   margin: 0 4px;
   border-radius: 4px;
 
   &:hover {
     background: ${({ theme, isSelected }) =>
       isSelected
-        ? theme.colors.primaryHover || theme.colors.primary
-        : theme.colors.backgroundSecondary};
+        ? getThemeColors(theme).primaryHover || getThemeColors(theme).primary
+        : getThemeColors(theme).backgroundSecondary};
   }
 
   &:active {
@@ -79,7 +81,7 @@ const StyledHeaderCell = styled.div`
   flex: 1;
   text-align: center;
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme }) => getThemeColors(theme).textSecondary};
   font-weight: 400;
   line-height: 40px;
 `
