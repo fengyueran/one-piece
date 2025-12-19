@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import React from 'react'
 import { ThemeProvider } from '../theme'
 import InputNumber from './input-number'
 
@@ -308,9 +309,12 @@ export const CustomTheme: Story = {
       theme={{
         colors: { primary: '#e91e63' },
         components: {
-          inputNumber: {
+          input: {
             borderRadius: '10px',
-            padding: '12px',
+            activeBorderColor: '#e91e63',
+            padding: {
+              md: '12px',
+            },
           },
         },
       }}
@@ -330,5 +334,3 @@ export const CustomTheme: Story = {
     },
   },
 }
-
-import React from 'react'

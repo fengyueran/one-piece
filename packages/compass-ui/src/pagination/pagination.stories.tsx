@@ -316,14 +316,16 @@ export const CustomTheme: Story = {
   render: (args: PaginationProps) => (
     <ConfigProvider
       theme={{
-        components: {
-          pagination: {
-            itemSize: '40px',
-            itemActiveBg: '#e6f7ff',
-            itemActiveColor: '#1890ff',
-            itemBorderRadius: '50%',
-            fontSize: '16px',
-            itemHoverColor: '#40a9ff',
+        token: {
+          components: {
+            pagination: {
+              itemSize: '40px',
+              itemActiveBg: '#e6f7ff',
+              itemActiveColor: '#1890ff',
+              itemBorderRadius: '50%',
+              fontSize: '16px',
+              itemHoverColor: '#40a9ff',
+            },
           },
         },
       }}

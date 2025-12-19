@@ -96,7 +96,7 @@ describe('DateRangePicker Detailed', () => {
       }
     }
 
-    const clearBtn = await screen.findByText('✕')
+    const clearBtn = await screen.findByRole('button', { name: 'clear' })
     fireEvent.click(clearBtn)
 
     expect(onChange).toHaveBeenCalledWith([null, null])

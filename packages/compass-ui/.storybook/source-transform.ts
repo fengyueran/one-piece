@@ -325,10 +325,59 @@ export const formatSource = (source: string): string => {
 /**
  * Main transform function that combines all steps
  */
-export const transformSource = (code: string): string => {
-  const cleanCode = code.trim()
+/**
+ * Convert args object to JSX string props
+ */
+const argsToSource = (args: any): string => {
+  if (!args || Object.keys(args).length === 0) return ''
+
+  return Object.entries(args)
+    .filter(([key, value]) => {
+      // Filter out children, style, className if handled elsewhere or default checks
+      if (key === 'children') return false
+      // Filter out functions/actions usually
+      if (typeof value === 'function' && key.startsWith('on')) return false
+      // Filter undefined
+      if (value === undefined) return false
+      return true
+    })
+    .map(([key, value]) => {
+      if (value === true) return key
+      if (value === false) return `${key}={false}`
+      if (typeof value === 'string') return `${key}="${value}"`
+      if (typeof value === 'number') return `${key}={${value}}`
+      if (typeof value === 'object') return `${key}={${JSON.stringify(value)}}`
+      return `${key}={${value}}`
+    })
+    .join(' ')
+}
+
+/**
+ * Main transform function that combines all steps
+ */
+export const transformSource = (code: string, storyContext?: any): string => {
+  // Try to use the original source from context if available
+  // BUT only if it looks like it contains a custom render function we want to preserve.
+  // If it's just a simple args object, we prefer the dynamic code passed by Storybook.
+  const originalSource = storyContext?.parameters?.docs?.source?.originalSource
+
+  let cleanCode = code.trim()
+
+  if (originalSource && (originalSource.includes('render:') || originalSource.includes('=>'))) {
+    cleanCode = originalSource.trim()
+  }
+
+  // If manual source (type: 'code'), context might not contain args or we shouldn't touch it?
+  // But usually we want to keep transform.
   if (shouldSkipTransform(cleanCode)) {
-    return code
+    // If we skipped based on originalSource being an object,
+    // we might want to fall back to processing the dynamic 'code' instead which is usually JSX
+    if (cleanCode !== code.trim()) {
+      cleanCode = code.trim()
+      if (shouldSkipTransform(cleanCode)) return code
+    } else {
+      return code
+    }
   }
 
   let { renderCode, functionArgs } = extractRenderInfo(cleanCode)
@@ -337,6 +386,17 @@ export const transformSource = (code: string): string => {
   if (!renderCode) return code
 
   renderCode = cleanEmptyHandlers(renderCode)
+
+  // Inject args if present
+  if (storyContext?.args) {
+    const argsProps = argsToSource(storyContext.args)
+    // simplistic replacement: look for {...args}
+    if (renderCode.includes('{...args}')) {
+      renderCode = renderCode.replace('{...args}', argsProps)
+    } else if (renderCode.includes('{...args}')) {
+      // already handled above
+    }
+  }
 
   const { imports } = generateImports(renderCode, functionArgs)
 

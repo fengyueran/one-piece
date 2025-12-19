@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { setYear } from 'date-fns'
-import { getThemeColors } from '../../theme/utils'
+import { getThemeToken } from '../../theme/utils'
 
 const StyledYearGrid = styled.div`
   display: grid;
@@ -17,17 +17,17 @@ const StyledYearCell = styled.div<{ isSelected?: boolean; isCurrent?: boolean }>
   border-radius: 4px;
   font-size: 14px;
   background: ${({ theme, isSelected }) =>
-    isSelected ? getThemeColors(theme).primary : 'transparent'};
+    isSelected ? getThemeToken(theme, 'colors').primary : 'transparent'};
   color: ${({ theme, isSelected, isCurrent }) =>
     isSelected
       ? '#fff'
       : isCurrent
-        ? getThemeColors(theme).text
-        : getThemeColors(theme).textDisabled};
+        ? getThemeToken(theme, 'colors').text
+        : getThemeToken(theme, 'colors').textDisabled};
 
   &:hover {
     background: ${({ theme, isSelected }) =>
-      isSelected ? getThemeColors(theme).primary : 'rgba(0, 0, 0, 0.08)'};
+      isSelected ? getThemeToken(theme, 'colors').primary : 'rgba(0, 0, 0, 0.08)'};
   }
 `
 

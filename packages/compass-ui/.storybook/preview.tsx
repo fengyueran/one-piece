@@ -18,8 +18,8 @@ const preview: Preview = {
       source: {
         state: 'open',
         excludeDecorators: true,
-        transform: (code: string) => {
-          return transformSource(code)
+        transform: (code: string, storyContext: any) => {
+          return transformSource(code, storyContext)
         },
       },
 

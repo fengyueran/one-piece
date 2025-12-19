@@ -1,19 +1,21 @@
 import styled from '@emotion/styled'
 import Button from '../button'
+import { getComponentTheme, getThemeToken } from '../theme/utils'
 
 export const AnimationDuration = 500 // ms
 
 export const RootContainer = styled.div<{ $visible: boolean }>`
   position: fixed;
   inset: 0;
-  z-index: ${(props) => props.theme?.components?.modal?.zIndex || 1000};
+  z-index: ${(props) => getComponentTheme(props.theme, 'modal').zIndex || 1000};
   pointer-events: ${(props) => (props.$visible ? 'auto' : 'none')};
 `
 
 export const Mask = styled.div<{ $visible?: boolean }>`
   position: fixed;
   inset: 0;
-  background-color: ${(props) => props.theme?.components?.modal?.maskColor || 'rgba(0, 0, 0, 0.3)'};
+  background-color: ${(props) =>
+    getComponentTheme(props.theme, 'modal').maskColor || 'rgba(0, 0, 0, 0.3)'};
   backdrop-filter: blur(4px);
   opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity ${AnimationDuration}ms;
@@ -21,12 +23,16 @@ export const Mask = styled.div<{ $visible?: boolean }>`
 
 export const ModalContent = styled.div<{ $visible: boolean; $width?: string | number }>`
   background: ${(props) =>
-    props.theme?.components?.modal?.contentBg || props.theme.colors.background};
+    getComponentTheme(props.theme, 'modal').contentBg ||
+    getThemeToken(props.theme, 'colors').background};
   padding: ${(props) =>
-    props.theme?.components?.modal?.bodyPadding || `${props.theme.spacing.lg}px`};
+    getComponentTheme(props.theme, 'modal').bodyPadding ||
+    `${getThemeToken(props.theme, 'spacing').lg}px`};
   border-radius: ${(props) =>
-    props.theme?.components?.modal?.borderRadius || `${props.theme.borderRadius.md}px`};
-  box-shadow: ${(props) => props.theme?.components?.modal?.boxShadow || props.theme.shadows.lg};
+    getComponentTheme(props.theme, 'modal').borderRadius ||
+    `${getThemeToken(props.theme, 'borderRadius').md}px`};
+  box-shadow: ${(props) =>
+    getComponentTheme(props.theme, 'modal').boxShadow || getThemeToken(props.theme, 'shadows').lg};
   width: ${(props) =>
     props.$width
       ? typeof props.$width === 'number'
@@ -48,13 +54,13 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${(props) => props.theme.spacing.md}px;
+  margin-bottom: ${(props) => getThemeToken(props.theme, 'spacing').md}px;
 `
 
 export const Title = styled.div`
-  font-size: ${(props) => props.theme.fontSize.lg}px;
-  font-weight: ${(props) => props.theme.fontWeight.bold};
-  color: ${(props) => props.theme.colors.text};
+  font-size: ${(props) => getThemeToken(props.theme, 'fontSize').lg}px;
+  font-weight: ${(props) => getThemeToken(props.theme, 'fontWeight').bold};
+  color: ${(props) => getThemeToken(props.theme, 'colors').text};
   line-height: 1.5;
 `
 
@@ -64,7 +70,7 @@ export const Footer = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  margin-top: ${(props) => props.theme.spacing.md}px;
+  margin-top: ${(props) => getThemeToken(props.theme, 'spacing').md}px;
 `
 
 export const StyledButton = styled(Button)`

@@ -56,7 +56,10 @@ export const StepperWrapper = styled.div<{ size?: 'small' | 'medium' | 'large' }
   }
 `
 
-export const StepperButton = styled.button<{ disabled?: boolean }>`
+export const StepperButton = styled.button<{
+  disabled?: boolean
+  $size?: 'small' | 'medium' | 'large'
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +97,7 @@ export const StepperButton = styled.button<{ disabled?: boolean }>`
   }
 
   svg {
-    width: 12px;
-    height: 12px;
+    width: ${({ $size }) => ($size === 'small' ? '9px' : '12px')};
+    height: ${({ $size }) => ($size === 'small' ? '9px' : '12px')};
   }
 `

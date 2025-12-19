@@ -77,14 +77,14 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     content: {
-      description: 'Content of the message',
+      description: '消息内容',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
       },
     },
     duration: {
-      description: "Time(seconds) before auto-dismiss, don't dismiss if set to 0",
+      description: '自动关闭的延时，单位秒。设为 0 时不自动关闭。',
       control: 'number',
       table: {
         type: { summary: 'number' },
@@ -92,7 +92,7 @@ const meta: Meta = {
       },
     },
     type: {
-      description: 'Type of message',
+      description: '消息类型',
       control: 'select',
       options: ['info', 'success', 'error', 'warning', 'loading'],
       table: {
@@ -101,34 +101,34 @@ const meta: Meta = {
       },
     },
     onClose: {
-      description: 'Callback when the message is closed',
+      description: '关闭时触发的回调函数',
       table: {
         type: { summary: '() => void' },
       },
     },
     icon: {
-      description: 'Customized icon',
+      description: '自定义图标',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
       },
     },
     key: {
-      description: 'Unique ID for the message',
+      description: '当前消息的唯一标识',
       control: 'text',
       table: {
         disable: true,
       },
     },
     className: {
-      description: 'Custom CSS class',
+      description: '自定义 CSS 类名',
       control: 'text',
       table: {
         type: { summary: 'string' },
       },
     },
     style: {
-      description: 'Custom CSS style',
+      description: '自定义 CSS 样式',
       control: 'object',
       table: {
         type: { summary: 'CSSProperties' },
@@ -256,11 +256,13 @@ export const CustomTheme: Story = {
   render: () => (
     <ConfigProvider
       theme={{
-        components: {
-          message: {
-            contentPadding: '12px 24px',
-            borderRadius: '20px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+        token: {
+          components: {
+            message: {
+              contentPadding: '12px 24px',
+              borderRadius: '20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            },
           },
         },
       }}

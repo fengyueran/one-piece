@@ -306,27 +306,29 @@ export const CustomTheme: Story = {
   render: (args) => (
     <ConfigProvider
       theme={{
-        components: {
-          steps: {
-            processIconColor: '#722ed1',
-            processTitleColor: '#722ed1',
-            processDescriptionColor: '#b37feb',
-            waitIconColor: '#d9d9d9',
-            waitTitleColor: '#d9d9d9',
-            waitDescriptionColor: '#d9d9d9',
-            finishIconColor: '#eb2f96',
-            finishTitleColor: '#eb2f96',
-            finishDescriptionColor: '#ffadd2',
-            errorIconColor: '#f5222d',
-            errorTitleColor: '#f5222d',
-            errorDescriptionColor: '#ffccc7',
-            iconSize: '26px',
-            titleFontSize: '18px',
-            descriptionFontSize: '14px',
-            titleColor: '#333',
-            subTitleColor: '#666',
-            descriptionColor: '#999',
-            dotSize: '3px', //vertical dot 时才生效
+        token: {
+          components: {
+            steps: {
+              processIconColor: '#722ed1',
+              processTitleColor: '#722ed1',
+              processDescriptionColor: '#b37feb',
+              waitIconColor: '#d9d9d9',
+              waitTitleColor: '#d9d9d9',
+              waitDescriptionColor: '#d9d9d9',
+              finishIconColor: '#eb2f96',
+              finishTitleColor: '#eb2f96',
+              finishDescriptionColor: '#ffadd2',
+              errorIconColor: '#f5222d',
+              errorTitleColor: '#f5222d',
+              errorDescriptionColor: '#ffccc7',
+              iconSize: '26px',
+              titleFontSize: '18px',
+              descriptionFontSize: '14px',
+              titleColor: '#333',
+              subTitleColor: '#666',
+              descriptionColor: '#999',
+              dotSize: '3px', //vertical dot 时才生效
+            },
           },
         },
       }}

@@ -273,11 +273,13 @@ export const CustomTheme: Story = {
   render: () => (
     <ConfigProvider
       theme={{
-        components: {
-          menu: {
-            itemHoverBg: '#e6f7ff',
-            itemColor: '#1890ff',
-            borderRadius: '8px',
+        token: {
+          components: {
+            menu: {
+              itemHoverBg: '#e6f7ff',
+              itemColor: '#1890ff',
+              borderRadius: '8px',
+            },
           },
         },
       }}

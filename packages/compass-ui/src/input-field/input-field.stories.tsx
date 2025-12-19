@@ -274,13 +274,15 @@ export const CustomTheme: Story = {
   render: (args) => (
     <ConfigProvider
       theme={{
-        components: {
-          input: {
-            borderRadius: '20px',
-            activeBorderColor: '#722ed1',
-            hoverBorderColor: '#b37feb',
-            padding: {
-              md: '10px 20px',
+        token: {
+          components: {
+            input: {
+              borderRadius: '20px',
+              activeBorderColor: '#722ed1',
+              hoverBorderColor: '#b37feb',
+              padding: {
+                md: '10px 20px',
+              },
             },
           },
         },

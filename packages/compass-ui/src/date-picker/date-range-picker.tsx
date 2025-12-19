@@ -252,7 +252,12 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
             onClick={() => handleInputClick('end')}
           />
           {clearable && inputHover && (dates[0] || dates[1]) ? (
-            <StyledSuffixIcon onClick={handleClear} style={{ cursor: 'pointer' }}>
+            <StyledSuffixIcon
+              onClick={handleClear}
+              style={{ cursor: 'pointer' }}
+              role="button"
+              aria-label="clear"
+            >
               <CloseCircleIcon />
             </StyledSuffixIcon>
           ) : (

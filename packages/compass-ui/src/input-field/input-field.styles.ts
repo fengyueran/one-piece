@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { getComponentTheme, getThemeColors } from '../theme/utils'
+import { getComponentTheme, getThemeToken } from '../theme/utils'
 
 export const Container = styled.div<{ fullWidth?: boolean }>`
   display: inline-flex;
@@ -10,21 +10,21 @@ export const Container = styled.div<{ fullWidth?: boolean }>`
 export const Label = styled.label`
   font-size: 14px;
   margin-bottom: 4px;
-  color: ${({ theme }) => getThemeColors(theme).text};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
 `
 
 export const HelperText = styled.div<{ error?: boolean }>`
   font-size: 12px;
   margin-top: 4px;
   color: ${({ theme, error }) =>
-    error ? getThemeColors(theme).error : getThemeColors(theme).textSecondary};
+    error ? getThemeToken(theme, 'colors').error : getThemeToken(theme, 'colors').textSecondary};
 `
 
 export const Adornment = styled.span<{ $position?: 'start' | 'end' }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   flex-shrink: 0;
   line-height: 0;
   margin-right: ${({ $position }) => ($position === 'start' ? '8px' : '0')};
@@ -37,7 +37,7 @@ export const ClearButton = styled.button<{ visible?: boolean; $isHoverShow?: boo
   padding: 0;
   margin: 0 4px 0 8px;
   cursor: pointer;
-  color: ${({ theme }) => getThemeColors(theme).textTertiary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textTertiary};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@ export const ClearButton = styled.button<{ visible?: boolean; $isHoverShow?: boo
   }};
 
   &:hover {
-    color: ${({ theme }) => getThemeColors(theme).textSecondary};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   }
 `
 
@@ -70,7 +70,7 @@ export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }
   background: transparent;
   padding: 0;
   margin: 0;
-  color: ${({ theme }) => getThemeColors(theme).text};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
   font-size: ${({ theme, $size }) => {
     const map = { small: 'sm', medium: 'md', large: 'lg' } as const
     return getComponentTheme(theme, 'input').fontSize[map[$size || 'medium']]
@@ -78,7 +78,7 @@ export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }
   width: 100%;
 
   &::placeholder {
-    color: ${({ theme }) => getThemeColors(theme).textDisabled};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').textDisabled};
   }
 
   &:disabled {
@@ -113,10 +113,10 @@ export const InputWrapper = styled.div<{
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  background-color: ${({ theme }) => getThemeColors(theme).background};
+  background-color: ${({ theme }) => getThemeToken(theme, 'colors').background};
   border: 1px solid
     ${({ theme, error, focused }) => {
-      const colors = getThemeColors(theme)
+      const colors = getThemeToken(theme, 'colors')
       const inputTheme = getComponentTheme(theme, 'input')
       if (error) return colors.error
       if (focused) return inputTheme.activeBorderColor
@@ -131,7 +131,7 @@ export const InputWrapper = styled.div<{
 
   &:hover {
     border-color: ${({ theme, error, focused, disabled }) => {
-      const colors = getThemeColors(theme)
+      const colors = getThemeToken(theme, 'colors')
       const inputTheme = getComponentTheme(theme, 'input')
       if (disabled) return colors.border
       if (error) return colors.error
@@ -148,7 +148,7 @@ export const InputWrapper = styled.div<{
   ${({ disabled, theme }) =>
     disabled &&
     `
-    background-color: ${getThemeColors(theme).backgroundSecondary};
+    background-color: ${getThemeToken(theme, 'colors').backgroundSecondary};
     cursor: not-allowed;
     opacity: 0.6;
   `}

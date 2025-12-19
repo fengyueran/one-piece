@@ -136,61 +136,61 @@ const onMenuClick = (e: React.MouseEvent, key?: string | number) => {
   alert(`Menu clicked! Key: ${key}`)
 }
 
-// export const Basic: Story = {
-//   args: {
-//     menu: {
-//       items,
-//       onClick: onMenuClick,
-//     },
-//     children: <Button>Basic</Button>,
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story:
-//           '**数据驱动** - 通过 `menu` 属性配置菜单，支持传递 `MenuProps`（包含 `items`, `onClick` 等）。',
-//       },
-//     },
-//   },
-// }
+export const Basic: Story = {
+  args: {
+    menu: {
+      items,
+      onClick: onMenuClick,
+    },
+    children: <Button>Basic</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**数据驱动** - 通过 `menu` 属性配置菜单，支持传递 `MenuProps`（包含 `items`, `onClick` 等）。',
+      },
+    },
+  },
+}
 
-// export const ClickTrigger: Story = {
-//   args: {
-//     trigger: 'click',
-//     overlay: MenuContent,
-//     children: <Button>Click me</Button>,
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**点击触发** - 设置 `trigger="click"` 可改为点击触发。',
-//       },
-//     },
-//   },
-// }
+export const ClickTrigger: Story = {
+  args: {
+    trigger: 'click',
+    overlay: MenuContent,
+    children: <Button>Click me</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**点击触发** - 设置 `trigger="click"` 可改为点击触发。',
+      },
+    },
+  },
+}
 
-// export const Controlled: Story = {
-//   render: () => {
-//     const [visible, setVisible] = React.useState(false)
-//     return (
-//       <Dropdown
-//         visible={visible}
-//         onVisibleChange={setVisible}
-//         overlay={MenuContent}
-//         trigger="click"
-//       >
-//         <Button>Controlled ({visible ? 'Open' : 'Closed'})</Button>
-//       </Dropdown>
-//     )
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**受控模式** - 通过 `visible` 和 `onVisibleChange` 属性完全控制菜单的显示状态。',
-//       },
-//     },
-//   },
-// }
+export const Controlled: Story = {
+  render: () => {
+    const [visible, setVisible] = React.useState(false)
+    return (
+      <Dropdown
+        visible={visible}
+        onVisibleChange={setVisible}
+        overlay={MenuContent}
+        trigger="click"
+      >
+        <Button>Controlled ({visible ? 'Open' : 'Closed'})</Button>
+      </Dropdown>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**受控模式** - 通过 `visible` 和 `onVisibleChange` 属性完全控制菜单的显示状态。',
+      },
+    },
+  },
+}
 
 export const OnVisibleChange: Story = {
   render: () => (
@@ -210,149 +210,181 @@ export const OnVisibleChange: Story = {
   },
 }
 
-// export const Disabled: Story = {
-//   args: {
-//     disabled: true,
-//     overlay: MenuContent,
-//     children: <Button>Disabled</Button>,
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**禁用状态** - 设置 `disabled` 属性可禁用下拉菜单。',
-//       },
-//     },
-//   },
-// }
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    overlay: MenuContent,
+    children: <Button>Disabled</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**禁用状态** - 设置 `disabled` 属性可禁用下拉菜单。',
+      },
+    },
+  },
+}
 
-// export const Styled: Story = {
-//   args: {
-//     overlay: MenuContent,
-//     children: <Button>Styled Dropdown</Button>,
-//     className: 'custom-dropdown',
-//     style: { border: '2px solid red', display: 'inline-block' },
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**自定义样式** - 支持 `className` 和 `style` 属性自定义触发器样式。',
-//       },
-//     },
-//   },
-// }
+export const ClassName: Story = {
+  args: {
+    className: 'custom-dropdown-class',
+    overlay: MenuContent,
+    children: <Button>Custom ClassName</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义类名** - 通过 `className` 属性自定义样式类名。',
+      },
+    },
+  },
+}
 
-// export const CustomOverlay: Story = {
-//   args: {
-//     overlay: (
-//       <div
-//         style={{
-//           padding: 12,
-//           background: '#fff',
-//           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-//           borderRadius: 4,
-//         }}
-//       >
-//         <p style={{ margin: '0 0 8px' }}>Custom Content</p>
-//         <Button size="small">Action</Button>
-//       </div>
-//     ),
-//     children: <Button>Custom Overlay</Button>,
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**自定义 Overlay** - `overlay` 属性接受任意 React 节点，不局限于 Menu 组件。',
-//       },
-//     },
-//   },
-// }
+export const Style: Story = {
+  args: {
+    style: { border: '1px solid #1677ff' },
+    overlay: MenuContent,
+    children: <Button>Custom Style</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义样式** - 通过 `style` 属性自定义行内样式。',
+      },
+    },
+  },
+}
 
-// export const Placements: Story = {
-//   render: () => (
-//     <div style={{ padding: '50px' }}>
-//       <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', marginLeft: '70px' }}>
-//         <Dropdown placement="top-start" overlay={MenuContent}>
-//           <Button>TL</Button>
-//         </Dropdown>
-//         <Dropdown placement="top" overlay={MenuContent}>
-//           <Button>Top</Button>
-//         </Dropdown>
-//         <Dropdown placement="top-end" overlay={MenuContent}>
-//           <Button>TR</Button>
-//         </Dropdown>
-//       </div>
-//       <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-//         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '70px' }}>
-//           <Dropdown placement="left-start" overlay={MenuContent}>
-//             <Button>LT</Button>
-//           </Dropdown>
-//           <Dropdown placement="left" overlay={MenuContent}>
-//             <Button>Left</Button>
-//           </Dropdown>
-//           <Dropdown placement="left-end" overlay={MenuContent}>
-//             <Button>LB</Button>
-//           </Dropdown>
-//         </div>
-//         <div style={{ width: '180px' }}></div>
-//         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '70px' }}>
-//           <Dropdown placement="right-start" overlay={MenuContent}>
-//             <Button>RT</Button>
-//           </Dropdown>
-//           <Dropdown placement="right" overlay={MenuContent}>
-//             <Button>Right</Button>
-//           </Dropdown>
-//           <Dropdown placement="right-end" overlay={MenuContent}>
-//             <Button>RB</Button>
-//           </Dropdown>
-//         </div>
-//       </div>
-//       <div style={{ display: 'flex', gap: '20px', marginLeft: '70px' }}>
-//         <Dropdown placement="bottom-start" overlay={MenuContent}>
-//           <Button>BL</Button>
-//         </Dropdown>
-//         <Dropdown placement="bottom" overlay={MenuContent}>
-//           <Button>Bottom</Button>
-//         </Dropdown>
-//         <Dropdown placement="bottom-end" overlay={MenuContent}>
-//           <Button>BR</Button>
-//         </Dropdown>
-//       </div>
-//     </div>
-//   ),
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**弹出位置** - 支持 12 个弹出位置，通过 `placement` 属性配置。',
-//       },
-//     },
-//   },
-// }
+export const Styled: Story = {
+  args: {
+    overlay: MenuContent,
+    children: <Button>Styled Dropdown</Button>,
+    className: 'custom-dropdown',
+    style: { border: '2px solid red', display: 'inline-block' },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义样式** - 支持 `className` 和 `style` 属性自定义触发器样式。',
+      },
+    },
+  },
+}
 
-// export const CustomTheme: Story = {
-//   render: (args) => (
-//     <ConfigProvider
-//       theme={{
-//         components: {
-//           dropdown: {
-//             backgroundColor: '#f6ffed',
-//             borderRadius: '8px',
-//             boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-//           },
-//         },
-//       }}
-//     >
-//       <Dropdown {...args} />
-//     </ConfigProvider>
-//   ),
-//   args: {
-//     overlay: MenuContent,
-//     children: <Button>Custom Theme</Button>,
-//   },
-//   parameters: {
-//     docs: {
-//       description: {
-//         story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量',
-//       },
-//     },
-//   },
-// }
+export const CustomOverlay: Story = {
+  args: {
+    overlay: (
+      <div
+        style={{
+          padding: 12,
+          background: '#fff',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          borderRadius: 4,
+        }}
+      >
+        <p style={{ margin: '0 0 8px' }}>Custom Content</p>
+        <Button size="small">Action</Button>
+      </div>
+    ),
+    children: <Button>Custom Overlay</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义 Overlay** - `overlay` 属性接受任意 React 节点，不局限于 Menu 组件。',
+      },
+    },
+  },
+}
+
+export const Placements: Story = {
+  render: () => (
+    <div style={{ padding: '50px' }}>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', marginLeft: '70px' }}>
+        <Dropdown placement="top-start" overlay={MenuContent}>
+          <Button>TL</Button>
+        </Dropdown>
+        <Dropdown placement="top" overlay={MenuContent}>
+          <Button>Top</Button>
+        </Dropdown>
+        <Dropdown placement="top-end" overlay={MenuContent}>
+          <Button>TR</Button>
+        </Dropdown>
+      </div>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '70px' }}>
+          <Dropdown placement="left-start" overlay={MenuContent}>
+            <Button>LT</Button>
+          </Dropdown>
+          <Dropdown placement="left" overlay={MenuContent}>
+            <Button>Left</Button>
+          </Dropdown>
+          <Dropdown placement="left-end" overlay={MenuContent}>
+            <Button>LB</Button>
+          </Dropdown>
+        </div>
+        <div style={{ width: '180px' }}></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '70px' }}>
+          <Dropdown placement="right-start" overlay={MenuContent}>
+            <Button>RT</Button>
+          </Dropdown>
+          <Dropdown placement="right" overlay={MenuContent}>
+            <Button>Right</Button>
+          </Dropdown>
+          <Dropdown placement="right-end" overlay={MenuContent}>
+            <Button>RB</Button>
+          </Dropdown>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '20px', marginLeft: '70px' }}>
+        <Dropdown placement="bottom-start" overlay={MenuContent}>
+          <Button>BL</Button>
+        </Dropdown>
+        <Dropdown placement="bottom" overlay={MenuContent}>
+          <Button>Bottom</Button>
+        </Dropdown>
+        <Dropdown placement="bottom-end" overlay={MenuContent}>
+          <Button>BR</Button>
+        </Dropdown>
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '**弹出位置** - 支持 12 个弹出位置，通过 `placement` 属性配置。',
+      },
+    },
+  },
+}
+
+export const CustomTheme: Story = {
+  render: (args) => (
+    <ConfigProvider
+      theme={{
+        token: {
+          components: {
+            dropdown: {
+              backgroundColor: '#f6ffed',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            },
+          },
+        },
+      }}
+    >
+      <Dropdown {...args} />
+    </ConfigProvider>
+  ),
+  args: {
+    overlay: MenuContent,
+    children: <Button>Custom Theme</Button>,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量',
+      },
+    },
+  },
+}

@@ -373,12 +373,14 @@ export const CustomTheme: Story = {
   render: () => (
     <ConfigProvider
       theme={{
-        components: {
-          progress: {
-            trackColor: '#e6f7ff',
-            infoColor: '#722ed1',
-            successColor: '#52c41a',
-            fontSize: '16px',
+        token: {
+          components: {
+            progress: {
+              trackColor: '#e6f7ff',
+              infoColor: '#722ed1',
+              successColor: '#52c41a',
+              fontSize: '16px',
+            },
           },
         },
       }}

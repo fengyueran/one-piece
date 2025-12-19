@@ -2,6 +2,8 @@ import styled from '@emotion/styled'
 
 import { StepStatus } from './types'
 
+import { getThemeToken, getComponentTheme } from '../theme/utils'
+
 export const StyledSteps = styled.div<{
   direction?: 'horizontal' | 'vertical'
   labelPlacement?: 'horizontal' | 'vertical'
@@ -38,10 +40,16 @@ export const StyledStepItem = styled.div<{
     margin-right: 0;
   }
 
-  ${(props) =>
-    props.direction === 'horizontal' &&
-    props.labelPlacement === 'vertical' &&
-    `
+  ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    const colors = getThemeToken(props.theme, 'colors')
+    const iconSize = steps.iconSize
+    const dotSize = steps.dotSize
+
+    return (
+      props.direction === 'horizontal' &&
+      props.labelPlacement === 'vertical' &&
+      `
     text-align: center;
     overflow: visible;
     margin-right: 0;
@@ -80,11 +88,11 @@ export const StyledStepItem = styled.div<{
       top: 16px;
       left: 50%;
       display: block;
-      width: calc(100% - ${props.variant === 'dot' ? props.theme.components.steps.dotSize : props.theme.components.steps.iconSize} - 16px);
+      width: calc(100% - ${props.variant === 'dot' ? dotSize : iconSize} - 16px);
       height: 1px;
-      background: ${props.theme.colors.border};
+      background: ${colors.border};
       content: '';
-      margin-left: calc(${props.variant === 'dot' ? props.theme.components.steps.dotSize : props.theme.components.steps.iconSize} / 2 + 8px);
+      margin-left: calc(${props.variant === 'dot' ? dotSize : iconSize} / 2 + 8px);
     }
 
     &:last-child::after {
@@ -100,7 +108,9 @@ export const StyledStepItem = styled.div<{
     & .compass-steps-description {
       margin: 2px auto 0;
     }
-  `}
+  `
+    )
+  }}
   ${(props) =>
     props.direction === 'vertical' &&
     `
@@ -123,25 +133,27 @@ export const StyledStepIcon = styled.div<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: ${(props) =>
-    props.variant === 'dot'
-      ? props.theme.components.steps.dotSize
-      : props.theme.components.steps.iconSize};
-  height: ${(props) =>
-    props.variant === 'dot'
-      ? props.theme.components.steps.dotSize
-      : props.theme.components.steps.iconSize};
+  width: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+  }};
+  height: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+  }};
   margin-right: 8px;
-  margin-top: ${(props) =>
-    `calc((32px - ${props.variant === 'dot' ? props.theme.components.steps.dotSize : props.theme.components.steps.iconSize}) / 2)`};
-  font-size: ${(props) => props.theme.components.steps.titleFontSize};
+  margin-top: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return `calc((32px - ${props.variant === 'dot' ? steps.dotSize : steps.iconSize}) / 2)`
+  }};
+  font-size: ${(props) => getComponentTheme(props.theme, 'steps').titleFontSize};
   line-height: 1;
   text-align: center;
   border: 1px solid;
-  border-radius: ${(props) =>
-    props.variant === 'dot'
-      ? props.theme.components.steps.dotSize
-      : props.theme.components.steps.iconSize};
+  border-radius: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+  }};
   transition:
     background-color 0.3s,
     border-color 0.3s;
@@ -151,8 +163,8 @@ export const StyledStepIcon = styled.div<{
   }
 
   ${(props) => {
-    const { steps } = props.theme.components
-    const { colors } = props.theme
+    const steps = getComponentTheme(props.theme, 'steps')
+    const colors = getThemeToken(props.theme, 'colors')
     switch (props.status) {
       case 'process':
         return `
@@ -198,7 +210,7 @@ export const StyledStepTitle = styled.div<{
   display: inline-block;
   padding-right: 16px;
   color: ${(props) => {
-    const { steps } = props.theme.components
+    const steps = getComponentTheme(props.theme, 'steps')
     switch (props.status) {
       case 'process':
         return steps.processTitleColor
@@ -212,7 +224,7 @@ export const StyledStepTitle = styled.div<{
         return steps.titleColor
     }
   }};
-  font-size: ${(props) => props.theme.components.steps.titleFontSize};
+  font-size: ${(props) => getComponentTheme(props.theme, 'steps').titleFontSize};
   line-height: 32px;
 
   &::after {
@@ -222,7 +234,7 @@ export const StyledStepTitle = styled.div<{
     display: ${(props) => (props.isLast || props.direction === 'vertical' ? 'none' : 'block')};
     width: 9999px;
     height: 1px;
-    background: ${(props) => props.theme.colors.borderSecondary};
+    background: ${(props) => getThemeToken(props.theme, 'colors').borderSecondary};
     content: '';
   }
 `
@@ -230,14 +242,14 @@ export const StyledStepTitle = styled.div<{
 export const StyledStepSubTitle = styled.div`
   display: inline;
   margin-left: 8px;
-  color: ${(props) => props.theme.components.steps.subTitleColor};
+  color: ${(props) => getComponentTheme(props.theme, 'steps').subTitleColor};
   font-weight: normal;
   font-size: 14px;
 `
 
 export const StyledStepDescription = styled.div<{ status?: StepStatus }>`
   color: ${(props) => {
-    const { steps } = props.theme.components
+    const steps = getComponentTheme(props.theme, 'steps')
     switch (props.status) {
       case 'process':
         return steps.processDescriptionColor
@@ -251,7 +263,7 @@ export const StyledStepDescription = styled.div<{ status?: StepStatus }>`
         return steps.descriptionColor
     }
   }};
-  font-size: ${(props) => props.theme.components.steps.descriptionFontSize};
+  font-size: ${(props) => getComponentTheme(props.theme, 'steps').descriptionFontSize};
 `
 
 export const StyledStepTail = styled.div<{
@@ -261,11 +273,15 @@ export const StyledStepTail = styled.div<{
 }>`
   display: ${(props) => (props.direction === 'vertical' && !props.isLast ? 'block' : 'none')};
   position: absolute;
-  top: ${(props) =>
-    `calc((32px + ${props.variant === 'dot' ? props.theme.components.steps.dotSize : props.theme.components.steps.iconSize}) / 2 + 6px)`};
+  top: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return `calc((32px + ${props.variant === 'dot' ? steps.dotSize : steps.iconSize}) / 2 + 6px)`
+  }};
   bottom: 6px;
-  left: ${(props) =>
-    `calc(${props.variant === 'dot' ? props.theme.components.steps.dotSize : props.theme.components.steps.iconSize} / 2)`};
+  left: ${(props) => {
+    const steps = getComponentTheme(props.theme, 'steps')
+    return `calc(${props.variant === 'dot' ? steps.dotSize : steps.iconSize} / 2)`
+  }};
   width: 1px;
   padding: 0;
   margin-left: 0;
@@ -275,7 +291,7 @@ export const StyledStepTail = styled.div<{
     display: inline-block;
     width: 1px;
     height: 100%;
-    background: ${(props) => props.theme.colors.borderSecondary};
+    background: ${(props) => getThemeToken(props.theme, 'colors').borderSecondary};
     border-radius: 1px;
     transition: background 0.3s;
     content: '';

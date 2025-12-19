@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { setHours, setMinutes, setSeconds } from 'date-fns'
 import { useConfig } from '../../config-provider/context'
-import { getThemeColors } from '../../theme/utils'
+import { getThemeToken } from '../../theme/utils'
 
 const StyledTimePanel = styled.div`
   display: flex;
@@ -36,11 +36,11 @@ const StyledColumn = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => getThemeColors(theme).border};
+    background: ${({ theme }) => getThemeToken(theme, 'colors').border};
     border-radius: 3px;
 
     &:hover {
-      background: ${({ theme }) => getThemeColors(theme).textSecondary};
+      background: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
     }
   }
 `
@@ -52,16 +52,16 @@ const StyledTimeCell = styled.div<{ isSelected?: boolean }>`
   font-size: 14px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background: ${({ theme, isSelected }) =>
-    isSelected ? getThemeColors(theme).primary : 'transparent'};
-  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : getThemeColors(theme).text)};
+    isSelected ? getThemeToken(theme, 'colors').primary : 'transparent'};
+  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : getThemeToken(theme, 'colors').text)};
   margin: 0 4px;
   border-radius: 4px;
 
   &:hover {
     background: ${({ theme, isSelected }) =>
       isSelected
-        ? getThemeColors(theme).primaryHover || getThemeColors(theme).primary
-        : getThemeColors(theme).backgroundSecondary};
+        ? getThemeToken(theme, 'colors').primaryHover || getThemeToken(theme, 'colors').primary
+        : getThemeToken(theme, 'colors').backgroundSecondary};
   }
 
   &:active {
@@ -81,7 +81,7 @@ const StyledHeaderCell = styled.div`
   flex: 1;
   text-align: center;
   font-size: 12px;
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   font-weight: 400;
   line-height: 40px;
 `

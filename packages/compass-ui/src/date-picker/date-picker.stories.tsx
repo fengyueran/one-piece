@@ -133,35 +133,6 @@ export default meta
 type Story = StoryObj<typeof DatePicker>
 
 export const Basic: Story = {
-  render: (args) => {
-    // Storybook controls return timestamps (number) for date inputs
-    // We need to convert them to Date objects for the component
-    const toDate = (val: any) => {
-      if (typeof val === 'number') return new Date(val)
-      return val
-    }
-
-    const [date, setDate] = useState<Date | null>(
-      toDate(args.value) || toDate(args.defaultValue) || null,
-    )
-
-    useEffect(() => {
-      if (args.value !== undefined) {
-        setDate(toDate(args.value))
-      }
-    }, [args.value])
-
-    return (
-      <DatePicker
-        {...args}
-        value={date || undefined}
-        onChange={(newDate) => {
-          setDate(newDate)
-          args.onChange?.(newDate)
-        }}
-      />
-    )
-  },
   args: {
     placeholder: 'Select date',
   },

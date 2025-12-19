@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { getComponentTheme, getThemeColors } from '../theme/utils'
+import { getComponentTheme, getThemeToken } from '../theme/utils'
 
 export const StyledDatePicker = styled.div<{ fullWidth?: boolean }>`
   position: relative;
@@ -8,7 +8,7 @@ export const StyledDatePicker = styled.div<{ fullWidth?: boolean }>`
 `
 
 export const StyledCalendar = styled.div`
-  background: ${({ theme }) => getThemeColors(theme).background};
+  background: ${({ theme }) => getThemeToken(theme, 'colors').background};
   border: 1px solid ${({ theme }) => getComponentTheme(theme, 'datePicker').borderColor};
   border-radius: 8px;
   box-shadow: ${({ theme }) => getComponentTheme(theme, 'datePicker').boxShadow};
@@ -45,7 +45,7 @@ export const StyledHeaderButton = styled.button`
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   font-size: 14px;
   line-height: 1;
   transition: all 0.2s;
@@ -55,8 +55,8 @@ export const StyledHeaderButton = styled.button`
   justify-content: center;
 
   &:hover {
-    color: ${({ theme }) => getThemeColors(theme).text};
-    background: ${({ theme }) => getThemeColors(theme).backgroundSecondary};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').text};
+    background: ${({ theme }) => getThemeToken(theme, 'colors').backgroundSecondary};
   }
 `
 
@@ -67,7 +67,7 @@ export const StyledHeaderTitle = styled.div`
   transition: color 0.2s;
 
   &:hover {
-    color: ${({ theme }) => getThemeColors(theme).primary};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').primary};
   }
 `
 
@@ -80,7 +80,7 @@ export const StyledWeekDays = styled.div<{ showWeekNumber?: boolean }>`
 `
 
 export const StyledWeekDay = styled.div`
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   font-size: ${({ theme }) => getComponentTheme(theme, 'datePicker').weekDayFontSize};
   padding: 4px 0;
   font-weight: 400;
@@ -105,7 +105,7 @@ export const StyledWeekNumber = styled.div<{ isSelected?: boolean; isHovered?: b
   box-sizing: border-box;
   color: ${({ theme, isSelected, isHovered }) => {
     if (isSelected || isHovered) return getComponentTheme(theme, 'datePicker').cellActiveColor
-    return getThemeColors(theme).textSecondary
+    return getThemeToken(theme, 'colors').textSecondary
   }};
   background: ${({ theme, isSelected, isHovered }) => {
     if (isSelected) return getComponentTheme(theme, 'datePicker').cellActiveBg
@@ -168,7 +168,7 @@ export const StyledDay = styled.div<{
   background: ${({ theme, isSelected, isHovered, isInRange }) => {
     if (isSelected) return getComponentTheme(theme, 'datePicker').cellActiveBg
     if (isHovered) return getComponentTheme(theme, 'datePicker').cellHoverBg
-    if (isInRange) return hexToRgba(getThemeColors(theme).primary, 0.2)
+    if (isInRange) return hexToRgba(getThemeToken(theme, 'colors').primary, 0.2)
     return 'transparent'
   }};
   border-radius: ${({ isWeekMode, isWeekEnd, theme }) =>
@@ -212,12 +212,12 @@ export const StyledRangeWrapper = styled.div<{
   box-sizing: border-box;
   width: 100%;
   min-width: 320px;
-  background-color: ${({ theme }) => getThemeColors(theme).background};
+  background-color: ${({ theme }) => getThemeToken(theme, 'colors').background};
   border: 1px solid
     ${({ theme, error, focused }) => {
-      if (error) return getThemeColors(theme).error
+      if (error) return getThemeToken(theme, 'colors').error
       if (focused) return getComponentTheme(theme, 'input').activeBorderColor
-      return getThemeColors(theme).border
+      return getThemeToken(theme, 'colors').border
     }};
   border-radius: ${({ theme }) => getComponentTheme(theme, 'input').borderRadius};
   padding: 4px 11px;
@@ -225,8 +225,8 @@ export const StyledRangeWrapper = styled.div<{
 
   &:hover {
     border-color: ${({ theme, error, focused, disabled }) => {
-      if (disabled) return getThemeColors(theme).border
-      if (error) return getThemeColors(theme).error
+      if (disabled) return getThemeToken(theme, 'colors').border
+      if (error) return getThemeToken(theme, 'colors').error
       if (focused) return getComponentTheme(theme, 'input').activeBorderColor
       return getComponentTheme(theme, 'input').hoverBorderColor
     }};
@@ -235,7 +235,7 @@ export const StyledRangeWrapper = styled.div<{
   ${({ disabled, theme }) =>
     disabled &&
     `
-    background-color: ${getThemeColors(theme).backgroundSecondary};
+    background-color: ${getThemeToken(theme, 'colors').backgroundSecondary};
     cursor: not-allowed;
     opacity: 0.6;
   `}
@@ -248,13 +248,13 @@ export const StyledRangeInput = styled.input`
   background: transparent;
   padding: 0;
   margin: 0;
-  color: ${({ theme }) => getThemeColors(theme).text};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
   font-size: 14px;
   width: 100%;
   text-align: center;
 
   &::placeholder {
-    color: ${({ theme }) => getThemeColors(theme).textDisabled};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').textDisabled};
   }
 
   &:disabled {
@@ -263,7 +263,7 @@ export const StyledRangeInput = styled.input`
 `
 
 export const StyledSeparator = styled.span`
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   margin: 0 8px;
   flex-shrink: 0;
 `
@@ -275,7 +275,7 @@ export const StyledActiveBar = styled.div<{
   position: absolute;
   bottom: -1px;
   height: 2px;
-  background-color: ${({ theme }) => getThemeColors(theme).primary};
+  background-color: ${({ theme }) => getThemeToken(theme, 'colors').primary};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   left: ${({ position }) => (position === 'left' ? '0' : '50%')};
   width: 50%;
@@ -287,7 +287,7 @@ export const StyledActiveBar = styled.div<{
 export const StyledSuffixIcon = styled.span`
   display: flex;
   align-items: center;
-  color: ${({ theme }) => getThemeColors(theme).textSecondary};
+  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
   margin-left: 8px;
   width: 16px;
   justify-content: center;
@@ -295,6 +295,6 @@ export const StyledSuffixIcon = styled.span`
   transition: color 0.2s;
 
   &:hover {
-    color: ${({ theme }) => getThemeColors(theme).text};
+    color: ${({ theme }) => getThemeToken(theme, 'colors').text};
   }
 `

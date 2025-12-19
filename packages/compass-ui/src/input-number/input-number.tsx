@@ -12,7 +12,7 @@ import {
   StepperButton,
 } from './input-number.styles'
 
-export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props, ref) => {
+const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props, ref) => {
   const {
     value,
     defaultValue,
@@ -225,6 +225,7 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
               disabled={max !== undefined && currentValue !== null && currentValue >= max}
               onClick={() => handleStep('up')}
               onMouseDown={(e) => e.preventDefault()}
+              $size={size}
             >
               <svg viewBox="0 0 12 12" fill="currentColor">
                 <path d="M6 3l4 4H2z" />
@@ -235,6 +236,7 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
               disabled={min !== undefined && currentValue !== null && currentValue <= min}
               onClick={() => handleStep('down')}
               onMouseDown={(e) => e.preventDefault()}
+              $size={size}
             >
               <svg viewBox="0 0 12 12" fill="currentColor">
                 <path d="M6 9l4-4H2z" />

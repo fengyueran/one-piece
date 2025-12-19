@@ -51,7 +51,7 @@ A modal dialog component for displaying content that requires user interaction.
   tags: ['autodocs'],
   argTypes: {
     isOpen: {
-      description: 'Whether the modal is open',
+      description: '对话框是否可见',
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
@@ -59,7 +59,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     maskVisible: {
-      description: 'Whether to show the mask',
+      description: '是否显示遮罩层',
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
@@ -67,49 +67,49 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     footer: {
-      description: 'Custom footer content',
+      description: '底部内容，当不需要默认底部按钮时，可以设为 footer={null}',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
       },
     },
     children: {
-      description: 'Modal content',
+      description: '对话框内容',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
       },
     },
     className: {
-      description: 'Custom class name',
+      description: '自定义类名',
       control: 'text',
       table: {
         type: { summary: 'string' },
       },
     },
     style: {
-      description: 'Custom style',
+      description: '自定义样式',
       control: 'object',
       table: {
         type: { summary: 'CSSProperties' },
       },
     },
     onCancel: {
-      description: 'Callback when the modal is closed or cancelled',
+      description: '点击遮罩层或右上角叉或取消按钮的回调',
       action: 'cancelled',
       table: {
         type: { summary: '() => void' },
       },
     },
     title: {
-      description: 'Modal title',
+      description: '标题',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
       },
     },
     closable: {
-      description: 'Whether to show the close button',
+      description: '是否显示右上角的关闭按钮',
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
@@ -117,7 +117,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     width: {
-      description: 'Width of the modal',
+      description: '宽度',
       control: 'text',
       table: {
         type: { summary: 'string | number' },
@@ -125,7 +125,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     onOk: {
-      description: 'Callback when the OK button is clicked',
+      description: '点击确定回调',
       action: 'ok',
       table: {
         type: { summary: '(e: React.MouseEvent<HTMLElement>) => void | Promise<void>' },
@@ -133,7 +133,7 @@ A modal dialog component for displaying content that requires user interaction.
     },
 
     okText: {
-      description: 'Text of the OK button',
+      description: '确认按钮文字',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
@@ -141,7 +141,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     cancelText: {
-      description: 'Text of the Cancel button',
+      description: '取消按钮文字',
       control: 'text',
       table: {
         type: { summary: 'ReactNode' },
@@ -149,7 +149,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     confirmLoading: {
-      description: 'Whether the OK button is loading',
+      description: '确定按钮 loading',
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
@@ -157,7 +157,7 @@ A modal dialog component for displaying content that requires user interaction.
       },
     },
     afterClose: {
-      description: 'Callback when the modal is completely closed (after animation)',
+      description: 'Modal 完全关闭后的回调',
       action: 'afterClose',
       table: {
         type: { summary: '() => void' },
@@ -175,35 +175,28 @@ export const Default: Story = {
       description: { story: '**基础用法**' },
     },
   },
-  render: (args: ModalProps) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || false)
-
-    // Sync isOpen with args when args.isOpen changes (e.g. via Controls)
-    useEffect(() => {
-      setIsOpen(args.isOpen || false)
-    }, [args.isOpen])
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false)
 
     const handleCancel = (e?: React.MouseEvent<HTMLElement>) => {
       setIsOpen(false)
-      args.onCancel?.(e)
+    }
+
+    const handleAfterClose = () => {
+      console.log('afterClose')
     }
 
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-        <Modal
-          {...args}
-          isOpen={isOpen}
-          onCancel={handleCancel}
-          title={args.title || 'Basic Modal'}
-        >
-          {args.children || (
+        <Modal isOpen={isOpen} onCancel={handleCancel} afterClose={handleAfterClose}>
+          {
             <>
               <p>Some contents...</p>
               <p>Some contents...</p>
               <p>Some contents...</p>
             </>
-          )}
+          }
         </Modal>
       </>
     )
@@ -484,7 +477,7 @@ export const DynamicTheme: Story = {
     }
 
     return (
-      <ConfigProvider theme={theme}>
+      <ConfigProvider theme={{ token: theme }}>
         <div style={{ padding: 20, border: '1px solid #eee' }}>
           <h3>Dynamic Theme Context Test</h3>
           <div style={{ marginBottom: 16 }}>
@@ -604,13 +597,15 @@ export const CustomTheme: Story = {
     return (
       <ConfigProvider
         theme={{
-          components: {
-            modal: {
-              borderRadius: '20px',
-              headerPadding: '20px 30px',
-              bodyPadding: '30px',
-              footerPadding: '15px 30px',
-              maskColor: 'rgba(100, 0, 100, 0.5)',
+          token: {
+            components: {
+              modal: {
+                borderRadius: '20px',
+                headerPadding: '20px 30px',
+                bodyPadding: '30px',
+                footerPadding: '15px 30px',
+                maskColor: 'rgba(100, 0, 100, 0.5)',
+              },
             },
           },
         }}

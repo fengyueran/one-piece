@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { setMonth, setQuarter, getQuarter } from 'date-fns'
-import { getThemeColors } from '../../theme/utils'
+import { getThemeToken } from '../../theme/utils'
 
 const StyledQuarterGrid = styled.div`
   display: grid;
@@ -17,12 +17,12 @@ const StyledQuarterCell = styled.div<{ isSelected?: boolean }>`
   border-radius: 4px;
   font-size: 14px;
   background: ${({ theme, isSelected }) =>
-    isSelected ? getThemeColors(theme).primary : 'transparent'};
-  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : getThemeColors(theme).text)};
+    isSelected ? getThemeToken(theme, 'colors').primary : 'transparent'};
+  color: ${({ theme, isSelected }) => (isSelected ? '#fff' : getThemeToken(theme, 'colors').text)};
 
   &:hover {
     background: ${({ theme, isSelected }) =>
-      isSelected ? getThemeColors(theme).primary : 'rgba(0, 0, 0, 0.08)'};
+      isSelected ? getThemeToken(theme, 'colors').primary : 'rgba(0, 0, 0, 0.08)'};
   }
 `
 
