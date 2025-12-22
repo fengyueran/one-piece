@@ -1,2 +1,5 @@
-export { Steps } from './steps'
+import Steps from './steps'
+
 export type { StepsProps, StepProps, StepStatus } from './types'
+
+export default Steps

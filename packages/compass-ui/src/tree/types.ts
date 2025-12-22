@@ -1,0 +1,101 @@
+import React from 'react'
+
+export interface DataNode {
+  key: string | number
+  title?: React.ReactNode
+  children?: DataNode[]
+  disabled?: boolean
+  selectable?: boolean
+  checkable?: boolean
+  icon?: React.ReactNode
+  isLeaf?: boolean
+  [key: string]: any
+}
+
+export interface TreeProps {
+  /** Tree data */
+  treeData?: DataNode[]
+  /** Whether to show checkboxes */
+  checkable?: boolean
+  /** Whether treeNodes are selectable */
+  selectable?: boolean
+  /** Whether to show connecting lines */
+  showLine?: boolean
+  /** Whether to show icon */
+  showIcon?: boolean
+  /** Default expanded keys */
+  defaultExpandedKeys?: (string | number)[]
+  /** Expanded keys (controlled) */
+  expandedKeys?: (string | number)[]
+  /** Callback when keys are expanded/collapsed */
+  onExpand?: (
+    expandedKeys: (string | number)[],
+    info: { node: DataNode; expanded: boolean },
+  ) => void
+  /** Default selected keys */
+  defaultSelectedKeys?: (string | number)[]
+  /** Selected keys (controlled) */
+  selectedKeys?: (string | number)[]
+  /** Callback when node is selected */
+  onSelect?: (
+    selectedKeys: (string | number)[],
+    info: { node: DataNode; selected: boolean; event: React.MouseEvent },
+  ) => void
+  /** Default checked keys */
+  defaultCheckedKeys?: (string | number)[]
+  /** Checked keys (controlled) */
+  checkedKeys?: (string | number)[]
+  /** Callback when node is checked */
+  onCheck?: (
+    checkedKeys: (string | number)[],
+    info: { node: DataNode; checked: boolean; event: React.MouseEvent },
+  ) => void
+  /** Custom expand icon */
+  switcherIcon?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode)
+  /** Custom title render */
+  titleRender?: (node: DataNode) => React.ReactNode
+  /** Virtual scroll height */
+  height?: number
+  /** Virtual scroll item height */
+  itemHeight?: number
+  /** Enable virtual scrolling */
+  virtual?: boolean
+  /** Virtual List props */
+  virtualListProps?: Record<string, any>
+  /** Class name */
+  className?: string
+  /** Style */
+  style?: React.CSSProperties
+}
+
+export interface FlattenNode extends DataNode {
+  key: string | number
+  title?: React.ReactNode
+  level: number
+  parent: FlattenNode | null
+  children: FlattenNode[]
+  data: DataNode
+  pos: string // "0-0-1"
+}
+
+export interface TreeNodeProps extends Omit<DataNode, 'children'> {
+  eventKey: string | number
+  level?: number
+  expanded?: boolean
+  selected?: boolean
+  checked?: boolean
+  halfChecked?: boolean
+  loading?: boolean
+  domRef?: React.Ref<HTMLDivElement>
+  className?: string
+  style?: React.CSSProperties
+  onExpand?: (e: React.MouseEvent) => void
+  onSelect?: (e: React.MouseEvent) => void
+  onCheck?: (e: React.MouseEvent) => void
+  children?: React.ReactNode
+  switcherIcon?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode)
+  showLine?: boolean
+  showIcon?: boolean
+  isLast?: boolean
+  indentLines?: boolean[]
+}

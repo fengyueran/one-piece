@@ -1,5 +1,23 @@
 import React from 'react'
 
+// ... imports
+
+export const CaretRightOutlined = () => (
+  <span role="img" aria-label="caret-right" className="compass-icon compass-icon-caret-right">
+    <svg
+      viewBox="0 0 1024 1024"
+      focusable="false"
+      data-icon="caret-right"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M715.8 493.5L335 865c-12.3 12-32.8 3.3-32.8-13.7V172.7c0-17 20.5-25.7 32.8-13.7l380.8 371.5c7.5 7.3 7.5 19.4 0 26.7z"></path>
+    </svg>
+  </span>
+)
+
 export const InfoIcon = () => (
   <span role="img" aria-label="info" className="compass-icon compass-icon-info-circle">
     <svg
@@ -304,6 +322,56 @@ export const EllipsisOutlined = () => (
       aria-hidden="true"
     >
       <path d="M176 512a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path>
+    </svg>
+  </span>
+)
+
+export const PlusSquareOutlined = () => (
+  <span role="img" aria-label="plus-square" className="compass-icon compass-icon-plus-square">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="plus-square"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M328 544h152v152c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V544h152c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H544V328c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v152H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"></path>
+      <path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path>
+    </svg>
+  </span>
+)
+
+export const MinusSquareOutlined = () => (
+  <span role="img" aria-label="minus-square" className="compass-icon compass-icon-minus-square">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="minus-square"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M328 544h368c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"></path>
+      <path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path>
+    </svg>
+  </span>
+)
+
+export const FileOutlined = () => (
+  <span role="img" aria-label="file" className="compass-icon compass-icon-file">
+    <svg
+      viewBox="64 64 896 896"
+      focusable="false"
+      data-icon="file"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.6-9.4-22.7zM790.2 326H602V137.8L790.2 326zm1.8 562H232V136h302v216a42 42 0 0042 42h216v494z"></path>
     </svg>
   </span>
 )

@@ -103,6 +103,32 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
             ...t.components.datePicker,
           }
         }
+        if (t.components?.select) {
+          result.components.select = {
+            ...result.components.select,
+            ...t.components.select,
+            padding: {
+              ...result.components.select.padding,
+              ...t.components.select?.padding,
+            },
+            fontSize: {
+              ...result.components.select.fontSize,
+              ...t.components.select?.fontSize,
+            },
+          }
+        }
+        if (t.components?.pagination) {
+          result.components.pagination = {
+            ...result.components.pagination,
+            ...t.components.pagination,
+          }
+        }
+        if (t.components?.tree) {
+          result.components.tree = {
+            ...result.components.tree,
+            ...t.components.tree,
+          }
+        }
       })
 
       return result

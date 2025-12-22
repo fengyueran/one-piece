@@ -92,6 +92,9 @@ importers:
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@18.3.1)(react@18.3.1)
+      react-window:
+        specifier: ^2.2.3
+        version: 2.2.3(react-dom@18.3.1)(react@18.3.1)
     devDependencies:
       '@storybook/addon-docs':
         specifier: ^9.1.12
@@ -135,6 +138,9 @@ importers:
       '@types/react-transition-group':
         specifier: ^4.4.12
         version: 4.4.12(@types/react@18.3.23)
+      '@types/react-window':
+        specifier: ^2.0.0
+        version: 2.0.0(react-dom@18.3.1)(react@18.3.1)
       identity-obj-proxy:
         specifier: ^3.0.0
         version: 3.0.0
@@ -3721,6 +3727,19 @@ packages:
       '@types/react': '*'
     dependencies:
       '@types/react': 18.3.23
+    dev: true
+
+  /@types/react-window@2.0.0(react-dom@18.3.1)(react@18.3.1):
+    resolution:
+      {
+        integrity: sha512-E8hMDtImEpMk1SjswSvqoSmYvk7GEtyVaTa/GJV++FdDNuMVVEzpAClyJ0nqeKYBrMkGiyH6M1+rPLM0Nu1exQ==,
+      }
+    deprecated: This is a stub types definition. react-window provides its own type definitions, so you do not need this installed.
+    dependencies:
+      react-window: 2.2.3(react-dom@18.3.1)(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
     dev: true
 
   /@types/react@18.3.23:
@@ -10364,6 +10383,18 @@ packages:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     dev: false
+
+  /react-window@2.2.3(react-dom@18.3.1)(react@18.3.1):
+    resolution:
+      {
+        integrity: sha512-gTRqQYC8ojbiXyd9duYFiSn2TJw0ROXCgYjenOvNKITWzK0m0eCvkUsEUM08xvydkMh7ncp+LE0uS3DeNGZxnQ==,
+      }
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   /react@18.3.1:
     resolution:

@@ -194,7 +194,17 @@ export const extractRenderInfo = (
 export const cleanEmptyHandlers = (code: string): string => {
   let result = code
   // Common handlers
-  const handlers = ['onChange', 'onPressEnter', 'onClick', 'onFocus', 'onBlur', 'onVisibleChange']
+  const handlers = [
+    'onChange',
+    'onPressEnter',
+    'onClick',
+    'onFocus',
+    'onBlur',
+    'onVisibleChange',
+    'onExpand',
+    'onCheck',
+    'onSelect',
+  ]
 
   handlers.forEach((handler) => {
     const regex = new RegExp(`\\s*${handler}=\\{\\(\\)\\s*=>\\s*\\{\\}\\}`, 'g')
@@ -227,6 +237,7 @@ const KNOWN_COMPONENTS = [
   'Menu',
   'DatePicker',
   'Pagination',
+  'Tree',
 ]
 
 /**

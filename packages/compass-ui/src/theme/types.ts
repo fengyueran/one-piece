@@ -97,7 +97,20 @@ export interface Theme {
     datePicker: DatePickerTheme
     select: SelectTheme
     pagination: PaginationTheme
+    tree: TreeTheme
   }
+}
+
+export interface TreeTheme {
+  nodeSelectedBg: string
+  nodeHoverBg: string
+  nodeColor: string
+  nodeSelectedColor: string
+  switcherColor: string
+  switcherHoverColor: string
+  fontSize: string
+  borderRadius: string
+  indentSize: string
 }
 
 export interface SelectTheme {

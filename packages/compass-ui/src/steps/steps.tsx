@@ -14,7 +14,7 @@ import { CheckIcon, CloseIcon } from '../icons'
 
 const Step: React.FC<StepProps> = () => null
 
-export const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
+const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
   current = 0,
   status = 'process',
   direction = 'horizontal',
@@ -138,3 +138,5 @@ export const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
 }
 
 Steps.Step = Step
+
+export default Steps

@@ -1,6 +1,12 @@
 export { default as Button } from './button'
 export type { ButtonProps } from './button'
 
+export { default as Steps } from './steps'
+export type { StepsProps } from './steps'
+
+export { default as Tree } from './tree'
+export type { TreeProps, TreeNodeProps, DataNode } from './tree'
+
 export { default as Dropdown } from './dropdown'
 export type { DropdownProps } from './dropdown'
 

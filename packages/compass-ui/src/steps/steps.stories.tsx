@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Steps } from './steps'
+import Steps from './steps'
 import { LoadingIcon, InfoIcon } from '../icons'
 import ConfigProvider from '../config-provider'
 

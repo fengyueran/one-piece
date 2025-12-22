@@ -145,6 +145,10 @@ pnpm test -- --watch
 # 生成覆盖率报告
 pnpm test -- --coverage
 
+# 生成 HTML 格式覆盖率报告并在浏览器中打开
+# macOS
+pnpm test -- --coverage && open coverage/lcov-report/index.html
+
 # 更新快照
 pnpm test -- -u
 ```
