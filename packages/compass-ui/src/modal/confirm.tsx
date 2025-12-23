@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Modal from './modal'
-import { ModalBaseProps } from './types'
+import { ModalBaseProps, ModalType } from './types'
 import { InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../icons'
 import { AnimationDuration } from './modal.styles'
 import { ThemeProvider, defaultTheme } from '../theme'
@@ -25,7 +25,7 @@ export interface ModalFuncProps extends Omit<ModalBaseProps, 'isOpen' | 'childre
   okText?: string
   cancelText?: string
   icon?: React.ReactNode
-  type?: 'info' | 'success' | 'error' | 'warning' | 'confirm'
+  type?: ModalType
 }
 
 const confirmDialog = (config: ModalFuncProps) => {

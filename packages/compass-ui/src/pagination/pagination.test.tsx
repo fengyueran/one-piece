@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Pagination from './index'
 import { ThemeProvider, defaultTheme } from '../theme'
-import userEvent from '@testing-library/user-event'
 
 const renderWithTheme = (ui: React.ReactElement) => {
   return render(<ThemeProvider theme={defaultTheme}>{ui}</ThemeProvider>)
@@ -37,9 +36,9 @@ describe('Pagination', () => {
   describe('Props', () => {
     it('should apply disabled state', () => {
       renderWithTheme(<Pagination total={50} disabled />)
-      // Check prev/next buttons
-      const prev = screen.getByTitle('Previous Page')
-      const next = screen.getByTitle('Next Page')
+      // Check prev/next buttons exist
+      screen.getByTitle('Previous Page')
+      screen.getByTitle('Next Page')
     })
 
     it('should accept custom className and style', () => {
@@ -71,7 +70,7 @@ describe('Pagination', () => {
     })
 
     it('should show size changer', () => {
-      const { container } = renderWithTheme(<Pagination total={100} showSizeChanger />)
+      renderWithTheme(<Pagination total={100} showSizeChanger />)
       expect(screen.getByText('10 / page')).toBeInTheDocument()
     })
   })

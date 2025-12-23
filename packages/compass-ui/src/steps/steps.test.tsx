@@ -2,7 +2,6 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Steps from './steps'
 import { ThemeProvider } from '../theme'
-import { InfoIcon } from '../icons'
 
 describe('Steps', () => {
   const items = [

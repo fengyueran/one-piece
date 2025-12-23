@@ -5,7 +5,7 @@ import Tree, { type DataNode } from './index'
 
 // Mock react-window for virtual scrolling tests
 jest.mock('react-window', () => ({
-  List: ({ rowComponent: Row, rowCount, rowProps, rowHeight, ...props }: any) => {
+  List: ({ rowComponent: Row, rowCount, ...props }: any) => {
     const rows = []
     for (let i = 0; i < rowCount; i++) {
       rows.push(<Row key={i} index={i} style={{}} />)
@@ -125,13 +125,6 @@ describe('Tree', () => {
       const onExpand = jest.fn()
       const onSelect = jest.fn()
       const onCheck = jest.fn() // Add onCheck
-
-      // Define simple switcher to find generic click target for expand
-      const TestSwitcher = ({ expanded, onClick }: any) => (
-        <span onClick={onClick} data-testid="v-switcher">
-          {expanded ? '-' : '+'}
-        </span>
-      )
 
       render(
         <Tree

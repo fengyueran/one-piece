@@ -81,7 +81,7 @@ describe('Message Component', () => {
     it('should support object argument', async () => {
       // Test info
       act(() => {
-        // @ts-ignore
+        // @ts-expect-error - Testing invalid prop structure
         message.info({ content: 'Info Object Content', duration: 2 })
         jest.advanceTimersByTime(20)
       })

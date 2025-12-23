@@ -4,11 +4,11 @@ declare module 'prettier-v2/standalone' {
 }
 
 declare module 'prettier-v2/parser-babel' {
-  const parser: any
+  const parser: Record<string, unknown>
   export default parser
 }
 
 declare module 'prettier-v2/parser-typescript' {
-  const parser: any
+  const parser: Record<string, unknown>
   export default parser
 }

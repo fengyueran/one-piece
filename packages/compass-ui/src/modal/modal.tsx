@@ -54,8 +54,7 @@ export const BaseModal = (props: ModalBaseProps) => {
       return
     }
 
-    let returnValue: void | Promise<void>
-    returnValue = onOk(e)
+    const returnValue: void | Promise<void> = onOk(e)
 
     if (returnValue && typeof returnValue.then === 'function') {
       setLoading(true)

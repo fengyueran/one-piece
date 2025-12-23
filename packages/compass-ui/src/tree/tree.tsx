@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { List, RowComponentProps } from 'react-window'
-import { TreeProps, DataNode } from './types'
+import { TreeProps, DataNode, FlattenNode } from './types'
 import { TreeContainer } from './tree.styles'
 import { TreeNode } from './tree-node'
 import { flattenTreeData } from './utils/flatten'
@@ -41,17 +41,9 @@ const Tree: React.FC<TreeProps> = ({
     propCheckedKeys || defaultCheckedKeys,
   )
 
-  useEffect(() => {
-    if (propExpandedKeys) setExpandedKeys(propExpandedKeys)
-  }, [propExpandedKeys])
-
-  useEffect(() => {
-    if (propSelectedKeys) setSelectedKeys(propSelectedKeys)
-  }, [propSelectedKeys])
-
-  useEffect(() => {
-    if (propCheckedKeys) setCheckedKeys(propCheckedKeys)
-  }, [propCheckedKeys])
+  const mergedExpandedKeys = propExpandedKeys || expandedKeys
+  const mergedSelectedKeys = propSelectedKeys || selectedKeys
+  const mergedCheckedKeys = propCheckedKeys || checkedKeys
 
   // Memoize entities map for cascade check
   const { keyEntities } = useMemo(() => {
@@ -60,14 +52,14 @@ const Tree: React.FC<TreeProps> = ({
 
   // Flatten data
   const flattenedNodes = useMemo(() => {
-    return flattenTreeData(treeData, expandedKeys)
-  }, [treeData, expandedKeys])
+    return flattenTreeData(treeData, mergedExpandedKeys)
+  }, [treeData, mergedExpandedKeys])
 
   // Handlers
   const handleExpand = (key: string | number, node: DataNode) => {
-    const newExpandedKeys = expandedKeys.includes(key)
-      ? expandedKeys.filter((k) => k !== key)
-      : [...expandedKeys, key]
+    const newExpandedKeys = mergedExpandedKeys.includes(key)
+      ? mergedExpandedKeys.filter((k) => k !== key)
+      : [...mergedExpandedKeys, key]
 
     if (!propExpandedKeys) {
       setExpandedKeys(newExpandedKeys)
@@ -76,7 +68,7 @@ const Tree: React.FC<TreeProps> = ({
     if (onExpand) {
       onExpand(newExpandedKeys, {
         node,
-        expanded: !expandedKeys.includes(key),
+        expanded: !mergedExpandedKeys.includes(key),
       })
     }
   }
@@ -98,13 +90,13 @@ const Tree: React.FC<TreeProps> = ({
   }
 
   const handleCheck = (key: string | number, node: DataNode, event: React.MouseEvent) => {
-    const checked = !checkedKeys.includes(key)
+    const checked = !mergedCheckedKeys.includes(key)
 
     // Use conductCheckWithTrigger for cascade logic
     const { checkedKeys: newCheckedKeys } = conductCheckWithTrigger(
       key,
       checked,
-      checkedKeys,
+      mergedCheckedKeys,
       keyEntities,
     )
 
@@ -122,7 +114,7 @@ const Tree: React.FC<TreeProps> = ({
   }
 
   // Helper to check if a node is the last child of its parent
-  const isLastChild = (node: any) => {
+  const isLastChild = (node: FlattenNode) => {
     if (!node.parent) {
       // For root nodes, check against original treeData
       const rootNodes = treeData
@@ -152,9 +144,9 @@ const Tree: React.FC<TreeProps> = ({
         eventKey={node.key}
         title={titleRender ? titleRender(node.data) : node.title}
         level={node.level}
-        expanded={expandedKeys.includes(node.key)}
-        selected={selectedKeys.includes(node.key)}
-        checked={checkedKeys.includes(node.key)}
+        expanded={mergedExpandedKeys.includes(node.key)}
+        selected={mergedSelectedKeys.includes(node.key)}
+        checked={mergedCheckedKeys.includes(node.key)}
         isLeaf={node.isLeaf || (!node.children && !node.data.children)}
         checkable={checkable}
         selectable={selectable}
@@ -200,9 +192,9 @@ const Tree: React.FC<TreeProps> = ({
           eventKey={node.key}
           title={titleRender ? titleRender(node.data) : node.title}
           level={node.level}
-          expanded={expandedKeys.includes(node.key)}
-          selected={selectedKeys.includes(node.key)}
-          checked={checkedKeys.includes(node.key)}
+          expanded={mergedExpandedKeys.includes(node.key)}
+          selected={mergedSelectedKeys.includes(node.key)}
+          checked={mergedCheckedKeys.includes(node.key)}
           isLeaf={node.isLeaf || (!node.children && !node.data.children)}
           checkable={checkable}
           selectable={selectable}

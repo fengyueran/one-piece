@@ -16,7 +16,7 @@ import { useConfig } from '../config-provider/context'
 import defaultLocale from '../locale/zh_CN'
 
 import { DateRangePickerProps } from './types'
-import { useCalendar } from './hooks/useCalendar'
+import { useCalendar } from './hooks/use-calendar'
 import { TimePanel } from './panels'
 import Button from '../button'
 import {
@@ -62,7 +62,6 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
     value,
     defaultValue,
     onChange,
-    picker = 'date',
     showTime = false,
     format,
     disabled = false,
@@ -71,7 +70,6 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
     className,
     style,
     fullWidth = false,
-    ...rest
   } = props
 
   const [isOpen, setIsOpen] = useState(false)
@@ -274,6 +272,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
       {isOpen && (
         <FloatingPortal>
           <FloatingFocusManager context={context} modal={false}>
+            {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
             <div
               ref={refs.setFloating}
               style={{ ...floatingStyles, zIndex: 1000 }}

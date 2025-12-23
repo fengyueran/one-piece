@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 
 import { InputNumberProps } from './types'
 import {
@@ -52,8 +52,6 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
 
   const currentValue = isControlled ? (value === undefined ? null : value) : internalValue
 
-  const [inputValue, setInputValue] = useState<string>('')
-
   const formatValue = React.useCallback(
     (val: number | null): string => {
       if (val === null) return ''
@@ -65,20 +63,20 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
     [precision],
   )
 
+  const [inputValue, setInputValue] = useState<string>(() => formatValue(currentValue))
+  const [lastSyncedValue, setLastSyncedValue] = useState(currentValue)
+
+  // Sync inputValue when currentValue changes externally and input is not focused
+  if (currentValue !== lastSyncedValue && !focused) {
+    setInputValue(formatValue(currentValue))
+    setLastSyncedValue(currentValue)
+  }
+
   const parseValue = (text: string): number | null => {
     if (!text.trim()) return null
     const parsed = parseFloat(text)
     return isNaN(parsed) ? null : parsed
   }
-
-  useEffect(() => {
-    // Only update display value if not focused to avoid interrupting typing
-    const isFocused = innerRef.current && document.activeElement === innerRef.current
-    if (!isFocused) {
-      const formatted = formatValue(currentValue)
-      setInputValue(formatted)
-    }
-  }, [currentValue, precision, formatValue])
 
   const getValidValue = (val: number): number => {
     let newVal = val
@@ -107,6 +105,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
     // Explicitly format the display value on blur
     const formatted = formatValue(num)
     setInputValue(formatted)
+    setLastSyncedValue(num)
 
     onBlur?.(e)
 
@@ -158,6 +157,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
     }
     onChange?.(newNum)
     setInputValue(formatValue(newNum))
+    setLastSyncedValue(newNum)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -173,6 +173,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
       onChange?.(num)
 
       setInputValue(formatValue(num))
+      setLastSyncedValue(num)
 
       onPressEnter?.(e)
     }

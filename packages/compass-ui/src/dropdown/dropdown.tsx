@@ -64,8 +64,9 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   // Ensure children is a single React element
   const child = React.Children.only(children) as React.ReactElement
-  // @ts-ignore
+  // @ts-expect-error - Accessing ref is necessary for merging refs
   const childRef = child.ref
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = useMergeRefs([refs.setReference, childRef])
 
   const dropdownContent = overlay || (menu ? <Menu {...menu} /> : null)
@@ -86,6 +87,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       })}
       {visible && (
         <FloatingPortal>
+          {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
           <OverlayContainer
             ref={refs.setFloating}
             style={floatingStyles}

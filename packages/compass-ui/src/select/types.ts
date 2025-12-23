@@ -6,7 +6,7 @@ export interface SelectOption {
   label: React.ReactNode
   value: string | number
   disabled?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface SelectProps {

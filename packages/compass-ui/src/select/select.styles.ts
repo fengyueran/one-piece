@@ -1,17 +1,6 @@
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scaleY(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-`
-
 const rotate = keyframes`
   from {
     transform: rotate(0deg);

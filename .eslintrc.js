@@ -39,5 +39,19 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'off',
       },
     },
+    {
+      files: ['*.stories.tsx', '*.stories.ts'],
+      rules: {
+        'react-hooks/rules-of-hooks': 'off',
+        'react/display-name': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      files: ['*.test.tsx', '*.test.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
   ],
 }

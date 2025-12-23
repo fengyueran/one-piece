@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import {
   startOfMonth,
   endOfMonth,
@@ -26,15 +26,13 @@ interface UseCalendarProps {
 
 export const useCalendar = ({ value, defaultValue }: UseCalendarProps) => {
   const [viewDate, setViewDate] = useState<Date>(value || defaultValue || new Date())
+  const [lastSyncedValue, setLastSyncedValue] = useState(value)
 
-  useEffect(() => {
-    if (value) {
-      setViewDate((prev) => {
-        if (isSameDay(prev, value)) return prev
-        return value
-      })
-    }
-  }, [value])
+  // Sync viewDate when value changes
+  if (value && value !== lastSyncedValue && !isSameDay(viewDate, value)) {
+    setViewDate(value)
+    setLastSyncedValue(value)
+  }
 
   const days = useMemo(() => {
     const monthStart = startOfMonth(viewDate)

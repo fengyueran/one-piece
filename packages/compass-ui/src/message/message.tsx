@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { createPortal } from 'react-dom'
-import { createRoot } from 'react-dom/client'
+import { createRoot, Root } from 'react-dom/client'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import { MessageProps } from './types'
@@ -48,6 +48,8 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
   },
 )
 
+Message.displayName = 'Message'
+
 interface MessageContainerProps {
   prefixCls?: string
 }
@@ -60,23 +62,21 @@ export interface MessageContainerRef {
 export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainerProps>(
   (props, ref) => {
     const [messages, setMessages] = useState<MessageProps[]>([])
-    const nodeRefs = React.useRef(new Map<string, React.RefObject<HTMLDivElement>>())
-    const [container, setContainer] = useState<HTMLElement | null>(null)
-
-    useEffect(() => {
-      setContainer(document.body)
-    }, [])
+    const [nodeRefs] = useState(() => new Map<string, React.RefObject<HTMLDivElement>>())
+    const [container] = useState<HTMLElement | null>(() =>
+      typeof window !== 'undefined' ? document.body : null,
+    )
 
     useImperativeHandle(ref, () => ({
       add: (message: MessageProps) => {
-        if (message.key && !nodeRefs.current.has(message.key)) {
-          nodeRefs.current.set(message.key, React.createRef())
+        if (message.key && !nodeRefs.has(message.key)) {
+          nodeRefs.set(message.key, React.createRef())
         }
         setMessages((prev) => [...prev, message])
       },
       remove: (key: string) => {
         setMessages((prev) => prev.filter((m) => m.key !== key))
-        nodeRefs.current.delete(key)
+        nodeRefs.delete(key)
       },
     }))
 
@@ -86,7 +86,7 @@ export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageCo
       <MessageContainer>
         <TransitionGroup component={null}>
           {messages.map((msg) => {
-            const nodeRef = nodeRefs.current.get(msg.key!)
+            const nodeRef = nodeRefs.get(msg.key!)
             return (
               <CSSTransition
                 key={msg.key}
@@ -105,8 +105,10 @@ export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageCo
   },
 )
 
+MessageContainerWrapper.displayName = 'MessageContainerWrapper'
+
 let messageContainerRef: MessageContainerRef | null = null
-let containerRoot: any = null
+let containerRoot: Root | null = null
 let containerPromise: Promise<MessageContainerRef> | null = null
 
 const getMessageContainer = (): Promise<MessageContainerRef> => {

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useImperativeHandle, ReactElement } from 'react'
 
 import { ModalFuncProps } from './confirm'
+import { ModalType } from './types'
 import { InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../icons'
 import Modal from './modal'
 import Button from '../button'
@@ -20,6 +21,7 @@ interface HookModalProps extends ModalFuncProps {
   afterClose?: () => void
   isOpen: boolean
   closeModal: () => void
+  type: ModalType
 }
 
 const HookModal: React.FC<HookModalProps> = ({
@@ -101,7 +103,7 @@ const HookModal: React.FC<HookModalProps> = ({
       }
     >
       <ConfirmContent>
-        <IconWrapper $type={type as any}>{icon || defaultIcon}</IconWrapper>
+        <IconWrapper $type={type}>{icon || defaultIcon}</IconWrapper>
         <ContentWrapper>
           {title && <Title>{title}</Title>}
           {content && <Content>{content}</Content>}
@@ -138,6 +140,8 @@ const ElementsHolder = React.forwardRef<ElementsHolderRef>((props, ref) => {
 
   return <>{Array.from(elements.values())}</>
 })
+
+ElementsHolder.displayName = 'ElementsHolder'
 
 export type ModalFunc = (props: ModalFuncProps) => {
   destroy: () => void
@@ -181,6 +185,7 @@ export default function useModal(): [ModalInstance, ReactElement] {
             <HookModal
               key={uuid}
               {...renderProps}
+              type={renderProps.type || 'info'}
               isOpen={!!renderProps.isOpen}
               closeModal={close}
               afterClose={() => {

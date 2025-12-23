@@ -9,7 +9,7 @@ export interface DataNode {
   checkable?: boolean
   icon?: React.ReactNode
   isLeaf?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface TreeProps {
@@ -61,7 +61,7 @@ export interface TreeProps {
   /** Enable virtual scrolling */
   virtual?: boolean
   /** Virtual List props */
-  virtualListProps?: Record<string, any>
+  virtualListProps?: Record<string, unknown>
   /** Class name */
   className?: string
   /** Style */

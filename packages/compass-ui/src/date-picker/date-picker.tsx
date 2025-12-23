@@ -21,7 +21,7 @@ import styled from '@emotion/styled'
 
 import InputField from '../input-field'
 import { DatePickerProps } from './types'
-import { useCalendar } from './hooks/useCalendar'
+import { useCalendar } from './hooks/use-calendar'
 import { MonthPanel, YearPanel, QuarterPanel, TimePanel } from './panels'
 import Button from '../button'
 import {
@@ -124,24 +124,22 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   const { getReferenceProps, getFloatingProps } = useInteractions([dismiss])
 
   const handleDateSelect = (date: Date) => {
-    let newDate = date
     // Preserve time if selecting date
     if (selectedDate && panelMode === 'date') {
-      newDate.setHours(selectedDate.getHours())
-      newDate.setMinutes(selectedDate.getMinutes())
-      newDate.setSeconds(selectedDate.getSeconds())
+      date.setHours(selectedDate.getHours())
+      date.setMinutes(selectedDate.getMinutes())
+      date.setSeconds(selectedDate.getSeconds())
     }
 
     if (picker === 'week') {
-      const start = startOfWeek(newDate, { weekStartsOn: 1 })
-      setSelectedDate(start)
+      const start = startOfWeek(date, { weekStartsOn: 1 })
       setSelectedDate(start)
       onChange?.(start)
       setIsOpen(false)
     } else {
-      setSelectedDate(newDate)
+      setSelectedDate(date)
       if (!(showTime && picker === 'date')) {
-        onChange?.(newDate)
+        onChange?.(date)
         setIsOpen(false)
       }
     }
@@ -182,7 +180,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
 
   const renderHeader = () => {
     switch (panelMode) {
-      case 'year':
+      case 'year': {
         const startYear = Math.floor(viewDate.getFullYear() / 10) * 10
         return (
           <StyledHeader>
@@ -195,6 +193,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
             </StyledHeaderButton>
           </StyledHeader>
         )
+      }
       case 'month':
       case 'quarter':
         return (
@@ -265,7 +264,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
             onSelect={(date) => handlePanelSelect(date, 'quarter')}
           />
         )
-      default:
+      default: {
         const showWeekNumber = picker === 'week'
         return (
           <>
@@ -324,6 +323,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
             </StyledDays>
           </>
         )
+      }
     }
   }
 
@@ -379,6 +379,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
       {isOpen && (
         <FloatingPortal>
           <FloatingFocusManager context={context} modal={false}>
+            {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
             <div
               ref={refs.setFloating}
               style={{ ...floatingStyles, zIndex: 1000 }}

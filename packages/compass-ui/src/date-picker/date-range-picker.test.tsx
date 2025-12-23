@@ -1,7 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { format } from 'date-fns'
+import { render, screen, fireEvent } from '@testing-library/react'
 import DatePicker from './index'
 import ThemeProvider from '../theme/theme-provider'
 
@@ -171,7 +169,7 @@ describe('DateRangePicker Detailed', () => {
 
   it('should not auto-switch to start when selecting end first with showTime', async () => {
     const onChange = jest.fn()
-    const { container } = renderWithTheme(<DateRangePicker showTime onChange={onChange} />)
+    renderWithTheme(<DateRangePicker showTime onChange={onChange} />)
     const inputs = screen.getAllByRole('textbox')
 
     // Click End input to start selecting end date first

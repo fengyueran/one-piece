@@ -49,7 +49,7 @@ describe('QuarterPanel', () => {
     // Or check computed style.
 
     // Q2 should be selected
-    const q2 = screen.getByText('Q2')
+    screen.getByText('Q2')
     // We can't strictly check color without knowing theme values, but we can trust the branch execution.
     // We also need to ensure others are NOT selected.
   })

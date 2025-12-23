@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { setMonth, setQuarter, getQuarter } from 'date-fns'
+import { setMonth, getQuarter } from 'date-fns'
 import { getThemeToken } from '../../theme/utils'
 
 const StyledQuarterGrid = styled.div`

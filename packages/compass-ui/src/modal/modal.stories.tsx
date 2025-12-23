@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import Modal, { ModalProps } from '.'
+import Modal from '.'
 import Button from '../button'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { defaultTheme } from '../theme'
 import ConfigProvider from '../config-provider'
 
@@ -178,7 +178,7 @@ export const Default: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
 
-    const handleCancel = (e?: React.MouseEvent<HTMLElement>) => {
+    const handleCancel = () => {
       setIsOpen(false)
     }
 
@@ -232,7 +232,7 @@ export const WithTitleAndClose: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
 
-    const handleCancel = (e?: React.MouseEvent<HTMLElement>) => {
+    const handleCancel = () => {
       setIsOpen(false)
       console.log('Cancel clicked')
     }
@@ -297,7 +297,7 @@ export const CustomStyle: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false)
 
-    const handleCancel = (e?: React.MouseEvent<HTMLElement>) => {
+    const handleCancel = () => {
       setIsOpen(false)
       console.log('Cancel clicked')
     }

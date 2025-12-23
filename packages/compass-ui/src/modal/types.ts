@@ -1,5 +1,8 @@
 import React, { CSSProperties } from 'react'
 
+/** Modal type */
+export type ModalType = 'info' | 'success' | 'error' | 'warning' | 'confirm'
+
 export interface ModalBaseProps {
   /** Whether the modal is open */
   isOpen: boolean

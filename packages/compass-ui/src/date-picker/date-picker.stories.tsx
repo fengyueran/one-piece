@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import DatePicker from './index'
 import ConfigProvider from '../config-provider'
 

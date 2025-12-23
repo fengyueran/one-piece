@@ -15,7 +15,7 @@ import {
   safePolygon,
 } from '@floating-ui/react'
 
-import { SelectProps, SelectOption, SelectValue } from './types'
+import { SelectProps, SelectOption, SelectValue, OptionProps } from './types'
 import { SelectContext } from './context'
 import Option from './option'
 import {
@@ -77,10 +77,11 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     } else {
       React.Children.forEach(children, (child) => {
         if (
-          React.isValidElement(child) &&
-          (child.type === Option || (child.type as any).displayName === 'Option')
+          React.isValidElement<OptionProps>(child) &&
+          (child.type === Option ||
+            (typeof child.type === 'function' && child.type.name === 'Option'))
         ) {
-          const { value, children: label, disabled, ...rest } = child.props as any
+          const { value, children: label, disabled, ...rest } = child.props
           opts.push({ value, label, disabled, ...rest })
         }
       })
@@ -335,7 +336,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     setActiveValue: () => {},
   }
 
-  const triggerRef = refs.setReference as any
+  const triggerRef = refs.setReference as (node: HTMLElement | null) => void
 
   return (
     <SelectContext.Provider value={contextValue}>
@@ -380,6 +381,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
         {open && (
           <FloatingPortal>
+            {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
             <SelectDropdown
               ref={refs.setFloating}
               style={{

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import ConfigProvider from './config-provider'
 import { useConfig } from './context'

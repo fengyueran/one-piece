@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { TimePanel } from './time-panel'
 import ThemeProvider from '../../theme/theme-provider'
-import { setHours, setMinutes, setSeconds } from 'date-fns'
+import { setHours, setMinutes } from 'date-fns'
 
 const renderWithTheme = (ui: React.ReactElement) => {
   return render(<ThemeProvider>{ui}</ThemeProvider>)

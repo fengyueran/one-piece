@@ -146,13 +146,13 @@ describe('Progress', () => {
     })
 
     it('should calculate font size for very small circle', () => {
-      const { container } = renderWithTheme(<Progress type="circle" percent={25} size={50} />)
+      renderWithTheme(<Progress type="circle" percent={25} size={50} />)
       // Check computed style of text if possible, or reliance on coverage
       expect(screen.getByText('25%')).toBeInTheDocument()
     })
 
     it('should calculate font size for very large circle', () => {
-      const { container } = renderWithTheme(<Progress type="circle" percent={25} size={150} />)
+      renderWithTheme(<Progress type="circle" percent={25} size={150} />)
       expect(screen.getByText('25%')).toBeInTheDocument()
     })
 

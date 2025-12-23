@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react'
-import { useCalendar } from './useCalendar'
-import { startOfMonth, isSameDay } from 'date-fns'
+import { isSameDay } from 'date-fns'
+
+import { useCalendar } from './use-calendar'
 
 describe('useCalendar', () => {
   it('should initialize with default value', () => {

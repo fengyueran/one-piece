@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { ModalType } from './types'
 
 export const ConfirmContent = styled.div`
   display: flex;
@@ -6,7 +7,7 @@ export const ConfirmContent = styled.div`
 `
 
 export const IconWrapper = styled.div<{
-  $type: 'info' | 'success' | 'error' | 'warning' | 'confirm'
+  $type: ModalType
 }>`
   margin-right: 12px;
   font-size: 22px;

@@ -14,7 +14,7 @@ export const InputWrapper = styled(BaseInputWrapper)<{
   size?: 'small' | 'medium' | 'large'
   controls?: boolean
 }>`
-  padding-right: ${({ theme, size, controls }) => {
+  padding-right: ${({ size, controls }) => {
     if (!controls) return undefined // Use default padding if no controls
     const map = { small: '30px', medium: '34px', large: '38px' } as const
     return map[size || 'medium']

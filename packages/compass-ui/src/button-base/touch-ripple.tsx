@@ -86,3 +86,4 @@ export const TouchRipple = forwardRef((props: { bgColor?: string; opacity?: numb
     </RootContainer>
   )
 })
+TouchRipple.displayName = 'TouchRipple'

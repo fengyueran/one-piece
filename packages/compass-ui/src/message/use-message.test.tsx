@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import useMessage from './use-message'
 import { ConfigProvider } from '../index'
 

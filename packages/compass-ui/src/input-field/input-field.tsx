@@ -104,7 +104,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
   const inputType = type === 'password' && showPassword ? 'text' : type
 
   // Determine prefix
-  let renderedPrefix = prefix
+  const renderedPrefix = prefix
 
   // Determine suffix
   let renderedSuffix = suffix

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Select from './select'
 
@@ -158,9 +158,7 @@ describe('Select', () => {
     it('removes tag when close icon is clicked', async () => {
       const user = userEvent.setup()
       const handleChange = jest.fn()
-      const { container } = render(
-        <Select options={options} multiple value={['1']} onChange={handleChange} />,
-      )
+      render(<Select options={options} multiple value={['1']} onChange={handleChange} />)
 
       const tag = screen.getByText('Option 1').parentElement!
       const closeIcon = tag.querySelector('svg')!

@@ -156,7 +156,7 @@ describe('Dropdown', () => {
     })
 
     it('should render children only if no overlay/menu', () => {
-      const { container } = render(
+      render(
         <Dropdown>
           <Button>Trigger</Button>
         </Dropdown>,

@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MonthPanel } from './month-panel'
 import ThemeProvider from '../../theme/theme-provider'
-import { setMonth, format } from 'date-fns'
+import { setMonth } from 'date-fns'
 
 const renderWithTheme = (ui: React.ReactElement) => {
   return render(<ThemeProvider>{ui}</ThemeProvider>)
@@ -28,9 +28,9 @@ describe('MonthPanel', () => {
       <MonthPanel viewDate={viewDate} onSelect={handleSelect} selectedDate={selectedDate} />,
     )
 
-    const marchCell = screen.getByText('Mar')
     // We can verify style or class. The implementation uses styled-component with props.
     // However, styled-components usually don't expose simple class names.
+    screen.getByText('Mar')
     // We can check computed style.
     // MonthPanel styles: background: ${({ theme, isSelected }) => (isSelected ? theme.colors.primary : 'transparent')};
     // primary color roughly #1677ff usually.
