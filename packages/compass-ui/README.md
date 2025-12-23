@@ -59,11 +59,12 @@ Clear visual hierarchy and interaction patterns that feel natural and predictabl
 
 ### Navigation
 
-- [ ] Navigation Bar
+- [x] Menu
+- [x] Dropdown
+- [x] Pagination
+- [x] Steps
 - [ ] Breadcrumb
-- [ ] Menu
-- [ ] Pagination
-- [ ] Steps
+- [ ] Navigation Bar
 
 ### Layout
 
@@ -75,74 +76,55 @@ Clear visual hierarchy and interaction patterns that feel natural and predictabl
 ### General
 
 - [x] Button
+- [x] ConfigProvider
 - [ ] Icon
 - [ ] Typography
 
 ### Data Entry
 
-- [ ] Input
-- [ ] Select
-- [ ] DatePicker
+- [x] Input
+- [x] InputNumber
+- [x] Select
+- [x] DatePicker
 - [ ] Form
+- [ ] Checkbox
+- [ ] Radio
+- [ ] Switch
 
 ### Data Display
 
+- [x] Tree
 - [ ] Table
 - [ ] List
 - [ ] Card
 - [ ] Avatar
+- [ ] Badge
+- [ ] Tag
+- [ ] Tooltip
 
 ### Feedback
 
+- [x] Message
+- [x] Modal
+- [x] Progress
 - [ ] Alert
-- [ ] Message
-- [ ] Modal
 - [ ] Drawer
+- [ ] Skeleton
+- [ ] Spin
 
 ### Theming
 
 - [x] ThemeProvider
 - [x] defaultTheme
 
-## 🎨 Theming
-
-Compass UI supports comprehensive theming to match your brand:
-
-```tsx
-import { ThemeProvider } from '@one-piece/compass-ui'
-
-const theme = {
-  primary: '#1890ff',
-  success: '#52c41a',
-  warning: '#faad14',
-  error: '#f5222d',
-}
-
-function App() {
-  return <ThemeProvider theme={theme}>{/* Your app */}</ThemeProvider>
-}
-```
-
 ## 📖 Documentation
 
 - [API Documentation](./docs/API.md) - Complete API reference
 - [Development Guide](./docs/DEVELOPMENT.md) - Development workflow and standards
-- [Contributing Guide](./docs/CONTRIBUTING.md) - How to contribute
 - [Changelog](./CHANGELOG.md) - Version history
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTING.md) for details on:
-
-- Reporting bugs
-- Suggesting features
-- Submitting pull requests
-- Development workflow
 
 ## 📄 License
 
 MIT © [xinghunm](https://github.com/fengyueran)
-
----
 
 _"A good compass will guide you home, good components will guide users to success."_
