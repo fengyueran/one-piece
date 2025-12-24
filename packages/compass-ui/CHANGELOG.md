@@ -1,5 +1,19 @@
 # @xinghunm/compass-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- - **新增**: Form 表单组件，支持字段管理、表单验证、表单联动等功能
+  - **新增**: FormItem 表单项组件，支持标签、错误提示、字段校验
+  - **新增**: Form 组件支持主题配置，可通过 Design Token 自定义样式
+  - **优化**: ThemeProvider 使用通用深度合并函数，提升扩展性
+
+### Patch Changes
+
+- Updated dependencies
+  - @xinghunm/compass-hooks@0.1.0
+
 ## 0.1.0
 
 ### Minor Changes
