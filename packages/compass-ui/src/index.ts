@@ -39,3 +39,6 @@ export type { ConfigProviderProps } from './config-provider'
 
 export { default as InputNumber } from './input-number'
 export type { InputNumberProps } from './input-number'
+
+export { default as Form } from './form'
+export type { FormProps, FormItemProps, ValidateErrorEntity, FieldData, FormInstance } from './form'

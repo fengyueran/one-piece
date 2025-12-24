@@ -4,6 +4,7 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
 import { Theme as CompassTheme, ThemeMode, DeepPartial, ThemeProviderProps } from './types'
 import { defaultTheme } from './default-theme'
 import { darkTheme as builtinDarkTheme } from './dark-theme'
+import { deepMerge } from './utils'
 
 interface ThemeContextType {
   mode: ThemeMode
@@ -32,102 +33,11 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const modeTheme = mode === 'dark' ? customDarkTheme : customLightTheme
 
     const mergeThemeObjects = (...themes: (DeepPartial<CompassTheme> | undefined)[]) => {
-      const result = { ...baseTheme }
+      let result = { ...baseTheme }
 
       themes.forEach((t) => {
-        if (!t) return
-        if (t.colors) result.colors = { ...result.colors, ...t.colors }
-        if (t.spacing) result.spacing = { ...result.spacing, ...t.spacing }
-        if (t.borderRadius) result.borderRadius = { ...result.borderRadius, ...t.borderRadius }
-        if (t.fontSize) result.fontSize = { ...result.fontSize, ...t.fontSize }
-        if (t.fontWeight) result.fontWeight = { ...result.fontWeight, ...t.fontWeight }
-        if (t.lineHeight) result.lineHeight = { ...result.lineHeight, ...t.lineHeight }
-        if (t.shadows) result.shadows = { ...result.shadows, ...t.shadows }
-        if (t.transitions) result.transitions = { ...result.transitions, ...t.transitions }
-        if (t.breakpoints) result.breakpoints = { ...result.breakpoints, ...t.breakpoints }
-        if (t.components) {
-          result.components = {
-            ...result.components,
-            button: t.components.button
-              ? {
-                  ...result.components.button,
-                  padding: {
-                    ...result.components.button.padding,
-                    ...t.components.button.padding,
-                  },
-                  fontSize: {
-                    ...result.components.button.fontSize,
-                    ...t.components.button.fontSize,
-                  },
-                  borderRadius: {
-                    ...result.components.button.borderRadius,
-                    ...t.components.button.borderRadius,
-                  },
-                }
-              : result.components.button,
-            message: { ...result.components.message, ...t.components.message },
-            modal: { ...result.components.modal, ...t.components.modal },
-            progress: { ...result.components.progress, ...t.components.progress },
-            steps: { ...result.components.steps, ...t.components.steps },
-            input: t.components.input
-              ? {
-                  ...result.components.input,
-                  ...t.components.input,
-                  padding: {
-                    ...result.components.input.padding,
-                    ...t.components.input.padding,
-                  },
-                  fontSize: {
-                    ...result.components.input.fontSize,
-                    ...t.components.input.fontSize,
-                  },
-                }
-              : result.components.input,
-          }
-        }
-        if (t.components?.dropdown) {
-          result.components.dropdown = {
-            ...result.components.dropdown,
-            ...t.components.dropdown,
-          }
-        }
-        if (t.components?.menu) {
-          result.components.menu = {
-            ...result.components.menu,
-            ...t.components.menu,
-          }
-        }
-        if (t.components?.datePicker) {
-          result.components.datePicker = {
-            ...result.components.datePicker,
-            ...t.components.datePicker,
-          }
-        }
-        if (t.components?.select) {
-          result.components.select = {
-            ...result.components.select,
-            ...t.components.select,
-            padding: {
-              ...result.components.select.padding,
-              ...t.components.select?.padding,
-            },
-            fontSize: {
-              ...result.components.select.fontSize,
-              ...t.components.select?.fontSize,
-            },
-          }
-        }
-        if (t.components?.pagination) {
-          result.components.pagination = {
-            ...result.components.pagination,
-            ...t.components.pagination,
-          }
-        }
-        if (t.components?.tree) {
-          result.components.tree = {
-            ...result.components.tree,
-            ...t.components.tree,
-          }
+        if (t) {
+          result = deepMerge(result, t)
         }
       })
 

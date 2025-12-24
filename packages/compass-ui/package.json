@@ -44,6 +44,7 @@
     "@emotion/styled": "^11.14.1",
     "@floating-ui/react": "^0.27.16",
     "@xinghunm/compass-hooks": "workspace:^",
+    "async-validator": "^4.2.5",
     "date-fns": "^4.1.0",
     "react-transition-group": "^4.4.5",
     "react-window": "^2.2.3"

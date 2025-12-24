@@ -16,11 +16,6 @@ const StyledButtonBase = styled.button`
   padding: 0;
   cursor: pointer;
   background: transparent;
-  &:focus,
-  &:focus-visible {
-    outline: none;
-    box-shadow: none;
-  }
 `
 
 export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>((props, ref) => {

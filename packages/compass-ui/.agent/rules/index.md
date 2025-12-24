@@ -120,6 +120,15 @@ description: Compass UI Development Rules
 - 示例：
   - 需要按钮时，使用 `<Button />` 而不是 `<button>`。
 
+## 2. TypeScript 规范
+
+### 2.1 类型使用
+
+- **严禁使用 `any`**：在任何情况下都不要使用 `any` 类型。
+  - 如果类型不确定，请使用 `unknown` 并配合类型守卫。
+  - 对于复杂的对象结构，定义具体的 Interface 或 Type。
+  - 如果是临时代码，请添加 `// TODO: fix any` 注释，但提交代码时必须修复。
+
 ## 3. 测试规范 ⚠️
 
 ### 3.1 测试覆盖率要求

@@ -98,7 +98,19 @@ export interface Theme {
     select: SelectTheme
     pagination: PaginationTheme
     tree: TreeTheme
+    form: FormTheme
   }
+}
+
+export interface FormTheme {
+  itemMarginBottom: string
+  labelColor: string
+  labelFontSize: string
+  labelMarginBottom: string
+  errorColor: string
+  errorFontSize: string
+  errorMarginTop: string
+  errorMarginBottom: string
 }
 
 export interface TreeTheme {

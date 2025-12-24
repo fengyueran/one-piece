@@ -244,5 +244,15 @@ export const defaultTheme: Theme = {
       padding: { sm: '0 8px', md: '0 11px', lg: '0 11px' },
       fontSize: { sm: '12px', md: '14px', lg: '16px' },
     },
+    form: {
+      itemMarginBottom: '0px',
+      labelColor: 'rgba(0, 0, 0, 0.88)',
+      labelFontSize: '14px',
+      labelMarginBottom: '8px',
+      errorColor: '#ff4d4f',
+      errorFontSize: '12px',
+      errorMarginTop: '2px',
+      errorMarginBottom: '2px',
+    },
   },
 }

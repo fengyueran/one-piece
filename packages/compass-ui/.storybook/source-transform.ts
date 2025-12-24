@@ -238,6 +238,7 @@ const KNOWN_COMPONENTS = [
   'DatePicker',
   'Pagination',
   'Tree',
+  'Form',
 ]
 
 /**

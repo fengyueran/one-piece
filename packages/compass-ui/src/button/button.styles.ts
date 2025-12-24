@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { ButtonBase } from '../button-base'
+import { ButtonProps } from './types'
 
 export const StyledButton = styled(ButtonBase)<{
   $variant: ButtonProps['variant']
@@ -23,11 +24,6 @@ export const StyledButton = styled(ButtonBase)<{
   white-space: nowrap;
   font-weight: ${({ theme }) => theme?.fontWeight?.normal || '400'};
   transition: ${({ theme }) => theme?.transitions?.normal || 'all 0.3s'};
-
-  &:focus {
-    outline: 2px solid ${({ theme }) => theme?.colors?.primary || '#007bff'};
-    outline-offset: 2px;
-  }
 
   &:disabled {
     cursor: not-allowed;

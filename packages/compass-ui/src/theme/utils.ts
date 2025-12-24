@@ -21,3 +21,45 @@ export const getThemeToken = <K extends keyof Theme>(
 ): Theme[K] => {
   return theme?.[tokenKey] || defaultTheme[tokenKey]
 }
+
+/**
+ * Deep merge two objects.
+ * Simple implementation for theme merging.
+ */
+export function deepMerge<T extends Record<string, unknown>, S extends Record<string, unknown>>(
+  target: T,
+  source: S,
+): T & S {
+  if (!source) {
+    return target as T & S
+  }
+  if (!target) {
+    return source as T & S
+  }
+
+  const result = { ...target } as unknown as Record<string, unknown>
+  const src = source as unknown as Record<string, unknown>
+
+  Object.keys(src).forEach((key) => {
+    const targetValue = result[key]
+    const sourceValue = src[key]
+
+    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      result[key] = [...targetValue, ...sourceValue]
+    } else if (
+      targetValue &&
+      typeof targetValue === 'object' &&
+      sourceValue &&
+      typeof sourceValue === 'object'
+    ) {
+      result[key] = deepMerge(
+        targetValue as Record<string, unknown>,
+        sourceValue as Record<string, unknown>,
+      )
+    } else if (sourceValue !== undefined) {
+      result[key] = sourceValue
+    }
+  })
+
+  return result as T & S
+}

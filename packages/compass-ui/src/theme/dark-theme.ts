@@ -75,5 +75,10 @@ export const darkTheme: Theme = {
       activeBorderColor: '#177ddc',
       hoverBorderColor: '#177ddc',
     },
+    form: {
+      ...defaultTheme.components.form,
+      labelColor: 'rgba(255, 255, 255, 0.85)',
+      errorColor: '#a61d24',
+    },
   },
 }
