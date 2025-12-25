@@ -13,16 +13,16 @@ jest.mock('react-window', () => ({
 
     // Filter out react-window specific props that shouldn't be passed to DOM
     const {
-      height,
-      itemCount,
-      itemSize,
-      onItemsRendered,
-      overscanCount,
-      useIsScrolling,
+      height: _height,
+      itemCount: _itemCount,
+      itemSize: _itemSize,
+      onItemsRendered: _onItemsRendered,
+      overscanCount: _overscanCount,
+      useIsScrolling: _useIsScrolling,
       // Add more props that caused warnings
-      defaultHeight,
-      rowHeight,
-      rowProps,
+      defaultHeight: _defaultHeight,
+      rowHeight: _rowHeight,
+      rowProps: _rowProps,
       ...domProps
     } = props
 

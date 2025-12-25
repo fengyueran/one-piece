@@ -56,12 +56,13 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   }, [])
 
   const validateRules = useCallback(
-    async (options: { triggerValue?: unknown } = {}): Promise<string[] | null> => {
+    async (options: { triggerName?: string } = {}): Promise<string[] | null> => {
       if (!name || !rules || rules.length === 0) {
         return null
       }
 
-      const value = 'triggerValue' in options ? options.triggerValue : context?.getFieldValue(name)
+      const value =
+        'triggerName' in options ? context?.getFieldValue(name) : context?.getFieldValue(name)
       const descriptor: Rules = { [name]: rules }
       const validator = new Schema(descriptor)
 
@@ -174,7 +175,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         }
 
         if (rules.length > 0) {
-          validateRules(trigger === 'onChange' ? { triggerValue: newValue } : {})
+          validateRules(trigger === 'onChange' ? { triggerName: 'onChange' } : {})
         }
       }
     })
