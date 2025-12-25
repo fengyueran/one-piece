@@ -1,9 +1,18 @@
 import React from 'react'
-import { Store, FieldEntity, Callbacks, ValidateErrorEntity, FieldError, StoreValue } from './types'
+import {
+  Store,
+  FieldEntity,
+  Callbacks,
+  ValidateErrorEntity,
+  FieldError,
+  StoreValue,
+  FieldData,
+} from './types'
 
 export class FormStore {
   private store: Store = {}
   private fieldEntities: FieldEntity[] = []
+  private watchList: ((name: string) => void)[] = []
   private initialValues: Store = {}
   private callbacks: Callbacks = {}
   private forceRootUpdate: React.Dispatch<React.SetStateAction<object>> | undefined
@@ -30,6 +39,17 @@ export class FormStore {
     return entity ? entity.getErrors() : []
   }
 
+  public getFieldData = (name: string): FieldData => {
+    const entity = this.getFieldEntity(name)
+    return {
+      name,
+      value: this.getFieldValue(name),
+      touched: this.isFieldTouched(name),
+      validating: entity?.isFieldValidating() || false,
+      errors: entity?.getErrors() || [],
+    }
+  }
+
   public isFieldsTouched = (nameList?: string[]): boolean => {
     // Basic implementation: check if store value is different from initial
     // In a full implementation, we'd track touched state separately
@@ -43,9 +63,26 @@ export class FormStore {
     return this.isFieldsTouched([name])
   }
 
-  public isFieldValidating = (): boolean => {
-    // Placeholder: We need to track validating state in FormItem or here
-    return false
+  public isFieldValidating = (name?: string): boolean => {
+    if (name) {
+      const entity = this.getFieldEntity(name)
+      return entity?.isFieldValidating() || false
+    }
+    return this.fieldEntities.some((entity) => entity.isFieldValidating())
+  }
+
+  public notifyFieldChange = (name: string) => {
+    if (this.callbacks.onFieldsChange) {
+      const changedField = this.getFieldData(name)
+      const allFields = this.fieldEntities
+        .map((entity) => {
+          const entityName = entity.getName()
+          return entityName ? this.getFieldData(entityName) : null
+        })
+        .filter((item): item is FieldData => item !== null)
+
+      this.callbacks.onFieldsChange([changedField], allFields)
+    }
   }
 
   public resetFields = (nameList?: string[]) => {
@@ -102,12 +139,21 @@ export class FormStore {
     }
   }
 
+  public registerWatch = (callback: (name: string) => void) => {
+    this.watchList.push(callback)
+    return () => {
+      this.watchList = this.watchList.filter((fn) => fn !== callback)
+    }
+  }
+
   private notify = (name: string) => {
     this.fieldEntities.forEach((entity) => {
       if (entity.getName() === name) {
         entity.onStoreChange()
       }
     })
+
+    this.watchList.forEach((callback) => callback(name))
   }
 
   private getFieldEntity = (name: string): FieldEntity | undefined => {

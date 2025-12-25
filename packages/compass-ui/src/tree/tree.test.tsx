@@ -10,8 +10,24 @@ jest.mock('react-window', () => ({
     for (let i = 0; i < rowCount; i++) {
       rows.push(<Row key={i} index={i} style={{}} />)
     }
+
+    // Filter out react-window specific props that shouldn't be passed to DOM
+    const {
+      height,
+      itemCount,
+      itemSize,
+      onItemsRendered,
+      overscanCount,
+      useIsScrolling,
+      // Add more props that caused warnings
+      defaultHeight,
+      rowHeight,
+      rowProps,
+      ...domProps
+    } = props
+
     return (
-      <div data-testid="virtual-list" {...props}>
+      <div data-testid="virtual-list" {...domProps}>
         {rows}
       </div>
     )

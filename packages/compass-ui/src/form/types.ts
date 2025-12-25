@@ -35,9 +35,11 @@ export interface InternalFieldData extends Meta {
  */
 export interface FieldEntity {
   onStoreChange: () => void
-  validateRules: () => Promise<string[] | null>
+  validateRules: (options?: { triggerName?: string }) => Promise<string[] | null>
   getName: () => string
   getErrors: () => string[]
+  isFieldValidating: () => boolean
+  isFieldTouched: () => boolean
   props: {
     name?: string
     rules?: RuleItem[]
@@ -48,6 +50,7 @@ export interface FieldEntity {
 
 export interface Callbacks<Values = Record<string, unknown>> {
   onValuesChange?: (changedValues: Store, values: Values) => void
+  onFieldsChange?: (changedFields: FieldData[], allFields: FieldData[]) => void
   onFinish?: (values: Values) => void
   onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void
 }
@@ -61,10 +64,12 @@ export interface ValidateErrorEntity<Values = Record<string, unknown>> {
 // Internal hooks for communication between Form and FormItem
 export interface InternalHooks {
   registerField: (entity: FieldEntity) => () => void
+  registerWatch: (callback: (name: string) => void) => () => void
   setInitialValues: (values: Store, init: boolean) => void
   setCallbacks: (callbacks: Callbacks) => void
   dispatch: (action: ReducerAction) => void
   getFieldValue: (name: string) => StoreValue
+  notifyFieldChange: (name: string) => void
 }
 
 export interface FormInstance<Values = Record<string, unknown>> {

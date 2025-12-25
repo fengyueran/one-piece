@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { Form } from './form'
+import Form, { FormInstance } from './index'
 import { FormItem } from './form-item'
 import { useForm } from './form-context'
 import userEvent from '@testing-library/user-event'
@@ -187,7 +187,9 @@ describe('Form', () => {
     const onFinish = jest.fn()
     const user = userEvent.setup()
 
-    const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => <input {...props} />
+    const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+      <input {...props} value={props.value ?? ''} />
+    )
 
     const Wrapper = () => {
       const [tick, setTick] = React.useState(0)
@@ -224,6 +226,61 @@ describe('Form', () => {
 
     await waitFor(() => {
       expect(onFinish).toHaveBeenCalledWith({ username: 'admin', password: '111' })
+    })
+  })
+
+  it('should call onFieldsChange when fields update', async () => {
+    const onFieldsChange = jest.fn()
+    render(
+      <Form onFieldsChange={onFieldsChange}>
+        <FormItem name="username">
+          <Input aria-label="username" />
+        </FormItem>
+      </Form>,
+    )
+
+    const input = screen.getByLabelText('username')
+    await userEvent.type(input, 'test')
+
+    await waitFor(() => {
+      expect(onFieldsChange).toHaveBeenCalled()
+      const args = onFieldsChange.mock.calls[0]
+      // changedFields
+      expect(args[0][0]).toHaveProperty('name', 'username')
+      expect(args[0][0]).toHaveProperty('value', 't')
+      // allFields
+      expect(args[1][0]).toHaveProperty('name', 'username')
+      expect(args[1][0]).toHaveProperty('value', 't')
+    })
+  })
+
+  it('should support useWatch', async () => {
+    const Watcher = ({ control }: { control: FormInstance }) => {
+      const value = Form.useWatch('test', control)
+      return <div data-testid="watch-value">{value as string}</div>
+    }
+
+    const TestComponent = () => {
+      const [form] = useForm()
+      return (
+        <Form form={form}>
+          <FormItem name="test">
+            <Input aria-label="test" />
+          </FormItem>
+          <Watcher control={form} />
+        </Form>
+      )
+    }
+
+    render(<TestComponent />)
+    const input = screen.getByLabelText('test')
+
+    expect(screen.getByTestId('watch-value')).toHaveTextContent('')
+
+    await userEvent.type(input, 'hello')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('watch-value')).toHaveTextContent('hello')
     })
   })
 })

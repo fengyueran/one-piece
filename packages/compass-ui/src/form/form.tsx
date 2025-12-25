@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useLayoutEffect, useRef } from 'react'
 import { FormContext, useForm } from './form-context'
-import { FormInstance, Store, ValidateErrorEntity } from './types'
+import { FormInstance, Store, ValidateErrorEntity, FieldData } from './types'
 
 export interface FormProps<Values = Record<string, unknown>> {
   form?: FormInstance<Values>
@@ -9,6 +9,7 @@ export interface FormProps<Values = Record<string, unknown>> {
   onFinish?: (values: Values) => void
   onFinishFailed?: (errorInfo: ValidateErrorEntity<Values>) => void
   onValuesChange?: (changedValues: Store, values: Values) => void
+  onFieldsChange?: (changedFields: FieldData[], allFields: FieldData[]) => void
   className?: string
   style?: React.CSSProperties
 }
@@ -20,6 +21,7 @@ export const Form = <Values extends Record<string, unknown> = Record<string, unk
   onFinish,
   onFinishFailed,
   onValuesChange,
+  onFieldsChange,
   className,
   style,
 }: FormProps<Values>) => {
@@ -41,9 +43,10 @@ export const Form = <Values extends Record<string, unknown> = Record<string, unk
         onFinish: onFinish as (values: unknown) => void,
         onFinishFailed: onFinishFailed as (errorInfo: ValidateErrorEntity<unknown>) => void,
         onValuesChange: onValuesChange as (changedValues: Store, values: unknown) => void,
+        onFieldsChange: onFieldsChange,
       })
     }
-  }, [onFinish, onFinishFailed, onValuesChange, internalHooks])
+  }, [onFinish, onFinishFailed, onValuesChange, onFieldsChange, internalHooks])
 
   return (
     <FormContext.Provider value={formInstance}>

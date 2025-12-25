@@ -40,10 +40,12 @@ export const useForm = <Values extends Record<string, unknown> = Record<string, 
         if (secret === 'COMPASS_FORM_INTERNAL_HOOKS') {
           return {
             registerField: defaultStore.registerField,
+            registerWatch: defaultStore.registerWatch,
             setInitialValues: defaultStore.setInitialValues,
             setCallbacks: defaultStore.setCallbacks,
             dispatch: () => {},
             getFieldValue: defaultStore.getFieldValue,
+            notifyFieldChange: defaultStore.notifyFieldChange,
           }
         }
         return null

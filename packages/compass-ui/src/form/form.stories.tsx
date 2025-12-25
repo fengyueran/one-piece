@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
 import type { RuleItem } from 'async-validator'
 import Form from './index'
-import type { ValidateErrorEntity } from './types'
+import type { ValidateErrorEntity, FieldData } from './types'
 import Button from '../button'
 import InputField from '../input-field'
 import InputNumber from '../input-number'
@@ -343,6 +343,148 @@ export const CustomTheme: Story = {
     docs: {
       description: {
         story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量。例如修改标签颜色和字体大小。',
+      },
+    },
+  },
+}
+
+export const FieldSubscription: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+    const [canSend, setCanSend] = React.useState(false)
+
+    // Update button state when fields change
+    const onFieldsChange = (_: FieldData[], allFields: FieldData[]) => {
+      const emailField = allFields.find((f) => f.name === 'email')
+      const emailValue = emailField?.value
+      const emailErrors = emailField?.errors || []
+
+      // Enable if value exists and no errors
+      const isValid = !!emailValue && emailErrors.length === 0
+      setCanSend(isValid)
+    }
+
+    return (
+      <Form form={form} onFieldsChange={onFieldsChange} style={{ maxWidth: 600 }}>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            { required: true, message: 'Email is required' },
+            { type: 'email', message: 'Invalid email format' },
+          ]}
+        >
+          <InputField placeholder="example@email.com" />
+        </Form.Item>
+
+        <Form.Item>
+          <Button variant="primary" disabled={!canSend} onClick={() => alert('Sent!')}>
+            Send Email
+          </Button>
+        </Form.Item>
+        <div>Current Status: {canSend ? 'Ready to send' : 'Invalid or empty email'}</div>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '演示如何通过 `onFieldsChange` 监听字段变化（包括值和错误状态），实现"验证通过后启用按钮"的需求。',
+      },
+    },
+  },
+}
+
+export const OnFieldsChange: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+    const [logs, setLogs] = React.useState<string[]>([])
+
+    const onFieldsChange = (changedFields: FieldData[], allFields: FieldData[]) => {
+      const changed = changedFields.map(
+        (f) =>
+          `${f.name}: value=${f.value}, errors=${JSON.stringify(f.errors)}, touched=${f.touched}, validating=${f.validating}`,
+      )
+      setLogs((prev) => [`[${new Date().toLocaleTimeString()}] ${changed.join(', ')}`, ...prev])
+      console.log('Changed:', changedFields, 'All:', allFields)
+    }
+
+    return (
+      <Form form={form} onFieldsChange={onFieldsChange} style={{ maxWidth: 600 }}>
+        <Form.Item label="Username" name="username" rules={[{ required: true }]}>
+          <InputField placeholder="Username" />
+        </Form.Item>
+        <Form.Item label="Password" name="password" rules={[{ required: true, min: 6 }]}>
+          <InputField type="password" placeholder="Password (min 6 chars)" />
+        </Form.Item>
+        <div
+          style={{
+            marginTop: 20,
+            padding: 10,
+            background: '#f5f5f5',
+            maxHeight: 200,
+            overflowY: 'auto',
+          }}
+        >
+          <h4>Change Log:</h4>
+          {logs.map((log, index) => (
+            // eslint-disable-next-line
+            <div key={index} style={{ fontSize: 12, marginBottom: 4 }}>
+              {log}
+            </div>
+          ))}
+        </div>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '演示 `onFieldsChange` 回调的详细信息。每次字段变化（值改变、验证开始、验证结束）都会触发该回调。',
+      },
+    },
+  },
+}
+
+export const UseWatch: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    const WatchComponent = () => {
+      const nameValue = Form.useWatch('name', form)
+      const ageValue = Form.useWatch('age', form)
+
+      return (
+        <div style={{ padding: 12, background: '#f5f5f5', marginTop: 16 }}>
+          <p>
+            Name: <strong>{String(nameValue)}</strong>
+          </p>
+          <p>
+            Age: <strong>{String(ageValue)}</strong>
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <Form form={form} style={{ maxWidth: 600 }}>
+        <Form.Item label="Name" name="name">
+          <InputField placeholder="Enter name" />
+        </Form.Item>
+        <Form.Item label="Age" name="age">
+          <InputNumber placeholder="Enter age" />
+        </Form.Item>
+        <WatchComponent />
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '演示使用 `Form.useWatch` 钩子监听字段值的变化。这种方式可以仅重新渲染依赖该值的组件，而不是整个 Form。',
       },
     },
   },
