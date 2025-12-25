@@ -1,5 +1,12 @@
 # @xinghunm/compass-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- - Form 组件支持 `onFieldsChange` 属性
+  - 新增 `Form.useWatch` 钩子
+
 ## 0.2.0
 
 ### Minor Changes
