@@ -42,3 +42,6 @@ export type { InputNumberProps } from './input-number'
 
 export { default as Form } from './form'
 export type { FormProps, FormItemProps, ValidateErrorEntity, FieldData, FormInstance } from './form'
+
+export { Tabs, TabPane } from './tabs'
+export type { TabsProps, TabItem, TabPaneProps } from './tabs'

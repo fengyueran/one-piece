@@ -99,6 +99,7 @@ export interface Theme {
     pagination: PaginationTheme
     tree: TreeTheme
     form: FormTheme
+    tabs: TabsTheme
   }
 }
 
@@ -111,6 +112,22 @@ export interface FormTheme {
   errorFontSize: string
   errorMarginTop: string
   errorMarginBottom: string
+}
+
+export interface TabsTheme {
+  tabBarBorderColor: string
+  tabBarBorderWidth: string
+  tabBarBackgroundColor: string
+  tabItemColor: string
+  tabItemActiveColor: string
+  tabItemHoverColor: string
+  tabItemDisabledColor: string
+  tabItemFontSize: string
+  tabItemPadding: string
+  tabItemHorizontalGutter: string
+  tabItemVerticalGutter: string
+  inkBarColor: string
+  inkBarHeight: string
 }
 
 export interface TreeTheme {
