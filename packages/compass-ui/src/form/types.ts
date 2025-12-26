@@ -46,6 +46,7 @@ export interface FieldEntity {
     dependencies?: string[]
     initialValue?: unknown
   }
+  setErrors: (errors: string[]) => void
 }
 
 export interface Callbacks<Values = Record<string, unknown>> {

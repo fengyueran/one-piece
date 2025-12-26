@@ -87,11 +87,15 @@ export class FormStore {
 
   public resetFields = (nameList?: string[]) => {
     const nextStore = { ...this.store }
-    const fieldsToReset = nameList || Object.keys(this.store)
+    const fieldsToReset = nameList || this.fieldEntities.map((e) => e.getName()).filter((n) => !!n)
 
     fieldsToReset.forEach((name) => {
       nextStore[name] = this.initialValues[name]
-      // Also notify to reset errors/touched state if managed by item
+      // Reset errors
+      const entity = this.getFieldEntity(name)
+      if (entity) {
+        entity.setErrors([])
+      }
     })
 
     this.store = nextStore
@@ -109,6 +113,33 @@ export class FormStore {
       if (this.callbacks.onValuesChange) {
         this.callbacks.onValuesChange({ [name]: value }, this.store)
       }
+    }
+  }
+
+  public setFields = (fields: FieldData[]) => {
+    fields.forEach((field) => {
+      const { name, value, errors } = field
+      if (value !== undefined) {
+        this.store[name] = value
+      }
+      if (errors !== undefined) {
+        const entity = this.getFieldEntity(name)
+        if (entity) {
+          entity.setErrors(errors)
+        }
+      }
+      this.notify(name)
+    })
+
+    if (this.callbacks.onValuesChange) {
+      // Create a partial store for changed values
+      const changedValues: Store = {}
+      fields.forEach(({ name, value }) => {
+        if (value !== undefined) {
+          changedValues[name] = value
+        }
+      })
+      this.callbacks.onValuesChange(changedValues, this.store)
     }
   }
 
@@ -208,8 +239,6 @@ export class FormStore {
     this.initialValues = initialValues || {}
     if (init) {
       this.store = { ...this.initialValues }
-      // Important: notify all registered fields so they re-render with latest store,
-      // even if parent props children identity doesn't change (e.g. when Form owns the store).
       this.fieldEntities.forEach((entity) => {
         entity.onStoreChange()
       })

@@ -15,6 +15,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       danger = false,
       block = false,
       icon,
+      type = 'button',
       onClick,
       className,
       style,
@@ -30,6 +31,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <StyledButton
         ref={ref}
+        type={type}
         className={`compass-button compass-button--${variant} ${className || ''}`}
         style={style}
         $variant={variant}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import { FormStore } from './form-store'
-import { FormInstance, InternalHooks, Store } from './types'
+import { FormInstance, InternalHooks, Store, FieldData } from './types'
 
 const FormContext = createContext<FormInstance<unknown> | null>(null)
 
@@ -32,9 +32,7 @@ export const useForm = <Values extends Record<string, unknown> = Record<string, 
       isFieldTouched: (name: string) => defaultStore.isFieldTouched(name),
       isFieldValidating: () => defaultStore.isFieldValidating(),
       resetFields: (fields?: string[]) => defaultStore.resetFields(fields),
-      setFields: () => {
-        console.warn('setFields not implemented')
-      },
+      setFields: (fields: FieldData[]) => defaultStore.setFields(fields),
       submit: () => defaultStore.submit(),
       getInternalHooks: (secret: string): InternalHooks | null => {
         if (secret === 'COMPASS_FORM_INTERNAL_HOOKS') {

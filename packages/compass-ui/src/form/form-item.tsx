@@ -77,11 +77,8 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
             (err) => err.message || '',
           )
           setErrors(errorList)
-          // Do not reject here: validateRules is also called from event handlers
-          // (e.g. onChange). Rejecting would create unhandled promise rejections.
           return errorList
         }
-        // If validation fails with other errors (not validation errors), we should probably not swallow them silently
         console.error('[FormItem] Validation error:', e)
         return [e instanceof Error ? e.message : String(e)]
       } finally {
@@ -109,6 +106,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         getErrors,
         isFieldValidating,
         isFieldTouched,
+        setErrors: (newErrors: string[]) => setErrors(newErrors),
         props,
       })
       return unregister
@@ -140,12 +138,8 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   const getControlled = (child: ReactElement) => {
     const mergeProps: Record<string, unknown> = { ...child.props }
 
-    // Controlled value
-    if (value !== undefined) {
-      mergeProps.value = value
-    }
+    mergeProps.value = value === undefined ? '' : value
 
-    // Triggers
     const triggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
 
     triggers.forEach((trigger) => {

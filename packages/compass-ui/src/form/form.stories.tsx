@@ -247,7 +247,9 @@ export const Validation: Story = {
             <Button type="submit" variant="primary">
               Submit
             </Button>
-            <Button onClick={() => form.resetFields()}>Reset</Button>
+            <Button type="button" onClick={() => form.resetFields()}>
+              Reset
+            </Button>
           </div>
         </Form.Item>
       </Form>
@@ -301,48 +303,6 @@ export const DynamicMethods: Story = {
       description: {
         story:
           '演示如何使用 `form` 实例方法动态设置值 (`setFieldsValue`) 和获取值 (`getFieldsValue`)。',
-      },
-    },
-  },
-}
-
-export const CustomTheme: Story = {
-  render: () => {
-    const BasicForm = () => {
-      const [form] = Form.useForm()
-
-      return (
-        <Form form={form} initialValues={{ username: 'admin' }} style={{ maxWidth: 600 }}>
-          <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
-          >
-            <InputField placeholder="Username" />
-          </Form.Item>
-        </Form>
-      )
-    }
-    return (
-      <ThemeProvider
-        theme={{
-          components: {
-            form: {
-              labelColor: '#1890ff',
-              labelFontSize: '16px',
-              itemMarginBottom: '32px',
-            },
-          },
-        }}
-      >
-        <BasicForm />
-      </ThemeProvider>
-    )
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量。例如修改标签颜色和字体大小。',
       },
     },
   },
@@ -485,6 +445,451 @@ export const UseWatch: Story = {
       description: {
         story:
           '演示使用 `Form.useWatch` 钩子监听字段值的变化。这种方式可以仅重新渲染依赖该值的组件，而不是整个 Form。',
+      },
+    },
+  },
+}
+
+export const InitialValues: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    return (
+      <Form
+        form={form}
+        initialValues={{
+          username: 'existing_user',
+          role: 'editor',
+          notifications: true,
+        }}
+        onFinish={(values) => alert(JSON.stringify(values, null, 2))}
+        style={{ maxWidth: 600 }}
+      >
+        <Form.Item label="Username" name="username">
+          <InputField />
+        </Form.Item>
+        <Form.Item label="Role" name="role">
+          <InputField />
+        </Form.Item>
+        <Form.Item label="Notifications" name="notifications">
+          {/* Mocking a switch or checkbox with InputField for simplicity, though Checkbox is preferred if available */}
+          <InputField placeholder="true/false" />
+        </Form.Item>
+        <Form.Item>
+          <div style={{ gap: 8, display: 'flex' }}>
+            <Button type="submit" variant="primary">
+              Submit
+            </Button>
+            <Button onClick={() => form.resetFields()}>Reset to Initial</Button>
+          </div>
+        </Form.Item>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '演示 `initialValues` 属性的使用。表单初始化时会使用这些值，调用 `resetFields` 也会重置回这些值。',
+      },
+    },
+  },
+}
+
+export const Submission: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    const onFinish = (values: Record<string, unknown>) => {
+      alert(`Submission Success:\n${JSON.stringify(values, null, 2)}`)
+    }
+
+    const onFinishFailed = (errorInfo: ValidateErrorEntity) => {
+      alert(`Submission Failed:\nCheck console for details`)
+      console.error('Validation Failed:', errorInfo)
+    }
+
+    return (
+      <Form
+        form={form}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        style={{ maxWidth: 600 }}
+      >
+        <Form.Item
+          label="Required Field"
+          name="required"
+          rules={[{ required: true, message: 'This field is required!' }]}
+        >
+          <InputField placeholder="Try empty submission..." />
+        </Form.Item>
+        <Form.Item>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '演示 `onFinish` (验证通过) 和 `onFinishFailed` (验证失败) 的处理。尝试直接提交可以看到失败回调的效果。',
+      },
+    },
+  },
+}
+
+export const ValuesChange: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+    const [lastChange, setLastChange] = React.useState<string>('')
+
+    const onValuesChange = (
+      changedValues: Record<string, unknown>,
+      allValues: Record<string, unknown>,
+    ) => {
+      const changedKey = Object.keys(changedValues)[0]
+      const msg = `Field '${changedKey}' changed to '${changedValues[changedKey]}'. Current form state: ${JSON.stringify(allValues)}`
+      setLastChange(msg)
+      console.log('Values Changed:', changedValues, allValues)
+    }
+
+    return (
+      <Form form={form} onValuesChange={onValuesChange} style={{ maxWidth: 600 }}>
+        <Form.Item label="Project Name" name="projectName">
+          <InputField placeholder="Type here..." />
+        </Form.Item>
+        <Form.Item label="Description" name="description">
+          <InputField placeholder="Type here..." />
+        </Form.Item>
+        {lastChange && (
+          <div
+            style={{ padding: '8px 12px', background: '#f0f5ff', borderRadius: 4, marginTop: 16 }}
+          >
+            {lastChange}
+          </div>
+        )}
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '演示 `onValuesChange` 属性。只要表单内任意字段值发生改变，该回调就会被触发。',
+      },
+    },
+  },
+}
+
+export const Styling: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <Form style={{ border: '1px solid #d9d9d9', padding: 24, borderRadius: 8, maxWidth: 600 }}>
+        <h4>Using `style`</h4>
+        <Form.Item label="Input" name="input1">
+          <InputField />
+        </Form.Item>
+      </Form>
+
+      <style>{`
+        .custom-form-class {
+          background: #fafafa;
+          padding: 24px;
+          border-radius: 12px;
+          border: 1px dashed #1890ff;
+          max-width: 600px;
+        }
+        .custom-form-class .compass-form-item-label {
+          color: #1890ff;
+          font-weight: bold;
+        }
+      `}</style>
+      <Form className="custom-form-class">
+        <h4>Using `className`</h4>
+        <Form.Item label="Styled Label" name="input2">
+          <InputField />
+        </Form.Item>
+      </Form>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '演示 `className` 和 `style` 属性的使用。可以方便地进行自定义布局和样式覆盖。',
+      },
+    },
+  },
+}
+
+export const CustomTheme: Story = {
+  render: () => {
+    const BasicForm = () => {
+      const [form] = Form.useForm()
+
+      return (
+        <Form form={form} initialValues={{ username: 'admin' }} style={{ maxWidth: 600 }}>
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: 'Please input your username!' }]}
+          >
+            <InputField placeholder="Username" />
+          </Form.Item>
+        </Form>
+      )
+    }
+    return (
+      <ThemeProvider
+        theme={{
+          components: {
+            form: {
+              labelColor: '#1890ff',
+              labelFontSize: '16px',
+              itemMarginBottom: '32px',
+            },
+          },
+        }}
+      >
+        <BasicForm />
+      </ThemeProvider>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '**自定义主题** - 通过 ThemeProvider 覆盖主题变量。例如修改标签颜色和字体大小。',
+      },
+    },
+  },
+}
+
+export const MethodsData: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    return (
+      <Form form={form} style={{ maxWidth: 600 }}>
+        <Form.Item label="Field A" name="a">
+          <InputField />
+        </Form.Item>
+        <Form.Item label="Field B" name="b">
+          <InputField />
+        </Form.Item>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Button onClick={() => form.setFieldValue('a', 'Value A')}>Set A</Button>
+            <Button
+              onClick={() =>
+                form.setFieldsValue({
+                  a: 'Value A (Group)',
+                  b: 'Value B (Group)',
+                })
+              }
+            >
+              Set All
+            </Button>
+            <Button onClick={() => alert(form.getFieldValue('a'))}>Get A</Button>
+            <Button onClick={() => alert(JSON.stringify(form.getFieldsValue(), null, 2))}>
+              Get All
+            </Button>
+          </div>
+        </div>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**数据操作方法**：\n- `setFieldValue(name, value)`: 设置单个字段值。\n- `setFieldsValue(values)`: 设置多个字段值。\n- `getFieldValue(name)`: 获取单个字段值。\n- `getFieldsValue()`: 获取所有字段值。',
+      },
+    },
+  },
+}
+
+export const MethodsStatus: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+    const [, forceUpdate] = React.useState({})
+
+    // Force update to show status in real-time for demonstration
+    const checkStatus = () => forceUpdate({})
+
+    return (
+      <Form
+        form={form}
+        onValuesChange={checkStatus}
+        onFieldsChange={checkStatus}
+        style={{ maxWidth: 600 }}
+      >
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[
+            { required: true },
+            {
+              validator: async (_: unknown, value: unknown) => {
+                if (value === 'loading') {
+                  await new Promise((resolve) => setTimeout(resolve, 2000))
+                }
+                return Promise.resolve()
+              },
+            } as unknown as RuleItem,
+          ]}
+        >
+          <InputField placeholder="Type 'loading' to see validating state" />
+        </Form.Item>
+        <div style={{ padding: 12, background: '#f5f5f5', marginTop: 16 }}>
+          <p>
+            <strong>{`isFieldTouched('username')`}:</strong>{' '}
+            {String(form.isFieldTouched('username'))}
+          </p>
+          <p>
+            <strong>isFieldsTouched():</strong> {String(form.isFieldsTouched())}
+          </p>
+          <p>
+            <strong>{`getFieldError('username')`}:</strong>{' '}
+            {JSON.stringify(form.getFieldError('username'))}
+          </p>
+          <p>
+            <strong>{`isFieldValidating('username')`}:</strong>{' '}
+            {String(form.isFieldValidating('username'))}
+          </p>
+        </div>
+        <Button onClick={checkStatus} style={{ marginTop: 8 }}>
+          Refresh Status
+        </Button>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**状态查询方法**：\n- `isFieldTouched(name)`: 字段是否被操作过。\n- `isFieldsTouched()`: 任意字段是否被操作过。\n- `getFieldError(name)`: 获取字段错误信息。\n- `isFieldValidating(name)`: 字段是否正在验证中。',
+      },
+    },
+  },
+}
+
+export const MethodsOperations: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    return (
+      <Form form={form} style={{ maxWidth: 600 }}>
+        <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
+          <InputField />
+        </Form.Item>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+          <Button
+            onClick={() => {
+              form
+                .validateFields()
+                .then((values) => alert(`Valid: ${JSON.stringify(values)}`))
+                .catch((err) => console.error('Validation failed:', err))
+            }}
+          >
+            Validate
+          </Button>
+          <Button onClick={() => form.submit()}>Submit (Trigger onFinish)</Button>
+          <Button type="button" onClick={() => form.resetFields()}>
+            Reset
+          </Button>
+          <Button
+            onClick={() => {
+              form.setFields([
+                {
+                  name: 'email',
+                  value: 'invalid-email',
+                  errors: ['Manually set error'],
+                },
+              ])
+            }}
+          >
+            Set Fields (Manual Error)
+          </Button>
+        </div>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**操作方法**：\n- `validateFields()`: 触发验证，返回 Promise。\n- `submit()`: 提交表单（触发 onFinish/onFinishFailed）。\n- `resetFields()`: 重置表单。\n- `setFields()`: 手动设置字段状态（包括值和错误）。',
+      },
+    },
+  },
+}
+
+export const LayoutOnly: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    const onFinish = (values: any) => {
+      console.log('Success:', values)
+      alert(JSON.stringify(values, null, 2))
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+        {/* Scenario 1: Inside Form but without name (Pure Layout) */}
+        <div>
+          <h3>1. 纯布局模式（无 Name 属性）</h3>
+          <p>
+            当省略 <code>name</code> 属性时，<code>Form.Item</code>{' '}
+            仅作为布局容器使用。它与其他表单项对齐，但不参与数据管理。
+          </p>
+          <Form form={form} onFinish={onFinish} style={{ maxWidth: 600 }}>
+            <Form.Item label="用户名" name="username" rules={[{ required: true }]}>
+              <InputField />
+            </Form.Item>
+
+            {/* Pure Layout Item */}
+            <Form.Item label="提示">
+              <span style={{ lineHeight: '32px', color: '#666' }}>
+                这是一段与表单项对齐的静态文本，它不是表单数据的一部分。
+              </span>
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="submit" variant="primary">
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+
+        {/* Scenario 2: Standalone Usage (No Context) */}
+        <div>
+          <h3>2. 独立使用（无 Form Context）</h3>
+          <p>
+            <code>Form.Item</code> 可以独立于 <code>Form</code> 组件使用，用于复用 Label 和 Input
+            的布局样式。
+          </p>
+          <div style={{ border: '1px dashed #ccc', padding: '20px' }}>
+            <Form.Item label="独立输入框">
+              <InputField placeholder="我是独立的" />
+            </Form.Item>
+            <Form.Item label="独立选择框">
+              <select style={{ width: '100%', height: '32px' }}>
+                <option>选项 1</option>
+                <option>选项 2</option>
+              </select>
+            </Form.Item>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**纯布局模式 (Layout Mode)**\n\n演示 `Form.Item` 的两种特殊用法：\n1. **无 Name 属性**：在 Form 内部使用，仅作对齐布局，不参与数据收集。\n2. **无 Context (单独使用)**：完全脱离 Form 使用，仅复用 Label 和容器样式。',
       },
     },
   },
