@@ -210,6 +210,7 @@ export interface PaginationTheme {
 
 export interface MenuTheme {
   itemHoverBg: string
+  itemSelectedBg: string
   itemColor: string
   itemHeight: string
   itemPadding: string

@@ -185,6 +185,7 @@ export const defaultTheme: Theme = {
     },
     menu: {
       itemHoverBg: '#f5f5f5',
+      itemSelectedBg: '#e6f7ff',
       itemColor: 'rgba(0, 0, 0, 0.88)',
       itemHeight: '32px',
       itemPadding: '0 12px',

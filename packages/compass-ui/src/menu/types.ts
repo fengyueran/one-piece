@@ -67,6 +67,21 @@ export interface MenuProps {
    * Menu click handler
    */
   onClick?: (e: React.MouseEvent, key?: string | number) => void
+
+  /**
+   * Selected keys (controlled)
+   */
+  selectedKeys?: (string | number)[]
+
+  /**
+   * Default selected keys (uncontrolled)
+   */
+  defaultSelectedKeys?: (string | number)[]
+
+  /**
+   * Select handler
+   */
+  onSelect?: (keys: (string | number)[]) => void
 }
 
 export interface MenuItemProps {

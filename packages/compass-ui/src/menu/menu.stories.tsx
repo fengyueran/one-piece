@@ -89,6 +89,34 @@ const meta: Meta<typeof Menu> = {
       control: 'object',
       description: '自定义样式',
     },
+    selectedKeys: {
+      control: 'object',
+      description: '当前选中的 key (受控)',
+      table: {
+        type: { summary: '(string | number)[]' },
+      },
+    },
+    defaultSelectedKeys: {
+      control: 'object',
+      description: '默认选中的 key (非受控)',
+      table: {
+        type: { summary: '(string | number)[]' },
+      },
+    },
+    onSelect: {
+      action: 'selected',
+      description: '被选中时调用',
+      table: {
+        type: { summary: '(keys: (string | number)[]) => void' },
+      },
+    },
+    onClick: {
+      action: 'clicked',
+      description: '点击菜单项时调用',
+      table: {
+        type: { summary: '(e: React.MouseEvent, key?: string | number) => void' },
+      },
+    },
   },
 }
 
@@ -296,6 +324,28 @@ export const CustomTheme: Story = {
     docs: {
       description: {
         story: '**自定义主题** - 通过 ConfigProvider 覆盖主题变量',
+      },
+    },
+  },
+}
+
+export const Selection: Story = {
+  render: () => {
+    return (
+      <div style={{ width: 200, border: '1px solid #eee' }}>
+        <Menu defaultSelectedKeys={['1']}>
+          <Menu.Item eventKey="1">Selected Item</Menu.Item>
+          <Menu.Item eventKey="2">Normal Item</Menu.Item>
+          <Menu.Item eventKey="3">Another Item</Menu.Item>
+        </Menu>
+      </div>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '**默认选中** - 使用 `defaultSelectedKeys` 设置默认选中的菜单项。注意：结合 `children` 使用时需要为 Menu.Item 设置 `eventKey`。',
       },
     },
   },
