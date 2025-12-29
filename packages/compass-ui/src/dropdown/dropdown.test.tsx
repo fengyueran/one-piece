@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Dropdown from './dropdown'
 import Button from '../button'
+import Menu from '../menu'
 
 describe('Dropdown', () => {
   const overlay = <div data-testid="overlay">Overlay Content</div>
@@ -119,6 +120,86 @@ describe('Dropdown', () => {
       await user.click(item)
       expect(handleMenuClick).toHaveBeenCalledTimes(1)
       expect(handleMenuClick).toHaveBeenCalledWith(expect.anything(), '1')
+    })
+
+    it('should close dropdown when menu item is clicked', async () => {
+      const items = [{ key: '1', label: 'Menu Item 1' }]
+      const user = userEvent.setup()
+      render(
+        <Dropdown menu={{ items }} trigger="click">
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.click(screen.getByText('Trigger'))
+      const item = await screen.findByText('Menu Item 1')
+      await user.click(item)
+
+      await waitFor(() => {
+        expect(screen.queryByText('Menu Item 1')).not.toBeInTheDocument()
+      })
+    })
+
+    it('should call onVisibleChange(false) when menu item is clicked', async () => {
+      const handleVisibleChange = jest.fn()
+      const items = [{ key: '1', label: 'Menu Item 1' }]
+      const user = userEvent.setup()
+      render(
+        <Dropdown menu={{ items }} trigger="click" onVisibleChange={handleVisibleChange}>
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.click(screen.getByText('Trigger'))
+      expect(handleVisibleChange).not.toHaveBeenCalledWith(false)
+      expect(handleVisibleChange).toHaveBeenCalledWith(true)
+
+      const item = await screen.findByText('Menu Item 1')
+      await user.click(item)
+
+      expect(handleVisibleChange).toHaveBeenCalledWith(false)
+    })
+
+    it('should close dropdown when menu item is clicked (children mode)', async () => {
+      const handleVisibleChange = jest.fn()
+      const MenuContent = (
+        <>
+          <Menu.Item>Menu Item 1</Menu.Item>
+        </>
+      )
+      const user = userEvent.setup()
+      render(
+        <Dropdown
+          menu={{ children: MenuContent }}
+          trigger="click"
+          onVisibleChange={handleVisibleChange}
+        >
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.click(screen.getByText('Trigger'))
+      const item = await screen.findByText('Menu Item 1')
+      await user.click(item)
+
+      expect(handleVisibleChange).toHaveBeenCalledWith(false)
+    })
+
+    it('should NOT close dropdown when closeOnSelect is false', async () => {
+      const items = [{ key: '1', label: 'Menu Item 1' }]
+      const user = userEvent.setup()
+      render(
+        <Dropdown menu={{ items }} trigger="click" closeOnSelect={false}>
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.click(screen.getByText('Trigger'))
+      const item = await screen.findByText('Menu Item 1')
+      await user.click(item)
+
+      // It should still be visible
+      expect(await screen.findByText('Menu Item 1')).toBeInTheDocument()
     })
   })
 

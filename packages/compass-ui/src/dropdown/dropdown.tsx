@@ -17,6 +17,7 @@ import {
 import { DropdownProps } from './types'
 import { OverlayContainer } from './dropdown.styles'
 import Menu from '../menu'
+import { MenuContext } from '../menu/context'
 
 const Dropdown: React.FC<DropdownProps> = ({
   children,
@@ -27,6 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   visible: controlledVisible,
   onVisibleChange,
   disabled,
+  closeOnSelect = true,
   className,
   style,
 }) => {
@@ -69,6 +71,13 @@ const Dropdown: React.FC<DropdownProps> = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = useMergeRefs([refs.setReference, childRef])
 
+  const handleOverlayClick = (e: React.MouseEvent, key?: string | number) => {
+    // Menu component will handle the menu.onClick via props
+    if (closeOnSelect) {
+      handleVisibleChange(false)
+    }
+  }
+
   const dropdownContent = overlay || (menu ? <Menu {...menu} /> : null)
 
   if (!dropdownContent) {
@@ -94,7 +103,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             className={`compass-dropdown ${className || ''}`}
             {...getFloatingProps()}
           >
-            {dropdownContent}
+            <MenuContext.Provider value={{ onItemClick: handleOverlayClick }}>
+              {dropdownContent}
+            </MenuContext.Provider>
           </OverlayContainer>
         </FloatingPortal>
       )}

@@ -55,4 +55,10 @@ export interface DropdownProps {
    * Custom style
    */
   style?: React.CSSProperties
+
+  /**
+   * Whether to close the dropdown when a menu item is selected
+   * @default true
+   */
+  closeOnSelect?: boolean
 }

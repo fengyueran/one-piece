@@ -104,4 +104,9 @@ export interface MenuItemProps {
    * Custom style
    */
   style?: React.CSSProperties
+
+  /**
+   * Unique key for event handling
+   */
+  eventKey?: string | number
 }

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { MenuProps, MenuItemProps } from './types'
 import { StyledMenu, StyledMenuItem, IconWrapper } from './menu.styles'
+import { MenuContext } from './context'
 
 export const MenuItem: React.FC<MenuItemProps> = ({
   children,
@@ -10,10 +11,14 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   danger,
   className,
   style,
+  eventKey,
 }) => {
+  const context = useContext(MenuContext)
+
   const handleClick = (e: React.MouseEvent) => {
     if (disabled) return
     onClick?.(e)
+    context.onItemClick?.(e, eventKey)
   }
 
   return (
@@ -39,27 +44,34 @@ const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
   style,
   onClick,
 }) => {
+  const parentMenuContext = useContext(MenuContext)
+
+  const handleItemClick = (e: React.MouseEvent, key?: string | number) => {
+    onClick?.(e, key)
+    parentMenuContext.onItemClick?.(e, key)
+  }
+
   return (
-    <StyledMenu className={`compass-menu ${className || ''}`} style={style}>
-      {items
-        ? items.map((item) => (
-            <MenuItem
-              key={item.key}
-              onClick={(e) => {
-                item.onClick?.(e)
-                onClick?.(e, item.key)
-              }}
-              disabled={item.disabled}
-              danger={item.danger}
-              icon={item.icon}
-              className={item.className}
-              style={item.style}
-            >
-              {item.label}
-            </MenuItem>
-          ))
-        : children}
-    </StyledMenu>
+    <MenuContext.Provider value={{ onItemClick: handleItemClick }}>
+      <StyledMenu className={`compass-menu ${className || ''}`} style={style}>
+        {items
+          ? items.map((item) => (
+              <MenuItem
+                key={item.key}
+                eventKey={item.key}
+                onClick={item.onClick}
+                disabled={item.disabled}
+                danger={item.danger}
+                icon={item.icon}
+                className={item.className}
+                style={item.style}
+              >
+                {item.label}
+              </MenuItem>
+            ))
+          : children}
+      </StyledMenu>
+    </MenuContext.Provider>
   )
 }
 
