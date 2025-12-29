@@ -71,7 +71,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = useMergeRefs([refs.setReference, childRef])
 
-  const handleOverlayClick = (e: React.MouseEvent, key?: string | number) => {
+  const handleOverlayClick = () => {
     // Menu component will handle the menu.onClick via props
     if (closeOnSelect) {
       handleVisibleChange(false)

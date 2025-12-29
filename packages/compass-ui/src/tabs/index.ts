@@ -1,3 +1,5 @@
-export { default as Tabs } from './tabs'
-export { default as TabPane } from './tab-pane'
+import Tabs from './tabs'
+
 export type { TabsProps, TabItem, TabPaneProps } from './types'
+
+export default Tabs

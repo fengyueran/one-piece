@@ -7,6 +7,9 @@ export type { StepsProps } from './steps'
 export { default as Tree } from './tree'
 export type { TreeProps, TreeNodeProps, DataNode } from './tree'
 
+export { default as TreeSelect } from './tree-select'
+export type { TreeSelectProps } from './tree-select'
+
 export { default as Dropdown } from './dropdown'
 export type { DropdownProps } from './dropdown'
 
@@ -43,5 +46,5 @@ export type { InputNumberProps } from './input-number'
 export { default as Form } from './form'
 export type { FormProps, FormItemProps, ValidateErrorEntity, FieldData, FormInstance } from './form'
 
-export { Tabs, TabPane } from './tabs'
+export { default as Tabs } from './tabs'
 export type { TabsProps, TabItem, TabPaneProps } from './tabs'
