@@ -1,5 +1,11 @@
 # @xinghunm/compass-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- Added Tabs and TreeSelect components. Fixed bugs in Menu and Dropdown.
+
 ## 0.3.0
 
 ### Minor Changes
