@@ -218,7 +218,11 @@ export const Validation: Story = {
           name="email"
           rules={[
             { required: true, message: 'Email is required' },
-            { type: 'email', message: 'Invalid email format' },
+            {
+              type: 'email',
+              message:
+                'Invalid email format的说法啊啊啊啊啊啊啊啊啊啊AA啊啊啊啊啊的说法啊啊啊啊啊啊啊啊啊啊',
+            },
           ]}
         >
           <InputField placeholder="example@email.com" />
@@ -259,6 +263,51 @@ export const Validation: Story = {
     docs: {
       description: {
         story: '支持多种验证规则，包括必填、类型检查（如 email）、自定义 validator 函数等。',
+      },
+    },
+  },
+}
+
+export const ErrorMessageLayout: Story = {
+  render: () => {
+    const [form] = Form.useForm()
+
+    return (
+      <Form
+        form={form}
+        onFinish={(values) => alert(JSON.stringify(values, null, 2))}
+        style={{ maxWidth: 600 }}
+      >
+        <Form.Item
+          label="Long Error Message"
+          name="longError"
+          help="This is a very long error message that should wrap to the next line instead of overflowing the container or pushing the layout incorrectly. It demonstrates the text wrapping capability of the error message component."
+        >
+          <InputField status="error" placeholder="Field with long error" />
+        </Form.Item>
+
+        <Form.Item
+          label="Custom Help Message"
+          name="customHelp"
+          help={
+            <span style={{ color: 'orange' }}>
+              Warning: This is a custom help message with custom styling.
+            </span>
+          }
+        >
+          <InputField status="warning" placeholder="Field with custom help" />
+        </Form.Item>
+
+        <Form.Item label="No Error (Normal Layout)" name="normal">
+          <InputField placeholder="Normal field" />
+        </Form.Item>
+      </Form>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '展示 `help` 属性的使用，以及长文本错误信息的自动换行效果。',
       },
     },
   },

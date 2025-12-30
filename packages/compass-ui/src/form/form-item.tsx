@@ -20,6 +20,7 @@ export interface FormItemProps {
   initialValue?: unknown
   className?: string
   style?: React.CSSProperties
+  help?: React.ReactNode
 }
 
 export const FormItem: React.FC<FormItemProps> = (props) => {
@@ -31,6 +32,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     validateTrigger = 'onChange',
     className,
     style,
+    help,
   } = props
 
   const context = useFormContext()
@@ -177,11 +179,20 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     return cloneElement(child, mergeProps)
   }
 
+  const errorMessage = help !== undefined ? help : errors.length > 0 ? errors[0] : null
+  const hasError = !!errorMessage
+
   return (
-    <ItemWrapper className={`compass-form-item ${className || ''}`} style={style}>
+    <ItemWrapper
+      className={`compass-form-item ${className || ''}`}
+      style={style}
+      hasError={hasError}
+    >
       {label && <Label>{label}</Label>}
       {getControlled(children)}
-      <ErrorMessage>{errors.length > 0 ? errors[0] : '\u00A0'}</ErrorMessage>
+      {hasError && (
+        <ErrorMessage className="compass-form-item-error-message">{errorMessage}</ErrorMessage>
+      )}
     </ItemWrapper>
   )
 }

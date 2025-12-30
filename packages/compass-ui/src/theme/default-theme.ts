@@ -246,7 +246,7 @@ export const defaultTheme: Theme = {
       fontSize: { sm: '12px', md: '14px', lg: '16px' },
     },
     form: {
-      itemMarginBottom: '0px',
+      itemMarginBottom: '16px',
       labelColor: 'rgba(0, 0, 0, 0.88)',
       labelFontSize: '14px',
       labelMarginBottom: '8px',
