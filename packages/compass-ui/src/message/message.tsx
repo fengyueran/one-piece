@@ -86,15 +86,11 @@ export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageCo
       <MessageContainer>
         <TransitionGroup component={null}>
           {messages.map((msg) => {
-            const nodeRef = nodeRefs.get(msg.key!)
+            const { key, ...messageProps } = msg
+            const nodeRef = nodeRefs.get(key!)
             return (
-              <CSSTransition
-                key={msg.key}
-                timeout={300}
-                classNames="compass-message"
-                nodeRef={nodeRef}
-              >
-                <Message ref={nodeRef} {...msg} />
+              <CSSTransition key={key} timeout={300} classNames="compass-message" nodeRef={nodeRef}>
+                <Message ref={nodeRef} {...messageProps} />
               </CSSTransition>
             )
           })}
