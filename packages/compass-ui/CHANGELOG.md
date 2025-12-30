@@ -1,17 +1,24 @@
 # @xinghunm/compass-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- Form 组件支持自定义 help 以及优化了 help 的显示方式
+- 更新了 InputField 的眼睛图标
+
 ## 0.4.0
 
 ### Minor Changes
 
-- Added Tabs and TreeSelect components. Fixed bugs in Menu and Dropdown.
+- 添加了 Tabs 和 TreeSelect 组件，修复了 Menu 和 Dropdown 的 bug。
 
 ## 0.3.0
 
 ### Minor Changes
 
-- - Form 组件支持 `onFieldsChange` 属性
-  - 新增 `Form.useWatch` 钩子
+- Form 组件支持 `onFieldsChange` 属性
+- 新增 `Form.useWatch` 钩子
 
 ## 0.2.0
 
