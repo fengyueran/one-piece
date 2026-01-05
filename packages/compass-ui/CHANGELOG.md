@@ -1,5 +1,12 @@
 # @xinghunm/compass-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- - TreeSelect: 新增 `titleRender` 和 `switcherIcon` 属性支持
+  - Message: 修复 props 传递问题，避免将 `key` 直接传递给组件
+
 ## 0.5.0
 
 ### Minor Changes
