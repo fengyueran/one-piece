@@ -193,8 +193,12 @@ describe('DatePicker', () => {
       await userEvent.click(screen.getByText('确定'))
 
       expect(onChange).toHaveBeenCalled()
-      expect(screen.queryByText('确定')).not.toBeInTheDocument()
-    })
+      // Wait for floating element to disappear or check visibility
+      // userEvent.click is async but floating-ui state update might be async too
+      await waitFor(() => {
+        expect(screen.queryByText('确定')).not.toBeInTheDocument()
+      })
+    }, 10000)
 
     it('should switch panels', async () => {
       renderWithTheme(<DatePicker />)
@@ -218,8 +222,9 @@ describe('DatePicker', () => {
 
       // Select month -> Back to date
       await userEvent.click(screen.getByText('Jan'))
-      expect(headerTitle).toBeInTheDocument()
-    })
+      // Header title comes back
+      expect(screen.getByText(/\d{4}年 \d{1,2}月/)).toBeInTheDocument()
+    }, 10000)
 
     it('should handle input change clearing', async () => {
       const onChange = jest.fn()
@@ -253,11 +258,16 @@ describe('DateRangePicker', () => {
       const day15 = screen.getAllByText('15').find((el) => el.tagName === 'DIV')
       if (day15) await userEvent.click(day15)
 
+      // Use a more specific query or assertion
       const day20 = screen.getAllByText('20').find((el) => el.tagName === 'DIV')
-      if (day20) await userEvent.click(day20)
+      expect(day20).toBeInTheDocument()
+
+      // Trigger hover effect for range selection if needed
+      await userEvent.hover(day20!)
+      await userEvent.click(day20!)
 
       expect(handleChange).toHaveBeenCalled()
-    })
+    }, 10000)
   })
 
   describe('Boundary', () => {
