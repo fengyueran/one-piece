@@ -14,7 +14,7 @@ import {
 } from '@floating-ui/react'
 import Tree, { DataNode } from '../tree'
 import { convertTreeToEntities } from '../tree/utils/tree-data'
-import { DownIcon, CloseIcon, CloseCircleIcon, LoadingIcon } from '../icons'
+import { DownIcon, CloseIcon, CloseCircleIcon, LoadingIcon, SearchIcon } from '../icons'
 import { TreeSelectProps, SelectValue } from './types'
 import {
   TreeSelectContainer,
@@ -51,6 +51,8 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     dropdownStyle,
     dropdownClassName,
     showSearch = false,
+    titleRender,
+    switcherIcon,
     // treeLine,
     // treeIcon,
   } = props
@@ -335,6 +337,10 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
         )[])
       : [],
     titleRender: (nodeData: DataNode) => {
+      if (titleRender) {
+        return titleRender(nodeData, searchValue)
+      }
+
       const { treeSelectedIcon } = props
       const strTitle = nodeData.title as string
       let titleNode: React.ReactNode = strTitle
@@ -373,6 +379,7 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
 
       return titleNode
     },
+    switcherIcon,
   }
 
   const { filteredTreeData, expandedKeysForSearch } = useMemo(() => {
@@ -444,6 +451,8 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
             <span onClick={handleClear} style={{ cursor: 'pointer' }}>
               <CloseCircleIcon />
             </span>
+          ) : showSearch && open ? (
+            <SearchIcon />
           ) : (
             <DownIcon />
           )}

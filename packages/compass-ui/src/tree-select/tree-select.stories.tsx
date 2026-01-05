@@ -275,3 +275,167 @@ export const CustomStyle: Story = {
     )
   },
 }
+
+export const CustomNodeRender: Story = {
+  render: () => {
+    const [value, setValue] = useState<SelectValue>('2d-forward')
+    const physicsData = [
+      {
+        key: 'heat-equation',
+        title: 'Heat equation',
+        children: [
+          { key: '1d-forward', title: '1D Forward heat equation', isLeaf: true },
+          { key: '1d-backward', title: '1D Backward heat equation', isLeaf: true },
+          {
+            key: '1d-variable',
+            title: '1D Forward heat equation with variable coefficient',
+            isLeaf: true,
+          },
+          { key: '2d-forward', title: '2D Forward heat equation', isLeaf: true },
+          { key: '2d-backward', title: '2D Backward heat equation', isLeaf: true },
+        ],
+      },
+      {
+        key: 'advection-equation',
+        title: 'Advection equation',
+        children: [{ key: 'advection-1d', title: '1D Advection', isLeaf: true }],
+      },
+    ]
+
+    return (
+      <div style={{ padding: 40, height: 500 }}>
+        <h3>Custom Node Render</h3>
+        <p style={{ marginBottom: 20, color: '#666' }}>
+          Customize tree nodes with <code>titleRender</code> to create rich selection interfaces.
+        </p>
+        <TreeSelect
+          style={{ width: 400 }}
+          value={value}
+          onChange={setValue}
+          treeData={physicsData}
+          treeDefaultExpandedKeys={['heat-equation']}
+          showSearch
+          switcherIcon={({ expanded }) => (
+            <span
+              style={{
+                color: '#00000073',
+                fontSize: '12px',
+                display: 'inline-block',
+                transform: `rotate(${expanded ? 90 : 0}deg)`,
+                transition: 'transform 0.2s',
+              }}
+            >
+              ›
+            </span>
+          )}
+          titleRender={(node, searchValue) => {
+            const selected = value === node.key
+            const isLeaf = node.isLeaf || !node.children?.length
+            const strTitle = node.title as string
+
+            const renderTitle = () => {
+              if (!searchValue || !strTitle.toLowerCase().includes(searchValue.toLowerCase())) {
+                return strTitle
+              }
+              const index = strTitle.toLowerCase().indexOf(searchValue.toLowerCase())
+              const beforeStr = strTitle.substring(0, index)
+              const matchStr = strTitle.substring(index, index + searchValue.length)
+              const afterStr = strTitle.substring(index + searchValue.length)
+              return (
+                <span>
+                  {beforeStr}
+                  <span style={{ color: '#1677ff', fontWeight: 'bold' }}>{matchStr}</span>
+                  {afterStr}
+                </span>
+              )
+            }
+
+            if (!isLeaf) {
+              return (
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#000000d9',
+                    lineHeight: '24px',
+                  }}
+                >
+                  {renderTitle()}
+                </span>
+              )
+            }
+
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 12px',
+                  border: `1px solid ${selected ? '#1677ff' : '#d9d9d9'}`,
+                  borderRadius: '4px',
+                  background: '#fff',
+                  margin: '4px 0',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: selected ? '0 0 0 2px rgba(22, 119, 255, 0.1)' : 'none',
+                }}
+              >
+                <span
+                  style={{
+                    color: selected ? '#1677ff' : '#000000d9',
+                    fontSize: '13px',
+                    flex: 1,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    marginRight: '8px',
+                  }}
+                >
+                  {renderTitle()}
+                </span>
+                {selected ? (
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      flexShrink: 0,
+                      borderRadius: '50%',
+                      background: '#1677ff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '10px',
+                    }}
+                  >
+                    <svg
+                      viewBox="0 0 1024 1024"
+                      width="10"
+                      height="10"
+                      fill="#fff"
+                      style={{ display: 'block' }}
+                    >
+                      <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 00-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      flexShrink: 0,
+                      borderRadius: '50%',
+                      border: '1px solid #d9d9d9',
+                    }}
+                  />
+                )}
+              </div>
+            )
+          }}
+        />
+      </div>
+    )
+  },
+}

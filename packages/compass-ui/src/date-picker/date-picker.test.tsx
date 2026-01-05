@@ -67,7 +67,7 @@ describe('DatePicker', () => {
       renderWithTheme(<DatePicker />)
       const input = screen.getByRole('textbox')
       await userEvent.click(input)
-      expect(screen.getByText(format(new Date(), 'yyyy年 MM月'))).toBeInTheDocument()
+      expect(screen.getByText(format(new Date(), 'yyyy年 M月'))).toBeInTheDocument()
     })
 
     it('should select a date', async () => {
@@ -90,7 +90,7 @@ describe('DatePicker', () => {
       if (day) await userEvent.click(day)
 
       await waitFor(() => {
-        expect(screen.queryByText(format(new Date(), 'yyyy年 MM月'))).not.toBeInTheDocument()
+        expect(screen.queryByText(format(new Date(), 'yyyy年 M月'))).not.toBeInTheDocument()
       })
     })
   })

@@ -44,4 +44,14 @@ export interface TreeSelectProps extends Omit<SelectProps, 'options' | 'onChange
    * Custom icon for selected tree node
    */
   treeSelectedIcon?: React.ReactNode
+
+  /**
+   * Custom title render
+   */
+  titleRender?: (node: DataNode, searchValue: string) => React.ReactNode
+
+  /**
+   * Custom expand icon
+   */
+  switcherIcon?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode)
 }

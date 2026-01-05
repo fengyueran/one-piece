@@ -76,4 +76,69 @@ describe('TreeSelect', () => {
     // For now, let's skip complex interaction if hard to query, or try to click the node container?
     // Or we can rely on `fireEvent.click` on some element.
   })
+
+  it('should support titleRender', async () => {
+    render(
+      <TreeSelect
+        treeData={treeData}
+        titleRender={(node) => <span data-testid="custom-title">Custom: {node.title}</span>}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('combobox'))
+
+    await waitFor(() => {
+      const customTitles = screen.getAllByTestId('custom-title')
+      expect(customTitles).toHaveLength(2)
+      expect(customTitles[0]).toHaveTextContent('Custom: Node 1')
+      expect(customTitles[1]).toHaveTextContent('Custom: Node 2')
+    })
+  })
+
+  it('should pass searchValue to titleRender', async () => {
+    // Mock tree data
+    render(
+      <TreeSelect
+        showSearch
+        treeData={treeData}
+        titleRender={(node, searchValue) => (
+          <span data-testid="custom-title-search">
+            {node.title} - {searchValue}
+          </span>
+        )}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('combobox'))
+
+    // The input might be hidden or inside structure.
+    // In TreeSelect, if showSearch is true, we have <SearchInput>.
+    // Let's find input by value or role 'textbox' if identifiable?
+    // tree-select renderTriggerContent:
+    // <SearchInput ... onChange={handleInputChange} ... />
+    // It's a configured input.
+    // Let's rely on finding by selector input[type="text"] or just 'textbox' role?
+    // Testing library generic query
+
+    // Compass input might have role="textbox".
+    // Wait, <SearchInput> is styled input.
+    // Let's try to query by placeholder? No placeholder passed.
+    // Let's query by tag 'input' inside the container?
+
+    // Actually, tree-select.tsx has `role="listbox"` on container.
+    // The input is inside `TreeSelectTrigger`.
+
+    const input = document.querySelector('input')
+    if (input) {
+      fireEvent.change(input, { target: { value: 'ode' } })
+    }
+
+    await waitFor(() => {
+      // Should trigger titleRender with 'ode'
+      const customTitles = screen.getAllByTestId('custom-title-search')
+      // We expect matching nodes. "Node 1" matches "ode". "Node 2" matches "ode".
+      expect(customTitles.length).toBeGreaterThan(0)
+      expect(customTitles[0]).toHaveTextContent('Node 1 - ode')
+    })
+  })
 })
