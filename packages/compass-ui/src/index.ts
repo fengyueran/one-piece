@@ -4,6 +4,9 @@ export type { ButtonProps } from './button'
 export { default as Steps } from './steps'
 export type { StepsProps } from './steps'
 
+export { Table } from './table'
+export type { TableProps } from './table'
+
 export { default as Tree } from './tree'
 export type { TreeProps, TreeNodeProps, DataNode } from './tree'
 

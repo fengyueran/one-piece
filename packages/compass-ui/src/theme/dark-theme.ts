@@ -17,6 +17,7 @@ export const darkTheme: Theme = {
     background: '#141414',
     backgroundSecondary: '#1f1f1f',
     backgroundTertiary: '#2f2f2f',
+    backgroundHover: '#262626',
 
     border: '#434343',
     borderSecondary: '#303030',
@@ -79,6 +80,15 @@ export const darkTheme: Theme = {
       ...defaultTheme.components.form,
       labelColor: 'rgba(255, 255, 255, 0.85)',
       errorColor: '#a61d24',
+    },
+    table: {
+      headerBg: '#1f1f1f',
+      headerColor: 'rgba(255, 255, 255, 0.85)',
+      rowHoverBg: '#262626',
+      borderColor: '#303030',
+      bodyBg: '#141414',
+      color: 'rgba(255, 255, 255, 0.85)',
+      cellPadding: '16px 16px',
     },
   },
 }

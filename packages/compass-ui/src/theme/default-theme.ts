@@ -18,6 +18,7 @@ export const defaultTheme: Theme = {
     background: '#ffffff',
     backgroundSecondary: '#fafafa',
     backgroundTertiary: '#f5f5f5',
+    backgroundHover: '#fafafa',
 
     border: '#d9d9d9',
     borderSecondary: '#f0f0f0',
@@ -269,6 +270,15 @@ export const defaultTheme: Theme = {
       tabItemVerticalGutter: '16px',
       inkBarColor: '#1890ff',
       inkBarHeight: '2px',
+    },
+    table: {
+      headerBg: '#fafafa',
+      headerColor: 'rgba(0, 0, 0, 0.85)',
+      rowHoverBg: '#fafafa',
+      borderColor: '#f0f0f0',
+      bodyBg: '#ffffff',
+      color: 'rgba(0, 0, 0, 0.88)',
+      cellPadding: '16px 16px',
     },
   },
 }

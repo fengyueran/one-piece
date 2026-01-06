@@ -18,6 +18,7 @@ export interface Theme {
     background: string
     backgroundSecondary: string
     backgroundTertiary: string
+    backgroundHover: string
 
     border: string
     borderSecondary: string
@@ -100,7 +101,18 @@ export interface Theme {
     tree: TreeTheme
     form: FormTheme
     tabs: TabsTheme
+    table: TableTheme
   }
+}
+
+export interface TableTheme {
+  headerBg: string
+  headerColor: string
+  rowHoverBg: string
+  borderColor: string
+  bodyBg: string
+  color: string
+  cellPadding: string
 }
 
 export interface FormTheme {
