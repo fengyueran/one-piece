@@ -80,7 +80,12 @@ const meta: Meta<typeof TreeSelect> = {
     disabled: { control: 'boolean' },
     multiple: { control: 'boolean' },
     treeCheckable: { control: 'boolean' },
+    treeSelectable: { control: 'boolean' },
     showSearch: { control: 'boolean' },
+    onlyLeafSelect: {
+      control: 'boolean',
+      description: 'Only allow selecting leaf nodes',
+    },
   },
 }
 
@@ -434,6 +439,102 @@ export const CustomNodeRender: Story = {
               </div>
             )
           }}
+        />
+      </div>
+    )
+  },
+}
+
+export const OnlyLeafSelect: Story = {
+  render: () => {
+    const [value, setValue] = useState<SelectValue>()
+    return (
+      <div>
+        <h3>只允许选择叶子节点</h3>
+        <p style={{ marginBottom: 20, color: '#666' }}>
+          设置 <code>onlyLeafSelect</code> 为 <code>true</code>
+          ，父节点不可选，但点击可以展开/收起节点。
+        </p>
+        <TreeSelect
+          style={{ width: 300 }}
+          value={value}
+          onChange={setValue}
+          treeData={treeData}
+          onlyLeafSelect
+          placeholder="Please select leaf node"
+          treeDefaultExpandedKeys={['parent 1', 'parent 1-0']}
+        />
+      </div>
+    )
+  },
+}
+
+export const TreeSelectable: Story = {
+  render: () => {
+    const [value, setValue] = useState<SelectValue>()
+    return (
+      <div>
+        <h3>可选择性 (selectable)</h3>
+        <p style={{ marginBottom: 20, color: '#666' }}>
+          设置 <code>treeSelectable</code> 为 <code>false</code>，所有节点将不可选。
+        </p>
+        <TreeSelect
+          style={{ width: 300 }}
+          value={value}
+          onChange={setValue}
+          treeData={treeData}
+          treeSelectable={false}
+          placeholder="Selection disabled"
+          treeDefaultExpandedKeys={['parent 1', 'parent 1-0']}
+        />
+      </div>
+    )
+  },
+}
+
+export const PartiallySelectable: Story = {
+  render: () => {
+    const [value, setValue] = useState<SelectValue>()
+
+    const partiallySelectableData = [
+      {
+        key: 'parent 1',
+        title: 'parent 1 (Not Selectable)',
+        selectable: false,
+        children: [
+          {
+            key: 'parent 1-0',
+            title: 'parent 1-0',
+            children: [
+              { key: 'leaf1', title: 'leaf1 (Not Selectable)', selectable: false },
+              { key: 'leaf2', title: 'leaf2' },
+            ],
+          },
+          {
+            key: 'parent 1-1',
+            title: 'parent 1-1',
+            children: [{ key: 'leaf3', title: 'leaf3' }],
+          },
+        ],
+      },
+    ]
+
+    return (
+      <div>
+        <h3>部分节点可选</h3>
+        <p style={{ marginBottom: 20, color: '#666' }}>
+          通过在 <code>treeData</code> 中设置节点的 <code>selectable: false</code>
+          ，可以禁用特定节点的选择功能。
+          <br />
+          在此示例中，&quot;parent 1&quot; 和 &quot;leaf1&quot; 是不可选的。
+        </p>
+        <TreeSelect
+          style={{ width: 300 }}
+          value={value}
+          onChange={setValue}
+          treeData={partiallySelectableData}
+          placeholder="Please select"
+          treeDefaultExpandedKeys={['parent 1', 'parent 1-0']}
         />
       </div>
     )

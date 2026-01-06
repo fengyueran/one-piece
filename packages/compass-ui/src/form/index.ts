@@ -23,6 +23,7 @@ Form.useWatch = useWatch
 
 export type { FormProps } from './form'
 export type { FormItemProps } from './form-item'
+export type { RuleItem } from 'async-validator'
 export type { FormInstance, ValidateErrorEntity, FieldData } from './types'
 
 export default Form

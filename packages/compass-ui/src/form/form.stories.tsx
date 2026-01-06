@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React from 'react'
-import type { RuleItem } from 'async-validator'
-import Form from './index'
+import Form, { type RuleItem } from './index'
 import type { ValidateErrorEntity, FieldData } from './types'
 import Button from '../button'
 import InputField from '../input-field'
@@ -11,9 +10,46 @@ import { ThemeProvider } from '../theme'
 const meta: Meta<typeof Form> = {
   title: 'Components/Form',
   component: Form,
-  subcomponents: { FormItem: Form.Item as React.ComponentType<any> },
+  subcomponents: { FormItem: Form.Item },
   tags: ['autodocs'],
   argTypes: {
+    // FormItem props (for documentation)
+    // @ts-expect-error - Adding subcomponent props for documentation
+    'FormItem.rules': {
+      name: 'rules',
+      control: 'object',
+      description: '校验规则',
+      table: {
+        category: 'Form.Item',
+        type: {
+          summary: 'RuleItem[]',
+          detail: `interface RuleItem {
+  /** 验证错误信息 */
+  message?: string | ReactElement
+  /** 值类型 */
+  type?: 'string' | 'number' | 'boolean' | 'email' | 'url' | 'date' | 'array' | 'object' | ...
+  /** 是否必填 */
+  required?: boolean
+  /** 正则表达式 */
+  pattern?: RegExp
+  /** 最小长度/值 */
+  min?: number
+  /** 最大长度/值 */
+  max?: number
+  /** 确定长度 */
+  len?: number
+  /** 枚举值验证 */
+  enum?: any[]
+  /** 忽略空格 */
+  whitespace?: boolean
+  /** 自定义校验函数 */
+  validator?: (rule: RuleItem, value: unknown, callback: (error?: string | Error) => void) => Promise<void> | void
+  /** 转换值 */
+  transform?: (value: unknown) => unknown
+}`,
+        },
+      },
+    },
     form: {
       description: `表单控制实例，通过 \`Form.useForm()\` 创建。
 

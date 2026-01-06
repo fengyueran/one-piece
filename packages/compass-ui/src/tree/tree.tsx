@@ -149,7 +149,7 @@ const Tree: React.FC<TreeProps> = ({
         checked={mergedCheckedKeys.includes(node.key)}
         isLeaf={node.isLeaf || !node.data.children || node.data.children.length === 0}
         checkable={checkable}
-        selectable={selectable}
+        selectable={node.data.selectable ?? selectable}
         disabled={node.disabled}
         icon={node.icon}
         style={style}
@@ -197,7 +197,7 @@ const Tree: React.FC<TreeProps> = ({
           checked={mergedCheckedKeys.includes(node.key)}
           isLeaf={node.isLeaf || !node.data.children || node.data.children.length === 0}
           checkable={checkable}
-          selectable={selectable}
+          selectable={node.data.selectable ?? selectable}
           disabled={node.disabled}
           icon={node.icon}
           onExpand={() => handleExpand(node.key, node.data)}

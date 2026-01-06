@@ -79,6 +79,29 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     return convertTreeToEntities(treeData)
   }, [treeData])
 
+  // Process tree data for onlyLeafSelect
+  const processedTreeData = useMemo(() => {
+    if (!props.onlyLeafSelect) return treeData
+
+    const loop = (data: DataNode[]): DataNode[] => {
+      return data.map((item) => {
+        const hasChildren = item.children && item.children.length > 0
+        const isLeaf = item.isLeaf === true || !hasChildren
+
+        if (!isLeaf) {
+          return {
+            ...item,
+            selectable: false,
+            children: item.children ? loop(item.children) : undefined,
+          }
+        }
+        return item
+      })
+    }
+
+    return loop(treeData)
+  }, [treeData, props.onlyLeafSelect])
+
   const { x, y, refs, floatingStyles, context } = useFloating({
     open,
     onOpenChange: (nextOpen) => {
@@ -321,8 +344,9 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
 
   // Calculate tree props
   const treeProps = {
-    treeData,
-    selectable: !treeCheckable && props.treeSelectable !== false,
+    treeData: processedTreeData,
+    selectable:
+      !treeCheckable && (props.treeSelectable !== undefined ? props.treeSelectable : true),
     checkable: treeCheckable,
     onSelect: onTreeSelect,
     onCheck: onTreeCheck,
@@ -384,7 +408,7 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
 
   const { filteredTreeData, expandedKeysForSearch } = useMemo(() => {
     if (!searchValue) {
-      return { filteredTreeData: treeData, expandedKeysForSearch: [] }
+      return { filteredTreeData: processedTreeData, expandedKeysForSearch: [] }
     }
 
     const keysToExpand: (string | number)[] = []
@@ -409,12 +433,12 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
       return result
     }
 
-    const filtered = loop(treeData)
+    const filtered = loop(processedTreeData)
     // Remove duplicates
     const uniqueKeys = Array.from(new Set(keysToExpand))
 
     return { filteredTreeData: filtered, expandedKeysForSearch: uniqueKeys }
-  }, [treeData, searchValue])
+  }, [processedTreeData, searchValue])
 
   React.useEffect(() => {
     if (searchValue) {

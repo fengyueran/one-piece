@@ -54,4 +54,9 @@ export interface TreeSelectProps extends Omit<SelectProps, 'options' | 'onChange
    * Custom expand icon
    */
   switcherIcon?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode)
+
+  /**
+   * Only allow selecting leaf nodes
+   */
+  onlyLeafSelect?: boolean
 }

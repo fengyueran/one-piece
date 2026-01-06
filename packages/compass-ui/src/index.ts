@@ -44,7 +44,14 @@ export { default as InputNumber } from './input-number'
 export type { InputNumberProps } from './input-number'
 
 export { default as Form } from './form'
-export type { FormProps, FormItemProps, ValidateErrorEntity, FieldData, FormInstance } from './form'
+export type {
+  FormProps,
+  FormItemProps,
+  ValidateErrorEntity,
+  FieldData,
+  FormInstance,
+  RuleItem,
+} from './form'
 
 export { default as Tabs } from './tabs'
 export type { TabsProps, TabItem, TabPaneProps } from './tabs'

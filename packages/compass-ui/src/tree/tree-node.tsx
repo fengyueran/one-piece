@@ -42,8 +42,16 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
 
   const handleSelect = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!disabled && selectable !== false && onSelect) {
-      onSelect(e)
+    if (disabled) {
+      return
+    }
+
+    if (selectable !== false) {
+      if (onSelect) {
+        onSelect(e)
+      }
+    } else if (!isLeaf && onExpand) {
+      onExpand(e)
     }
   }
 

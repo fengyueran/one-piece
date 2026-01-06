@@ -141,4 +141,54 @@ describe('TreeSelect', () => {
       expect(customTitles[0]).toHaveTextContent('Node 1 - ode')
     })
   })
+
+  describe('onlyLeafSelect', () => {
+    it('should not allow selecting parent nodes when onlyLeafSelect is true', async () => {
+      const handleChange = jest.fn()
+      render(<TreeSelect treeData={treeData} onChange={handleChange} onlyLeafSelect />)
+
+      fireEvent.click(screen.getByRole('combobox'))
+      await waitFor(() => screen.getByText('Node 1'))
+
+      // Node 1 is a parent node
+      fireEvent.click(screen.getByText('Node 1'))
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('should allow selecting leaf nodes when onlyLeafSelect is true', async () => {
+      const handleChange = jest.fn()
+      render(
+        <TreeSelect
+          treeData={treeData}
+          onChange={handleChange}
+          onlyLeafSelect
+          treeDefaultExpandedKeys={['1']}
+        />,
+      )
+
+      fireEvent.click(screen.getByRole('combobox'))
+      await waitFor(() => screen.getByText('Child 1-1'))
+
+      // Child 1-1 is a leaf node
+      fireEvent.click(screen.getByText('Child 1-1'))
+      expect(handleChange).toHaveBeenCalledWith('1-1', 'Child 1-1', expect.anything())
+    })
+    it('should expand parent node when clicked upon if onlyLeafSelect is true', async () => {
+      render(<TreeSelect treeData={treeData} onlyLeafSelect />)
+
+      fireEvent.click(screen.getByRole('combobox'))
+      await waitFor(() => screen.getByText('Node 1'))
+
+      // Verify 'Child 1-1' is not visible (collapsed)
+      expect(screen.queryByText('Child 1-1')).not.toBeInTheDocument()
+
+      // Node 1 is a parent node, unselectable in this mode.
+      // Clicking it should trigger expansion.
+      fireEvent.click(screen.getByText('Node 1'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Child 1-1')).toBeInTheDocument()
+      })
+    })
+  })
 })
