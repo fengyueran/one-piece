@@ -19,26 +19,6 @@ describe('InputField', () => {
   })
 
   describe('Props', () => {
-    it('should render label', () => {
-      renderWithTheme(<InputField label="Username" />)
-      expect(screen.getByText('Username')).toBeInTheDocument()
-    })
-
-    it('should render helper text', () => {
-      renderWithTheme(<InputField helperText="Enter your username" />)
-      expect(screen.getByText('Enter your username')).toBeInTheDocument()
-    })
-
-    it('should render error message', () => {
-      renderWithTheme(<InputField error="Invalid input" />)
-      expect(screen.getByText('Invalid input')).toBeInTheDocument()
-    })
-
-    it('should render helper text with error style when error is boolean true', () => {
-      renderWithTheme(<InputField error={true} helperText="Error Text" />)
-      expect(screen.getByText('Error Text')).toBeInTheDocument()
-    })
-
     it('should render full width', () => {
       const { container } = renderWithTheme(<InputField fullWidth />)
       expect(container.firstChild).toHaveStyle('width: 100%')

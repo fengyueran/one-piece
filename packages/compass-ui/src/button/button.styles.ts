@@ -157,7 +157,19 @@ export const StyledButton = styled(ButtonBase)<{
           border-color: #ff7875;
         }
       `
-          : `
+          : $variant === 'link'
+            ? `
+        color: ${theme?.colors?.error || '#ff4d4f'};
+        border-color: transparent;
+        background-color: transparent;
+        
+        &:hover:not(:disabled) {
+            color: #ff7875;
+            border-color: transparent;
+            background-color: transparent;
+        }
+      `
+            : `
         border-color: ${theme?.colors?.error || '#ff4d4f'};
         color: ${theme?.colors?.error || '#ff4d4f'};
         

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import Pagination from '../pagination'
-import { TableProps } from './types'
+import { TableProps, ColumnType } from './types'
 import {
   StyledTableWrapper,
   StyledTable,
@@ -28,6 +28,11 @@ export function Table<T = unknown>(props: TableProps<T>) {
     emptyText = 'No Data',
     scroll,
   } = props
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: React.Key
+    order: 'ascend' | 'descend'
+  } | null>(null)
 
   const getRowKey = (record: T, index: number): string => {
     if (typeof rowKey === 'function') {
@@ -66,6 +71,33 @@ export function Table<T = unknown>(props: TableProps<T>) {
     rowSelection.onChange(newSelectedKeys, newSelectedRows)
   }
 
+  const handleSort = (key: React.Key) => {
+    const column = columns.find((c) => (c.key || c.dataIndex) === key)
+    if (!column || !column.sorter) return
+
+    setSortConfig((prev) => {
+      if (prev?.key === key) {
+        if (prev.order === 'ascend') return { key, order: 'descend' }
+        return null
+      }
+      return { key, order: 'ascend' }
+    })
+  }
+
+  const processedData = useMemo(() => {
+    const data = [...dataSource]
+    if (sortConfig && sortConfig.order) {
+      const column = columns.find((c) => (c.key || c.dataIndex) === sortConfig.key) as ColumnType<T>
+      if (column?.sorter) {
+        data.sort((a, b) => {
+          const res = column.sorter!(a, b)
+          return sortConfig.order === 'ascend' ? res : -res
+        })
+      }
+    }
+    return data
+  }, [dataSource, sortConfig, columns])
+
   const isAllSelected =
     dataSource.length > 0 &&
     dataSource.every((record, index) =>
@@ -84,6 +116,7 @@ export function Table<T = unknown>(props: TableProps<T>) {
               size={size}
               width={50}
               className="compass-table-cell compass-table-selection-column"
+              fixed="left"
             >
               <input
                 type="checkbox"
@@ -95,17 +128,66 @@ export function Table<T = unknown>(props: TableProps<T>) {
               />
             </StyledTh>
           )}
-          {columns.map((col) => (
-            <StyledTh
-              key={col.key || (col.dataIndex as string)}
-              align={col.align}
-              width={col.width}
-              size={size}
-              className="compass-table-cell"
-            >
-              {col.title}
-            </StyledTh>
-          ))}
+          {columns.map((col) => {
+            const colKey = col.key || (col.dataIndex as React.Key)
+            const isSorted = sortConfig?.key === colKey
+            const sortOrder = isSorted ? sortConfig.order : null
+
+            return (
+              <StyledTh
+                key={colKey}
+                align={col.align}
+                width={col.width}
+                size={size}
+                fixed={col.fixed}
+                className="compass-table-cell"
+                style={{ cursor: col.sorter ? 'pointer' : 'default' }}
+                onClick={() => handleSort(colKey)}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent:
+                      col.align === 'right'
+                        ? 'flex-end'
+                        : col.align === 'center'
+                          ? 'center'
+                          : 'flex-start',
+                  }}
+                >
+                  {col.title}
+                  {col.sorter && (
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        flexDirection: 'column',
+                        marginLeft: 8,
+                        fontSize: 10,
+                        lineHeight: 0.8,
+                        color: '#bfbfbf',
+                      }}
+                    >
+                      <span
+                        style={{ color: sortOrder === 'ascend' ? '#1890ff' : 'inherit' }}
+                        role="img"
+                        aria-label="caret-up"
+                      >
+                        ▲
+                      </span>
+                      <span
+                        style={{ color: sortOrder === 'descend' ? '#1890ff' : 'inherit' }}
+                        role="img"
+                        aria-label="caret-down"
+                      >
+                        ▼
+                      </span>
+                    </span>
+                  )}
+                </div>
+              </StyledTh>
+            )
+          })}
         </StyledTr>
       </StyledThead>
     )
@@ -128,7 +210,7 @@ export function Table<T = unknown>(props: TableProps<T>) {
       )
     }
 
-    if (dataSource.length === 0) {
+    if (processedData.length === 0) {
       return (
         <StyledTbody className="compass-table-tbody">
           <StyledTr className="compass-table-row">
@@ -145,14 +227,18 @@ export function Table<T = unknown>(props: TableProps<T>) {
 
     return (
       <StyledTbody scrollY={scroll?.y} className="compass-table-tbody">
-        {dataSource.map((record, index) => {
+        {processedData.map((record, index) => {
           const key = getRowKey(record, index)
           const isSelected = rowSelection?.selectedRowKeys?.includes(key)
 
           return (
             <StyledTr key={key} scrollY={scroll?.y} className="compass-table-row">
               {rowSelection && (
-                <StyledTd size={size} className="compass-table-cell compass-table-selection-column">
+                <StyledTd
+                  size={size}
+                  className="compass-table-cell compass-table-selection-column"
+                  fixed="left"
+                >
                   <input
                     type="checkbox"
                     checked={!!isSelected}
@@ -170,6 +256,7 @@ export function Table<T = unknown>(props: TableProps<T>) {
                     key={colKey}
                     align={col.align}
                     size={size}
+                    fixed={col.fixed}
                     className="compass-table-cell"
                   >
                     {col.render ? col.render(value, record, index) : (value as React.ReactNode)}
@@ -195,7 +282,7 @@ export function Table<T = unknown>(props: TableProps<T>) {
   return (
     <div>
       <StyledTableWrapper bordered={bordered} className={tableClassName} style={style}>
-        <StyledTable scrollY={scroll?.y}>
+        <StyledTable scrollY={scroll?.y} scrollX={scroll?.x}>
           {renderHeader()}
           {renderBody()}
         </StyledTable>

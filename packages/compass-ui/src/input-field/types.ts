@@ -6,19 +6,10 @@ export interface InputFieldProps
    * The type of input.
    * @default 'text'
    */
-  type?: 'text' | 'password' | 'search'
-  /**
-   * The label content.
-   */
-  label?: React.ReactNode
-  /**
-   * The error content.
-   */
-  error?: boolean | React.ReactNode
   /**
    * The helper text content.
    */
-  helperText?: React.ReactNode
+  type?: 'text' | 'password' | 'search'
   /**
    * If `true`, the input will take up the full width of its container.
    */

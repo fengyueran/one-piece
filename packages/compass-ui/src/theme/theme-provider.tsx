@@ -71,7 +71,12 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
 export const useTheme = () => {
   const context = useContext(ThemeContext)
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
+    return {
+      mode: 'light',
+      setMode: () => {},
+      toggleTheme: () => {},
+      theme: defaultTheme,
+    } as ThemeContextType
   }
   return context
 }

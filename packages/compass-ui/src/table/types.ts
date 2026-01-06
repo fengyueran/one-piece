@@ -14,6 +14,10 @@ export interface ColumnType<T = unknown> {
   align?: 'left' | 'center' | 'right'
   /** Column width */
   width?: string | number
+  /** Fixed column */
+  fixed?: 'left' | 'right' | boolean
+  /** Sorter function */
+  sorter?: (a: T, b: T) => number
 }
 
 export interface RowSelection<T> {

@@ -113,6 +113,7 @@ export const defaultTheme: Theme = {
         md: '6px',
         lg: '8px',
       },
+      rippleOpacity: 0.3,
     },
     message: {
       contentPadding: '8px 16px',

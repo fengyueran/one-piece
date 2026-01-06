@@ -7,19 +7,6 @@ export const Container = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : '320px')};
 `
 
-export const Label = styled.label`
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
-`
-
-export const HelperText = styled.div<{ error?: boolean }>`
-  font-size: 12px;
-  margin-top: 4px;
-  color: ${({ theme, error }) =>
-    error ? getThemeToken(theme, 'colors').error : getThemeToken(theme, 'colors').textSecondary};
-`
-
 export const Adornment = styled.span<{ $position?: 'start' | 'end' }>`
   display: flex;
   align-items: center;
@@ -103,7 +90,6 @@ export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }
 `
 
 export const InputWrapper = styled.div<{
-  error?: boolean
   disabled?: boolean
   focused?: boolean
   size?: 'small' | 'medium' | 'large'
@@ -115,10 +101,9 @@ export const InputWrapper = styled.div<{
   width: 100%;
   background-color: ${({ theme }) => getThemeToken(theme, 'colors').background};
   border: 1px solid
-    ${({ theme, error, focused }) => {
+    ${({ theme, focused }) => {
       const colors = getThemeToken(theme, 'colors')
       const inputTheme = getComponentTheme(theme, 'input')
-      if (error) return colors.error
       if (focused) return inputTheme.activeBorderColor
       return colors.border
     }};
@@ -130,11 +115,10 @@ export const InputWrapper = styled.div<{
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ theme, error, focused, disabled }) => {
+    border-color: ${({ theme, focused, disabled }) => {
       const colors = getThemeToken(theme, 'colors')
       const inputTheme = getComponentTheme(theme, 'input')
       if (disabled) return colors.border
-      if (error) return colors.error
       if (focused) return inputTheme.activeBorderColor
       return inputTheme.hoverBorderColor
     }};

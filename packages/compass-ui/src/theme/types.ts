@@ -245,6 +245,7 @@ export interface ButtonTheme {
     md: string
     lg: string
   }
+  rippleOpacity: number
 }
 
 export interface MessageTheme {

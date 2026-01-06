@@ -1,15 +1,7 @@
 import React, { useState, useRef } from 'react'
 
 import { InputFieldProps } from './types'
-import {
-  Container,
-  Label,
-  InputWrapper,
-  StyledInput,
-  HelperText,
-  Adornment,
-  ClearButton,
-} from './input-field.styles'
+import { Container, InputWrapper, StyledInput, Adornment, ClearButton } from './input-field.styles'
 
 import { CloseCircleIcon, EyeIcon, EyeInvisibleIcon, SearchIcon } from '../icons'
 
@@ -18,9 +10,6 @@ import { CloseCircleIcon, EyeIcon, EyeInvisibleIcon, SearchIcon } from '../icons
  */
 const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, ref) => {
   const {
-    label,
-    error,
-    helperText,
     type = 'text',
     fullWidth = false,
     prefix,
@@ -126,9 +115,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
 
   return (
     <Container fullWidth={fullWidth} className={className} style={style}>
-      {label && <Label>{label}</Label>}
       <InputWrapper
-        error={!!error}
         disabled={disabled}
         focused={focused}
         size={size}
@@ -162,11 +149,6 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
         )}
         {renderedSuffix && <Adornment $position="end">{renderedSuffix}</Adornment>}
       </InputWrapper>
-      {(helperText || error) && (
-        <HelperText error={!!error}>
-          {error && typeof error !== 'boolean' ? error : helperText}
-        </HelperText>
-      )}
     </Container>
   )
 })

@@ -54,3 +54,6 @@ Thumbs.db
 
 # Changesets
 .changeset/ 
+
+.dumi
+docs-dist

@@ -2,6 +2,8 @@ import React from 'react'
 import { useRef } from 'react'
 import styled from '@emotion/styled'
 
+import { useTheme } from '../theme'
+import { getComponentTheme } from '../theme/utils'
 import { TouchRipple, Handlers } from './touch-ripple'
 import { ButtonBaseProps } from './types'
 
@@ -19,7 +21,9 @@ const StyledButtonBase = styled.button`
 `
 
 export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>((props, ref) => {
-  const { hasRipple = true, className, rippleBgColor, rippleOpacity, children, ...res } = props
+  const { hasRipple = true, className, children, ...res } = props
+  const { theme } = useTheme()
+  const rippleOpacity = getComponentTheme(theme, 'button').rippleOpacity
 
   const rippleRef = useRef<Handlers>()
 
@@ -44,7 +48,7 @@ export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>((
       onMouseDown={handleMouseDown}
     >
       {children}
-      <TouchRipple ref={rippleRef} bgColor={rippleBgColor} opacity={rippleOpacity} />
+      <TouchRipple ref={rippleRef} opacity={rippleOpacity} />
     </StyledButtonBase>
   )
 })

@@ -3,12 +3,10 @@ import {
   InputWrapper as BaseInputWrapper,
   StyledInput,
   Container,
-  Label,
-  HelperText,
   Adornment,
 } from '../input-field/input-field.styles'
 
-export { StyledInput, Container, Label, HelperText, Adornment }
+export { StyledInput, Container, Adornment }
 
 export const InputWrapper = styled(BaseInputWrapper)<{
   size?: 'small' | 'medium' | 'large'

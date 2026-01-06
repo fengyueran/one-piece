@@ -15,8 +15,13 @@ export const StyledTableWrapper = styled.div<{
   }};
 `
 
-export const StyledTable = styled.table<{ scrollY?: string | number }>`
-  width: 100%;
+export const StyledTable = styled.table<{
+  scrollY?: string | number
+  scrollX?: string | number
+}>`
+  width: ${({ scrollX }) =>
+    scrollX ? (typeof scrollX === 'number' ? `${scrollX}px` : scrollX) : '100%'};
+  min-width: 100%;
   border-collapse: collapse;
   text-align: left;
   background-color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').bodyBg};
@@ -70,6 +75,7 @@ export const StyledTh = styled.th<{
   align?: 'left' | 'center' | 'right'
   width?: string | number
   size?: 'small' | 'medium' | 'large'
+  fixed?: 'left' | 'right' | boolean
 }>`
   padding: ${({ size }) =>
     size === 'small' ? '8px 8px' : size === 'large' ? '16px 16px' : '12px 16px'};
@@ -78,16 +84,41 @@ export const StyledTh = styled.th<{
   text-align: ${({ align }) => align || 'left'};
   width: ${({ width }) => (typeof width === 'number' ? `${width}px` : width)};
   white-space: nowrap;
+  ${({ fixed, theme }) =>
+    fixed
+      ? `
+      position: sticky;
+      z-index: 2;
+      background-color: ${getComponentTheme(theme as Theme, 'table').headerBg};
+      ${fixed === 'right' ? 'right: 0;' : 'left: 0;'}
+      box-shadow: ${
+        fixed === 'right' ? '-2px 0 5px rgba(0,0,0,0.05)' : '2px 0 5px rgba(0,0,0,0.05)'
+      };
+    `
+      : ''}
 `
 
 export const StyledTd = styled.td<{
   align?: 'left' | 'center' | 'right'
   size?: 'small' | 'medium' | 'large'
+  fixed?: 'left' | 'right' | boolean
 }>`
   padding: ${({ size }) =>
     size === 'small' ? '8px 8px' : size === 'large' ? '16px 16px' : '12px 16px'};
   color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').color};
   text-align: ${({ align }) => align || 'left'};
+  ${({ fixed, theme }) =>
+    fixed
+      ? `
+      position: sticky;
+      z-index: 1;
+      background-color: ${getComponentTheme(theme as Theme, 'table').bodyBg};
+      ${fixed === 'right' ? 'right: 0;' : 'left: 0;'}
+      box-shadow: ${
+        fixed === 'right' ? '-2px 0 5px rgba(0,0,0,0.05)' : '2px 0 5px rgba(0,0,0,0.05)'
+      };
+    `
+      : ''}
 `
 
 export const EmptyWrapper = styled.div`

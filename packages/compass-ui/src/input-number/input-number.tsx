@@ -5,8 +5,6 @@ import {
   InputWrapper,
   StyledInput,
   Container,
-  Label,
-  HelperText,
   Adornment,
   StepperWrapper,
   StepperButton,
@@ -27,9 +25,6 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
     onBlur,
     onPressEnter,
     onFocus,
-    label,
-    error,
-    helperText,
     prefix,
     suffix,
     size = 'medium',
@@ -191,9 +186,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
 
   return (
     <Container fullWidth={fullWidth} className={className} style={style}>
-      {label && <Label>{label}</Label>}
       <InputWrapper
-        error={!!error}
         disabled={disabled}
         focused={focused}
         size={size}
@@ -246,11 +239,6 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
           </StepperWrapper>
         )}
       </InputWrapper>
-      {(helperText || error) && (
-        <HelperText error={!!error}>
-          {error && typeof error !== 'boolean' ? error : helperText}
-        </HelperText>
-      )}
     </Container>
   )
 })
