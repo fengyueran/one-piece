@@ -27,6 +27,7 @@ const Tree: React.FC<TreeProps> = ({
   virtual = false,
   switcherIcon,
   titleRender,
+  expandOnClick,
   className,
   style,
 }) => {
@@ -86,6 +87,11 @@ const Tree: React.FC<TreeProps> = ({
         selected: true,
         event,
       })
+    }
+
+    // Handle expand on click if enabled
+    if (expandOnClick && !node.isLeaf) {
+      handleExpand(key, node)
     }
   }
 
@@ -173,7 +179,7 @@ const Tree: React.FC<TreeProps> = ({
           rowHeight={itemHeight}
           rowComponent={Row}
           rowProps={{}}
-          style={{ width: '100%' }}
+          style={{ width: '100%', height }}
         />
       )
     }

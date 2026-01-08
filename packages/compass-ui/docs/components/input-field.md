@@ -1,5 +1,5 @@
 ---
-title: Input 输入框
+title: InputField 输入框
 nav:
   title: 组件
   order: 2
@@ -8,7 +8,7 @@ group:
   order: 2
 ---
 
-# Input 输入框
+# InputField 输入框
 
 通过鼠标或键盘输入内容,是最基础的表单域的包装。
 

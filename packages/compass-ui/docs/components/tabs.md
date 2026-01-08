@@ -203,7 +203,19 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Tabs, CalendarOutlined } from '@xinghunm/compass-ui'
+import { Tabs } from '@xinghunm/compass-ui'
+
+const CalendarOutlined = () => (
+  <span
+    role="img"
+    aria-label="calendar"
+    style={{ fontSize: '14px', verticalAlign: 'middle', display: 'inline-flex' }}
+  >
+    <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
+      <path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zm-40 656H184V460h656v380zM184 392V256h128v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h256v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h128v136H184z" />
+    </svg>
+  </span>
+)
 
 export default () => {
   const items = [
@@ -325,7 +337,7 @@ export default () => {
 | ------------------ | ----------------------- | -------------------------------------------------------- | ----------- |
 | activeKey          | 当前激活 tab 面板的 key | `string`                                                 | -           |
 | defaultActiveKey   | 初始化选中面板的 key    | `string`                                                 | -           |
-| items              | 配置选项卡内容          | `TabItem[]`                                              | `[]`        |
+| items              | 配置选项卡内容          | [TabItem[]](#tabitem)                                    | `[]`        |
 | type               | 页签的基本样式          | `'line' \| 'card' \| 'editable-card'`                    | `'line'`    |
 | size               | 大小                    | `'small' \| 'default' \| 'large'`                        | `'default'` |
 | tabPosition        | 页签位置                | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `'top'`     |
@@ -348,7 +360,10 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-| Token Name                                | Description        |
+<details>
+<summary>组件 Token (components.tabs)</summary>
+
+| 变量名                                    | 说明               |
 | ----------------------------------------- | ------------------ |
 | `components.tabs.tabBarBorderColor`       | 标签栏边框颜色     |
 | `components.tabs.tabBarBorderWidth`       | 标签栏边框宽度     |
@@ -363,3 +378,5 @@ export default () => {
 | `components.tabs.tabItemVerticalGutter`   | 标签项垂直间距     |
 | `components.tabs.inkBarColor`             | 指示条颜色         |
 | `components.tabs.inkBarHeight`            | 指示条高度         |
+
+</details>

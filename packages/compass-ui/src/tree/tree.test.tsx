@@ -281,6 +281,26 @@ describe('Tree', () => {
       fireEvent.click(checkboxes[1])
       expect(onCheck).toHaveBeenCalled()
     })
+
+    it('should expand on click when expandOnClick is true', () => {
+      const onExpand = jest.fn()
+      render(
+        <Tree
+          treeData={treeData}
+          onExpand={onExpand}
+          expandOnClick
+          defaultExpandedKeys={[]} // Start collapsed
+        />,
+      )
+
+      // Click on the node title (not switcher)
+      // Node 1 is a parent node
+      fireEvent.click(screen.getByText('Node 1'))
+
+      expect(onExpand).toHaveBeenCalled()
+      // Verify expanded is true
+      expect(onExpand.mock.calls[0][1].expanded).toBe(true)
+    })
   })
 
   describe('Boundary', () => {

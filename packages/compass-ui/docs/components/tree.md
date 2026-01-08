@@ -111,6 +111,11 @@ export default () => {
             { key: '0-0-0-1', title: 'leaf', isLeaf: true },
           ],
         },
+        {
+          key: '0-0-1',
+          title: 'parent 1-1',
+          children: [{ key: '0-0-1-0', title: 'leaf', isLeaf: true }],
+        },
       ],
     },
   ]
@@ -151,6 +156,184 @@ export default () => {
   ]
 
   return <Tree treeData={treeDataWithIcon} showIcon defaultExpandedKeys={['0-0']} />
+}
+```
+
+### 点击节点展开
+
+设置 `expandOnClick` 属性，点击节点标题也可以展开/折叠节点。
+
+```tsx
+import React from 'react'
+import { Tree } from '@xinghunm/compass-ui'
+
+export default () => {
+  const treeData = [
+    {
+      key: '0-0',
+      title: 'Parent 1',
+      children: [
+        { key: '0-0-0', title: 'Child 1', isLeaf: true },
+        { key: '0-0-1', title: 'Child 2', isLeaf: true },
+      ],
+    },
+    {
+      key: '0-1',
+      title: 'Parent 2',
+      children: [{ key: '0-1-0', title: 'Child 3', isLeaf: true }],
+    },
+  ]
+
+  return <Tree treeData={treeData} defaultExpandedKeys={['0-0']} expandOnClick />
+}
+```
+
+### 自定义展开/折叠图标
+
+通过 `switcherIcon` 自定义展开/折叠图标。
+
+```tsx
+import React, { useState } from 'react'
+import { Tree } from '@xinghunm/compass-ui'
+
+export default () => {
+  const treeData = [
+    {
+      key: '0-0',
+      title: 'Parent 1',
+      children: [
+        { key: '0-0-0', title: 'Child 1', isLeaf: true },
+        { key: '0-0-1', title: 'Child 2', isLeaf: true },
+      ],
+    },
+    {
+      key: '0-1',
+      title: 'Parent 2',
+      children: [{ key: '0-1-0', title: 'Child 3', isLeaf: true }],
+    },
+  ]
+
+  return (
+    <Tree
+      treeData={treeData}
+      defaultExpandedKeys={['0-0', '0-1']}
+      switcherIcon={({ expanded }) => (
+        <span
+          style={{
+            color: '#00000073',
+            fontSize: '12px',
+            display: 'inline-block',
+            transform: `rotate(${expanded ? 90 : 0}deg)`,
+            transition: 'transform 0.2s',
+          }}
+        >
+          ›
+        </span>
+      )}
+    />
+  )
+}
+```
+
+### 自定义标题渲染
+
+通过 `titleRender` 自定义节点标题的渲染逻辑，实现更丰富的展示效果。
+
+```tsx
+import React, { useState } from 'react'
+import { Tree } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [selectedKeys, setSelectedKeys] = useState(['0-0-0'])
+  const [expandedKeys, setExpandedKeys] = useState(['0-0'])
+
+  const treeData = [
+    {
+      key: '0-0',
+      title: 'Parent 1',
+      children: [
+        { key: '0-0-0', title: 'Child 1', isLeaf: true },
+        { key: '0-0-1', title: 'Child 2', isLeaf: true },
+      ],
+    },
+    {
+      key: '0-1',
+      title: 'Parent 2',
+      children: [{ key: '0-1-0', title: 'Child 3', isLeaf: true }],
+    },
+  ]
+
+  return (
+    <div
+      style={{
+        padding: '24px',
+        background: '#fff',
+        border: '1px solid #f0f0f0',
+        color: '#000000d9',
+        width: '300px',
+        borderRadius: '8px',
+      }}
+    >
+      <Tree
+        treeData={treeData}
+        expandedKeys={expandedKeys}
+        selectedKeys={selectedKeys}
+        onExpand={setExpandedKeys}
+        onSelect={(keys) => setSelectedKeys(keys)}
+        titleRender={(node) => {
+          const selected = selectedKeys.includes(node.key)
+          const isLeaf = node.isLeaf
+
+          if (!isLeaf) {
+            return (
+              <span
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000d9',
+                  lineHeight: '24px',
+                }}
+              >
+                {node.title}
+              </span>
+            )
+          }
+
+          return (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                border: `1px solid ${selected ? '#1677ff' : '#d9d9d9'}`,
+                borderRadius: '4px',
+                background: '#fff',
+                margin: '4px 0',
+                width: '100%',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: selected ? '0 0 0 2px rgba(22, 119, 255, 0.1)' : 'none',
+              }}
+            >
+              <span
+                style={{
+                  color: selected ? '#1677ff' : '#000000d9',
+                  fontSize: '13px',
+                  flex: 1,
+                  marginRight: '8px',
+                }}
+              >
+                {node.title}
+              </span>
+              {selected && <span style={{ color: '#1677ff' }}>✓</span>}
+            </div>
+          )
+        }}
+      />
+    </div>
+  )
 }
 ```
 
@@ -290,25 +473,43 @@ export default () => {
 
 ### Tree
 
-| 参数                | 说明                             | 类型                           | 默认值  |
-| ------------------- | -------------------------------- | ------------------------------ | ------- |
-| treeData            | 树形数据                         | `DataNode[]`                   | `[]`    |
-| checkable           | 节点前添加 Checkbox 复选框       | `boolean`                      | `false` |
-| selectable          | 是否可选中                       | `boolean`                      | `true`  |
-| showLine            | 是否展示连接线                   | `boolean`                      | `false` |
-| showIcon            | 是否展示 TreeNode title 前的图标 | `boolean`                      | `false` |
-| virtual             | 设置 false 时关闭虚拟滚动        | `boolean`                      | `true`  |
-| height              | 虚拟滚动容器高度                 | `number`                       | -       |
-| itemHeight          | 虚拟滚动每一行的高度             | `number`                       | -       |
-| defaultExpandedKeys | 默认展开的节点 key 数组          | `(string \| number)[]`         | -       |
-| expandedKeys        | （受控）展开的节点 key 数组      | `(string \| number)[]`         | -       |
-| defaultSelectedKeys | 默认选中的节点 key 数组          | `(string \| number)[]`         | -       |
-| selectedKeys        | （受控）选中的节点 key 数组      | `(string \| number)[]`         | -       |
-| defaultCheckedKeys  | 默认勾选的节点 key 数组          | `(string \| number)[]`         | -       |
-| checkedKeys         | （受控）勾选的节点 key 数组      | `(string \| number)[]`         | -       |
-| onExpand            | 展开/收起节点时触发              | `(expandedKeys, info) => void` | -       |
-| onSelect            | 点击树节点时触发                 | `(selectedKeys, info) => void` | -       |
-| onCheck             | 点击复选框时触发                 | `(checkedKeys, info) => void`  | -       |
+| 参数                | 说明                             | 类型                                                                                                                 | 默认值  |
+| ------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------- |
+| treeData            | 树形数据                         | [DataNode[]](#datanode)                                                                                              | `[]`    |
+| checkable           | 节点前添加 Checkbox 复选框       | `boolean`                                                                                                            | `false` |
+| selectable          | 是否可选中                       | `boolean`                                                                                                            | `true`  |
+| showLine            | 是否展示连接线                   | `boolean`                                                                                                            | `false` |
+| showIcon            | 是否展示 TreeNode title 前的图标 | `boolean`                                                                                                            | `false` |
+| virtual             | 设置 false 时关闭虚拟滚动        | `boolean`                                                                                                            | `true`  |
+| height              | 虚拟滚动容器高度                 | `number`                                                                                                             | -       |
+| itemHeight          | 虚拟滚动每一行的高度             | `number`                                                                                                             | -       |
+| defaultExpandedKeys | 默认展开的节点 key 数组          | `(string \| number)[]`                                                                                               | -       |
+| expandedKeys        | （受控）展开的节点 key 数组      | `(string \| number)[]`                                                                                               | -       |
+| defaultSelectedKeys | 默认选中的节点 key 数组          | `(string \| number)[]`                                                                                               | -       |
+| selectedKeys        | （受控）选中的节点 key 数组      | `(string \| number)[]`                                                                                               | -       |
+| defaultCheckedKeys  | 默认勾选的节点 key 数组          | `(string \| number)[]`                                                                                               | -       |
+| checkedKeys         | （受控）勾选的节点 key 数组      | `(string \| number)[]`                                                                                               | -       |
+| onExpand            | 展开/收起节点时触发              | `(expandedKeys: (string \| number)[], info: { node: DataNode; expanded: boolean }) => void`                          | -       |
+| onSelect            | 点击树节点时触发                 | `(selectedKeys: (string \| number)[], info: { node: DataNode; selected: boolean; event: React.MouseEvent }) => void` | -       |
+| onCheck             | 点击复选框时触发                 | `(checkedKeys: (string \| number)[], info: { node: DataNode; checked: boolean; event: React.MouseEvent }) => void`   | -       |
+| switcherIcon        | 自定义展开图标                   | `ReactNode \| ((props: { expanded: boolean }) => ReactNode)`                                                         | -       |
+| titleRender         | 自定义标题渲染                   | `(node: DataNode) => ReactNode`                                                                                      | -       |
+| expandOnClick       | 点击节点是否展开                 | `boolean`                                                                                                            | `false` |
+| className           | 自定义类名                       | `string`                                                                                                             | -       |
+| style               | 自定义样式                       | `CSSProperties`                                                                                                      | -       |
+
+### DataNode
+
+| 参数       | 说明           | 类型               | 默认值  |
+| ---------- | -------------- | ------------------ | ------- |
+| key        | 唯一标识       | `string \| number` | -       |
+| title      | 标题           | `ReactNode`        | -       |
+| children   | 子节点         | `DataNode[]`       | -       |
+| disabled   | 是否禁用       | `boolean`          | `false` |
+| selectable | 是否可选       | `boolean`          | `true`  |
+| checkable  | 是否可勾选     | `boolean`          | -       |
+| icon       | 自定义图标     | `ReactNode`        | -       |
+| isLeaf     | 是否是叶子节点 | `boolean`          | `false` |
 
 ## 主题变量 (Design Token)
 

@@ -54,14 +54,14 @@ export interface TreeProps {
   switcherIcon?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode)
   /** Custom title render */
   titleRender?: (node: DataNode) => React.ReactNode
+  /** Whether to expand node on click */
+  expandOnClick?: boolean
   /** Virtual scroll height */
   height?: number
   /** Virtual scroll item height */
   itemHeight?: number
   /** Enable virtual scrolling */
   virtual?: boolean
-  /** Virtual List props */
-  virtualListProps?: Record<string, unknown>
   /** Class name */
   className?: string
   /** Style */
