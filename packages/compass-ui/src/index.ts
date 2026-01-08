@@ -19,6 +19,9 @@ export type { DropdownProps } from './dropdown'
 export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 
+export { default as AutoComplete } from './auto-complete'
+export type { AutoCompleteProps } from './auto-complete'
+
 export { default as Menu } from './menu'
 export type { MenuProps, MenuItemProps, ItemType } from './menu'
 
