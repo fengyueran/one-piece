@@ -1,9 +1,11 @@
 import React, { ReactNode, useEffect, useLayoutEffect, useRef } from 'react'
 import { FormContext, useForm } from './form-context'
 import { FormInstance, Store, ValidateErrorEntity, FieldData } from './types'
+import { StyledForm } from './form.styles'
 
 export interface FormProps<Values = Record<string, unknown>> {
   form?: FormInstance<Values>
+  layout?: 'horizontal' | 'vertical' | 'inline'
   initialValues?: Store
   children?: ReactNode
   onFinish?: (values: Values) => void
@@ -16,6 +18,7 @@ export interface FormProps<Values = Record<string, unknown>> {
 
 export const Form = <Values extends Record<string, unknown> = Record<string, unknown>>({
   form,
+  layout = 'horizontal',
   initialValues,
   children,
   onFinish,
@@ -50,8 +53,8 @@ export const Form = <Values extends Record<string, unknown> = Record<string, unk
 
   return (
     <FormContext.Provider value={formInstance}>
-      <form
-        className={`compass-form ${className || ''}`}
+      <StyledForm
+        className={`compass-form compass-form-${layout} ${className || ''}`}
         style={style}
         onSubmit={(e) => {
           e.preventDefault()
@@ -60,7 +63,7 @@ export const Form = <Values extends Record<string, unknown> = Record<string, unk
         }}
       >
         {children}
-      </form>
+      </StyledForm>
     </FormContext.Provider>
   )
 }

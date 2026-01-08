@@ -179,8 +179,14 @@ export class FormStore {
 
   private notify = (name: string) => {
     this.fieldEntities.forEach((entity) => {
+      const { dependencies } = entity.props
       if (entity.getName() === name) {
         entity.onStoreChange()
+      } else if (dependencies && dependencies.includes(name)) {
+        // Trigger validation for dependent fields only if the field has been touched
+        if (entity.isFieldTouched()) {
+          entity.validateRules()
+        }
       }
     })
 

@@ -57,3 +57,8 @@ Thumbs.db
 
 .dumi
 docs-dist
+
+.cursor/
+.agent/
+.trae/
+

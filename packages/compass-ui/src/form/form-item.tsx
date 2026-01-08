@@ -21,6 +21,7 @@ export interface FormItemProps {
   className?: string
   style?: React.CSSProperties
   help?: React.ReactNode
+  dependencies?: string[]
 }
 
 export const FormItem: React.FC<FormItemProps> = (props) => {
@@ -188,7 +189,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
       style={style}
       hasError={hasError}
     >
-      {label && <Label>{label}</Label>}
+      {label && <Label className="compass-form-item-label">{label}</Label>}
       {getControlled(children)}
       {hasError && (
         <ErrorMessage className="compass-form-item-error-message">{errorMessage}</ErrorMessage>

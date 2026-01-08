@@ -462,4 +462,54 @@ describe('Form', () => {
       expect(screen.getByLabelText('test')).toHaveValue('')
     })
   })
+
+  describe('Dependencies', () => {
+    it('should validate dependent field when dependency changes', async () => {
+      const TestComponent = () => {
+        const [form] = useForm()
+        return (
+          <Form form={form}>
+            <FormItem name="password">
+              <Input aria-label="password" />
+            </FormItem>
+            <FormItem
+              name="confirm"
+              dependencies={['password']}
+              rules={[
+                {
+                  validator: async (_: any, value: any) => {
+                    if (!value || form.getFieldValue('password') === value) {
+                      return Promise.resolve()
+                    }
+                    return Promise.reject(new Error('Passwords do not match'))
+                  },
+                } as any,
+              ]}
+            >
+              <Input aria-label="confirm" />
+            </FormItem>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+      const passwordInput = screen.getByLabelText('password')
+      const confirmInput = screen.getByLabelText('confirm')
+
+      // Type matching passwords
+      await userEvent.type(passwordInput, '123')
+      await userEvent.type(confirmInput, '123')
+
+      expect(screen.queryByText('Passwords do not match')).not.toBeInTheDocument()
+
+      // Change password to mismatch
+      await userEvent.clear(passwordInput)
+      await userEvent.type(passwordInput, '1234')
+
+      // Confirm field should re-validate and show error
+      await waitFor(() => {
+        expect(screen.getByText('Passwords do not match')).toBeInTheDocument()
+      })
+    })
+  })
 })
