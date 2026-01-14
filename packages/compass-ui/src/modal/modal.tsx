@@ -84,7 +84,7 @@ export const BaseModal = (props: ModalBaseProps) => {
     <RootContainer
       className={`compass-modal ${className || ''}`}
       $visible={isOpen}
-      style={style}
+      style={{ zIndex: style?.zIndex }}
       role="dialog"
       aria-modal="true"
       {...res}
@@ -102,6 +102,7 @@ export const BaseModal = (props: ModalBaseProps) => {
         $visible={isOpen}
         $width={props.width}
         onTransitionEnd={onTransitionEnd}
+        style={style}
       >
         {(title || closable) && (
           <Header className="compass-modal-header">

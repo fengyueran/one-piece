@@ -572,17 +572,17 @@ export default () => {
 
 ### Form
 
-| 参数           | 说明                             | 类型                                                                                     | 默认值         |
-| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| form           | 表单控制实例                     | `FormInstance`                                                                           | -              |
-| layout         | 表单布局                         | `'horizontal' \| 'vertical' \| 'inline'`                                                 | `'horizontal'` |
-| initialValues  | 表单默认值                       | `Record<string, unknown>`                                                                | -              |
-| onFinish       | 提交表单且数据验证成功后回调事件 | `(values: Record<string, unknown>) => void`                                              | -              |
-| onFinishFailed | 提交表单且数据验证失败后回调事件 | (errorInfo: [ValidateErrorEntity](#validateerrorentity)) => void                         | -              |
-| onValuesChange | 字段值更新时触发回调事件         | `(changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => void`   | -              |
-| onFieldsChange | 字段状态更新时触发回调事件       | (changedFields: [FieldData](#fielddata)[], allFields: [FieldData](#fielddata)[]) => void | -              |
-| className      | 自定义类名                       | `string`                                                                                 | -              |
-| style          | 自定义样式                       | `React.CSSProperties`                                                                    | -              |
+| 参数           | 说明                             | 类型                                                                                     | 默认值       |
+| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------- | ------------ |
+| form           | 表单控制实例                     | `FormInstance`                                                                           | -            |
+| layout         | 表单布局                         | `'horizontal' \| 'vertical' \| 'inline'`                                                 | `'vertical'` |
+| initialValues  | 表单默认值                       | `Record<string, unknown>`                                                                | -            |
+| onFinish       | 提交表单且数据验证成功后回调事件 | `(values: Record<string, unknown>) => void`                                              | -            |
+| onFinishFailed | 提交表单且数据验证失败后回调事件 | (errorInfo: [ValidateErrorEntity](#validateerrorentity)) => void                         | -            |
+| onValuesChange | 字段值更新时触发回调事件         | `(changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => void`   | -            |
+| onFieldsChange | 字段状态更新时触发回调事件       | (changedFields: [FieldData](#fielddata)[], allFields: [FieldData](#fielddata)[]) => void | -            |
+| className      | 自定义类名                       | `string`                                                                                 | -            |
+| style          | 自定义样式                       | `React.CSSProperties`                                                                    | -            |
 
 ### Form.Item
 

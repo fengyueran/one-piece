@@ -478,6 +478,51 @@ export default () => {
 }
 ```
 
+### 行属性配置
+
+支持自定义行属性。
+
+```tsx
+import React from 'react'
+import { Table, Message } from '@xinghunm/compass-ui'
+
+export default () => {
+  const columns = [
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Age', dataIndex: 'age', key: 'age' },
+    { title: 'Address', dataIndex: 'address', key: 'address' },
+  ]
+  const data = [
+    { key: 1, name: 'John Brown', age: 32, address: 'New York No. 1 Lake Park' },
+    { key: 2, name: 'Jim Green', age: 42, address: 'London No. 1 Lake Park' },
+    { key: 3, name: 'Joe Black', age: 32, address: 'Sidney No. 1 Lake Park' },
+  ]
+  return (
+    <Table
+      columns={columns}
+      dataSource={data}
+      onRow={(record) => {
+        return {
+          onClick: (event) => {
+            Message.info(`Clicked row ${record.name}`)
+          },
+          onMouseEnter: (event) => {
+            console.log('Mouse Enter row', record)
+          },
+        }
+      }}
+      onHeaderRow={(columns, index) => {
+        return {
+          onClick: () => {
+            Message.info('Clicked header row')
+          },
+        }
+      }}
+    />
+  )
+}
+```
+
 ## API
 
 ### Table
@@ -496,6 +541,8 @@ export default () => {
 | scroll       | 滚动设置               | `{ x?: string \| number, y?: string \| number }` | -           |
 | className    | 自定义类名             | `string`                                         | -           |
 | style        | 自定义样式             | `React.CSSProperties`                            | -           |
+| onHeaderRow  | 设置头部行属性         | `(columns, index) => object`                     | -           |
+| onRow        | 设置行属性             | `(record, index) => object`                      | -           |
 
 ### ColumnType
 

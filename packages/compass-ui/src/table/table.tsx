@@ -11,6 +11,8 @@ import {
   StyledTd,
   EmptyWrapper,
   PaginationWrapper,
+  StyledLoadingOverlay,
+  StyledSpinner,
 } from './table.styles'
 
 export function Table<T = unknown>(props: TableProps<T>) {
@@ -27,6 +29,9 @@ export function Table<T = unknown>(props: TableProps<T>) {
     style,
     emptyText = 'No Data',
     scroll,
+    onHeaderRow,
+    onRow,
+    loadingIndicator,
   } = props
 
   const [sortConfig, setSortConfig] = useState<{
@@ -110,7 +115,11 @@ export function Table<T = unknown>(props: TableProps<T>) {
   const renderHeader = () => {
     return (
       <StyledThead scrollY={scroll?.y} className="compass-table-thead">
-        <StyledTr scrollY={scroll?.y} className="compass-table-row">
+        <StyledTr
+          scrollY={scroll?.y}
+          className="compass-table-row"
+          {...(onHeaderRow ? onHeaderRow(columns) : {})}
+        >
           {rowSelection && (
             <StyledTh
               size={size}
@@ -194,31 +203,27 @@ export function Table<T = unknown>(props: TableProps<T>) {
   }
 
   const renderBody = () => {
-    if (loading) {
-      return (
-        <StyledTbody className="compass-table-tbody">
-          <StyledTr className="compass-table-row">
-            <StyledTd
-              colSpan={columns.length + (rowSelection ? 1 : 0)}
-              style={{ textAlign: 'center', padding: '32px' }}
-              className="compass-table-cell"
-            >
-              Loading...
-            </StyledTd>
-          </StyledTr>
-        </StyledTbody>
-      )
-    }
-
     if (processedData.length === 0) {
+      const isInitialLoading = loading && dataSource.length === 0
+
       return (
         <StyledTbody className="compass-table-tbody">
           <StyledTr className="compass-table-row">
             <StyledTd
               colSpan={columns.length + (rowSelection ? 1 : 0)}
               className="compass-table-cell"
+              style={isInitialLoading ? { textAlign: 'center', padding: '32px' } : undefined}
             >
-              <EmptyWrapper className="compass-table-empty">{emptyText}</EmptyWrapper>
+              {isInitialLoading ? (
+                <StyledLoadingOverlay
+                  className="compass-table-loading-overlay"
+                  style={{ position: 'static', background: 'transparent' }}
+                >
+                  {loadingIndicator || <StyledSpinner />}
+                </StyledLoadingOverlay>
+              ) : (
+                <EmptyWrapper className="compass-table-empty">{emptyText}</EmptyWrapper>
+              )}
             </StyledTd>
           </StyledTr>
         </StyledTbody>
@@ -232,7 +237,12 @@ export function Table<T = unknown>(props: TableProps<T>) {
           const isSelected = rowSelection?.selectedRowKeys?.includes(key)
 
           return (
-            <StyledTr key={key} scrollY={scroll?.y} className="compass-table-row">
+            <StyledTr
+              key={key}
+              scrollY={scroll?.y}
+              className="compass-table-row"
+              {...(onRow ? onRow(record, index) : {})}
+            >
               {rowSelection && (
                 <StyledTd
                   size={size}
@@ -282,10 +292,15 @@ export function Table<T = unknown>(props: TableProps<T>) {
   return (
     <div>
       <StyledTableWrapper bordered={bordered} className={tableClassName} style={style}>
-        <StyledTable scrollY={scroll?.y} scrollX={scroll?.x}>
+        <StyledTable className="compass-table-container" scrollY={scroll?.y} scrollX={scroll?.x}>
           {renderHeader()}
           {renderBody()}
         </StyledTable>
+        {loading && dataSource.length > 0 && (
+          <StyledLoadingOverlay className="compass-table-loading-overlay">
+            {loadingIndicator || <StyledSpinner />}
+          </StyledLoadingOverlay>
+        )}
       </StyledTableWrapper>
       {pagination && (
         <PaginationWrapper className="compass-table-pagination">

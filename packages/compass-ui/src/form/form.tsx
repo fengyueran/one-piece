@@ -18,7 +18,7 @@ export interface FormProps<Values = Record<string, unknown>> {
 
 export const Form = <Values extends Record<string, unknown> = Record<string, unknown>>({
   form,
-  layout = 'horizontal',
+  layout = 'vertical',
   initialValues,
   children,
   onFinish,

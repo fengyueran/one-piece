@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 import { Theme } from '../theme'
 import { getThemeToken, getComponentTheme } from '../theme/utils'
 
@@ -131,4 +132,43 @@ export const PaginationWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   padding: 16px 0;
+`
+
+export const StyledLoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(0.5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary};
+  font-weight: 500;
+  max-height: 380px;
+`
+
+const spin = keyframes`
+  100% {
+    transform: rotate(360deg);
+  }
+`
+
+export const StyledSpinner = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+        farthest-side,
+        ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary} 94%,
+        #0000
+      )
+      top/4px 4px no-repeat,
+    conic-gradient(#0000 30%, ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary});
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  animation: ${spin} 1s infinite linear;
 `

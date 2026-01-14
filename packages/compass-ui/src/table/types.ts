@@ -9,7 +9,8 @@ export interface ColumnType<T = unknown> {
   /** Field name to get value from record */
   dataIndex?: keyof T
   /** Render function */
-  render?: (value: unknown, record: T, index: number) => React.ReactNode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  render?: (value: any, record: T, index: number) => React.ReactNode
   /** Column alignment */
   align?: 'left' | 'center' | 'right'
   /** Column width */
@@ -43,6 +44,8 @@ export interface TableProps<T = unknown> {
   size?: 'small' | 'medium' | 'large'
   /** Loading status */
   loading?: boolean
+  /** Custom loading indicator */
+  loadingIndicator?: React.ReactNode
   /** Pagination config, set false to hide */
   pagination?: PaginationProps | false
   /** Row selection config */
@@ -58,4 +61,11 @@ export interface TableProps<T = unknown> {
     x?: string | number
     y?: string | number
   }
+  /** Set header row properties */
+  onHeaderRow?: (
+    columns: ColumnType<T>[],
+    index?: number,
+  ) => React.HTMLAttributes<HTMLTableRowElement>
+  /** Set row properties */
+  onRow?: (record: T, index?: number) => React.HTMLAttributes<HTMLTableRowElement>
 }

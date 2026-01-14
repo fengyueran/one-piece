@@ -142,6 +142,8 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     const mergeProps: Record<string, unknown> = { ...child.props }
 
     mergeProps.value = value === undefined ? '' : value
+    // Pass name to child component for browser password manager recognition
+    mergeProps.name = name
 
     const triggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
 

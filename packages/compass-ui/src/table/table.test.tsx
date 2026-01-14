@@ -153,4 +153,52 @@ describe('Table', () => {
       // Based on Compass UI Pagination, we might not know exact text without checking it, but it should render.
     })
   })
+
+  describe('Custom Row Events', () => {
+    it('should support onHeaderRow', () => {
+      const handleClick = jest.fn()
+      const onHeaderRow = jest.fn(() => ({
+        onClick: handleClick,
+        className: 'custom-header-row',
+        'data-testid': 'custom-header-row',
+      }))
+
+      render(
+        <ThemeProvider>
+          <Table columns={columns} dataSource={data} onHeaderRow={onHeaderRow} />
+        </ThemeProvider>,
+      )
+
+      const headerRow = screen.getByTestId('custom-header-row')
+      expect(headerRow).toHaveClass('custom-header-row')
+
+      fireEvent.click(headerRow)
+      expect(handleClick).toHaveBeenCalled()
+      expect(onHeaderRow).toHaveBeenCalledWith(columns)
+    })
+
+    it('should support onRow', () => {
+      const handleClick = jest.fn()
+      const onRow = jest.fn((record, index) => ({
+        onClick: () => handleClick(record),
+        className: `custom-row-${index}`,
+        'data-testid': `custom-row-${index}`,
+      }))
+
+      render(
+        <ThemeProvider>
+          <Table columns={columns} dataSource={data} onRow={onRow} />
+        </ThemeProvider>,
+      )
+
+      const firstRow = screen.getByTestId('custom-row-0')
+      expect(firstRow).toHaveClass('custom-row-0')
+
+      fireEvent.click(firstRow)
+      expect(handleClick).toHaveBeenCalledWith(data[0])
+
+      const secondRow = screen.getByTestId('custom-row-1')
+      expect(secondRow).toHaveClass('custom-row-1')
+    })
+  })
 })

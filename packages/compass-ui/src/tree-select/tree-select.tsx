@@ -277,7 +277,9 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
               />
             </InputWrapper>
           )}
-          {currentArray.length === 0 && !inputValue && <Placeholder>{placeholder}</Placeholder>}
+          {currentArray.length === 0 && !inputValue && !showSearch && (
+            <Placeholder>{placeholder}</Placeholder>
+          )}
           {currentArray.length === 0 && !inputValue && showSearch && (
             <Placeholder style={{ position: 'absolute', left: 0, pointerEvents: 'none' }}>
               {placeholder}
