@@ -1,5 +1,16 @@
 # @xinghunm/compass-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- - 新增 `Table` 和 `AutoComplete` 组件。
+  - 为基础组件、表单组件、导航组件及数据展示组件添加语义化定制支持。
+  - 增强 `ThemeProvider`，支持 Token 合并及语义化定制工具函数。
+  - `Tree` 组件新增 `onlyLeafSelect` 属性及节点选择功能。
+  - 引入 Dumi 进行文档管理，并更新组件文档。
+  - 优化 `Modal` 样式，更新项目配置。
+
 ## 0.6.0
 
 ### Minor Changes
