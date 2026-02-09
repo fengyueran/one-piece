@@ -9,7 +9,8 @@ export interface DataNode {
   checkable?: boolean
   icon?: React.ReactNode
   isLeaf?: boolean
-  [key: string]: unknown
+  /** Additional custom data fields */
+  extraData?: Record<string, unknown>
 }
 
 export interface TreeProps {
@@ -62,10 +63,42 @@ export interface TreeProps {
   itemHeight?: number
   /** Enable virtual scrolling */
   virtual?: boolean
-  /** Class name */
+
+  /**
+   * Custom class name for root element
+   */
   className?: string
-  /** Style */
+
+  /**
+   * Custom style for root element
+   */
   style?: React.CSSProperties
+
+  /**
+   * Granular styles
+   */
+  styles?: {
+    root?: React.CSSProperties
+    node?: React.CSSProperties
+    content?: React.CSSProperties
+    switcher?: React.CSSProperties
+    checkbox?: React.CSSProperties
+    icon?: React.CSSProperties
+    title?: React.CSSProperties
+  }
+
+  /**
+   * Granular class names
+   */
+  classNames?: {
+    root?: string
+    node?: string
+    content?: string
+    switcher?: string
+    checkbox?: string
+    icon?: string
+    title?: string
+  }
 }
 
 export interface FlattenNode extends DataNode {
@@ -98,4 +131,7 @@ export interface TreeNodeProps extends Omit<DataNode, 'children'> {
   showIcon?: boolean
   isLast?: boolean
   indentLines?: boolean[]
+  hasTitleRender?: boolean
+  styles?: TreeProps['styles']
+  classNames?: TreeProps['classNames']
 }

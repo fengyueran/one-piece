@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { getComponentTheme } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const TreeContainer = styled.div`
   position: relative;
-  font-size: ${({ theme }) => getComponentTheme(theme, 'tree').fontSize};
+  font-size: ${token('components.tree.fontSize', '14px')};
   line-height: 1.5;
-  color: ${({ theme }) => getComponentTheme(theme, 'tree').nodeColor};
+  color: ${token('components.tree.nodeColor', 'rgba(0, 0, 0, 0.88)')};
 `
 
 export const TreeNodeWrapper = styled.div<{
@@ -18,22 +18,22 @@ export const TreeNodeWrapper = styled.div<{
   display: flex;
   align-items: center;
   padding: 0 4px;
-  padding-left: ${({ level, theme }) =>
-    `calc(${level} * ${getComponentTheme(theme, 'tree').indentSize} + 4px)`};
+  padding-left: ${({ level }) =>
+    `calc(${level} * ${token('components.tree.indentSize', '24px')} + 4px)`};
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
   position: relative;
-  background-color: ${({ selected, theme }) =>
-    selected ? getComponentTheme(theme, 'tree').nodeSelectedBg : 'transparent'};
-  border-radius: ${({ theme }) => getComponentTheme(theme, 'tree').borderRadius};
-  color: ${({ selected, theme }) =>
-    selected ? getComponentTheme(theme, 'tree').nodeSelectedColor : 'inherit'};
+  background-color: ${({ selected }) =>
+    selected ? token('components.tree.nodeSelectedBg', '#e6f7ff') : 'transparent'};
+  border-radius: ${token('components.tree.borderRadius', '4px')};
+  color: ${({ selected }) =>
+    selected ? token('components.tree.nodeSelectedColor', 'inherit') : 'inherit'};
 
   &:hover {
-    background-color: ${({ selected, theme }) =>
+    background-color: ${({ selected }) =>
       selected
-        ? getComponentTheme(theme, 'tree').nodeSelectedBg
-        : getComponentTheme(theme, 'tree').nodeHoverBg};
+        ? token('components.tree.nodeSelectedBg', '#e6f7ff')
+        : token('components.tree.nodeHoverBg', '#f5f5f5')};
   }
 
   ${({ disabled }) =>
@@ -63,13 +63,12 @@ export const Switcher = styled.span<{ expanded?: boolean; showLine?: boolean }>`
   transform: rotate(
     ${({ expanded, showLine }) => (showLine ? '0deg' : expanded ? '90deg' : '0deg')}
   );
-  transition: transform 0.2s;
   z-index: 1;
   background: ${({ showLine }) => (showLine ? '#fff' : 'transparent')};
-  color: ${({ theme }) => getComponentTheme(theme, 'tree').switcherColor};
+  color: ${token('components.tree.switcherColor', 'rgba(0, 0, 0, 0.45)')};
 
   &:hover {
-    color: ${({ theme }) => getComponentTheme(theme, 'tree').switcherHoverColor};
+    color: ${token('components.tree.switcherHoverColor', 'rgba(0, 0, 0, 0.88)')};
   }
 
   &.is-noop {
@@ -83,7 +82,7 @@ export const Switcher = styled.span<{ expanded?: boolean; showLine?: boolean }>`
 
 export const Indent = styled.span<{ active?: boolean; isLast?: boolean }>`
   align-self: stretch;
-  width: ${({ theme }) => getComponentTheme(theme, 'tree').indentSize};
+  width: ${token('components.tree.indentSize', '24px')};
   display: inline-block;
   flex-shrink: 0;
   position: relative;
@@ -119,7 +118,6 @@ export const NodeContent = styled.div`
 export const NodeTitle = styled.div`
   flex: 1;
   min-width: 0;
-  margin-left: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -25,13 +25,15 @@ export function Table<T = unknown>(props: TableProps<T>) {
     loading = false,
     pagination,
     rowSelection,
-    className,
-    style,
     emptyText = 'No Data',
     scroll,
     onHeaderRow,
     onRow,
     loadingIndicator,
+    className,
+    style,
+    styles,
+    classNames,
   } = props
 
   const [sortConfig, setSortConfig] = useState<{
@@ -114,17 +116,23 @@ export function Table<T = unknown>(props: TableProps<T>) {
   // Render helpers
   const renderHeader = () => {
     return (
-      <StyledThead scrollY={scroll?.y} className="compass-table-thead">
+      <StyledThead
+        scrollY={scroll?.y}
+        className={`compass-table-thead ${classNames?.thead || ''}`}
+        style={styles?.thead}
+      >
         <StyledTr
           scrollY={scroll?.y}
-          className="compass-table-row"
+          className={`compass-table-row ${classNames?.tr || ''}`}
+          style={styles?.tr}
           {...(onHeaderRow ? onHeaderRow(columns) : {})}
         >
           {rowSelection && (
             <StyledTh
               size={size}
               width={50}
-              className="compass-table-cell compass-table-selection-column"
+              className={`compass-table-cell compass-table-selection-column ${classNames?.th || ''}`}
+              style={styles?.th}
               fixed="left"
             >
               <input
@@ -149,8 +157,8 @@ export function Table<T = unknown>(props: TableProps<T>) {
                 width={col.width}
                 size={size}
                 fixed={col.fixed}
-                className="compass-table-cell"
-                style={{ cursor: col.sorter ? 'pointer' : 'default' }}
+                className={`compass-table-cell ${classNames?.th || ''}`}
+                style={{ cursor: col.sorter ? 'pointer' : 'default', ...styles?.th }}
                 onClick={() => handleSort(colKey)}
               >
                 <div
@@ -207,22 +215,37 @@ export function Table<T = unknown>(props: TableProps<T>) {
       const isInitialLoading = loading && dataSource.length === 0
 
       return (
-        <StyledTbody className="compass-table-tbody">
-          <StyledTr className="compass-table-row">
+        <StyledTbody
+          className={`compass-table-tbody ${classNames?.tbody || ''}`}
+          style={styles?.tbody}
+        >
+          <StyledTr className={`compass-table-row ${classNames?.tr || ''}`} style={styles?.tr}>
             <StyledTd
               colSpan={columns.length + (rowSelection ? 1 : 0)}
-              className="compass-table-cell"
-              style={isInitialLoading ? { textAlign: 'center', padding: '32px' } : undefined}
+              className={`compass-table-cell ${classNames?.td || ''}`}
+              style={{
+                ...(isInitialLoading ? { textAlign: 'center', padding: '32px' } : undefined),
+                ...styles?.td,
+              }}
             >
               {isInitialLoading ? (
                 <StyledLoadingOverlay
-                  className="compass-table-loading-overlay"
-                  style={{ position: 'static', background: 'transparent' }}
+                  className={`compass-table-loading-overlay ${classNames?.loadingOverlay || ''}`}
+                  style={{
+                    position: 'static',
+                    background: 'transparent',
+                    ...styles?.loadingOverlay,
+                  }}
                 >
                   {loadingIndicator || <StyledSpinner />}
                 </StyledLoadingOverlay>
               ) : (
-                <EmptyWrapper className="compass-table-empty">{emptyText}</EmptyWrapper>
+                <EmptyWrapper
+                  className={`compass-table-empty ${classNames?.empty || ''}`}
+                  style={styles?.empty}
+                >
+                  {emptyText}
+                </EmptyWrapper>
               )}
             </StyledTd>
           </StyledTr>
@@ -231,7 +254,11 @@ export function Table<T = unknown>(props: TableProps<T>) {
     }
 
     return (
-      <StyledTbody scrollY={scroll?.y} className="compass-table-tbody">
+      <StyledTbody
+        scrollY={scroll?.y}
+        className={`compass-table-tbody ${classNames?.tbody || ''}`}
+        style={styles?.tbody}
+      >
         {processedData.map((record, index) => {
           const key = getRowKey(record, index)
           const isSelected = rowSelection?.selectedRowKeys?.includes(key)
@@ -240,13 +267,15 @@ export function Table<T = unknown>(props: TableProps<T>) {
             <StyledTr
               key={key}
               scrollY={scroll?.y}
-              className="compass-table-row"
+              className={`compass-table-row ${classNames?.tr || ''}`}
+              style={styles?.tr}
               {...(onRow ? onRow(record, index) : {})}
             >
               {rowSelection && (
                 <StyledTd
                   size={size}
-                  className="compass-table-cell compass-table-selection-column"
+                  className={`compass-table-cell compass-table-selection-column ${classNames?.td || ''}`}
+                  style={styles?.td}
                   fixed="left"
                 >
                   <input
@@ -267,7 +296,8 @@ export function Table<T = unknown>(props: TableProps<T>) {
                     align={col.align}
                     size={size}
                     fixed={col.fixed}
-                    className="compass-table-cell"
+                    className={`compass-table-cell ${classNames?.td || ''}`}
+                    style={styles?.td}
                   >
                     {col.render ? col.render(value, record, index) : (value as React.ReactNode)}
                   </StyledTd>
@@ -284,26 +314,40 @@ export function Table<T = unknown>(props: TableProps<T>) {
     'compass-table',
     size && `compass-table--${size}`,
     bordered && 'compass-table--bordered',
-    className,
   ]
     .filter(Boolean)
     .join(' ')
 
   return (
     <div>
-      <StyledTableWrapper bordered={bordered} className={tableClassName} style={style}>
-        <StyledTable className="compass-table-container" scrollY={scroll?.y} scrollX={scroll?.x}>
+      <StyledTableWrapper
+        bordered={bordered}
+        className={`${tableClassName} ${className || ''} ${classNames?.root || ''}`}
+        style={{ ...style, ...styles?.root }}
+      >
+        <StyledTable
+          className={`compass-table-container ${classNames?.table || ''}`}
+          scrollY={scroll?.y}
+          scrollX={scroll?.x}
+          style={styles?.table}
+        >
           {renderHeader()}
           {renderBody()}
         </StyledTable>
         {loading && dataSource.length > 0 && (
-          <StyledLoadingOverlay className="compass-table-loading-overlay">
+          <StyledLoadingOverlay
+            className={`compass-table-loading-overlay ${classNames?.loadingOverlay || ''}`}
+            style={styles?.loadingOverlay}
+          >
             {loadingIndicator || <StyledSpinner />}
           </StyledLoadingOverlay>
         )}
       </StyledTableWrapper>
       {pagination && (
-        <PaginationWrapper className="compass-table-pagination">
+        <PaginationWrapper
+          className={`compass-table-pagination ${classNames?.pagination || ''}`}
+          style={styles?.pagination}
+        >
           <Pagination {...pagination} />
         </PaginationWrapper>
       )}

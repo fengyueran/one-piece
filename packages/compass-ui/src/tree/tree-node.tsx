@@ -32,6 +32,8 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
   showLine,
   showIcon,
   indentLines = [],
+  styles,
+  classNames,
 }) => {
   const handleExpand = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -82,8 +84,8 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
       level={showLine ? 0 : level}
       selected={selected}
       disabled={disabled}
-      className={`compass-tree-node ${selected ? 'compass-tree-node--selected' : ''} ${disabled ? 'compass-tree-node--disabled' : ''} ${className || ''}`}
-      style={style}
+      className={`compass-tree-node ${selected ? 'compass-tree-node--selected' : ''} ${disabled ? 'compass-tree-node--disabled' : ''} ${isLeaf ? 'compass-tree-node--leaf' : ''} ${classNames?.node || ''} ${className || ''}`}
+      style={{ ...style, ...styles?.node }}
       onClick={handleSelect}
       showLine={showLine}
     >
@@ -96,23 +98,36 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
         <Switcher
           expanded={shouldRotate ? expanded : undefined}
           onClick={handleExpand}
-          className="compass-tree-switcher"
+          className={`compass-tree-switcher ${classNames?.switcher || ''}`}
+          style={styles?.switcher}
           showLine={showLine}
         >
           {renderSwitcherIcon()}
         </Switcher>
       ) : showLine ? (
-        <Switcher className="compass-tree-switcher compass-tree-switcher--leaf" showLine={showLine}>
+        <Switcher
+          className={`compass-tree-switcher compass-tree-switcher--leaf ${classNames?.switcher || ''}`}
+          showLine={showLine}
+          style={styles?.switcher}
+        >
           {renderSwitcherIcon()}
         </Switcher>
       ) : (
-        <Switcher className="compass-tree-switcher compass-tree-switcher--noop" showLine={showLine}>
+        <Switcher
+          className={`compass-tree-switcher compass-tree-switcher--noop ${classNames?.switcher || ''}`}
+          showLine={showLine}
+          style={styles?.switcher}
+        >
           <span style={{ width: '16px', display: 'inline-block' }} />
         </Switcher>
       )}
 
-      {checkable && (
-        <CheckboxWrapper onClick={handleCheck} className="compass-tree-checkbox">
+      {(checkable as boolean | undefined) && (
+        <CheckboxWrapper
+          onClick={handleCheck}
+          className={`compass-tree-checkbox ${classNames?.checkbox || ''}`}
+          style={styles?.checkbox}
+        >
           <input
             type="checkbox"
             checked={checked}
@@ -127,9 +142,24 @@ export const TreeNode: React.FC<TreeNodeProps> = ({
         </CheckboxWrapper>
       )}
 
-      <NodeContent className="compass-tree-content">
-        {showIcon && icon && <IconWrapper className="compass-tree-icon">{icon}</IconWrapper>}
-        <NodeTitle className="compass-tree-title">{title}</NodeTitle>
+      <NodeContent
+        className={`compass-tree-content ${classNames?.content || ''}`}
+        style={styles?.content}
+      >
+        {showIcon && icon && (
+          <IconWrapper
+            className={`compass-tree-icon ${classNames?.icon || ''}`}
+            style={styles?.icon}
+          >
+            {icon}
+          </IconWrapper>
+        )}
+        <NodeTitle
+          className={`compass-tree-title ${classNames?.title || ''}`}
+          style={styles?.title}
+        >
+          {title}
+        </NodeTitle>
       </NodeContent>
     </TreeNodeWrapper>
   )

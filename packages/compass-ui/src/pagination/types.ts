@@ -31,4 +31,28 @@ export interface PaginationProps {
   className?: string
   /** Custom style */
   style?: React.CSSProperties
+
+  /**
+   * Granular styles
+   */
+  styles?: {
+    root?: React.CSSProperties
+    item?: React.CSSProperties
+    activeItem?: React.CSSProperties
+    jumpItem?: React.CSSProperties
+    options?: React.CSSProperties
+    total?: React.CSSProperties
+  }
+
+  /**
+   * Granular class names
+   */
+  classNames?: {
+    root?: string
+    item?: string
+    activeItem?: string
+    jumpItem?: string
+    options?: string
+    total?: string
+  }
 }

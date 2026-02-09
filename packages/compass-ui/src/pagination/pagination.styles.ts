@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { token } from '../theme/token-utils'
 
 export const PaginationContainer = styled.ul<{ disabled?: boolean; size?: 'default' | 'small' }>`
   display: flex;
@@ -6,8 +7,8 @@ export const PaginationContainer = styled.ul<{ disabled?: boolean; size?: 'defau
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: ${({ theme }) => theme.components?.pagination?.fontSize || '14px'};
-  color: ${({ theme }) => theme.components?.pagination?.itemColor || 'rgba(0, 0, 0, 0.88)'};
+  font-size: ${token('components.pagination.fontSize', '14px')};
+  color: ${token('components.pagination.itemColor', 'rgba(0, 0, 0, 0.88)')};
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'default')};
 
@@ -46,45 +47,45 @@ export const PaginationItem = styled.li<{
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-width: ${({ theme, size }) =>
-    size === 'small' ? '24px' : theme.components?.pagination?.itemSize || '32px'};
-  height: ${({ theme, size }) =>
-    size === 'small' ? '24px' : theme.components?.pagination?.itemSize || '32px'};
+  min-width: ${({ size }) =>
+    size === 'small' ? '24px' : token('components.pagination.itemSize', '32px')};
+  height: ${({ size }) =>
+    size === 'small' ? '24px' : token('components.pagination.itemSize', '32px')};
   margin-right: 8px;
-  border-radius: ${({ theme }) => theme.components?.pagination?.itemBorderRadius || '4px'};
-  background-color: ${({ theme, active }) =>
+  border-radius: ${token('components.pagination.itemBorderRadius', '4px')};
+  background-color: ${({ active }) =>
     active
-      ? theme.components?.pagination?.itemActiveBg || '#ffffff'
-      : theme.components?.pagination?.itemBg || '#ffffff'};
+      ? token('components.pagination.itemActiveBg', '#ffffff')
+      : token('components.pagination.itemBg', '#ffffff')};
   border: 1px solid
-    ${({ theme, active }) =>
-      active ? theme.colors?.primary || '#1890ff' : theme.colors?.border || '#d9d9d9'};
-  color: ${({ theme, active }) =>
+    ${({ active }) =>
+      active ? token('colors.primary', '#1890ff') : token('colors.border', '#d9d9d9')};
+  color: ${({ active }) =>
     active
-      ? theme.components?.pagination?.itemActiveColor || '#1890ff'
-      : theme.components?.pagination?.itemColor || 'rgba(0, 0, 0, 0.88)'};
+      ? token('components.pagination.itemActiveColor', '#1890ff')
+      : token('components.pagination.itemColor', 'rgba(0, 0, 0, 0.88)')};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   user-select: none;
   transition: all 0.2s;
   font-weight: ${({ active }) => (active ? 600 : 400)};
 
   &:hover {
-    border-color: ${({ theme, active, disabled }) =>
+    border-color: ${({ active, disabled }) =>
       disabled
         ? active
-          ? theme.colors?.primary || '#1890ff'
-          : theme.colors?.border || '#d9d9d9'
+          ? token('colors.primary', '#1890ff')
+          : token('colors.border', '#d9d9d9')
         : active
-          ? theme.colors?.primary || '#1890ff'
-          : theme.colors?.primaryHover || '#40a9ff'};
-    color: ${({ theme, active, disabled }) =>
+          ? token('colors.primary', '#1890ff')
+          : token('colors.primaryHover', '#40a9ff')};
+    color: ${({ active, disabled }) =>
       disabled
         ? active
-          ? theme.components?.pagination?.itemActiveColor || '#1890ff'
-          : theme.components?.pagination?.itemColor || 'rgba(0, 0, 0, 0.88)'
+          ? token('components.pagination.itemActiveColor', '#1890ff')
+          : token('components.pagination.itemColor', 'rgba(0, 0, 0, 0.88)')
         : active
-          ? theme.components?.pagination?.itemActiveColor || '#1890ff'
-          : theme.components?.pagination?.itemHoverColor || '#40a9ff'};
+          ? token('components.pagination.itemActiveColor', '#1890ff')
+          : token('components.pagination.itemHoverColor', '#40a9ff')};
   }
 
   a {
@@ -105,10 +106,10 @@ export const PaginationItem = styled.li<{
     background: transparent;
 
     &:hover {
-      color: ${({ theme, disabled }) =>
+      color: ${({ disabled }) =>
         disabled
-          ? theme.components?.pagination?.itemColor || 'rgba(0, 0, 0, 0.88)'
-          : theme.colors?.primary || '#1890ff'};
+          ? token('components.pagination.itemColor', 'rgba(0, 0, 0, 0.88)')
+          : token('colors.primary', '#1890ff')};
 
       .compass-pagination-item-ellipsis {
         opacity: ${({ disabled }) => (disabled ? 1 : 0)};
@@ -148,6 +149,6 @@ export const PaginationJump = styled.li`
   width: 32px;
   height: 32px;
   margin-right: 8px;
-  color: ${({ theme }) => theme.components?.pagination?.itemColor || 'rgba(0, 0, 0, 0.25)'};
+  color: ${token('components.pagination.itemColor', 'rgba(0, 0, 0, 0.25)')};
   cursor: pointer;
 `

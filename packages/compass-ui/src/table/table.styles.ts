@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
-import { Theme } from '../theme'
-import { getThemeToken, getComponentTheme } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const StyledTableWrapper = styled.div<{
   bordered?: boolean
@@ -10,9 +9,9 @@ export const StyledTableWrapper = styled.div<{
   width: 100%;
   overflow-x: auto;
   border-radius: 8px;
-  border: ${({ bordered, theme }) => {
-    const colors = getThemeToken(theme as Theme, 'colors')
-    return bordered ? `1px solid ${colors.border}` : 'none'
+  border: ${({ bordered }) => {
+    const borderColor = token('colors.border', '#d9d9d9')
+    return bordered ? `1px solid ${borderColor}` : 'none'
   }};
 `
 
@@ -25,13 +24,16 @@ export const StyledTable = styled.table<{
   min-width: 100%;
   border-collapse: collapse;
   text-align: left;
-  background-color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').bodyBg};
+  background-color: ${token('components.table.bodyBg', token('colors.background', '#fff'))};
   display: ${({ scrollY }) => (scrollY ? 'flex' : 'table')};
   flex-direction: column;
 `
 
 export const StyledThead = styled.thead<{ scrollY?: string | number }>`
-  background-color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').headerBg};
+  background-color: ${token(
+    'components.table.headerBg',
+    token('colors.backgroundSecondary', '#fafafa'),
+  )};
   ${({ scrollY }) => (scrollY ? 'flex: 0 0 auto;' : '')}
 `
 
@@ -63,13 +65,14 @@ export const StyledTr = styled.tr<{ scrollY?: string | number }>`
       : ''}
 
   &:hover {
-    background-color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').rowHoverBg};
+    background-color: ${token(
+      'components.table.rowHoverBg',
+      token('colors.backgroundSecondary', '#f5f5f5'),
+    )};
   }
 
-  &:not(:last-child) {
-    border-bottom: 1px solid
-      ${({ theme }) => getComponentTheme(theme as Theme, 'table').borderColor};
-  }
+  border-bottom: 1px solid
+    ${token('components.table.borderColor', token('colors.border', '#d9d9d9'))};
 `
 
 export const StyledTh = styled.th<{
@@ -80,17 +83,17 @@ export const StyledTh = styled.th<{
 }>`
   padding: ${({ size }) =>
     size === 'small' ? '8px 8px' : size === 'large' ? '16px 16px' : '12px 16px'};
-  color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').headerColor};
+  color: ${token('components.table.headerColor', token('colors.text', '#333'))};
   font-weight: 600;
   text-align: ${({ align }) => align || 'left'};
   width: ${({ width }) => (typeof width === 'number' ? `${width}px` : width)};
   white-space: nowrap;
-  ${({ fixed, theme }) =>
+  ${({ fixed }) =>
     fixed
       ? `
       position: sticky;
       z-index: 2;
-      background-color: ${getComponentTheme(theme as Theme, 'table').headerBg};
+      background-color: ${token('components.table.headerBg', token('colors.backgroundSecondary', '#fafafa'))};
       ${fixed === 'right' ? 'right: 0;' : 'left: 0;'}
       box-shadow: ${
         fixed === 'right' ? '-2px 0 5px rgba(0,0,0,0.05)' : '2px 0 5px rgba(0,0,0,0.05)'
@@ -106,14 +109,14 @@ export const StyledTd = styled.td<{
 }>`
   padding: ${({ size }) =>
     size === 'small' ? '8px 8px' : size === 'large' ? '16px 16px' : '12px 16px'};
-  color: ${({ theme }) => getComponentTheme(theme as Theme, 'table').color};
+  color: ${token('components.table.color', token('colors.text', '#333'))};
   text-align: ${({ align }) => align || 'left'};
-  ${({ fixed, theme }) =>
+  ${({ fixed }) =>
     fixed
       ? `
       position: sticky;
       z-index: 1;
-      background-color: ${getComponentTheme(theme as Theme, 'table').bodyBg};
+      background-color: ${token('components.table.bodyBg', token('colors.background', '#fff'))};
       ${fixed === 'right' ? 'right: 0;' : 'left: 0;'}
       box-shadow: ${
         fixed === 'right' ? '-2px 0 5px rgba(0,0,0,0.05)' : '2px 0 5px rgba(0,0,0,0.05)'
@@ -125,7 +128,7 @@ export const StyledTd = styled.td<{
 export const EmptyWrapper = styled.div`
   padding: 32px;
   text-align: center;
-  color: ${({ theme }) => getThemeToken(theme as Theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', '#999')};
 `
 
 export const PaginationWrapper = styled.div`
@@ -146,7 +149,7 @@ export const StyledLoadingOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 10;
-  color: ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary};
+  color: ${token('colors.primary', '#1890ff')};
   font-weight: 500;
   max-height: 380px;
 `
@@ -162,13 +165,9 @@ export const StyledSpinner = styled.div`
   height: 32px;
   border-radius: 50%;
   background:
-    radial-gradient(
-        farthest-side,
-        ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary} 94%,
-        #0000
-      )
-      top/4px 4px no-repeat,
-    conic-gradient(#0000 30%, ${({ theme }) => getThemeToken(theme as Theme, 'colors').primary});
+    radial-gradient(farthest-side, ${token('colors.primary', '#1890ff')} 94%, #0000) top/4px 4px
+      no-repeat,
+    conic-gradient(#0000 30%, ${token('colors.primary', '#1890ff')});
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
   animation: ${spin} 1s infinite linear;
 `

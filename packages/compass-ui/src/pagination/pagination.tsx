@@ -24,14 +24,14 @@ export const Pagination: React.FC<PaginationProps> = ({
   onChange,
   disabled,
   size = 'default',
-  className,
-  style,
   showSizeChanger,
   pageSizeOptions = [10, 20, 50, 100],
   showQuickJumper,
   showTotal,
   simple,
   totalAlign = 'left',
+  styles,
+  classNames,
   ...rest
 }) => {
   const { locale: contextLocale } = useConfig()
@@ -138,8 +138,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   if (simple) {
     return (
       <PaginationContainer
-        className={`compass-pagination compass-pagination-simple ${className || ''}`}
-        style={style}
+        className={`compass-pagination compass-pagination-simple ${classNames?.root || ''}`}
+        style={styles?.root}
         disabled={disabled}
         size={size}
         {...rest}
@@ -149,7 +149,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1 || disabled}
           onClick={() => handleChange(currentPage - 1)}
           size={size}
-          className="compass-pagination-prev"
+          className={`compass-pagination-prev ${classNames?.item || ''}`}
+          style={styles?.item}
           title={locale.prev_page}
         >
           <LeftOutlined />
@@ -173,7 +174,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages || disabled}
           onClick={() => handleChange(currentPage + 1)}
           size={size}
-          className="compass-pagination-next"
+          className={`compass-pagination-next ${classNames?.item || ''}`}
+          style={styles?.item}
           title={locale.next_page}
         >
           <RightOutlined />
@@ -189,7 +191,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       return (
         <PaginationItem
           key={`dots-${index}`}
-          className="compass-pagination-jump-placeholder"
+          className={`compass-pagination-jump-placeholder ${classNames?.jumpItem || ''}`}
+          style={styles?.jumpItem}
           size={size}
           disabled={disabled}
           title={isLeftDots ? locale.prev_5 : locale.next_5}
@@ -212,7 +215,12 @@ export const Pagination: React.FC<PaginationProps> = ({
         disabled={disabled}
         size={size}
         onClick={() => handleChange(Number(pageNumber))}
-        className={`compass-pagination-item compass-pagination-item-${pageNumber} ${currentPage === pageNumber ? 'compass-pagination-item-active' : ''}`}
+        className={`compass-pagination-item compass-pagination-item-${pageNumber} ${
+          currentPage === pageNumber
+            ? `compass-pagination-item-active ${classNames?.activeItem || ''}`
+            : ''
+        } ${classNames?.item || ''}`}
+        style={{ ...styles?.item, ...(currentPage === pageNumber ? styles?.activeItem : {}) }}
       >
         {pageNumber}
       </PaginationItem>
@@ -225,10 +233,11 @@ export const Pagination: React.FC<PaginationProps> = ({
     const rangeEnd = Math.min(currentPage * pageSize, total)
     return (
       <li
-        className="compass-pagination-total-text"
+        className={`compass-pagination-total-text ${classNames?.total || ''}`}
         style={{
           marginRight: totalAlign === 'left' ? 8 : 0,
           marginLeft: totalAlign === 'right' ? 8 : 0,
+          ...styles?.total,
         }}
       >
         {showTotal(total, [rangeStart, rangeEnd])}
@@ -238,8 +247,8 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <PaginationContainer
-      className={`compass-pagination ${className || ''}`}
-      style={style}
+      className={`compass-pagination ${classNames?.root || ''}`}
+      style={styles?.root}
       disabled={disabled}
       size={size}
       {...rest}
@@ -251,7 +260,8 @@ export const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1 || disabled}
         onClick={() => handleChange(currentPage - 1)}
         size={size}
-        className="compass-pagination-prev"
+        className={`compass-pagination-prev ${classNames?.item || ''}`}
+        style={styles?.item}
         title={locale.prev_page}
       >
         <LeftOutlined />
@@ -263,20 +273,24 @@ export const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === totalPages || disabled}
         onClick={() => handleChange(currentPage + 1)}
         size={size}
-        className="compass-pagination-next"
+        className={`compass-pagination-next ${classNames?.item || ''}`}
+        style={styles?.item}
         title={locale.next_page}
       >
         <RightOutlined />
       </PaginationItem>
 
       {showSizeChanger && (
-        <li className="compass-pagination-options" style={{ marginLeft: 16 }}>
+        <li
+          className={`compass-pagination-options ${classNames?.options || ''}`}
+          style={{ marginLeft: 16, ...styles?.options }}
+        >
           <Select
             size={size === 'small' ? 'small' : 'medium'}
             value={String(pageSize)}
             onChange={handleSizeChange}
             disabled={disabled}
-            style={{ width: size === 'small' ? 90 : 110 }}
+            styles={{ root: { width: size === 'small' ? 90 : 110 } }}
           >
             {pageSizeOptions.map((opt) => (
               <Select.Option key={opt} value={String(opt)}>
@@ -291,8 +305,8 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {showQuickJumper && (
         <li
-          className="compass-pagination-options compass-pagination-quick-jumper"
-          style={{ marginLeft: 16, display: 'flex', alignItems: 'center' }}
+          className={`compass-pagination-options compass-pagination-quick-jumper ${classNames?.options || ''}`}
+          style={{ marginLeft: 16, display: 'flex', alignItems: 'center', ...styles?.options }}
         >
           {locale.jump_to}
           <InputNumber

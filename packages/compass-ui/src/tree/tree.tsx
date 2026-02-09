@@ -30,6 +30,8 @@ const Tree: React.FC<TreeProps> = ({
   expandOnClick,
   className,
   style,
+  styles,
+  classNames,
 }) => {
   // State management
   const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>(
@@ -166,6 +168,8 @@ const Tree: React.FC<TreeProps> = ({
         showLine={showLine}
         showIcon={showIcon}
         indentLines={indentLines}
+        styles={styles}
+        classNames={classNames}
       />
     )
   }
@@ -213,13 +217,18 @@ const Tree: React.FC<TreeProps> = ({
           showLine={showLine}
           showIcon={showIcon}
           indentLines={indentLines}
+          styles={styles}
+          classNames={classNames}
         />
       )
     })
   }
 
   return (
-    <TreeContainer className={`compass-tree ${className || ''}`} style={style}>
+    <TreeContainer
+      className={`compass-tree ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
+    >
       {renderContent()}
     </TreeContainer>
   )

@@ -50,10 +50,6 @@ export interface TableProps<T = unknown> {
   pagination?: PaginationProps | false
   /** Row selection config */
   rowSelection?: RowSelection<T>
-  /** Custom class name */
-  className?: string
-  /** Custom style */
-  style?: React.CSSProperties
   /** Empty text */
   emptyText?: React.ReactNode
   /** Scroll config */
@@ -68,4 +64,36 @@ export interface TableProps<T = unknown> {
   ) => React.HTMLAttributes<HTMLTableRowElement>
   /** Set row properties */
   onRow?: (record: T, index?: number) => React.HTMLAttributes<HTMLTableRowElement>
+  /** Custom class name */
+  className?: string
+  /** Custom style */
+  style?: React.CSSProperties
+
+  /** Granular styles */
+  styles?: {
+    root?: React.CSSProperties
+    table?: React.CSSProperties
+    thead?: React.CSSProperties
+    tbody?: React.CSSProperties
+    tr?: React.CSSProperties
+    th?: React.CSSProperties
+    td?: React.CSSProperties
+    pagination?: React.CSSProperties
+    empty?: React.CSSProperties
+    loadingOverlay?: React.CSSProperties
+  }
+
+  /** Granular class names */
+  classNames?: {
+    root?: string
+    table?: string
+    thead?: string
+    tbody?: string
+    tr?: string
+    th?: string
+    td?: string
+    pagination?: string
+    empty?: string
+    loadingOverlay?: string
+  }
 }

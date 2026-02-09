@@ -59,4 +59,14 @@ export interface TreeSelectProps extends Omit<SelectProps, 'options' | 'onChange
    * Only allow selecting leaf nodes
    */
   onlyLeafSelect?: boolean
+
+  /**
+   * Custom className
+   */
+  className?: string
+
+  /**
+   * Custom style
+   */
+  style?: React.CSSProperties
 }

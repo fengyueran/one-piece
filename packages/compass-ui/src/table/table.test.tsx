@@ -72,7 +72,7 @@ describe('Table', () => {
     it('should show loading state', () => {
       render(
         <ThemeProvider>
-          <Table columns={columns} dataSource={[]} loading />
+          <Table columns={columns} dataSource={[]} loading loadingIndicator="Loading..." />
         </ThemeProvider>,
       )
       expect(screen.getByText('Loading...')).toBeInTheDocument()
