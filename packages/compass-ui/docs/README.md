@@ -2,7 +2,7 @@
 
 本项目包含两类文档:
 
-## 📚 用户文档 (通过 dumi 生成)
+## 📚 用户文档
 
 面向 **组件库使用者**,通过 `pnpm docs:dev` 启动,访问 http://localhost:8000
 
@@ -51,21 +51,18 @@ docs/
 ## 🚀 命令
 
 ```bash
-# 启动用户文档 (dumi)
+# 启动用户文档
 pnpm docs:dev
 
 # 构建用户文档
 pnpm docs:build
-
-# 启动 Storybook (旧版,可选)
-pnpm storybook
 ```
 
 ## 📝 编写组件文档
 
 在 `docs/components/` 目录下创建 Markdown 文件:
 
-```markdown
+````markdown
 ---
 title: ComponentName 组件名
 nav:
@@ -91,36 +88,18 @@ group:
 
 描述
 
-\`\`\`tsx
+```tsx
 import React from 'react'
 import { ComponentName } from '@xinghunm/compass-ui'
 
 export default () => {
-return <ComponentName>示例</ComponentName>
+  return <ComponentName>示例</ComponentName>
 }
-\`\`\`
+```
 
 ## API
 
 | 参数  | 说明 | 类型     | 默认值 |
 | ----- | ---- | -------- | ------ |
 | prop1 | 说明 | `string` | -      |
-```
-
-## 🔄 迁移说明
-
-我们正在从 Storybook 迁移到 dumi:
-
-- ✅ **已完成**: dumi 基础配置
-- ✅ **已完成**: Steps 组件文档迁移
-- ✅ **已完成**: Button 组件文档迁移
-- 🚧 **进行中**: 其他组件文档迁移
-- 📋 **待办**: 完全移除 Storybook (可选)
-
-## 💡 为什么选择 dumi?
-
-1. **更接近 Ant Design 风格** - 与 Ant Design 官网相同的文档工具
-2. **代码可编辑** - 用户可以直接在文档中编辑和运行代码
-3. **Markdown 优先** - 更简单的文档编写方式
-4. **专为组件库设计** - 内置组件 API 解析等功能
-5. **更好的 SEO** - 静态站点生成,利于搜索引擎收录
+````
