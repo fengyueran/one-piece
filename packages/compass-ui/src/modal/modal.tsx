@@ -26,12 +26,15 @@ export const BaseModal = (props: ModalBaseProps) => {
     className,
     style,
     title,
+    header,
     closable = true,
     onOk,
     okText = '确定',
     cancelText = '取消',
     confirmLoading,
     afterClose,
+    styles,
+    classNames,
     ...res
   } = props
 
@@ -82,46 +85,57 @@ export const BaseModal = (props: ModalBaseProps) => {
 
   return (
     <RootContainer
-      className={`compass-modal ${className || ''}`}
+      className={`compass-modal ${className || ''} ${classNames?.root || ''}`}
       $visible={isOpen}
-      style={{ zIndex: style?.zIndex }}
+      style={{ zIndex: style?.zIndex, ...styles?.root }}
       role="dialog"
       aria-modal="true"
       {...res}
     >
       {maskVisible && (
         <Mask
-          className="compass-modal-mask"
+          className={`compass-modal-mask ${classNames?.mask || ''}`}
+          style={styles?.mask}
           onClick={onCancel}
           aria-hidden="true"
           $visible={isOpen}
         />
       )}
       <ModalContent
-        className="compass-modal-content"
+        className={`compass-modal-content ${classNames?.content || ''}`}
         $visible={isOpen}
         $width={props.width}
         onTransitionEnd={onTransitionEnd}
-        style={style}
+        style={{ ...style, ...styles?.content }}
       >
-        {(title || closable) && (
-          <Header className="compass-modal-header">
-            <Title className="compass-modal-title">{title}</Title>
-            {closable && (
-              <CloseBtn
-                className="compass-modal-close"
-                onClick={onCancel}
-                aria-label="Close"
-                variant="text"
-                shape="circle"
-                icon={<CloseIcon />}
-              />
-            )}
-          </Header>
-        )}
-        <div className="compass-modal-body">{children}</div>
+        {header === undefined
+          ? (title || closable) && (
+              <Header
+                className={`compass-modal-header ${classNames?.header || ''}`}
+                style={styles?.header}
+              >
+                <Title className="compass-modal-title">{title}</Title>
+                {closable && (
+                  <CloseBtn
+                    className="compass-modal-close"
+                    onClick={onCancel}
+                    aria-label="Close"
+                    variant="text"
+                    shape="circle"
+                    icon={<CloseIcon />}
+                  />
+                )}
+              </Header>
+            )
+          : header}
+        <div className={`compass-modal-body ${classNames?.body || ''}`} style={styles?.body}>
+          {children}
+        </div>
         {footer === undefined ? (
-          <Footer className="compass-modal-footer">
+          <Footer
+            className={`compass-modal-footer ${classNames?.footer || ''}`}
+            style={styles?.footer}
+          >
             <StyledButton onClick={onCancel} aria-label="Close modal">
               {mergedCancelText}
             </StyledButton>

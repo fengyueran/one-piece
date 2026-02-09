@@ -245,6 +245,42 @@ describe('Dropdown', () => {
       expect(screen.getByText('Trigger')).toBeInTheDocument()
       // Should not crash and just render trigger
     })
+
+    it('should apply custom classNames and styles', async () => {
+      const user = userEvent.setup()
+      render(
+        <Dropdown
+          overlay={<div data-testid="overlay">Overlay</div>}
+          trigger="click"
+          classNames={{
+            trigger: 'custom-trigger',
+            overlay: 'custom-overlay',
+            content: 'custom-content',
+          }}
+          styles={{
+            trigger: { marginTop: '10px' },
+            overlay: { zIndex: 9999 },
+            content: { padding: '20px' },
+          }}
+        >
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      const trigger = screen.getByText('Trigger')
+      expect(trigger).toHaveClass('custom-trigger')
+      expect(trigger).toHaveStyle('margin-top: 10px')
+
+      await user.click(trigger)
+
+      const overlay = screen.getByTestId('overlay').parentElement?.parentElement // content -> overlay
+      expect(overlay).toHaveClass('custom-overlay')
+      expect(overlay).toHaveStyle('z-index: 9999')
+
+      const content = screen.getByTestId('overlay').parentElement
+      expect(content).toHaveClass('custom-content')
+      expect(content).toHaveStyle('padding: 20px')
+    })
   })
 
   describe('Accessibility', () => {
@@ -263,6 +299,46 @@ describe('Dropdown', () => {
       await waitFor(() => {
         expect(trigger).toHaveAttribute('aria-expanded', 'true')
       })
+    })
+  })
+
+  describe('Style Merging & Customization', () => {
+    it('should support overlayClassName and overlayStyle for styled-components compatibility', async () => {
+      const user = userEvent.setup()
+      render(
+        <Dropdown
+          overlay={<div data-testid="styled-overlay">Overlay</div>}
+          trigger="click"
+          overlayClassName="styled-modal-overlay"
+          overlayStyle={{ backgroundColor: 'red' }}
+        >
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.click(screen.getByText('Trigger'))
+
+      const overlayContainer = document.querySelector('.styled-modal-overlay')
+      expect(overlayContainer).toBeInTheDocument()
+      expect(overlayContainer).toHaveClass('compass-dropdown')
+      expect(overlayContainer).toHaveStyle('background-color: red')
+    })
+
+    it('should merge trigger styles and classes correctly', () => {
+      render(
+        <Dropdown className="dropdown-root-class" style={{ border: '1px solid black' }}>
+          <button className="my-btn" style={{ color: 'blue' }}>
+            Trigger
+          </button>
+        </Dropdown>,
+      )
+
+      const trigger = screen.getByText('Trigger')
+      expect(trigger).toHaveClass('compass-dropdown-trigger')
+      expect(trigger).toHaveClass('dropdown-root-class')
+      expect(trigger).toHaveClass('my-btn')
+      expect(trigger).toHaveStyle('border: 1px solid black')
+      expect(trigger).toHaveStyle('color: blue')
     })
   })
 })

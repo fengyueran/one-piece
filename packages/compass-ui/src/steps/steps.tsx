@@ -25,6 +25,8 @@ const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
   onChange,
   className,
   style,
+  styles,
+  classNames,
 }) => {
   const getStepStatus = (
     stepIndex: number,
@@ -74,8 +76,8 @@ const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
     <StyledSteps
       direction={direction}
       labelPlacement={labelPlacement}
-      className={`compass-steps compass-steps--${direction} compass-steps--label-${labelPlacement} compass-steps--${variant} ${className || ''}`}
-      style={style}
+      className={`compass-steps compass-steps--${direction} compass-steps--label-${labelPlacement} compass-steps--${variant} ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
       role="list"
     >
       {stepItems.map((item, index) => {
@@ -93,39 +95,53 @@ const Steps: React.FC<StepsProps> & { Step: typeof Step } = ({
             variant={variant}
             clickable={isClickable}
             onClick={() => onStepClick(index, item.disabled)}
-            className={`compass-steps-item compass-steps-item--${stepStatus} ${index === current ? 'compass-steps-item--active' : ''} ${item.disabled ? 'compass-steps-item--disabled' : ''} ${item.className || ''}`}
-            style={item.style}
+            className={`compass-steps-item compass-steps-item--${stepStatus} ${index === current ? 'compass-steps-item--active' : ''} ${item.disabled ? 'compass-steps-item--disabled' : ''} ${classNames?.item || ''} ${item.className || ''}`}
+            style={{ ...styles?.item, ...item.style }}
             role="listitem"
           >
             <StyledStepTail
               direction={direction}
               isLast={index === stepItems.length - 1}
               variant={variant}
+              className={classNames?.tail}
+              style={styles?.tail}
             />
             <StyledStepIcon
               status={stepStatus}
               active={index === current}
               variant={variant}
-              className={`compass-steps-icon ${variant === 'dot' ? 'compass-steps-icon--dot' : ''}`}
+              className={`compass-steps-icon ${variant === 'dot' ? 'compass-steps-icon--dot' : ''} ${classNames?.icon || ''}`}
+              style={styles?.icon}
             >
               {variant !== 'dot' && renderIcon(index, stepStatus, item.icon)}
             </StyledStepIcon>
-            <StyledStepContent className="compass-steps-content">
+            <StyledStepContent
+              className={`compass-steps-content ${classNames?.content || ''}`}
+              style={styles?.content}
+            >
               <StyledStepTitle
                 status={stepStatus}
-                className="compass-steps-title"
+                className={`compass-steps-title ${classNames?.title || ''}`}
+                style={styles?.title}
                 isLast={index === stepItems.length - 1}
                 direction={direction}
               >
                 {item.title}
                 {item.subTitle && (
-                  <StyledStepSubTitle className="compass-steps-subtitle">
+                  <StyledStepSubTitle
+                    className={`compass-steps-subtitle ${classNames?.subtitle || ''}`}
+                    style={styles?.subtitle}
+                  >
                     {item.subTitle}
                   </StyledStepSubTitle>
                 )}
               </StyledStepTitle>
               {item.description && (
-                <StyledStepDescription status={stepStatus} className="compass-steps-description">
+                <StyledStepDescription
+                  status={stepStatus}
+                  className={`compass-steps-description ${classNames?.description || ''}`}
+                  style={styles?.description}
+                >
                   {item.description}
                 </StyledStepDescription>
               )}

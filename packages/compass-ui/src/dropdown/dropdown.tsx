@@ -31,6 +31,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   closeOnSelect = true,
   className,
   style,
+  overlayClassName,
+  overlayStyle,
+  classNames,
+  styles,
 }) => {
   const [uncontrolledVisible, setUncontrolledVisible] = useState(false)
   const isControlled = controlledVisible !== undefined
@@ -84,14 +88,27 @@ const Dropdown: React.FC<DropdownProps> = ({
     return <>{children}</>
   }
 
+  const triggerCls = [
+    'compass-dropdown-trigger',
+    className,
+    classNames?.trigger,
+    child.props.className, // Merge child's own className
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const overlayCls = ['compass-dropdown', overlayClassName, classNames?.overlay]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <>
       {React.cloneElement(child, {
         ref,
         ...getReferenceProps({
-          className: `compass-dropdown-trigger ${className || ''}`,
-          style,
           ...child.props,
+          className: triggerCls,
+          style: { ...child.props.style, ...style, ...styles?.trigger },
         }),
       })}
       {visible && (
@@ -99,12 +116,17 @@ const Dropdown: React.FC<DropdownProps> = ({
           {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
           <OverlayContainer
             ref={refs.setFloating}
-            style={floatingStyles}
-            className={`compass-dropdown ${className || ''}`}
+            style={{ ...floatingStyles, ...overlayStyle, ...styles?.overlay }}
+            className={overlayCls}
             {...getFloatingProps()}
           >
             <MenuContext.Provider value={{ onItemClick: handleOverlayClick }}>
-              {dropdownContent}
+              <div
+                className={`compass-dropdown-content ${classNames?.content || ''}`}
+                style={styles?.content}
+              >
+                {dropdownContent}
+              </div>
             </MenuContext.Provider>
           </OverlayContainer>
         </FloatingPortal>

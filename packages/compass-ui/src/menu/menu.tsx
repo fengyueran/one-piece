@@ -1,18 +1,23 @@
-import React, { useContext } from 'react'
+import React, { useContext, forwardRef } from 'react'
 import { MenuProps, MenuItemProps } from './types'
 import { StyledMenu, StyledMenuItem, IconWrapper } from './menu.styles'
 import { MenuContext } from './context'
 
-const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
-  children,
-  items,
-  className,
-  style,
-  onClick,
-  selectedKeys,
-  defaultSelectedKeys = [],
-  onSelect,
-}) => {
+const InternalMenu = forwardRef<HTMLUListElement, MenuProps>((props, ref) => {
+  const {
+    children,
+    items,
+    onClick,
+    selectedKeys,
+    defaultSelectedKeys = [],
+    onSelect,
+    className,
+    style,
+    styles,
+    classNames,
+    ...rest
+  } = props
+
   const parentMenuContext = useContext(MenuContext)
   const [internalSelectedKeys, setInternalSelectedKeys] =
     React.useState<(string | number)[]>(defaultSelectedKeys)
@@ -33,9 +38,15 @@ const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
 
   return (
     <MenuContext.Provider
-      value={{ onItemClick: handleItemClick, selectedKeys: mergedSelectedKeys }}
+      value={{ onItemClick: handleItemClick, selectedKeys: mergedSelectedKeys, styles, classNames }}
     >
-      <StyledMenu className={`compass-menu ${className || ''}`} style={style}>
+      <StyledMenu
+        ref={ref}
+        className={`compass-menu ${className || ''} ${classNames?.root || ''}`}
+        style={{ ...style, ...styles?.root }}
+        role="menu"
+        {...rest}
+      >
         {items
           ? items.map((item) => (
               <MenuItem
@@ -55,18 +66,10 @@ const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
       </StyledMenu>
     </MenuContext.Provider>
   )
-}
+})
 
-export const MenuItem: React.FC<MenuItemProps> = ({
-  children,
-  onClick,
-  disabled,
-  icon,
-  danger,
-  className,
-  style,
-  eventKey,
-}) => {
+export const MenuItem = forwardRef<HTMLLIElement, MenuItemProps>((props, ref) => {
+  const { children, onClick, disabled, icon, danger, eventKey, className, style, ...rest } = props
   const context = useContext(MenuContext)
   const isSelected = eventKey !== undefined && context.selectedKeys?.includes(eventKey)
 
@@ -78,21 +81,48 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 
   return (
     <StyledMenuItem
+      ref={ref}
       className={`compass-menu-item ${disabled ? 'compass-menu-item--disabled' : ''} ${
         danger ? 'compass-menu-item--danger' : ''
-      } ${isSelected ? 'compass-menu-item--selected' : ''} ${className || ''}`}
-      style={style}
+      } ${isSelected ? 'compass-menu-item--selected' : ''} ${context.classNames?.item || ''} ${
+        className || ''
+      }`}
+      style={{ ...context.styles?.item, ...style }}
       onClick={handleClick}
       $disabled={disabled}
       $danger={danger}
       $selected={isSelected}
+      role="menuitem"
+      aria-disabled={disabled}
+      aria-selected={isSelected}
+      {...rest}
     >
-      {icon && <IconWrapper className="compass-menu-item-icon">{icon}</IconWrapper>}
-      <span className="compass-menu-item-content">{children}</span>
+      {icon && (
+        <IconWrapper
+          className={`compass-menu-item-icon ${context.classNames?.icon || ''}`}
+          style={context.styles?.icon}
+        >
+          {icon}
+        </IconWrapper>
+      )}
+      <span
+        className={`compass-menu-item-content ${context.classNames?.content || ''}`}
+        style={context.styles?.content}
+      >
+        {children}
+      </span>
     </StyledMenuItem>
   )
+})
+
+MenuItem.displayName = 'MenuItem'
+InternalMenu.displayName = 'Menu'
+
+type MenuComponent = typeof InternalMenu & {
+  Item: typeof MenuItem
 }
 
+const Menu = InternalMenu as MenuComponent
 Menu.Item = MenuItem
 
 export default Menu

@@ -15,9 +15,7 @@ export interface StepProps {
   status?: StepStatus
   /** Disabled state */
   disabled?: boolean
-  /** Custom className */
   className?: string
-  /** Custom style */
   style?: React.CSSProperties
 }
 
@@ -38,8 +36,42 @@ export interface StepsProps {
   children?: React.ReactNode
   /** Change handler */
   onChange?: (current: number) => void
-  /** Custom className */
+
+  /**
+   * Custom class name for root element
+   */
   className?: string
-  /** Custom style */
+
+  /**
+   * Custom style for root element
+   */
   style?: React.CSSProperties
+
+  /**
+   * Granular styles
+   */
+  styles?: {
+    root?: React.CSSProperties
+    item?: React.CSSProperties
+    icon?: React.CSSProperties
+    content?: React.CSSProperties
+    title?: React.CSSProperties
+    subtitle?: React.CSSProperties
+    description?: React.CSSProperties
+    tail?: React.CSSProperties
+  }
+
+  /**
+   * Granular class names
+   */
+  classNames?: {
+    root?: string
+    item?: string
+    icon?: string
+    content?: string
+    title?: string
+    subtitle?: string
+    description?: string
+    tail?: string
+  }
 }

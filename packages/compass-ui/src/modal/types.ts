@@ -18,6 +18,8 @@ export interface ModalBaseProps {
   style?: CSSProperties
   /** Modal title */
   title?: React.ReactNode
+  /** Custom header content */
+  header?: React.ReactNode
   /** Whether to show the close button */
   closable?: boolean
   /** Width of the modal */
@@ -33,5 +35,26 @@ export interface ModalBaseProps {
   /** Whether the OK button is loading */
   confirmLoading?: boolean
   /** Callback when the modal is completely closed (after animation) */
+  /** Callback when the modal is completely closed (after animation) */
   afterClose?: () => void
+
+  /** Granular styles */
+  styles?: {
+    root?: React.CSSProperties
+    mask?: React.CSSProperties
+    content?: React.CSSProperties
+    header?: React.CSSProperties
+    body?: React.CSSProperties
+    footer?: React.CSSProperties
+  }
+
+  /** Granular class names */
+  classNames?: {
+    root?: string
+    mask?: string
+    content?: string
+    header?: string
+    body?: string
+    footer?: string
+  }
 }

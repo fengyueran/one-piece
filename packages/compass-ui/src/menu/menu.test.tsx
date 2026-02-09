@@ -60,6 +60,26 @@ describe('Menu', () => {
       render(<Menu items={items} />)
       expect(screen.getByRole('img', { name: 'search' })).toBeInTheDocument()
     })
+
+    it('should forward ref to Menu element', () => {
+      const ref = React.createRef<HTMLUListElement>()
+      render(
+        <Menu ref={ref}>
+          <Menu.Item>Item</Menu.Item>
+        </Menu>,
+      )
+      expect(ref.current).toBeInstanceOf(HTMLUListElement)
+    })
+
+    it('should forward ref to Menu.Item element', () => {
+      const ref = React.createRef<HTMLLIElement>()
+      render(
+        <Menu>
+          <Menu.Item ref={ref}>Item</Menu.Item>
+        </Menu>,
+      )
+      expect(ref.current).toBeInstanceOf(HTMLLIElement)
+    })
   })
 
   describe('Props', () => {

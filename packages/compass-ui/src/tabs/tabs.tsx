@@ -24,15 +24,21 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
       items,
       tabBarExtraContent,
       tabPosition = 'top',
+      tabBarPosition,
       type = 'line',
       size = 'default',
+      children,
       className,
       style,
-      children,
+      styles,
+      classNames,
       ...rest
     },
     ref,
   ) => {
+    // Layout position defaults to tabPosition if not specified
+    const layoutPosition = tabBarPosition || tabPosition
+
     // Collect tabs from items or children
     const tabs: TabItem[] = React.useMemo(() => {
       if (items) {
@@ -109,13 +115,24 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
       <TabsContainer
         ref={ref}
         $tabPosition={tabPosition}
-        className={`compass-tabs compass-tabs--${tabPosition} compass-tabs--${size} ${className || ''}`}
-        style={style}
+        $tabBarPosition={layoutPosition}
+        className={`compass-tabs compass-tabs--${tabPosition} compass-tabs--${size} ${className || ''} ${classNames?.root || ''}`}
+        style={{ ...style, ...styles?.root }}
         {...rest}
       >
-        <TabsNav $tabPosition={tabPosition} $type={type}>
-          <TabsNavWrap $tabPosition={tabPosition}>
-            <TabsNavList ref={navListRef} $tabPosition={tabPosition}>
+        <TabsNav
+          $tabPosition={tabPosition}
+          $tabBarPosition={layoutPosition}
+          $type={type}
+          className={`compass-tabs-nav ${classNames?.nav || ''}`}
+          style={styles?.nav}
+        >
+          <TabsNavWrap $tabPosition={tabPosition} className="compass-tabs-nav-wrap">
+            <TabsNavList
+              ref={navListRef}
+              $tabPosition={tabPosition}
+              className="compass-tabs-nav-list"
+            >
               {tabs.map((tab) => (
                 <StyledTabItem
                   key={tab.key}
@@ -129,6 +146,7 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
                   role="tab"
                   aria-selected={mergedActiveKey === tab.key}
                   aria-disabled={tab.disabled}
+                  className={`compass-tabs-tab ${mergedActiveKey === tab.key ? 'compass-tabs-tab-active' : ''} ${tab.disabled ? 'compass-tabs-tab-disabled' : ''}`}
                 >
                   {tab.icon && (
                     <span style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center' }}>
@@ -154,17 +172,27 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
                 $height={inkStyle.height}
                 $position={tabPosition}
                 $type={type}
+                className={`compass-tabs-ink-bar ${classNames?.inkBar || ''}`}
+                style={styles?.inkBar}
               />
             </TabsNavList>
           </TabsNavWrap>
           {tabBarExtraContent && <div style={{ marginLeft: 'auto' }}>{tabBarExtraContent}</div>}
         </TabsNav>
-        <TabsContent>
+        <TabsContent
+          className={`compass-tabs-content ${classNames?.content || ''}`}
+          style={styles?.content}
+        >
           {tabs.map((tab) => {
             // For performance, we could only render active tab, but keeping DOM is standard for simple Tabs
             // Or allow `destroyInactiveTabPane`. Assume keep for now but controlled by display: none via TabPaneContainer
             return (
-              <TabPaneContainer key={tab.key} $active={mergedActiveKey === tab.key} role="tabpanel">
+              <TabPaneContainer
+                key={tab.key}
+                $active={mergedActiveKey === tab.key}
+                role="tabpanel"
+                className={`compass-tabs-tabpane ${mergedActiveKey === tab.key ? 'compass-tabs-tabpane-active' : ''}`}
+              >
                 {tab.children}
               </TabPaneContainer>
             )

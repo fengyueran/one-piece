@@ -3,6 +3,9 @@ import { Placement } from '@floating-ui/react'
 
 import { MenuProps } from '../menu'
 
+/**
+ * Dropdown component properties
+ */
 export interface DropdownProps {
   /**
    * Trigger mode
@@ -47,14 +50,48 @@ export interface DropdownProps {
   disabled?: boolean
 
   /**
-   * Custom class name
+   * Custom root element class name
    */
   className?: string
 
   /**
-   * Custom style
+   * Custom root element style
    */
   style?: React.CSSProperties
+
+  /**
+   * Custom overlay element class name
+   */
+  overlayClassName?: string
+
+  /**
+   * Custom overlay element style
+   */
+  overlayStyle?: React.CSSProperties
+
+  /**
+   * Semantic class names for internal elements
+   */
+  classNames?: {
+    /** Class name for the trigger element */
+    trigger?: string
+    /** Class name for the overlay container */
+    overlay?: string
+    /** Class name for the content wrapper */
+    content?: string
+  }
+
+  /**
+   * Semantic styles for internal elements
+   */
+  styles?: {
+    /** Style for the trigger element */
+    trigger?: React.CSSProperties
+    /** Style for the overlay container */
+    overlay?: React.CSSProperties
+    /** Style for the content wrapper */
+    content?: React.CSSProperties
+  }
 
   /**
    * Whether to close the dropdown when a menu item is selected

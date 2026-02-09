@@ -17,14 +17,32 @@ export interface TabsProps {
   type?: 'line' | 'card' | 'editable-card'
   /** Tab size */
   size?: 'small' | 'default' | 'large'
-  /** Custom className */
-  className?: string
-  /** Custom style */
-  style?: React.CSSProperties
+  /** Tab bar position (controls layout separate from styling) */
+  tabBarPosition?: 'top' | 'right' | 'bottom' | 'left'
   /** Children (TabPane components) */
   children?: React.ReactNode
   /** Callback when tab is edited */
   onEdit?: (targetKey: string, action: 'add' | 'remove') => void
+  /** Custom class name */
+  className?: string
+  /** Custom style */
+  style?: React.CSSProperties
+
+  /** Granular styles */
+  styles?: {
+    root?: React.CSSProperties
+    nav?: React.CSSProperties
+    inkBar?: React.CSSProperties
+    content?: React.CSSProperties
+  }
+
+  /** Granular class names */
+  classNames?: {
+    root?: string
+    nav?: string
+    inkBar?: string
+    content?: string
+  }
 }
 
 export interface TabItem {

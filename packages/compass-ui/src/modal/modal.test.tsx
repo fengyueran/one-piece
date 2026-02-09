@@ -37,7 +37,8 @@ describe('Modal', () => {
       )
       const modalRoot = document.querySelector('.compass-modal')
       expect(modalRoot).toHaveClass('custom-class')
-      expect(modalRoot).toHaveStyle({ top: '100px' })
+      const modalContent = document.querySelector('.compass-modal-content')
+      expect(modalContent).toHaveStyle({ top: '100px' })
     })
 
     it('should not render mask when maskVisible is false', () => {
@@ -67,6 +68,27 @@ describe('Modal', () => {
         </Modal>,
       )
       expect(screen.getByText('Test Title')).toBeInTheDocument()
+    })
+
+    it('should render custom header', () => {
+      renderWithTheme(
+        <Modal isOpen={true} header={<div>Custom Header</div>}>
+          <div>Content</div>
+        </Modal>,
+      )
+      expect(screen.getByText('Custom Header')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Close')).not.toBeInTheDocument()
+    })
+
+    it('should not render header when header is null', () => {
+      renderWithTheme(
+        <Modal isOpen={true} title="Test Title" header={null}>
+          <div>Content</div>
+        </Modal>,
+      )
+      const header = document.querySelector('.compass-modal-header')
+      expect(header).not.toBeInTheDocument()
+      expect(screen.queryByText('Test Title')).not.toBeInTheDocument()
     })
   })
 

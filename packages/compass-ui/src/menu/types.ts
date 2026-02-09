@@ -82,6 +82,26 @@ export interface MenuProps {
    * Select handler
    */
   onSelect?: (keys: (string | number)[]) => void
+
+  /**
+   * Granular styles
+   */
+  styles?: {
+    root?: React.CSSProperties
+    item?: React.CSSProperties
+    icon?: React.CSSProperties
+    content?: React.CSSProperties
+  }
+
+  /**
+   * Granular class names
+   */
+  classNames?: {
+    root?: string
+    item?: string
+    icon?: string
+    content?: string
+  }
 }
 
 export interface MenuItemProps {
@@ -111,6 +131,11 @@ export interface MenuItemProps {
   danger?: boolean
 
   /**
+   * Unique key for event handling
+   */
+  eventKey?: string | number
+
+  /**
    * Custom class name
    */
   className?: string
@@ -119,9 +144,4 @@ export interface MenuItemProps {
    * Custom style
    */
   style?: React.CSSProperties
-
-  /**
-   * Unique key for event handling
-   */
-  eventKey?: string | number
 }

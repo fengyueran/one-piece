@@ -1,8 +1,6 @@
 import styled from '@emotion/styled'
-
 import { StepStatus } from './types'
-
-import { getThemeToken, getComponentTheme } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const StyledSteps = styled.div<{
   direction?: 'horizontal' | 'vertical'
@@ -41,10 +39,8 @@ export const StyledStepItem = styled.div<{
   }
 
   ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    const colors = getThemeToken(props.theme, 'colors')
-    const iconSize = steps.iconSize
-    const dotSize = steps.dotSize
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
 
     return (
       props.direction === 'horizontal' &&
@@ -90,7 +86,7 @@ export const StyledStepItem = styled.div<{
       display: block;
       width: calc(100% - ${props.variant === 'dot' ? dotSize : iconSize} - 16px);
       height: 1px;
-      background: ${colors.border};
+      background: ${token('colors.border', '#d9d9d9')};
       content: '';
       margin-left: calc(${props.variant === 'dot' ? dotSize : iconSize} / 2 + 8px);
     }
@@ -133,26 +129,31 @@ export const StyledStepIcon = styled.div<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  justify-content: center;
   width: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return props.variant === 'dot' ? dotSize : iconSize
   }};
   height: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return props.variant === 'dot' ? dotSize : iconSize
   }};
   margin-right: 8px;
   margin-top: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return `calc((32px - ${props.variant === 'dot' ? steps.dotSize : steps.iconSize}) / 2)`
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return `calc((32px - ${props.variant === 'dot' ? dotSize : iconSize}) / 2)`
   }};
-  font-size: ${(props) => getComponentTheme(props.theme, 'steps').titleFontSize};
+  font-size: ${token('components.steps.titleFontSize', '16px')};
   line-height: 1;
   text-align: center;
   border: 1px solid;
   border-radius: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return props.variant === 'dot' ? steps.dotSize : steps.iconSize
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return props.variant === 'dot' ? dotSize : iconSize
   }};
   transition:
     background-color 0.3s,
@@ -163,32 +164,36 @@ export const StyledStepIcon = styled.div<{
   }
 
   ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    const colors = getThemeToken(props.theme, 'colors')
+    const processIconColor = token('components.steps.processIconColor', '#1890ff')
+    const waitIconColor = token('components.steps.waitIconColor', 'rgba(0, 0, 0, 0.25)')
+    const finishIconColor = token('components.steps.finishIconColor', '#1890ff')
+    const errorIconColor = token('components.steps.errorIconColor', '#ff4d4f')
+    const background = token('colors.background', '#ffffff')
+
     switch (props.status) {
       case 'process':
         return `
-          background-color: ${steps.processIconColor};
-          border-color: ${steps.processIconColor};
+          background-color: ${processIconColor};
+          border-color: ${processIconColor};
           color: #fff;
         `
       case 'wait':
         return `
-          background-color: ${colors.background};
-          border-color: ${steps.waitIconColor};
-          color: ${steps.waitIconColor};
+          background-color: ${background};
+          border-color: ${waitIconColor};
+          color: ${waitIconColor};
         `
       case 'finish':
         return `
-          background-color: ${colors.background};
-          border-color: ${steps.finishIconColor};
-          color: ${steps.finishIconColor};
+          background-color: ${background};
+          border-color: ${finishIconColor};
+          color: ${finishIconColor};
         `
       case 'error':
         return `
-          background-color: ${colors.background};
-          border-color: ${steps.errorIconColor};
-          color: ${steps.errorIconColor};
+          background-color: ${background};
+          border-color: ${errorIconColor};
+          color: ${errorIconColor};
         `
       default:
         return ''
@@ -210,21 +215,20 @@ export const StyledStepTitle = styled.div<{
   display: inline-block;
   padding-right: 16px;
   color: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
     switch (props.status) {
       case 'process':
-        return steps.processTitleColor
+        return token('components.steps.processTitleColor', 'rgba(0, 0, 0, 0.88)')
       case 'wait':
-        return steps.waitTitleColor
+        return token('components.steps.waitTitleColor', 'rgba(0, 0, 0, 0.45)')
       case 'finish':
-        return steps.finishTitleColor
+        return token('components.steps.finishTitleColor', 'rgba(0, 0, 0, 0.88)')
       case 'error':
-        return steps.errorTitleColor
+        return token('components.steps.errorTitleColor', '#ff4d4f')
       default:
-        return steps.titleColor
+        return token('components.steps.titleColor', 'rgba(0, 0, 0, 0.88)')
     }
   }};
-  font-size: ${(props) => getComponentTheme(props.theme, 'steps').titleFontSize};
+  font-size: ${token('components.steps.titleFontSize', '16px')};
   line-height: 32px;
 
   &::after {
@@ -234,7 +238,7 @@ export const StyledStepTitle = styled.div<{
     display: ${(props) => (props.isLast || props.direction === 'vertical' ? 'none' : 'block')};
     width: 9999px;
     height: 1px;
-    background: ${(props) => getThemeToken(props.theme, 'colors').borderSecondary};
+    background: ${token('colors.borderSecondary', '#f0f0f0')};
     content: '';
   }
 `
@@ -242,28 +246,27 @@ export const StyledStepTitle = styled.div<{
 export const StyledStepSubTitle = styled.div`
   display: inline;
   margin-left: 8px;
-  color: ${(props) => getComponentTheme(props.theme, 'steps').subTitleColor};
+  color: ${token('components.steps.subTitleColor', 'rgba(0, 0, 0, 0.45)')};
   font-weight: normal;
   font-size: 14px;
 `
 
 export const StyledStepDescription = styled.div<{ status?: StepStatus }>`
   color: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
     switch (props.status) {
       case 'process':
-        return steps.processDescriptionColor
+        return token('components.steps.processDescriptionColor', 'rgba(0, 0, 0, 0.88)')
       case 'wait':
-        return steps.waitDescriptionColor
+        return token('components.steps.waitDescriptionColor', 'rgba(0, 0, 0, 0.45)')
       case 'finish':
-        return steps.finishDescriptionColor
+        return token('components.steps.finishDescriptionColor', 'rgba(0, 0, 0, 0.45)')
       case 'error':
-        return steps.errorDescriptionColor
+        return token('components.steps.errorDescriptionColor', '#ff4d4f')
       default:
-        return steps.descriptionColor
+        return token('components.steps.descriptionColor', 'rgba(0, 0, 0, 0.45)')
     }
   }};
-  font-size: ${(props) => getComponentTheme(props.theme, 'steps').descriptionFontSize};
+  font-size: ${token('components.steps.descriptionFontSize', '14px')};
 `
 
 export const StyledStepTail = styled.div<{
@@ -274,13 +277,15 @@ export const StyledStepTail = styled.div<{
   display: ${(props) => (props.direction === 'vertical' && !props.isLast ? 'block' : 'none')};
   position: absolute;
   top: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return `calc((32px + ${props.variant === 'dot' ? steps.dotSize : steps.iconSize}) / 2 + 6px)`
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return `calc((32px + ${props.variant === 'dot' ? dotSize : iconSize}) / 2 + 6px)`
   }};
   bottom: 6px;
   left: ${(props) => {
-    const steps = getComponentTheme(props.theme, 'steps')
-    return `calc(${props.variant === 'dot' ? steps.dotSize : steps.iconSize} / 2)`
+    const iconSize = token('components.steps.iconSize', '32px')
+    const dotSize = token('components.steps.dotSize', '8px')
+    return `calc(${props.variant === 'dot' ? dotSize : iconSize} / 2)`
   }};
   width: 1px;
   padding: 0;
@@ -291,7 +296,7 @@ export const StyledStepTail = styled.div<{
     display: inline-block;
     width: 1px;
     height: 100%;
-    background: ${(props) => getThemeToken(props.theme, 'colors').borderSecondary};
+    background: ${token('colors.borderSecondary', '#f0f0f0')};
     border-radius: 1px;
     transition: background 0.3s;
     content: '';
