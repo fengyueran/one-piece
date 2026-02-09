@@ -20,7 +20,7 @@ export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 
 export { default as AutoComplete } from './auto-complete'
-export type { AutoCompleteProps } from './auto-complete'
+export type { AutoCompleteProps, AutoCompleteOption } from './auto-complete'
 
 export { default as Menu } from './menu'
 export type { MenuProps, MenuItemProps, ItemType } from './menu'
@@ -46,7 +46,7 @@ export type { DatePickerProps, DateRangePickerProps } from './date-picker'
 export { default as ConfigProvider } from './config-provider'
 export type { ConfigProviderProps } from './config-provider'
 
-export { default as InputNumber } from './input-number'
+export { InputNumber } from './input-number'
 export type { InputNumberProps } from './input-number'
 
 export { default as Form } from './form'
@@ -57,6 +57,7 @@ export type {
   FieldData,
   FormInstance,
   RuleItem,
+  NamePath,
 } from './form'
 
 export { default as Tabs } from './tabs'

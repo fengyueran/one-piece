@@ -21,6 +21,7 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom --outDir dist --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "jest",
+    "test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=lcov",
     "clean": "rm -rf dist",
     "docs:dev": "dumi dev",
     "docs:build": "dumi build",

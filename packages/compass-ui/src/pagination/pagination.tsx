@@ -30,6 +30,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   showTotal,
   simple,
   totalAlign = 'left',
+  className,
+  style,
   styles,
   classNames,
   ...rest
@@ -138,8 +140,8 @@ export const Pagination: React.FC<PaginationProps> = ({
   if (simple) {
     return (
       <PaginationContainer
-        className={`compass-pagination compass-pagination-simple ${classNames?.root || ''}`}
-        style={styles?.root}
+        className={`compass-pagination compass-pagination-simple ${className || ''} ${classNames?.root || ''}`}
+        style={{ ...style, ...styles?.root }}
         disabled={disabled}
         size={size}
         {...rest}
@@ -247,8 +249,8 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <PaginationContainer
-      className={`compass-pagination ${classNames?.root || ''}`}
-      style={styles?.root}
+      className={`compass-pagination ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
       disabled={disabled}
       size={size}
       {...rest}

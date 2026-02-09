@@ -192,27 +192,30 @@ describe('Progress', () => {
   describe('Custom Styling', () => {
     it('should apply standard className format', () => {
       const { container } = renderWithTheme(<Progress percent={50} />)
-      expect(container.firstChild).toHaveClass('compass-progress')
-      expect(container.firstChild).toHaveClass('compass-progress--line')
+      const root = container.querySelector('.compass-progress')
+      expect(root).toHaveClass('compass-progress')
+      expect(root).toHaveClass('compass-progress--line')
     })
 
     it('should apply correct className for circle type', () => {
       const { container } = renderWithTheme(<Progress type="circle" percent={50} />)
-      expect(container.firstChild).toHaveClass('compass-progress')
-      expect(container.firstChild).toHaveClass('compass-progress--circle')
+      const root = container.querySelector('.compass-progress')
+      expect(root).toHaveClass('compass-progress')
+      expect(root).toHaveClass('compass-progress--circle')
     })
 
     it('should apply custom className along with standard classes', () => {
       const { container } = renderWithTheme(<Progress className="custom-progress" percent={50} />)
-      expect(container.firstChild).toHaveClass('compass-progress')
-      expect(container.firstChild).toHaveClass('compass-progress--line')
-      expect(container.firstChild).toHaveClass('custom-progress')
+      const root = container.querySelector('.compass-progress')
+      expect(root).toHaveClass('compass-progress')
+      expect(root).toHaveClass('compass-progress--line')
+      expect(root).toHaveClass('custom-progress')
     })
 
     it('should apply custom style', () => {
       const customStyle = { marginTop: '20px' }
       const { container } = renderWithTheme(<Progress style={customStyle} percent={50} />)
-      expect(container.firstChild).toHaveStyle(customStyle)
+      expect(container.querySelector('.compass-progress')).toHaveStyle(customStyle)
     })
 
     it('should handle string strokeColor', () => {
@@ -234,8 +237,7 @@ describe('Progress', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA attributes for screen readers', () => {
       const { container } = renderWithTheme(<Progress percent={50} />)
-      const progressContainer = container.firstChild as HTMLElement
-
+      const progressContainer = container.querySelector('.compass-progress') as HTMLElement
       expect(progressContainer).toHaveAttribute('role', 'progressbar')
       expect(progressContainer).toHaveAttribute('aria-valuenow', '50')
       expect(progressContainer).toHaveAttribute('aria-valuemin', '0')
@@ -245,8 +247,7 @@ describe('Progress', () => {
 
     it('should have proper ARIA attributes for circle progress', () => {
       const { container } = renderWithTheme(<Progress type="circle" percent={75} />)
-      const progressContainer = container.firstChild as HTMLElement
-
+      const progressContainer = container.querySelector('.compass-progress') as HTMLElement
       expect(progressContainer).toHaveAttribute('role', 'progressbar')
       expect(progressContainer).toHaveAttribute('aria-valuenow', '75')
       expect(progressContainer).toHaveAttribute('aria-valuemin', '0')
@@ -256,8 +257,7 @@ describe('Progress', () => {
 
     it('should update ARIA attributes when percent changes', () => {
       const { container, rerender } = renderWithTheme(<Progress percent={25} />)
-      const progressContainer = container.firstChild as HTMLElement
-
+      const progressContainer = container.querySelector('.compass-progress') as HTMLElement
       expect(progressContainer).toHaveAttribute('aria-valuenow', '25')
       expect(progressContainer).toHaveAttribute('aria-label', 'Progress 25%')
 

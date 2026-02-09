@@ -321,7 +321,7 @@ describe('Dropdown', () => {
       const overlayContainer = document.querySelector('.styled-modal-overlay')
       expect(overlayContainer).toBeInTheDocument()
       expect(overlayContainer).toHaveClass('compass-dropdown')
-      expect(overlayContainer).toHaveStyle('background-color: red')
+      expect(overlayContainer).toHaveStyle('background-color: rgb(255, 0, 0)')
     })
 
     it('should merge trigger styles and classes correctly', () => {
@@ -338,7 +338,7 @@ describe('Dropdown', () => {
       expect(trigger).toHaveClass('dropdown-root-class')
       expect(trigger).toHaveClass('my-btn')
       expect(trigger).toHaveStyle('border: 1px solid black')
-      expect(trigger).toHaveStyle('color: blue')
+      expect(trigger).toHaveStyle('color: rgb(0, 0, 255)')
     })
   })
 })

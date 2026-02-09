@@ -184,11 +184,10 @@ export class FormStore {
     // We can iterate keys of values and update store.
 
     // Simplest recursive merge:
-    const updateStore = (current: any, path: InternalNamePath = []) => {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
+    const updateStore = (current: StoreValue, path: InternalNamePath = []) => {
       if (current && typeof current === 'object' && !Array.isArray(current)) {
-        Object.keys(current).forEach((key) => {
-          updateStore(current[key], [...path, key])
+        Object.keys(current as object).forEach((key) => {
+          updateStore((current as Record<string, StoreValue>)[key], [...path, key])
         })
       } else {
         // leaf value

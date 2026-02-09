@@ -218,6 +218,44 @@ describe('Button', () => {
 - **暗色模式**：确保组件通过主题变量（Design Token）自动适配 Light/Dark 模式。
 - **组件必须提供默认样式**：确保在没有 `ThemeProvider` 的情况下，组件也能正常显示，所有依赖主题的样式都必须有备用值。
 
+### 4.1.1 定义 Token 原则 (Design Tokenization Rules)
+
+样式属性是 **“提取为 Token”** 还是 **“直接写死 (Hardcode)”**，遵循以下三个核心原则：
+
+#### 1. 核心原则：是否随“主题”变化 (Theme-Dependent - 最硬性的标准)
+
+*   **Token化**：任何在该组件切换 **【亮色/暗色模式】** 或 **【品牌色】** 时需要发生变化的值。
+    *   **颜色**：背景色、文字色、边框色。（必须 Token）
+    *   **阴影**：暗黑模式下的阴影通常不同。（必须 Token）
+*   **写死**：无论主题怎么变，这个组件的物理结构都不变。
+    *   `display: flex`
+    *   `position: relative`
+    *   `align-items: center`
+
+#### 2. 核心原则：是否属于“设计系统约束” (Design System Constraint)
+
+为了保证全站通过 **一致的视觉韵律**。
+
+*   **Token化**：如果不提取，设计师改版时会导致全站不统一的值。
+    *   **间距 (Spacing)**：`padding: 16px`。如果不引用 `spacing.md`，未来系统从 8px 栅格改成 10px 栅格时，组件就会“破裂”。
+    *   **圆角 (Radius)**：`border-radius: 4px`。这是品牌的“圆润度”特征，属于 Token。
+    *   **字体 (Typography)**：字号、行高。
+*   **写死**：为了实现布局逻辑而必须存在的“胶水代码”。
+    *   `width: 100%`
+    *   `transform: translate(-50%, -50%)`
+    *   `overflow: hidden`
+
+#### 3. 核心原则：“魔法数字” vs “逻辑值” (Magic Numbers vs Logical Values)
+
+*   **Token化**：具体的、含糊的数值。
+    *   `opacity: 0.38` -> 这通常代表“禁用态”或“次要文本”，应改为 `opacity.disabled`。
+    *   `z-index: 1050` -> 应改为 `zIndex.dropdown`，方便统一管理层级关系。
+*   **写死**：具有明确逻辑含义的数值。
+    *   `border: 0` (无边框)
+    *   `opacity: 0` (完全透明/隐藏)
+    *   `opacity: 1` (完全显示)
+    *   `line-height: 1` (消除间隙)
+
 ### 4.2 样式文件
 
 - 样式定义在单独的 `styles.ts` 文件中

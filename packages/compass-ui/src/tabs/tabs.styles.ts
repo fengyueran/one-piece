@@ -34,7 +34,7 @@ export const TabsNav = styled.div<{
   flex: none;
   position: relative;
 
-  ${({ $tabPosition, $type, theme }) => {
+  ${({ $tabPosition, $type }) => {
     // const tabsTheme = getComponentTheme(theme, 'tabs')
     const borderColor = token('components.tabs.tabBarBorderColor', '#f0f0f0')
     const borderWidth = token('components.tabs.tabBarBorderWidth', '1px')
@@ -64,7 +64,7 @@ export const TabsNav = styled.div<{
   margin-right: ${({ $tabBarPosition }) => ($tabBarPosition === 'left' ? '16px' : '0')};
   margin-left: ${({ $tabBarPosition }) => ($tabBarPosition === 'right' ? '16px' : '0')};
 
-  background-color: ${({ theme }) => token('components.tabs.tabBarBackgroundColor', '#ffffff')};
+  background-color: ${() => token('components.tabs.tabBarBackgroundColor', '#ffffff')};
 
   ${({ $tabPosition }) =>
     ($tabPosition === 'left' || $tabPosition === 'right') &&
@@ -140,7 +140,7 @@ export const TabItem = styled.div<{
   display: inline-flex;
   align-items: center;
 
-  ${({ theme, $position }) => {
+  ${({ $position }) => {
     const itemPadding = token('components.tabs.tabItemPadding', '12px 16px')
     const verticalGutter = token('components.tabs.tabItemVerticalGutter', '16px')
     const horizontalGutter = token('components.tabs.tabItemHorizontalGutter', '32px')
@@ -153,7 +153,7 @@ export const TabItem = styled.div<{
     };`
   }}
 
-  font-size: ${({ theme, $size }) => {
+  font-size: ${({ $size }) => {
     const defaultSize = token('components.tabs.tabItemFontSize', '14px')
     if ($size === 'large') return `calc(${defaultSize} + 2px)`
     if ($size === 'small') return `calc(${defaultSize} - 2px)`
@@ -164,7 +164,7 @@ export const TabItem = styled.div<{
   outline: none;
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 
-  ${({ theme, $active, $disabled }) => {
+  ${({ $active, $disabled }) => {
     if ($disabled)
       return `color: ${token('components.tabs.tabItemDisabledColor', token('colors.textDisabled', '#ccc'))};`
     if ($active)
@@ -172,18 +172,18 @@ export const TabItem = styled.div<{
     return `color: ${token('components.tabs.tabItemColor', token('colors.text', '#333'))};`
   }}
 
-  font-weight: ${({ theme }) => token('fontWeight.normal', '400')};
+  font-weight: ${() => token('fontWeight.normal', '400')};
   transition: all 0.3s;
 
   &:hover {
-    ${({ theme, $disabled }) => {
+    ${({ $disabled }) => {
       return !$disabled
         ? `color: ${token('components.tabs.tabItemHoverColor', token('colors.primaryHover', '#40a9ff'))};`
         : ''
     }}
   }
 
-  ${({ $type, $active, theme }) => {
+  ${({ $type, $active }) => {
     if ($type !== 'card' && $type !== 'editable-card') return ''
     const borderColor = token('colors.border', '#d9d9d9')
     return `
@@ -208,12 +208,12 @@ export const CloseButton = styled.span`
   height: 16px;
   line-height: 0;
   border-radius: 50%;
-  color: ${({ theme }) => token('colors.textSecondary', '#999')};
+  color: ${() => token('colors.textSecondary', '#999')};
   transition: all 0.2s;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.06);
-    color: ${({ theme }) => token('colors.text', '#333')};
+    color: ${() => token('colors.text', '#333')};
   }
 `
 
@@ -226,8 +226,7 @@ export const InkBar = styled.div<{
   $type?: TabsProps['type']
 }>`
   position: absolute;
-  background: ${({ theme }) =>
-    token('components.tabs.inkBarColor', token('colors.primary', '#1890ff'))};
+  background: ${() => token('components.tabs.inkBarColor', token('colors.primary', '#1890ff'))};
   pointer-events: none;
   transition:
     width 0.3s,
@@ -237,7 +236,7 @@ export const InkBar = styled.div<{
 
   display: ${({ $type }) => ($type === 'line' ? 'block' : 'none')};
 
-  ${({ $position, $left, $width, $top, $height, theme }) => {
+  ${({ $position, $left, $width, $top, $height }) => {
     const barHeight = token('components.tabs.inkBarHeight', '2px')
     if ($position === 'left' || $position === 'right') {
       return `

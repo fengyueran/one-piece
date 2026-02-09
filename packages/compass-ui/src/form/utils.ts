@@ -1,4 +1,4 @@
-import { InternalNamePath, NamePath, Store } from './types'
+import { InternalNamePath, NamePath, Store, StoreValue } from './types'
 
 export const getNamePath = (path: NamePath | null): InternalNamePath => {
   if (!path) {
@@ -20,56 +20,59 @@ export const matchNamePath = (nameA: InternalNamePath, nameB: InternalNamePath):
   return nameA.every((unit, index) => unit === nameB[index])
 }
 
-export const getValue = (store: Store, namePath: InternalNamePath): any => {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  let current: any = store // eslint-disable-line @typescript-eslint/no-explicit-any
+export const getValue = (store: Store, namePath: InternalNamePath): StoreValue => {
+  let current: StoreValue = store
 
   for (let i = 0; i < namePath.length; i++) {
     if (current === undefined || current === null) {
       return undefined
     }
-    current = current[namePath[i]]
+    current = (current as Record<string | number, StoreValue>)[namePath[i]]
   }
 
   return current
 }
 
-export const setValue = (
-  store: Store,
-  namePath: InternalNamePath,
-  value: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-): Store => {
+export const setValue = (store: Store, namePath: InternalNamePath, value: StoreValue): Store => {
   const newStore = { ...store }
-  let current: any = newStore // eslint-disable-line @typescript-eslint/no-explicit-any
+  let current: StoreValue = newStore
 
   for (let i = 0; i < namePath.length; i++) {
     const key = namePath[i]
+    const currentRecord = current as Record<string | number, StoreValue>
+
     if (i === namePath.length - 1) {
-      current[key] = value
+      currentRecord[key] = value
     } else {
       // Ensure path exists and is an object/array
-      if (!current[key] || typeof current[key] !== 'object') {
+      if (!currentRecord[key] || typeof currentRecord[key] !== 'object') {
         const nextKey = namePath[i + 1]
-        current[key] = typeof nextKey === 'number' ? [] : {}
+        currentRecord[key] = typeof nextKey === 'number' ? [] : {}
       }
       // Clone for immutability
-      if (Array.isArray(current[key])) {
-        current[key] = [...current[key]]
+      if (Array.isArray(currentRecord[key])) {
+        currentRecord[key] = [...(currentRecord[key] as StoreValue[])]
       } else {
-        current[key] = { ...current[key] }
+        currentRecord[key] = { ...(currentRecord[key] as Record<string, StoreValue>) }
       }
-      current = current[key]
+      current = currentRecord[key]
     }
   }
 
   return newStore
 }
 
-export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
+export function defaultGetValueFromEvent(valuePropName: string, ...args: unknown[]) {
   const event = args[0]
-  if (event && event.target && valuePropName in event.target) {
-    return (event.target as any)[valuePropName] // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (
+    event &&
+    typeof event === 'object' &&
+    'target' in event &&
+    event.target &&
+    typeof event.target === 'object' &&
+    valuePropName in event.target
+  ) {
+    return (event.target as Record<string, unknown>)[valuePropName]
   }
   return event
 }

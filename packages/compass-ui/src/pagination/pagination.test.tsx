@@ -12,7 +12,7 @@ describe('Pagination', () => {
     it('should render correctly with default props', () => {
       const { container } = renderWithTheme(<Pagination total={50} />)
       // The container is a UL
-      expect(container.firstChild).toHaveClass('compass-pagination')
+      expect(container.querySelector('.compass-pagination')).toHaveClass('compass-pagination')
       expect(screen.getByText('1')).toBeInTheDocument()
       expect(screen.getByText('5')).toBeInTheDocument()
     })
@@ -29,7 +29,7 @@ describe('Pagination', () => {
 
     it('should not render when total is 0', () => {
       const { container } = renderWithTheme(<Pagination total={0} />)
-      expect(container.firstChild).toBeNull()
+      expect(container.querySelector('.compass-pagination')).not.toBeInTheDocument()
     })
   })
 
@@ -45,8 +45,9 @@ describe('Pagination', () => {
       const { container } = renderWithTheme(
         <Pagination total={50} className="custom-test-class" style={{ opacity: 0.5 }} />,
       )
-      expect(container.firstChild).toHaveClass('custom-test-class')
-      expect(container.firstChild).toHaveStyle('opacity: 0.5')
+      const root = container.querySelector('.compass-pagination')
+      expect(root).toHaveClass('custom-test-class')
+      expect(root).toHaveStyle('opacity: 0.5')
     })
 
     it('should show total text correctly', () => {
@@ -240,7 +241,10 @@ describe('Pagination', () => {
     it('should have correct ARIA attributes', () => {
       const { container } = renderWithTheme(<Pagination total={50} />)
       // The role might be implicitly list/listitem, but we check label
-      expect(container.firstChild).toHaveAttribute('aria-label', 'pagination')
+      expect(container.querySelector('.compass-pagination')).toHaveAttribute(
+        'aria-label',
+        'pagination',
+      )
 
       expect(screen.getByTitle('Previous Page')).toBeInTheDocument()
       expect(screen.getByTitle('Next Page')).toBeInTheDocument()

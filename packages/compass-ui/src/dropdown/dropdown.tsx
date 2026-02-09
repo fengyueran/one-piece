@@ -84,10 +84,6 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const dropdownContent = overlay || (menu ? <Menu {...menu} /> : null)
 
-  if (!dropdownContent) {
-    return <>{children}</>
-  }
-
   const triggerCls = [
     'compass-dropdown-trigger',
     className,
@@ -101,16 +97,20 @@ const Dropdown: React.FC<DropdownProps> = ({
     .filter(Boolean)
     .join(' ')
 
+  const triggerElement = React.cloneElement(child, {
+    ...getReferenceProps(child.props),
+    className: triggerCls,
+    style: { ...child.props.style, ...style, ...styles?.trigger },
+    ref,
+  })
+
+  if (!dropdownContent) {
+    return triggerElement
+  }
+
   return (
     <>
-      {React.cloneElement(child, {
-        ref,
-        ...getReferenceProps({
-          ...child.props,
-          className: triggerCls,
-          style: { ...child.props.style, ...style, ...styles?.trigger },
-        }),
-      })}
+      {triggerElement}
       {visible && (
         <FloatingPortal>
           {/* eslint-disable-next-line react-hooks/rules-of-hooks */}

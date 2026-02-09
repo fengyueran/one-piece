@@ -12,16 +12,17 @@ export const CSS_VAR_PREFIX = 'compass'
 export function themeToCssVariables(theme: Theme): Record<string, string | number> {
   const cssVars: Record<string, string | number> = {}
 
-  function traverse(obj: any, path: string[]) {
+  function traverse(obj: unknown, path: string[]) {
     if (!obj || typeof obj !== 'object') return
 
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key]
+    const record = obj as Record<string, unknown>
+    Object.keys(record).forEach((key) => {
+      const value = record[key]
       const currentPath = [...path, key]
 
       if (typeof value === 'string' || typeof value === 'number') {
         const varName = `--${CSS_VAR_PREFIX}-${currentPath.join('-')}`
-        let cssValue = value
+        let cssValue: string | number = value
 
         // Add px to specific dimension keys if they are numbers
         if (typeof value === 'number') {
@@ -31,7 +32,7 @@ export function themeToCssVariables(theme: Theme): Record<string, string | numbe
         }
 
         cssVars[varName] = cssValue
-      } else if (typeof value === 'object') {
+      } else if (value && typeof value === 'object') {
         traverse(value, currentPath)
       }
     })
