@@ -72,6 +72,8 @@ export interface ThemeConfig {
   light?: DeepPartial<Theme>
   dark?: DeepPartial<Theme>
   defaultMode?: ThemeMode
+  /** Whether to inject CSS variables to :root. */
+  global?: boolean
 }
 
 export interface ConfigProviderProps {

@@ -17,6 +17,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = (props) => {
         lightTheme={theme?.light}
         darkTheme={theme?.dark}
         defaultMode={theme?.defaultMode}
+        global={theme?.global}
       >
         {children}
       </ThemeProvider>

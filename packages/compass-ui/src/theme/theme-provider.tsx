@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react'
-import { ThemeProvider as EmotionThemeProvider } from '@emotion/react'
+import { ThemeProvider as EmotionThemeProvider, Global, css } from '@emotion/react'
 
 import { Theme as CompassTheme, ThemeMode, DeepPartial, ThemeProviderProps } from './types'
 import { defaultTheme } from './default-theme'
 import { darkTheme as builtinDarkTheme } from './dark-theme'
 import { deepMerge } from './utils'
+import { themeToCssVariables } from './token-utils'
 
 interface ThemeContextType {
   mode: ThemeMode
@@ -21,8 +22,14 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
   lightTheme: customLightTheme,
   darkTheme: customDarkTheme,
   defaultMode = 'light',
+  global,
 }) => {
   const [mode, setMode] = useState<ThemeMode>(defaultMode)
+  const parentContext = useContext(ThemeContext)
+  const isNested = !!parentContext
+
+  // Default global to true if not nested, false if nested
+  const shouldInjectGlobal = global ?? !isNested
 
   useEffect(() => {
     setMode(defaultMode)
@@ -61,9 +68,30 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({
     [mode, mergedTheme],
   )
 
+  const cssVariables = useMemo(() => themeToCssVariables(mergedTheme), [mergedTheme])
+
   return (
     <ThemeContext.Provider value={value}>
-      <EmotionThemeProvider theme={mergedTheme}>{children}</EmotionThemeProvider>
+      <EmotionThemeProvider theme={mergedTheme}>
+        {shouldInjectGlobal && (
+          <Global
+            styles={css({
+              ':root': cssVariables,
+            })}
+          />
+        )}
+        <div
+          className="compass-theme-scope"
+          style={
+            {
+              display: 'contents',
+              ...(!shouldInjectGlobal ? cssVariables : {}),
+            } as React.CSSProperties
+          }
+        >
+          {children}
+        </div>
+      </EmotionThemeProvider>
     </ThemeContext.Provider>
   )
 }
