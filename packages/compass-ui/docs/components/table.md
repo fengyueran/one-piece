@@ -539,8 +539,6 @@ export default () => {
 | size         | 表格大小               | `'small' \| 'medium' \| 'large'`                 | `'medium'`  |
 | emptyText    | 空数据文案             | `ReactNode`                                      | `'No Data'` |
 | scroll       | 滚动设置               | `{ x?: string \| number, y?: string \| number }` | -           |
-| className    | 自定义类名             | `string`                                         | -           |
-| style        | 自定义样式             | `React.CSSProperties`                            | -           |
 | onHeaderRow  | 设置头部行属性         | `(columns, index) => object`                     | -           |
 | onRow        | 设置行属性             | `(record, index) => object`                      | -           |
 

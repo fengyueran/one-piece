@@ -25,10 +25,10 @@ group:
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => (
-  <Button onClick={() => message.info('This is a normal message')}>Display normal message</Button>
+  <Button onClick={() => Message.info('This is a normal message')}>Display normal message</Button>
 )
 ```
 
@@ -38,15 +38,15 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => (
   <div style={{ display: 'flex', gap: '8px' }}>
-    <Button onClick={() => message.info('This is a normal message')}>Info</Button>
-    <Button onClick={() => message.success('This is a success message')}>Success</Button>
-    <Button onClick={() => message.error('This is an error message')}>Error</Button>
-    <Button onClick={() => message.warning('This is a warning message')}>Warning</Button>
-    <Button onClick={() => message.loading('This is a loading message')}>Loading</Button>
+    <Button onClick={() => Message.info('This is a normal message')}>Info</Button>
+    <Button onClick={() => Message.success('This is a success message')}>Success</Button>
+    <Button onClick={() => Message.error('This is an error message')}>Error</Button>
+    <Button onClick={() => Message.warning('This is a warning message')}>Warning</Button>
+    <Button onClick={() => Message.loading('This is a loading message')}>Loading</Button>
   </div>
 )
 ```
@@ -57,10 +57,10 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => (
-  <Button onClick={() => message.loading('Action in progress..', 2.5)}>
+  <Button onClick={() => Message.loading('Action in progress..', 2.5)}>
     Display loading indicator
   </Button>
 )
@@ -72,10 +72,10 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => (
-  <Button onClick={() => message.info('This message will stay for 10 seconds', 10)}>
+  <Button onClick={() => Message.info('This message will stay for 10 seconds', 10)}>
     Customized display duration
   </Button>
 )
@@ -87,10 +87,10 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => {
-  const [messageApi, contextHolder] = message.useMessage()
+  const [messageApi, contextHolder] = Message.useMessage()
 
   return (
     <>
@@ -112,12 +112,12 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { message, Button } from '@xinghunm/compass-ui'
+import { Message, Button } from '@xinghunm/compass-ui'
 
 export default () => (
   <Button
     onClick={() =>
-      message.open({
+      Message.open({
         content: 'This is a message with full configuration',
         type: 'success',
         duration: 5,
@@ -139,10 +139,10 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { message, Button, ConfigProvider } from '@xinghunm/compass-ui'
+import { Message, Button, ConfigProvider } from '@xinghunm/compass-ui'
 
 const CustomThemeWrapper = () => {
-  const [messageApi, contextHolder] = message.useMessage()
+  const [messageApi, contextHolder] = Message.useMessage()
   return (
     <>
       {contextHolder}
@@ -156,6 +156,7 @@ const CustomThemeWrapper = () => {
 export default () => (
   <ConfigProvider
     theme={{
+      global: false,
       token: {
         components: {
           message: {

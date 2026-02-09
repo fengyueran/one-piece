@@ -286,6 +286,7 @@ export default () => {
   return (
     <ConfigProvider
       theme={{
+        global: false,
         token: {
           colors: { primary: '#722ed1' },
           components: {
@@ -311,27 +312,163 @@ export default () => {
 }
 ```
 
+### 自定义类名
+
+通过 `classNames` 属性可以精细控制组件内部各个部分的类名，配合 CSS 实现定制样式。
+
+```tsx
+import React from 'react'
+import { Select } from '@xinghunm/compass-ui'
+
+export default () => {
+  const options = [
+    { label: 'Jack', value: 'jack' },
+    { label: 'Lucy', value: 'lucy' },
+    { label: 'Yiminghe', value: 'yiminghe' },
+  ]
+
+  return (
+    <>
+      <style>{`
+        .my-select-root {
+          width: 200px
+        }
+        .my-select-trigger {
+          border: 1px solid #1890ff !important;
+          background-color: #e6f7ff !important;
+        }
+        .my-select-dropdown {
+          background-color: #f0f5ff !important;
+          border: 2px solid #1890ff !important;
+        }
+        .my-select-option {
+          color: #1890ff !important;
+          font-weight: bold;
+        }
+        .my-select-option:hover {
+          background-color: #bae7ff !important;
+        }
+      `}</style>
+      <Select
+        options={options}
+        placeholder="Custom classNames"
+        classNames={{
+          root: 'my-select-root',
+          trigger: 'my-select-trigger',
+          dropdown: 'my-select-dropdown',
+          option: 'my-select-option',
+        }}
+      />
+    </>
+  )
+}
+```
+
+### CSS 变量覆盖
+
+你也可以直接通过设置 CSS 变量来定制样式，这在局部调整或非 React 环境下非常有用。
+
+```tsx
+import React from 'react'
+import { Select } from '@xinghunm/compass-ui'
+
+export default () => {
+  const options = [
+    { label: 'Jack', value: 'jack' },
+    { label: 'Lucy', value: 'lucy' },
+    { label: 'Yiminghe', value: 'yiminghe' },
+  ]
+
+  return (
+    <div
+      style={
+        {
+          //这里为了演示使用了内联样式，你也可以在 CSS 文件中定义
+          '--compass-components-select-border-radius': '20px',
+          '--compass-components-select-background-color': '#f6ffed',
+          '--compass-components-select-border-color': '#b7eb8f',
+          '--compass-components-select-option-selected-bg': '#d9f7be',
+        } as React.CSSProperties
+      }
+    >
+      <Select
+        options={options}
+        defaultValue="jack"
+        style={{ width: 200 }}
+        placeholder="CSS Variable Override"
+      />
+    </div>
+  )
+}
+```
+
+### 自定义选项与标签渲染
+
+使用 `optionRender` 自定义下拉列表项的显示，使用 `labelRender` 自定义选中后在选择框内的显示。
+
+```tsx
+import React from 'react'
+import { Select, Space } from '@xinghunm/compass-ui'
+
+export default () => {
+  const options = [
+    { value: '1', label: '用户 A', desc: '管理员', icon: '👤' },
+    { value: '2', label: '用户 B', desc: '编辑', icon: '✍️' },
+    { value: '3', label: '用户 C', desc: '访客', icon: '👁️' },
+  ]
+
+  return (
+    <Select
+      options={options}
+      placeholder="自定义渲染演示"
+      style={{ width: 240 }}
+      optionRender={(option, { index }) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span role="img">{option.icon}</span>
+          <div>
+            <div style={{ fontWeight: 'bold' }}>{option.label}</div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              {option.desc} (Index: {index})
+            </div>
+          </div>
+        </div>
+      )}
+      labelRender={(option) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span role="img">{option.icon}</span>
+          <span>
+            {option.label} - {option.desc}
+          </span>
+        </div>
+      )}
+    />
+  )
+}
+```
+
 ## API
 
 ### Select
 
-| 参数         | 说明                   | 类型                                                                   | 默认值     |
-| ------------ | ---------------------- | ---------------------------------------------------------------------- | ---------- |
-| options      | 数据化配置选项内容     | `SelectOption[]`                                                       | `[]`       |
-| value        | 指定当前选中的条目     | `SelectValue`                                                          | -          |
-| defaultValue | 指定默认选中的条目     | `SelectValue`                                                          | -          |
-| onChange     | 选中 option 时调用     | `(value: SelectValue, option: SelectOption \| SelectOption[]) => void` | -          |
-| disabled     | 是否禁用               | `boolean`                                                              | `false`    |
-| loading      | 加载中状态             | `boolean`                                                              | `false`    |
-| allowClear   | 支持清除               | `boolean`                                                              | `false`    |
-| placeholder  | 选择框默认文字         | `string`                                                               | -          |
-| multiple     | 支持多选               | `boolean`                                                              | `false`    |
-| mode         | 设置 Select 的模式     | `'multiple' \| 'tags'`                                                 | -          |
-| size         | 选择框大小             | `'small' \| 'medium' \| 'large'`                                       | `'medium'` |
-| status       | 设置校验状态           | `'error' \| 'warning'`                                                 | -          |
-| filterOption | 是否根据输入项进行筛选 | `boolean \| ((inputValue, option) => boolean)`                         | `true`     |
-| className    | 自定义类名             | `string`                                                               | -          |
-| style        | 自定义样式             | `React.CSSProperties`                                                  | -          |
+| 参数         | 说明                   | 类型                                                                              | 默认值     |
+| ------------ | ---------------------- | --------------------------------------------------------------------------------- | ---------- |
+| options      | 数据化配置选项内容     | `SelectOption[]`                                                                  | `[]`       |
+| value        | 指定当前选中的条目     | `SelectValue`                                                                     | -          |
+| defaultValue | 指定默认选中的条目     | `SelectValue`                                                                     | -          |
+| onChange     | 选中 option 时调用     | `(value: SelectValue, option: SelectOption \| SelectOption[]) => void`            | -          |
+| disabled     | 是否禁用               | `boolean`                                                                         | `false`    |
+| loading      | 加载中状态             | `boolean`                                                                         | `false`    |
+| allowClear   | 支持清除               | `boolean`                                                                         | `false`    |
+| placeholder  | 选择框默认文字         | `string`                                                                          | -          |
+| multiple     | 支持多选               | `boolean`                                                                         | `false`    |
+| mode         | 设置 Select 的模式     | `'multiple' \| 'tags'`                                                            | -          |
+| size         | 选择框大小             | `'small' \| 'medium' \| 'large'`                                                  | `'medium'` |
+| status       | 设置校验状态           | `'error' \| 'warning'`                                                            | -          |
+| filterOption | 是否根据输入项进行筛选 | `boolean \| ((inputValue, option) => boolean)`                                    | `true`     |
+| styles       | 内部组件样式           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
+| classNames   | 内部组件类名           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
+| optionRender | 自定义下拉选项渲染     | `(option: SelectOption, info: { index: number; selected: boolean }) => ReactNode` | -          |
+| labelRender  | 自定义选择框标签渲染   | `(props: SelectOption) => ReactNode`                                              | -          |
 
 ### SelectOption
 

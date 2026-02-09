@@ -153,6 +153,50 @@ export default () => {
 }
 ```
 
+### 校验状态
+
+使用 `status` 属性来标示校验状态。
+
+```tsx
+import React from 'react'
+import { InputField } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <InputField status="error" placeholder="Error status" />
+    <InputField status="warning" placeholder="Warning status" />
+  </div>
+)
+```
+
+### 自定义样式
+
+通过 `classNames` 和 `styles` 属性可以精确控制组件内部元素的样式。
+
+```tsx
+import React from 'react'
+import { InputField } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <InputField
+      placeholder="Custom Input Style"
+      classNames={{
+        root: 'my-input-root',
+        input: 'my-input-element',
+        prefix: 'my-input-prefix',
+      }}
+      styles={{
+        root: { border: '2px dashed #1890ff', padding: '4px' },
+        input: { color: '#722ed1', fontWeight: 'bold' },
+        prefix: { color: '#faad14', fontWeight: 'bold' },
+      }}
+      prefix="Tags:"
+    />
+  </div>
+)
+```
+
 ### 自定义主题
 
 通过 `ConfigProvider` 自定义输入框主题。
@@ -164,6 +208,7 @@ import { InputField, ConfigProvider } from '@xinghunm/compass-ui'
 export default () => (
   <ConfigProvider
     theme={{
+      global: false,
       token: {
         components: {
           input: {
@@ -186,53 +231,61 @@ export default () => (
 
 ## API
 
-### InputField
+通用属性参考：[通用属性](/guide/common-props)
 
-| 参数         | 说明                     | 类型                               | 默认值     |
-| ------------ | ------------------------ | ---------------------------------- | ---------- |
-| value        | 输入框内容               | `string`                           | -          |
-| defaultValue | 输入框默认内容           | `string`                           | -          |
-| placeholder  | 占位文本                 | `string`                           | -          |
-| size         | 输入框大小               | `'small' \| 'medium' \| 'large'`   | `'medium'` |
-| disabled     | 是否禁用                 | `boolean`                          | `false`    |
-| fullWidth    | 是否占满父容器宽度       | `boolean`                          | `false`    |
-| allowClear   | 可以点击清除图标删除内容 | `boolean`                          | `false`    |
-| prefix       | 带有前缀图标的 input     | `ReactNode`                        | -          |
-| suffix       | 带有后缀图标的 input     | `ReactNode`                        | -          |
-| type         | 声明 input 类型          | `'text' \| 'password' \| 'search'` | `'text'`   |
-| onChange     | 输入框内容变化时的回调   | `(e: ChangeEvent) => void`         | -          |
-| onPressEnter | 按下回车的回调           | `(e: KeyboardEvent) => void`       | -          |
-| className    | 自定义类名               | `string`                           | -          |
-| style        | 自定义样式               | `React.CSSProperties`              | -          |
+| 参数         | 说明                     | 类型                                     | 默认值     |
+| ------------ | ------------------------ | ---------------------------------------- | ---------- |
+| value        | 输入框内容               | `string`                                 | -          |
+| defaultValue | 输入框默认内容           | `string`                                 | -          |
+| placeholder  | 占位文本                 | `string`                                 | -          |
+| size         | 输入框大小               | `'small' \| 'medium' \| 'large'`         | `'medium'` |
+| disabled     | 是否禁用                 | `boolean`                                | `false`    |
+| status       | 校验状态                 | `'error' \| 'warning'`                   | -          |
+| fullWidth    | 是否占满父容器宽度       | `boolean`                                | `false`    |
+| allowClear   | 可以点击清除图标删除内容 | `boolean`                                | `false`    |
+| prefix       | 带有前缀图标的 input     | `ReactNode`                              | -          |
+| suffix       | 带有后缀图标的 input     | `ReactNode`                              | -          |
+| type         | 声明 input 类型          | `'text' \| 'password' \| 'search'`       | `'text'`   |
+| onChange     | 输入框内容变化时的回调   | `(e: ChangeEvent) => void`               | -          |
+| onPressEnter | 按下回车的回调           | `(e: KeyboardEvent) => void`             | -          |
+| classNames   | 语义化类名               | `{ root, input, prefix, suffix, clear }` | -          |
+| styles       | 语义化样式               | `{ root, input, prefix, suffix, clear }` | -          |
 
 ## 主题变量 (Design Token)
 
 <details>
 <summary>组件 Token (components.input)</summary>
 
-| 变量名              | 默认值     | 说明             |
-| ------------------- | ---------- | ---------------- |
-| `activeBorderColor` | `#40a9ff`  | 激活状态边框颜色 |
-| `hoverBorderColor`  | `#4096ff`  | 悬停状态边框颜色 |
-| `borderRadius`      | `4px`      | 边框圆角         |
-| `padding.sm`        | `4px 8px`  | 小尺寸内边距     |
-| `padding.md`        | `6px 12px` | 中尺寸内边距     |
-| `padding.lg`        | `8px 16px` | 大尺寸内边距     |
-| `fontSize.sm`       | `12px`     | 小尺寸字体大小   |
-| `fontSize.md`       | `14px`     | 中尺寸字体大小   |
-| `fontSize.lg`       | `16px`     | 大尺寸字体大小   |
+| 变量名                               | 说明             |
+| ------------------------------------ | ---------------- |
+| `components.input.activeBorderColor` | 激活状态边框颜色 |
+| `components.input.hoverBorderColor`  | 悬停状态边框颜色 |
+| `components.input.borderRadius`      | 边框圆角         |
+| `components.input.padding.sm`        | 小尺寸内边距     |
+| `components.input.padding.md`        | 中尺寸内边距     |
+| `components.input.padding.lg`        | 大尺寸内边距     |
+| `components.input.fontSize.sm`       | 小尺寸字体大小   |
+| `components.input.fontSize.md`       | 中尺寸字体大小   |
+| `components.input.fontSize.lg`       | 大尺寸字体大小   |
 
 </details>
 
 <details>
 <summary>全局 Token</summary>
 
-| 变量名                 | 说明         |
-| ---------------------- | ------------ |
-| `colors.text`          | 文本颜色     |
-| `colors.textSecondary` | 次级文本颜色 |
-| `colors.textDisabled`  | 禁用文本颜色 |
-| `colors.border`        | 边框颜色     |
-| `colors.background`    | 背景颜色     |
+| 变量名                       | 说明             |
+| ---------------------------- | ---------------- |
+| `colors.primary`             | 主色调           |
+| `colors.text`                | 文本颜色         |
+| `colors.textSecondary`       | 次级文本颜色     |
+| `colors.textTertiary`        | 三级文本颜色     |
+| `colors.textDisabled`        | 禁用文本颜色     |
+| `colors.border`              | 边框颜色         |
+| `colors.background`          | 背景颜色         |
+| `colors.backgroundSecondary` | 次级背景颜色     |
+| `colors.error`               | 错误状态颜色     |
+| `colors.errorHover`          | 错误状态悬停颜色 |
+| `colors.warning`             | 警告状态颜色     |
+| `colors.warningHover`        | 警告状态悬停颜色 |
 
 </details>

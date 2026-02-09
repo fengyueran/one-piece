@@ -135,29 +135,62 @@ export default () => (
 
 ### 自定义主题
 
-通过 ThemeProvider 覆盖主题变量。
+通过 `ConfigProvider` 覆盖主题变量。
 
 ```tsx
 import React from 'react'
-import { InputNumber, ThemeProvider } from '@xinghunm/compass-ui'
+import { InputNumber, ConfigProvider } from '@xinghunm/compass-ui'
 
 export default () => (
-  <ThemeProvider
+  <ConfigProvider
     theme={{
-      colors: { primary: '#e91e63' },
-      components: {
-        input: {
-          borderRadius: '10px',
-          activeBorderColor: '#e91e63',
-          padding: {
-            md: '12px',
+      global: false,
+      token: {
+        colors: { primary: '#e91e63' },
+        components: {
+          input: {
+            borderRadius: '10px',
+            activeBorderColor: '#e91e63',
+            padding: {
+              md: '12px',
+            },
           },
         },
       },
     }}
   >
     <InputNumber defaultValue={123} label="Custom Theme" />
-  </ThemeProvider>
+  </ConfigProvider>
+)
+```
+
+### 自定义样式
+
+通过 `classNames` 和 `styles` 属性可以精确控制组件内部元素的样式。
+
+```tsx
+import React from 'react'
+import { InputNumber } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '300px' }}>
+    <InputNumber
+      defaultValue={100}
+      prefix="$"
+      classNames={{
+        root: 'my-input-root',
+        input: 'my-input-element',
+        upHandler: 'my-up-btn',
+        downHandler: 'my-down-btn',
+      }}
+      styles={{
+        root: { border: '2px solid #1890ff', borderRadius: '4px' },
+        input: { color: '#1890ff', fontWeight: 'bold' },
+        upHandler: { backgroundColor: '#e6f7ff' },
+        downHandler: { backgroundColor: '#fffbe6' },
+      }}
+    />
+  </div>
 )
 ```
 
@@ -165,34 +198,60 @@ export default () => (
 
 ### InputNumber
 
-| 参数         | 说明               | 类型                              | 默认值     |
-| ------------ | ------------------ | --------------------------------- | ---------- |
-| value        | 当前值（受控）     | `number \| null`                  | -          |
-| defaultValue | 默认值             | `number \| null`                  | -          |
-| onChange     | 值变化时的回调     | `(value: number \| null) => void` | -          |
-| min          | 最小值             | `number`                          | -          |
-| max          | 最大值             | `number`                          | -          |
-| step         | 步长               | `number`                          | `1`        |
-| precision    | 数值精度           | `number`                          | -          |
-| disabled     | 是否禁用           | `boolean`                         | `false`    |
-| controls     | 是否显示增减按钮   | `boolean`                         | `true`     |
-| keyboard     | 是否支持键盘上下键 | `boolean`                         | `true`     |
-| size         | 输入框大小         | `'small' \| 'medium' \| 'large'`  | `'medium'` |
-| prefix       | 前缀               | `ReactNode`                       | -          |
-| suffix       | 后缀               | `ReactNode`                       | -          |
-| placeholder  | 输入框占位文本     | `string`                          | -          |
-| label        | 标签文本           | `string`                          | -          |
-| helperText   | 辅助文本           | `ReactNode`                       | -          |
-| error        | 错误状态或错误文本 | `boolean \| string`               | -          |
-| fullWidth    | 是否占满父容器宽度 | `boolean`                         | `false`    |
-| onPressEnter | 按下回车键时的回调 | `(e: KeyboardEvent) => void`      | -          |
+| 参数         | 说明               | 类型                                                                    | 默认值     |
+| ------------ | ------------------ | ----------------------------------------------------------------------- | ---------- |
+| value        | 当前值（受控）     | `number \| null`                                                        | -          |
+| defaultValue | 默认值             | `number \| null`                                                        | -          |
+| min          | 最小值             | `number`                                                                | -          |
+| max          | 最大值             | `number`                                                                | -          |
+| step         | 步长               | `number`                                                                | `1`        |
+| precision    | 数值精度           | `number`                                                                | -          |
+| size         | 输入框大小         | `'small' \| 'medium' \| 'large'`                                        | `'medium'` |
+| disabled     | 是否禁用           | `boolean`                                                               | `false`    |
+| status       | 校验状态           | `'error' \| 'warning'`                                                  | -          |
+| fullWidth    | 是否占满父容器宽度 | `boolean`                                                               | `false`    |
+| controls     | 是否显示增减按钮   | `boolean`                                                               | `true`     |
+| keyboard     | 是否支持键盘上下键 | `boolean`                                                               | `true`     |
+| prefix       | 前缀               | `ReactNode`                                                             | -          |
+| suffix       | 后缀               | `ReactNode`                                                             | -          |
+| placeholder  | 输入框占位文本     | `string`                                                                | -          |
+| onChange     | 值变化时的回调     | `(value: number \| null) => void`                                       | -          |
+| onPressEnter | 按下回车键时的回调 | `(e: KeyboardEvent) => void`                                            | -          |
+| classNames   | 语义化类名         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
+| styles       | 语义化样式         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
 
-## 主题变量 (Design Token)
+<details>
+<summary>组件 Token (components.input)</summary>
 
-| Token Name                           | Description      | Default Value      |
-| ------------------------------------ | ---------------- | ------------------ |
-| `components.input.borderRadius`      | 边框圆角         | 4px                |
-| `components.input.activeBorderColor` | 激活状态边框颜色 | #40a9ff            |
-| `components.input.hoverBorderColor`  | 悬停状态边框颜色 | #4096ff            |
-| `components.input.padding`           | 内边距           | different per size |
-| `components.input.fontSize`          | 字体大小         | different per size |
+| 变量名                               | 说明             |
+| ------------------------------------ | ---------------- |
+| `components.input.activeBorderColor` | 激活状态边框颜色 |
+| `components.input.hoverBorderColor`  | 悬停状态边框颜色 |
+| `components.input.borderRadius`      | 边框圆角         |
+| `components.input.padding.sm`        | 小尺寸内边距     |
+| `components.input.padding.md`        | 中尺寸内边距     |
+| `components.input.padding.lg`        | 大尺寸内边距     |
+| `components.input.fontSize.sm`       | 小尺寸字体大小   |
+| `components.input.fontSize.md`       | 中尺寸字体大小   |
+| `components.input.fontSize.lg`       | 大尺寸字体大小   |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名                       | 说明         |
+| ---------------------------- | ------------ |
+| `colors.primary`             | 主色调       |
+| `colors.text`                | 文本颜色     |
+| `colors.textSecondary`       | 次级文本颜色 |
+| `colors.textTertiary`        | 三级文本颜色 |
+| `colors.textDisabled`        | 禁用文本颜色 |
+| `colors.border`              | 边框颜色     |
+| `colors.background`          | 背景颜色     |
+| `colors.backgroundSecondary` | 次级背景颜色 |
+| `colors.backgroundTertiary`  | 三级背景颜色 |
+| `colors.error`               | 错误状态颜色 |
+| `colors.warning`             | 警告状态颜色 |
+
+</details>

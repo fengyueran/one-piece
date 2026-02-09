@@ -495,8 +495,8 @@ export default () => {
 | switcherIcon        | 自定义展开图标                   | `ReactNode \| ((props: { expanded: boolean }) => ReactNode)`                                                         | -       |
 | titleRender         | 自定义标题渲染                   | `(node: DataNode) => ReactNode`                                                                                      | -       |
 | expandOnClick       | 点击节点是否展开                 | `boolean`                                                                                                            | `false` |
-| className           | 自定义类名                       | `string`                                                                                                             | -       |
-| style               | 自定义样式                       | `CSSProperties`                                                                                                      | -       |
+| styles              | 内部组件样式                     | `{ root, node, content, switcher, checkbox, icon, title }`                                                           | -       |
+| classNames          | 内部组件类名                     | `{ root, node, content, switcher, checkbox, icon, title }`                                                           | -       |
 
 ### DataNode
 

@@ -161,6 +161,44 @@ export default () => {
 }
 ```
 
+### 自定义头部
+
+自定义头部内容。
+
+```tsx
+import React, { useState } from 'react'
+import { Modal, Button } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open Modal with Custom Header</Button>
+      <Modal
+        isOpen={isOpen}
+        onCancel={() => setIsOpen(false)}
+        header={
+          <div
+            style={{
+              padding: '16px 24px',
+              borderBottom: '1px solid #f0f0f0',
+              fontWeight: 'bold',
+              fontSize: '18px',
+              color: '#1890ff',
+            }}
+          >
+            Custom Header
+          </div>
+        }
+      >
+        <p>This modal has a custom header.</p>
+      </Modal>
+    </>
+  )
+}
+```
+
 ### 静态方法
 
 使用 `Modal.info`, `Modal.success` 等静态方法创建对话框。
@@ -321,6 +359,7 @@ export default () => {
 | onOk           | 点击确定回调                                      | `(e: MouseEvent) => void \| Promise<void>` | -        |
 | onCancel       | 点击遮罩层或右上角叉或取消按钮的回调              | `() => void`                               | -        |
 | footer         | 底部内容，当不需要默认底部按钮时，可以设为 `null` | `ReactNode`                                | -        |
+| header         | 头部内容，当不需要默认头部时，可以设为 `null`     | `ReactNode`                                | -        |
 | okText         | 确认按钮文字                                      | `ReactNode`                                | `'确定'` |
 | cancelText     | 取消按钮文字                                      | `ReactNode`                                | `'取消'` |
 | confirmLoading | 确定按钮 loading                                  | `boolean`                                  | `false`  |

@@ -121,6 +121,24 @@ export default () => {
 }
 ```
 
+### 校验状态
+
+通过 `status` 属性设置校验状态。
+
+```tsx
+import React from 'react'
+import { DatePicker } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <DatePicker status="error" placeholder="Error status" />
+    <DatePicker status="warning" placeholder="Warning status" />
+    <DatePicker.RangePicker status="error" />
+    <DatePicker.RangePicker status="warning" />
+  </div>
+)
+```
+
 ### 范围选择器
 
 通过 `DatePicker.RangePicker` 实现日期范围选择。
@@ -205,6 +223,33 @@ export default () => {
 }
 ```
 
+### 自定义样式
+
+可以通过 `styles` 和 `classNames` 属性对组件内部的各个部分进行精细化控制。支持的 key 包括：`root`, `input`, `popup`, `header`, `body`, `day`, `footer`。
+
+```tsx
+import React, { useState } from 'react'
+import { DatePicker } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [date, setDate] = useState(null)
+  return (
+    <DatePicker
+      value={date}
+      onChange={setDate}
+      classNames={{
+        popup: 'my-custom-popup',
+        day: 'my-custom-day',
+      }}
+      styles={{
+        header: { background: '#f6f6f6' },
+        day: { fontWeight: 'bold' },
+      }}
+    />
+  )
+}
+```
+
 ### 自定义主题
 
 通过 `ConfigProvider` 覆盖主题变量。
@@ -218,6 +263,7 @@ export default () => {
   return (
     <ConfigProvider
       theme={{
+        global: false,
         token: {
           components: {
             datePicker: {
@@ -242,6 +288,8 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### DatePicker
 
 | 参数         | 说明                 | 类型                                                 | 默认值          |
@@ -256,10 +304,12 @@ export default () => {
 | clearable    | 是否显示清除按钮     | `boolean`                                            | `false`         |
 | placeholder  | 输入框提示文字       | `string`                                             | `'Select date'` |
 | fullWidth    | 是否撑满父容器宽度   | `boolean`                                            | `false`         |
-| className    | 自定义类名           | `string`                                             | -               |
-| style        | 自定义样式           | `CSSProperties`                                      | -               |
+| styles       | 内部组件样式         | `DatePickerStyles`                                   | -               |
+| classNames   | 内部组件类名         | `DatePickerClassNames`                               | -               |
 
 ### DatePicker.RangePicker
+
+支持 `DatePicker` 的其他通用属性，如 `disabled`, `format`, `showTime`, `fullWidth` 等。
 
 | 参数         | 说明                 | 类型                                            | 默认值                     |
 | ------------ | -------------------- | ----------------------------------------------- | -------------------------- |
@@ -270,14 +320,43 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-| Token Name                             | Description    | Default             |
-| -------------------------------------- | -------------- | ------------------- |
-| `components.datePicker.cellWidth`      | 单元格宽度     | 32px                |
-| `components.datePicker.cellHeight`     | 单元格高度     | 32px                |
-| `components.datePicker.cellFontSize`   | 单元格字体大小 | 14px                |
-| `components.datePicker.cellActiveBg`   | 选中日期背景色 | #1890ff             |
-| `components.datePicker.cellHoverBg`    | 悬停日期背景色 | #40a9ff             |
-| `components.datePicker.cellColor`      | 日期文字颜色   | rgba(0, 0, 0, 0.88) |
-| `components.datePicker.borderColor`    | 边框颜色       | rgba(0, 0, 0, 0.06) |
-| `components.datePicker.headerPadding`  | 头部内边距     | 12px 16px           |
-| `components.datePicker.headerFontSize` | 头部字体大小   | 14px                |
+<details>
+<summary>组件 Token (components.datePicker)</summary>
+
+| 变量名                                    | 说明            |
+| ----------------------------------------- | --------------- |
+| `components.datePicker.borderColor`       | 边框颜色        |
+| `components.datePicker.boxShadow`         | 阴影            |
+| `components.datePicker.headerPadding`     | 头部内边距      |
+| `components.datePicker.headerFontSize`    | 头部字体大小    |
+| `components.datePicker.weekDayFontSize`   | 星期字体大小    |
+| `components.datePicker.cellWidth`         | 单元格宽度      |
+| `components.datePicker.cellHeight`        | 单元格高度      |
+| `components.datePicker.cellMargin`        | 单元格边距      |
+| `components.datePicker.cellFontSize`      | 单元格字体大小  |
+| `components.datePicker.cellColor`         | 单元格文字颜色  |
+| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 |
+| `components.datePicker.cellActiveBg`      | 选中背景色      |
+| `components.datePicker.cellHoverBg`       | 悬停背景色      |
+| `components.datePicker.cellDisabledColor` | 禁用文字颜色    |
+| `components.datePicker.cellBorderRadius`  | 单元格圆角      |
+
+</details>
+
+<details>
+<summary>全局 Token</summary>
+
+| 变量名                       | 说明         |
+| ---------------------------- | ------------ |
+| `colors.primary`             | 主色调       |
+| `colors.background`          | 背景色       |
+| `colors.backgroundSecondary` | 次级背景色   |
+| `colors.text`                | 文本颜色     |
+| `colors.textSecondary`       | 次级文本颜色 |
+| `colors.textDisabled`        | 禁用文本颜色 |
+| `colors.border`              | 边框颜色     |
+| `colors.error`               | 错误色       |
+| `borderRadius.lg`            | 大圆角       |
+| `shadows.lg`                 | 大阴影       |
+
+</details>

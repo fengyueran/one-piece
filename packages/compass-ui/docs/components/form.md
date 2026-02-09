@@ -17,6 +17,8 @@ group:
 - 用于创建一个实体或收集信息
 - 需要对输入的数据类型进行校验时
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ## 代码演示
 
 ### 基础用法
@@ -327,17 +329,19 @@ export default () => {
       </Form.Item>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Button onClick={() => form.setFieldValue('a', '值 A')}>设置 A</Button>
+        <Button onClick={() => form.setFieldValue(['b', 'c'], '值 C (嵌套)')}>设置 B.C</Button>
         <Button
           onClick={() =>
             form.setFieldsValue({
               a: '值 A (批量)',
-              b: '值 B (批量)',
+              b: { c: '值 C (批量嵌套)' },
             })
           }
         >
           批量设置
         </Button>
         <Button onClick={() => alert(form.getFieldValue('a'))}>获取 A</Button>
+        <Button onClick={() => alert(form.getFieldValue(['b', 'c']))}>获取 B.C</Button>
         <Button onClick={() => alert(JSON.stringify(form.getFieldsValue(), null, 2))}>
           获取全部
         </Button>
@@ -568,35 +572,147 @@ export default () => {
 }
 ```
 
+### 嵌套结构
+
+支持使用数组格式的 `name` 来处理嵌套数据结构。
+
+```tsx
+import React from 'react'
+import { Form, InputField, Button } from '@xinghunm/compass-ui'
+
+export default () => {
+  const handleSubmit = (values) => {
+    console.log('表单值:', values)
+    alert(JSON.stringify(values, null, 2))
+  }
+
+  const initialValues = {
+    user: {
+      name: {
+        first: 'John',
+        last: 'Doe',
+      },
+      email: 'john@example.com',
+    },
+  }
+
+  return (
+    <Form onFinish={handleSubmit} initialValues={initialValues}>
+      <Form.Item label="First Name" name={['user', 'name', 'first']}>
+        <InputField />
+      </Form.Item>
+
+      <Form.Item label="Last Name" name={['user', 'name', 'last']}>
+        <InputField />
+      </Form.Item>
+
+      <Form.Item label="Email" name={['user', 'email']}>
+        <InputField />
+      </Form.Item>
+
+      <Form.Item>
+        <Button variant="primary" htmlType="submit">
+          提交
+        </Button>
+      </Form.Item>
+    </Form>
+  )
+}
+```
+
+### 自定义样式
+
+通过 `classNames` 和 `styles` 属性可以精确控制组件内部元素的样式。对于 Form 组件，你可以直接在根组件上配置所有 Item 的全局样式。
+
+```tsx
+import React from 'react'
+import { Form, InputField, Button } from '@xinghunm/compass-ui'
+
+export default () => (
+  <Form
+    classNames={{
+      form: 'custom-form',
+      item: 'custom-item-root',
+      label: 'custom-item-label',
+      error: 'custom-item-error',
+    }}
+    styles={{
+      form: { border: '1px solid #eee', padding: 16 },
+      label: { color: 'blue', fontWeight: 'bold' },
+    }}
+  >
+    <Form.Item label="Custom Item" name="custom">
+      <InputField placeholder="Check styles in devtools" />
+    </Form.Item>
+    <Button htmlType="submit">Submit</Button>
+  </Form>
+)
+```
+
+### 自定义主题
+
+通过 `ConfigProvider` 自定义表单主题。
+
+```tsx
+import { ConfigProvider, Form, InputField } from '@xinghunm/compass-ui'
+
+export default () => {
+  return (
+    <ConfigProvider
+      theme={{
+        global: false,
+        token: {
+          components: {
+            form: {
+              labelColor: '#1890ff',
+              labelFontSize: '16px',
+              itemMarginBottom: '32px',
+            },
+          },
+        },
+      }}
+    >
+      <Form>
+        <Form.Item label="用户名" name="username">
+          <InputField />
+        </Form.Item>
+      </Form>
+    </ConfigProvider>
+  )
+}
+```
+
 ## API
+
+通用属性参考：[通用属性](/guide/common-props)
 
 ### Form
 
-| 参数           | 说明                             | 类型                                                                                     | 默认值       |
-| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------- | ------------ |
-| form           | 表单控制实例                     | `FormInstance`                                                                           | -            |
-| layout         | 表单布局                         | `'horizontal' \| 'vertical' \| 'inline'`                                                 | `'vertical'` |
-| initialValues  | 表单默认值                       | `Record<string, unknown>`                                                                | -            |
-| onFinish       | 提交表单且数据验证成功后回调事件 | `(values: Record<string, unknown>) => void`                                              | -            |
-| onFinishFailed | 提交表单且数据验证失败后回调事件 | (errorInfo: [ValidateErrorEntity](#validateerrorentity)) => void                         | -            |
-| onValuesChange | 字段值更新时触发回调事件         | `(changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => void`   | -            |
-| onFieldsChange | 字段状态更新时触发回调事件       | (changedFields: [FieldData](#fielddata)[], allFields: [FieldData](#fielddata)[]) => void | -            |
-| className      | 自定义类名                       | `string`                                                                                 | -            |
-| style          | 自定义样式                       | `React.CSSProperties`                                                                    | -            |
+| 参数           | 说明                             | 类型                                                                                           | 默认值       |
+| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------------- | ------------ |
+| form           | 表单控制实例                     | `FormInstance`                                                                                 | -            |
+| layout         | 表单布局                         | `'horizontal' \| 'vertical' \| 'inline'`                                                       | `'vertical'` |
+| initialValues  | 表单默认值                       | `Record<string, unknown>`                                                                      | -            |
+| onFinish       | 提交表单且数据验证成功后回调事件 | `(values: Record<string, unknown>) => void`                                                    | -            |
+| onFinishFailed | 提交表单且数据验证失败后回调事件 | (errorInfo: [ValidateErrorEntity](#validateerrorentity)) => void                               | -            |
+| onValuesChange | 字段值更新时触发回调事件         | `(changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => void`         | -            |
+| onFieldsChange | 字段状态更新时触发回调事件       | (changedFields: [FieldData](#fielddata)[], allFields: [FieldData](#fielddata)[]) => void       | -            |
+| classNames     | 语义化类名                       | `{ form?: string; item?: string; label?: string; error?: string }`                             | -            |
+| styles         | 语义化样式                       | `{ form?: CSSProperties; item?: CSSProperties; label?: CSSProperties; error?: CSSProperties }` | -            |
 
 ### Form.Item
 
-| 参数           | 说明       | 类型                                                | 默认值  |
-| -------------- | ---------- | --------------------------------------------------- | ------- |
-| name           | 字段名     | `string \| string[]`                                | -       |
-| label          | 标签文本   | `ReactNode`                                         | -       |
-| rules          | 校验规则   | `Rule[]`                                            | -       |
-| required       | 是否必填   | `boolean`                                           | `false` |
-| help           | 提示信息   | `ReactNode`                                         | -       |
-| validateStatus | 校验状态   | `'success' \| 'warning' \| 'error' \| 'validating'` | -       |
-| dependencies   | 依赖字段   | `string[]`                                          | -       |
-| className      | 自定义类名 | `string`                                            | -       |
-| style          | 自定义样式 | `React.CSSProperties`                               | -       |
+| 参数           | 说明       | 类型                                                  | 默认值  |
+| -------------- | ---------- | ----------------------------------------------------- | ------- |
+| name           | 字段名     | `NamePath` (string \| number \| (string \| number)[]) | -       |
+| label          | 标签文本   | `ReactNode`                                           | -       |
+| rules          | 校验规则   | `Rule[]`                                              | -       |
+| required       | 是否必填   | `boolean`                                             | `false` |
+| help           | 提示信息   | `ReactNode`                                           | -       |
+| validateStatus | 校验状态   | `'success' \| 'warning' \| 'error' \| 'validating'`   | -       |
+| dependencies   | 依赖字段   | `NamePath[]`                                          | -       |
+| className      | 自定义类名 | `string`                                              | -       |
+| style          | 自定义样式 | `React.CSSProperties`                                 | -       |
 
 ### Rule
 
@@ -614,11 +730,11 @@ export default () => {
 
 表单验证失败时的错误信息对象。
 
-| 参数        | 说明               | 类型                                   |
-| ----------- | ------------------ | -------------------------------------- |
-| values      | 当前表单的所有值   | `object`                               |
-| errorFields | 验证失败的字段列表 | `{ name: string; errors: string[] }[]` |
-| outOfDate   | 错误信息是否过期   | `boolean`                              |
+| 参数        | 说明               | 类型                                     |
+| ----------- | ------------------ | ---------------------------------------- |
+| values      | 当前表单的所有值   | `object`                                 |
+| errorFields | 验证失败的字段列表 | `{ name: NamePath; errors: string[] }[]` |
+| outOfDate   | 错误信息是否过期   | `boolean`                                |
 
 ### FieldData
 
@@ -632,50 +748,30 @@ export default () => {
 | validating | 是否正在验证     | `boolean`  |
 | errors     | 错误信息列表     | `string[]` |
 
-## 主题变量
-
-Form 组件支持通过 ConfigProvider 自定义主题变量。
+## 主题变量 (Design Token)
 
 <details>
 <summary>组件 Token (components.form)</summary>
 
-| Token 名称                          | 说明             | 默认值                |
-| ----------------------------------- | ---------------- | --------------------- |
-| `components.form.itemMarginBottom`  | 表单项下间距     | `0px`                 |
-| `components.form.labelMarginBottom` | 标签下间距       | `8px`                 |
-| `components.form.labelFontSize`     | 标签字体大小     | `14px`                |
-| `components.form.labelColor`        | 标签颜色         | `rgba(0, 0, 0, 0.88)` |
-| `components.form.errorColor`        | 错误信息颜色     | `#ff4d4f`             |
-| `components.form.errorFontSize`     | 错误信息字体大小 | `12px`                |
-| `components.form.errorMarginTop`    | 错误信息上间距   | `4px`                 |
-| `components.form.errorMarginBottom` | 错误信息下间距   | `8px`                 |
+| 变量名                              | 说明             |
+| ----------------------------------- | ---------------- |
+| `components.form.itemMarginBottom`  | 表单项下间距     |
+| `components.form.labelMarginBottom` | 标签下间距       |
+| `components.form.labelFontSize`     | 标签字体大小     |
+| `components.form.labelColor`        | 标签颜色         |
+| `components.form.errorColor`        | 错误信息颜色     |
+| `components.form.errorFontSize`     | 错误信息字体大小 |
+| `components.form.errorMarginTop`    | 错误信息上间距   |
+| `components.form.errorMarginBottom` | 错误信息下间距   |
 
 </details>
 
-### 使用示例
+<details>
+<summary>全局 Token</summary>
 
-```tsx
-import { ConfigProvider, Form, InputField } from '@xinghunm/compass-ui'
+| 变量名         | 说明     |
+| -------------- | -------- |
+| `spacing.md`   | 默认间距 |
+| `colors.error` | 错误主色 |
 
-export default () => {
-  return (
-    <ConfigProvider
-      theme={{
-        components: {
-          form: {
-            labelColor: '#1890ff',
-            labelFontSize: '16px',
-            itemMarginBottom: '32px',
-          },
-        },
-      }}
-    >
-      <Form>
-        <Form.Item label="用户名" name="username">
-          <InputField />
-        </Form.Item>
-      </Form>
-    </ConfigProvider>
-  )
-}
-```
+</details>

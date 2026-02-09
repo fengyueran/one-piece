@@ -315,17 +315,17 @@ export default () => {
 
 ### Steps
 
-| 参数           | 说明               | 类型                                         | 默认值         |
-| -------------- | ------------------ | -------------------------------------------- | -------------- |
-| current        | 当前步骤,从 0 开始 | `number`                                     | `0`            |
-| direction      | 步骤条方向         | `'horizontal' \| 'vertical'`                 | `'horizontal'` |
-| variant        | 步骤条变体         | `'default' \| 'dot'`                         | `'default'`    |
-| status         | 当前步骤的状态     | `'wait' \| 'process' \| 'finish' \| 'error'` | `'process'`    |
-| labelPlacement | 标签位置           | `'horizontal' \| 'vertical'`                 | `'horizontal'` |
-| items          | 步骤项配置         | `StepProps[]`                                | `[]`           |
-| onChange       | 点击切换步骤的回调 | `(current: number) => void`                  | -              |
-| className      | 自定义类名         | `string`                                     | -              |
-| style          | 自定义样式         | `React.CSSProperties`                        | -              |
+| 参数           | 说明               | 类型                                                                | 默认值         |
+| -------------- | ------------------ | ------------------------------------------------------------------- | -------------- |
+| current        | 当前步骤,从 0 开始 | `number`                                                            | `0`            |
+| direction      | 步骤条方向         | `'horizontal' \| 'vertical'`                                        | `'horizontal'` |
+| variant        | 步骤条变体         | `'default' \| 'dot'`                                                | `'default'`    |
+| status         | 当前步骤的状态     | `'wait' \| 'process' \| 'finish' \| 'error'`                        | `'process'`    |
+| labelPlacement | 标签位置           | `'horizontal' \| 'vertical'`                                        | `'horizontal'` |
+| items          | 步骤项配置         | `StepProps[]`                                                       | `[]`           |
+| onChange       | 点击切换步骤的回调 | `(current: number) => void`                                         | -              |
+| styles         | 内部组件样式       | `{ root, item, icon, content, title, subtitle, description, tail }` | -              |
+| classNames     | 内部组件类名       | `{ root, item, icon, content, title, subtitle, description, tail }` | -              |
 
 ### StepProps
 

@@ -131,6 +131,34 @@ export default () => {
 }
 ```
 
+### 分离布局与样式
+
+`tabPosition` 控制样式的方向（如 InkBar 位置），`tabBarPosition` 控制 Tab Bar 相对于内容的布局位置。
+例如：想要 Tab Bar 在顶部，但 InkBar 显示在 Tab Item 的上方（Bottom样式），可以组合使用。
+
+```tsx
+import React from 'react'
+import { Tabs } from '@xinghunm/compass-ui'
+
+export default () => {
+  const items = Array.from({ length: 3 }).map((_, i) => ({
+    key: `${i}`,
+    label: `Tab-${i}`,
+    children: `Content of Tab Pane ${i}`,
+  }))
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* 默认情况：Tab在上方，Style为Top（InkBar在下） */}
+      <Tabs defaultActiveKey="default" items={items} />
+
+      {/* Style为Bottom（InkBar在上），但强行布局在Top */}
+      <Tabs defaultActiveKey="mixed" tabPosition="bottom" tabBarPosition="top" items={items} />
+    </div>
+  )
+}
+```
+
 ### 三种大小
 
 大、中、小三种尺寸。
@@ -333,19 +361,20 @@ export default () => {
 
 ### Tabs
 
-| 参数               | 说明                    | 类型                                                     | 默认值      |
-| ------------------ | ----------------------- | -------------------------------------------------------- | ----------- |
-| activeKey          | 当前激活 tab 面板的 key | `string`                                                 | -           |
-| defaultActiveKey   | 初始化选中面板的 key    | `string`                                                 | -           |
-| items              | 配置选项卡内容          | [TabItem[]](#tabitem)                                    | `[]`        |
-| type               | 页签的基本样式          | `'line' \| 'card' \| 'editable-card'`                    | `'line'`    |
-| size               | 大小                    | `'small' \| 'default' \| 'large'`                        | `'default'` |
-| tabPosition        | 页签位置                | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `'top'`     |
-| tabBarExtraContent | 标签栏附加内容          | `ReactNode`                                              | -           |
-| onChange           | 切换面板的回调          | `(activeKey: string) => void`                            | -           |
-| onEdit             | 编辑标签的回调          | `(targetKey: string, action: 'add' \| 'remove') => void` | -           |
-| className          | 自定义类名              | `string`                                                 | -           |
-| style              | 自定义样式              | `CSSProperties`                                          | -           |
+| 参数               | 说明                                               | 类型                                                     | 默认值        |
+| ------------------ | -------------------------------------------------- | -------------------------------------------------------- | ------------- |
+| activeKey          | 当前激活 tab 面板的 key                            | `string`                                                 | -             |
+| defaultActiveKey   | 初始化选中面板的 key                               | `string`                                                 | -             |
+| items              | 配置选项卡内容                                     | [TabItem[]](#tabitem)                                    | `[]`          |
+| type               | 页签的基本样式                                     | `'line' \| 'card' \| 'editable-card'`                    | `'line'`      |
+| size               | 大小                                               | `'small' \| 'default' \| 'large'`                        | `'default'`   |
+| tabPosition        | 页签样式位置（控制边框、InkBar位置）               | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `'top'`       |
+| tabBarPosition     | 页签布局位置（控制Tab Bar相对于Content的物理位置） | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `tabPosition` |
+| tabBarExtraContent | 标签栏附加内容                                     | `ReactNode`                                              | -             |
+| onChange           | 切换面板的回调                                     | `(activeKey: string) => void`                            | -             |
+| onEdit             | 编辑标签的回调                                     | `(targetKey: string, action: 'add' \| 'remove') => void` | -             |
+| tabBarStyle        | Tab Bar 自定义样式                                 | `CSSProperties`                                          | -             |
+| tabBarClassName    | Tab Bar 自定义类名                                 | `string`                                                 | -             |
 
 ### TabItem
 

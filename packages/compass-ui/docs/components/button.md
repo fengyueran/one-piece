@@ -68,6 +68,32 @@ export default () => (
 )
 ```
 
+### 文本图标按钮 (Ghost)
+
+使用 `variant="text"` 和 `shape="circle"` 可以创建仅在悬停时显示背景的纯图标按钮，常用于工具栏或不需要过多强调的操作。
+
+```tsx
+import React from 'react'
+import { Button } from '@xinghunm/compass-ui'
+
+const SearchIcon = () => (
+  <span role="img" aria-label="search" className="compass-icon">
+    <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
+      <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
+    </svg>
+  </span>
+)
+
+export default () => (
+  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+    <Button variant="text" icon={<SearchIcon />} />
+    <Button variant="text" shape="circle" icon={<SearchIcon />} />
+    <Button variant="text" disabled icon={<SearchIcon />} />
+    <Button variant="text" danger icon={<SearchIcon />} />
+  </div>
+)
+```
+
 ### 按钮尺寸
 
 按钮有大、中、小三种尺寸。
@@ -185,43 +211,70 @@ export default () => (
 
 ### 自定义样式
 
-通过 `style` 和 `className` 属性自定义按钮样式。
+通过 `classNames` 和 `styles` 属性可以精确控制按钮内部元素的样式。
 
 ```tsx
 import React from 'react'
 import { Button } from '@xinghunm/compass-ui'
 
+const SearchIcon = () => (
+  <span role="img" aria-label="search" className="compass-icon">
+    <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
+      <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path>
+    </svg>
+  </span>
+)
+
 export default () => (
   <>
     <style>{`
-      .custom-button {
-        font-weight: bold !important;
-        letter-spacing: 2px;
-        transition: transform 0.2s;
+      .custom-button-root {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
-      .custom-button:hover {
-        transform: scale(1.05);
+      .custom-button-root:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      }
+      .custom-icon {
+        color: #1890ff;
+      }
+      .custom-text {
+        font-weight: 600;
       }
     `}</style>
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
       <Button
         variant="primary"
-        style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          border: 'none',
+        icon={<SearchIcon />}
+        classNames={{
+          root: 'custom-button-root',
+          icon: 'custom-icon',
+          text: 'custom-text',
         }}
       >
-        Gradient Button
+        使用 classNames
       </Button>
       <Button
         variant="default"
-        className="custom-button"
-        style={{
-          borderRadius: '20px',
-          padding: '0 24px',
+        icon={<SearchIcon />}
+        styles={{
+          root: { borderRadius: '20px', padding: '0 24px' },
+          icon: { color: '#52c41a', fontSize: '18px' },
+          text: { fontWeight: 'bold', letterSpacing: '1px' },
         }}
       >
-        Custom Class
+        使用 styles
+      </Button>
+      <Button
+        variant="primary"
+        loading
+        classNames={{
+          loading: 'custom-icon',
+        }}
+        styles={{
+          text: { marginLeft: '8px' },
+        }}
+      >
+        自定义 loading 样式
       </Button>
     </div>
   </>
@@ -257,6 +310,7 @@ import { Button, ConfigProvider } from '@xinghunm/compass-ui'
 export default () => (
   <ConfigProvider
     theme={{
+      global: false,
       token: {
         colors: {
           primary: '#722ed1',
@@ -280,21 +334,25 @@ export default () => (
 
 ## API
 
-### Button
+通用属性参考：[通用属性](/guide/common-props)
 
-| 参数      | 说明                     | 类型                                                     | 默认值      |
-| --------- | ------------------------ | -------------------------------------------------------- | ----------- |
-| variant   | 按钮类型                 | `'primary' \| 'default' \| 'dashed' \| 'text' \| 'link'` | `'default'` |
-| size      | 按钮尺寸                 | `'small' \| 'medium' \| 'large'`                         | `'medium'`  |
-| disabled  | 按钮失效状态             | `boolean`                                                | `false`     |
-| loading   | 设置按钮载入状态         | `boolean`                                                | `false`     |
-| block     | 将按钮宽度调整为其父宽度 | `boolean`                                                | `false`     |
-| danger    | 设置危险按钮             | `boolean`                                                | `false`     |
-| hasRipple | 是否启用水波纹效果       | `boolean`                                                | `true`      |
-| onClick   | 点击按钮时的回调         | `(event: React.MouseEvent) => void`                      | -           |
-| className | 自定义类名               | `string`                                                 | -           |
-| style     | 自定义样式               | `React.CSSProperties`                                    | -           |
-| children  | 按钮内容                 | `ReactNode`                                              | -           |
+| 参数       | 说明                     | 类型                                                                                                                    | 默认值      |
+| ---------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ----------- |
+| variant    | 按钮类型                 | `'primary' \| 'default' \| 'dashed' \| 'text' \| 'link'`                                                                | `'default'` |
+| size       | 按钮尺寸                 | `'small' \| 'medium' \| 'large'`                                                                                        | `'medium'`  |
+| disabled   | 按钮失效状态             | `boolean`                                                                                                               | `false`     |
+| loading    | 设置按钮载入状态         | `boolean`                                                                                                               | `false`     |
+| block      | 将按钮宽度调整为其父宽度 | `boolean`                                                                                                               | `false`     |
+| danger     | 设置危险按钮             | `boolean`                                                                                                               | `false`     |
+| hasRipple  | 是否启用水波纹效果       | `boolean`                                                                                                               | `true`      |
+| icon       | 按钮图标                 | `ReactNode`                                                                                                             | -           |
+| shape      | 按钮形状                 | `'default' \| 'circle' \| 'round'`                                                                                      | `'default'` |
+| onClick    | 点击按钮时的回调         | `(event: React.MouseEvent) => void`                                                                                     | -           |
+| classNames | 自定义内部元素类名       | `{ root?: string; icon?: string; text?: string; loading?: string }`                                                     | -           |
+| styles     | 自定义内部元素样式       | `{ root?: React.CSSProperties; icon?: React.CSSProperties; text?: React.CSSProperties; loading?: React.CSSProperties }` | -           |
+| children   | 按钮内容                 | `ReactNode`                                                                                                             | -           |
+
+支持原生 `button` 元素的所有标准属性。
 
 ## 主题变量 (Design Token)
 
