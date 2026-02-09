@@ -3,8 +3,6 @@ import { Theme } from './types'
 export const defaultTheme: Theme = {
   colors: {
     primary: '#1890ff',
-    primaryHover: '#40a9ff',
-    primaryActive: '#096dd9',
     success: '#52c41a',
     warning: '#faad14',
     error: '#ff4d4f',
@@ -23,6 +21,7 @@ export const defaultTheme: Theme = {
     border: '#d9d9d9',
     borderSecondary: '#f0f0f0',
     borderHover: '#4096ff',
+    white: '#ffffff',
   },
 
   spacing: {
@@ -117,6 +116,8 @@ export const defaultTheme: Theme = {
     },
     message: {
       contentPadding: '8px 16px',
+      contentBg: '#ffffff',
+      contentColor: 'rgba(0, 0, 0, 0.88)',
       borderRadius: '8px',
       boxShadow:
         '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',

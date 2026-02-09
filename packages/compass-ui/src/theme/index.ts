@@ -5,3 +5,4 @@ export { darkTheme } from './dark-theme'
 
 export { default as ThemeProvider, useTheme } from './theme-provider'
 export * from './utils'
+export * from './token-utils'

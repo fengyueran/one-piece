@@ -3,8 +3,8 @@ import React from 'react'
 export interface Theme {
   colors: {
     primary: string
-    primaryHover: string
-    primaryActive: string
+    primaryHover?: string
+    primaryActive?: string
     success: string
     warning: string
     error: string
@@ -23,6 +23,7 @@ export interface Theme {
     border: string
     borderSecondary: string
     borderHover: string
+    white: string
   }
 
   spacing: {
@@ -250,6 +251,8 @@ export interface ButtonTheme {
 
 export interface MessageTheme {
   contentPadding: string
+  contentBg: string
+  contentColor: string
   borderRadius: string
   boxShadow: string
   zIndex: number
@@ -264,6 +267,7 @@ export interface ModalTheme {
   bodyPadding: string
   footerPadding: string
   zIndex: number
+  padding: string
 }
 
 export interface ProgressTheme {
@@ -333,4 +337,6 @@ export interface ThemeProviderProps {
   lightTheme?: DeepPartial<Theme>
   darkTheme?: DeepPartial<Theme>
   defaultMode?: ThemeMode
+  /** Whether to inject CSS variables to :root. Defaults to true. */
+  global?: boolean
 }
