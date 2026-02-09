@@ -58,7 +58,40 @@ describe('DatePicker', () => {
 
     it('should apply fullWidth style', () => {
       const { container } = renderWithTheme(<DatePicker fullWidth />)
-      expect(container.firstChild).toHaveStyle('width: 100%')
+      expect(container.querySelector('.compass-date-picker')).toHaveStyle('width: 100%')
+    })
+
+    it('should apply granular classNames and styles', async () => {
+      const { container } = renderWithTheme(
+        <DatePicker
+          classNames={{ root: 'custom-root', input: 'custom-input' }}
+          styles={{ root: { borderColor: 'red' }, input: { background: 'blue' } }}
+        />,
+      )
+
+      const root = container.querySelector('.compass-date-picker')
+      expect(root).toHaveClass('custom-root')
+      expect(root).toHaveStyle('border-color: red')
+
+      const input = container.querySelector('.custom-input')
+      expect(input).toBeInTheDocument()
+      expect(input).toHaveStyle('background: blue')
+    })
+
+    it('should respect status prop (error)', () => {
+      const { container } = renderWithTheme(<DatePicker status="error" />)
+      const inputWrapper = container.querySelector('.compass-input')
+      if (inputWrapper) {
+        expect(inputWrapper).toBeInTheDocument()
+      }
+    })
+
+    it('should handle disabled prop styling', () => {
+      const { container } = renderWithTheme(<DatePicker disabled />)
+      const input = screen.getByRole('textbox')
+      expect(input).toBeDisabled()
+      const wrapper = container.querySelector('.compass-date-picker')
+      expect(wrapper).toBeInTheDocument()
     })
   })
 

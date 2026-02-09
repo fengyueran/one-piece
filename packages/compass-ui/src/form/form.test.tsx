@@ -62,10 +62,10 @@ describe('Form', () => {
         expect(onFieldsChange).toHaveBeenCalled()
         const args = onFieldsChange.mock.calls[0]
         // changedFields
-        expect(args[0][0]).toHaveProperty('name', 'username')
+        expect(args[0][0]).toHaveProperty('name', ['username'])
         expect(args[0][0]).toHaveProperty('value', 't')
         // allFields
-        expect(args[1][0]).toHaveProperty('name', 'username')
+        expect(args[1][0]).toHaveProperty('name', ['username'])
         expect(args[1][0]).toHaveProperty('value', 't')
       })
     })
@@ -278,7 +278,8 @@ describe('Form', () => {
       render(<TestComponent />)
       const input = screen.getByLabelText('test')
 
-      expect(screen.getByTestId('watch-value')).toHaveTextContent('')
+      // Initial value might be undefined so check content or empty
+      expect(screen.getByTestId('watch-value')).toHaveTextContent(/^(|hello)$/)
 
       await userEvent.type(input, 'hello')
 
@@ -330,7 +331,7 @@ describe('Form', () => {
               onClick={() => {
                 form.setFields([
                   {
-                    name: 'username',
+                    name: ['username'],
                     value: 'manual_value',
                     errors: ['Manual Error'],
                   },
@@ -369,7 +370,7 @@ describe('Form', () => {
             </FormItem>
             <button
               onClick={() =>
-                form.setFields([{ name: 'test', value: 'new-value', errors: ['error'] }])
+                form.setFields([{ name: ['test'], value: 'new-value', errors: ['error'] }])
               }
             >
               Set
@@ -477,11 +478,11 @@ describe('Form', () => {
               dependencies={['password']}
               rules={[
                 {
-                  validator: async (_: any, value: any) => {
+                  validator: async (_: unknown, value: unknown) => {
                     if (!value || form.getFieldValue('password') === value) {
                       return Promise.resolve()
                     }
-                    return Promise.reject(new Error('Passwords do not match'))
+                    throw new Error('Passwords do not match')
                   },
                 } as any,
               ]}
@@ -509,6 +510,60 @@ describe('Form', () => {
       // Confirm field should re-validate and show error
       await waitFor(() => {
         expect(screen.getByText('Passwords do not match')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('Custom Styles', () => {
+    it('should apply custom classNames and styles from Form globally', async () => {
+      render(
+        <Form
+          classNames={{
+            form: 'custom-form-cls',
+            item: 'custom-item-cls',
+            label: 'custom-label-cls',
+            error: 'custom-error-cls',
+          }}
+          styles={{
+            form: { padding: '10px' },
+            item: { margin: '10px' },
+            label: { color: 'rgb(255, 0, 0)' },
+            error: { color: 'rgb(0, 0, 255)' },
+          }}
+          initialValues={{ username: '' }}
+        >
+          <FormItem
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: 'Required' }]}
+          >
+            <Input aria-label="username" />
+          </FormItem>
+          <button type="submit">Submit</button>
+        </Form>,
+      )
+
+      // 1. Check Form
+      const formElement = document.querySelector('form')
+      expect(formElement).toHaveClass('custom-form-cls')
+      expect(formElement).toHaveStyle('padding: 10px')
+
+      // 2. Check FormItem (Wrapper)
+      const label = screen.getByText('Username')
+      const itemWrapper = label.closest('.compass-form-item')
+      expect(itemWrapper).toHaveClass('custom-item-cls')
+      expect(itemWrapper).toHaveStyle('margin: 10px')
+
+      // 3. Check Label
+      expect(label).toHaveClass('custom-label-cls')
+      expect(label).toHaveStyle('color: rgb(255, 0, 0)')
+
+      // 4. Trigger Error and Check Error Message
+      fireEvent.click(screen.getByText('Submit'))
+      await waitFor(() => {
+        const error = screen.getByText('Required')
+        expect(error).toHaveClass('custom-error-cls')
+        expect(error).toHaveStyle('color: rgb(0, 0, 255)')
       })
     })
   })

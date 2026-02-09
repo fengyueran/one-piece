@@ -75,6 +75,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
     className,
     style,
     fullWidth = false,
+    styles,
+    classNames,
     ...rest
   } = props
 
@@ -183,7 +185,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
       case 'year': {
         const startYear = Math.floor(viewDate.getFullYear() / 10) * 10
         return (
-          <StyledHeader>
+          <StyledHeader className={classNames?.header} style={styles?.header}>
             <StyledHeaderButton onClick={() => setYear(viewDate.getFullYear() - 10)}>
               <DoubleLeftOutlined />
             </StyledHeaderButton>
@@ -197,7 +199,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
       case 'month':
       case 'quarter':
         return (
-          <StyledHeader>
+          <StyledHeader className={classNames?.header} style={styles?.header}>
             <StyledHeaderButton onClick={prevYear}>
               <DoubleLeftOutlined />
             </StyledHeaderButton>
@@ -211,7 +213,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
         )
       default: // date
         return (
-          <StyledHeader>
+          <StyledHeader className={classNames?.header} style={styles?.header}>
             <StyledHeaderButtonGroup>
               <StyledHeaderButton onClick={prevYear}>
                 <DoubleLeftOutlined />
@@ -306,6 +308,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
                       </StyledWeekNumber>
                     )}
                     <StyledDay
+                      className={classNames?.day}
+                      style={styles?.day}
                       isCurrentMonth={day.isCurrentMonth}
                       isToday={day.isToday}
                       isSelected={isSelected}
@@ -330,8 +334,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   return (
     <StyledDatePicker
       ref={ref}
-      className={`compass-date-picker ${className || ''}`}
-      style={style}
+      className={`compass-date-picker ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
       fullWidth={fullWidth}
     >
       <div
@@ -342,6 +346,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
       >
         <InputField
           {...rest}
+          className={classNames?.input}
+          style={styles?.input}
           fullWidth={fullWidth}
           placeholder={placeholder || locale.dateSelect}
           value={inputValue}
@@ -385,16 +391,16 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
               style={{ ...floatingStyles, zIndex: 1000 }}
               {...getFloatingProps()}
             >
-              <StyledCalendar>
+              <StyledCalendar className={classNames?.popup} style={styles?.popup}>
                 {renderHeader()}
-                <StyledPickerBody>
+                <StyledPickerBody className={classNames?.body} style={styles?.body}>
                   <StyledDatePanel>{renderPanel()}</StyledDatePanel>
                   {showTime && picker === 'date' && panelMode === 'date' && (
                     <TimePanel value={selectedDate} onChange={handleTimeChange} />
                   )}
                 </StyledPickerBody>
                 {showTime && picker === 'date' && (
-                  <StyledFooter>
+                  <StyledFooter className={classNames?.footer} style={styles?.footer}>
                     <div /> {/* Spacer */}
                     <Button size="small" variant="primary" onClick={handleOk}>
                       {locale.ok}

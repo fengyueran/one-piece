@@ -1,10 +1,8 @@
 import styled from '@emotion/styled'
-import { Theme } from '../theme/types'
-import { getComponentTheme } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const ItemWrapper = styled.div<{ hasError?: boolean }>`
-  margin-bottom: ${({ theme, hasError }) =>
-    hasError ? '0' : getComponentTheme(theme, 'form').itemMarginBottom};
+  margin-bottom: ${token('spacing.lg', '24px')};
   position: relative;
   display: flex;
   flex-direction: column;
@@ -13,21 +11,23 @@ export const ItemWrapper = styled.div<{ hasError?: boolean }>`
 
 export const Label = styled.label`
   display: block;
-  margin-bottom: ${({ theme }: { theme: Theme }) =>
-    getComponentTheme(theme, 'form').labelMarginBottom};
-  font-size: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').labelFontSize};
-  color: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').labelColor};
+  margin-bottom: ${token('components.form.labelMarginBottom', token('spacing.xs', '8px'))};
+  font-size: ${token('components.form.labelFontSize', token('fontSize.md', '14px'))};
+  color: ${token('components.form.labelColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))};
 `
 
 export const ErrorMessage = styled.div`
-  color: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').errorColor};
-  font-size: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').errorFontSize};
-  margin-top: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').errorMarginTop};
+  color: ${token('components.form.errorColor', token('colors.error', '#ff4d4f'))};
+  font-size: ${token('components.form.errorFontSize', token('fontSize.sm', '12px'))};
   margin-bottom: 0;
-  min-height: ${({ theme }: { theme: Theme }) => getComponentTheme(theme, 'form').itemMarginBottom};
+  min-height: ${token('spacing.lg', '24px')};
   width: 0;
   min-width: 100%;
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: break-all;
   white-space: pre-wrap;
+`
+
+export const MarginOffset = styled.div`
+  margin-bottom: calc(-1 * ${token('spacing.lg', '24px')});
 `

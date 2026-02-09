@@ -1,17 +1,20 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useFormContext } from './form-context'
-import { FormInstance } from './types'
+import { FormInstance, NamePath, InternalNamePath } from './types'
+import { getNamePath, matchNamePath, getValue } from './utils'
 
-export const useWatch = <T = unknown>(name: string | string[], form?: FormInstance): T => {
+export const useWatch = <T = unknown>(name: NamePath, form?: FormInstance): T => {
   const formContext = useFormContext()
   const targetForm = form || formContext
 
+  const namePath = useMemo(() => {
+    return getNamePath(name)
+  }, [name])
+
   const getCurrentValue = () => {
     if (targetForm) {
-      if (Array.isArray(name)) {
-        return name.map((n) => targetForm.getFieldValue(n))
-      }
-      return targetForm.getFieldValue(name)
+      const values = targetForm.getFieldsValue()
+      return getValue(values as unknown as Record<string, unknown>, namePath)
     }
     return undefined
   }
@@ -26,18 +29,20 @@ export const useWatch = <T = unknown>(name: string | string[], form?: FormInstan
     const hooks = targetForm.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
     if (!hooks) return
 
-    const callback = (changedName: string) => {
-      let shouldUpdate = false
-      if (Array.isArray(name)) {
-        if (name.includes(changedName)) {
-          shouldUpdate = true
-        }
-      } else if (name === changedName) {
-        shouldUpdate = true
-      }
+    const callback = (changedNamePath: InternalNamePath) => {
+      // Check if changedNamePath affects our watched path
+      // If changedNamePath is same as namePath
+      // OR if changedNamePath is a parent of namePath (e.g. user changed, we watch user.name)
+      // OR if changedNamePath is a child of namePath (e.g. user.name changed, we watch user)
 
-      if (shouldUpdate) {
-        const newValue = getCurrentValue()
+      if (
+        matchNamePath(changedNamePath, namePath) ||
+        (namePath.length > changedNamePath.length &&
+          matchNamePath(namePath.slice(0, changedNamePath.length), changedNamePath)) ||
+        (changedNamePath.length > namePath.length &&
+          matchNamePath(changedNamePath.slice(0, namePath.length), namePath))
+      ) {
+        const newValue = targetForm.getFieldValue(namePath)
         setValue(newValue)
       }
     }
@@ -45,14 +50,14 @@ export const useWatch = <T = unknown>(name: string | string[], form?: FormInstan
     const unregister = hooks.registerWatch(callback)
 
     // Check if value changed during mount
-    const currentValue = getCurrentValue()
+    const currentValue = targetForm.getFieldValue(namePath)
     if (JSON.stringify(currentValue) !== JSON.stringify(valueRef.current)) {
       setValue(currentValue)
     }
 
     return unregister
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetForm, Array.isArray(name) ? name.join(',') : name])
+  }, [targetForm, namePath.join('.')])
 
   return value as T
 }

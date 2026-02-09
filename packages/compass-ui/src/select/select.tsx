@@ -44,8 +44,6 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     loading,
     allowClear,
     placeholder,
-    className,
-    style,
     multiple = false,
     mode,
     size = 'medium',
@@ -54,6 +52,13 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     dropdownClassName,
     trigger = 'click',
     showSearch,
+    className,
+    style,
+    styles,
+    classNames,
+    optionRender,
+    labelRender,
+    menuItemSelectedIcon,
   } = props
 
   const isMultiple = multiple || mode === 'multiple' || mode === 'tags'
@@ -145,7 +150,8 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const getOptionLabel = (val: string | number) => {
     const opt = parsedOptions.find((o) => o.value === val)
-    return opt ? opt.label : val
+    if (!opt) return val
+    return labelRender ? labelRender(opt) : opt.label
   }
 
   const triggerSelect = (newValue: SelectValue, newOption: SelectOption | SelectOption[]) => {
@@ -231,7 +237,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
       return (
         <>
           {currentArray.map((val) => (
-            <Tag key={val}>
+            <Tag key={val} style={styles?.tag} className={classNames?.tag}>
               <span>{getOptionLabel(val)}</span>
               <TagCloseIcon onClick={(e) => handleTagRemove(val, e)}>
                 <CloseIcon />
@@ -334,6 +340,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     searchValue,
     activeValue: null,
     setActiveValue: () => {},
+    menuItemSelectedIcon,
   }
 
   const triggerRef = refs.setReference as (node: HTMLElement | null) => void
@@ -342,10 +349,10 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     <SelectContext.Provider value={contextValue}>
       <SelectContainer
         ref={triggerRef}
-        className={`compass-select ${className || ''} ${open ? 'compass-select-open' : ''} ${
+        className={`compass-select ${className || ''} ${classNames?.root || ''} ${open ? 'compass-select-open' : ''} ${
           disabled ? 'compass-select-disabled' : ''
         }`}
-        style={style}
+        style={{ ...style, ...styles?.root }}
         disabled={disabled}
         fullWidth
         {...getReferenceProps({
@@ -361,7 +368,8 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
           size={size}
           active={open}
           status={status}
-          className="compass-select-selector"
+          style={styles?.trigger}
+          className={`compass-select-selector ${classNames?.trigger || ''}`}
         >
           <SelectedContent size={size}>{renderContent()}</SelectedContent>
           <SuffixIcon>
@@ -389,16 +397,33 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
                 ...floatingStyles,
                 opacity: x === null || y === null ? 0 : 1,
                 visibility: x === null || y === null ? 'hidden' : 'visible',
+                ...styles?.dropdown,
               }}
-              className={`compass-select-dropdown ${dropdownClassName || ''}`}
+              className={`compass-select-dropdown ${dropdownClassName || ''} ${classNames?.dropdown || ''}`}
               {...getFloatingProps()}
             >
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((opt) => (
-                  <Option key={opt.value} {...opt}>
-                    {opt.label}
-                  </Option>
-                ))
+                filteredOptions.map((opt, index) => {
+                  const isSelected = isMultiple
+                    ? Array.isArray(currentValue) && currentValue.includes(opt.value)
+                    : currentValue === opt.value
+
+                  return (
+                    <Option
+                      key={opt.value}
+                      value={opt.value}
+                      disabled={opt.disabled}
+                      label={opt.label}
+                      style={styles?.option}
+                      className={`${classNames?.option || ''}`}
+                      menuItemSelectedIcon={optionRender ? <></> : undefined}
+                    >
+                      {optionRender
+                        ? optionRender(opt, { index, selected: isSelected })
+                        : opt.label}
+                    </Option>
+                  )
+                })
               ) : (
                 <div style={{ padding: '8px 12px', color: '#999', textAlign: 'center' }}>
                   No Data

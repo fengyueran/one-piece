@@ -6,23 +6,13 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  useMemo,
 } from 'react'
-import Schema, { Rules, RuleItem, ValidateError } from 'async-validator'
+import Schema, { Rules, ValidateError } from 'async-validator'
 import { useFormContext } from './form-context'
-import { ItemWrapper, Label, ErrorMessage } from './form-item.styles'
-
-export interface FormItemProps {
-  name?: string
-  label?: string
-  rules?: RuleItem[]
-  children: ReactElement
-  validateTrigger?: string | string[]
-  initialValue?: unknown
-  className?: string
-  style?: React.CSSProperties
-  help?: React.ReactNode
-  dependencies?: string[]
-}
+import { ItemWrapper, Label, ErrorMessage, MarginOffset } from './form-item.styles'
+import { FormItemProps } from './types'
+import { getNamePath } from './utils'
 
 export const FormItem: React.FC<FormItemProps> = (props) => {
   const {
@@ -37,19 +27,21 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   } = props
 
   const context = useFormContext()
+  const { classNames: globalClassNames, styles: globalStyles } = context || {}
   const [errors, setErrors] = useState<string[]>([])
   const [validating, setValidating] = useState(false)
   const errorsRef = useRef(errors)
   const validatingRef = useRef(validating)
+  const namePath = useMemo(() => getNamePath(name || []), [name])
 
   useEffect(() => {
     errorsRef.current = errors
     validatingRef.current = validating
     if (name && context) {
       const hooks = context.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
-      hooks?.notifyFieldChange(name)
+      hooks?.notifyFieldChange(namePath)
     }
-  }, [errors, validating, name, context])
+  }, [errors, validating, name, namePath, context])
 
   // Force update to re-render when store changes
   const [, forceUpdate] = useState({})
@@ -65,13 +57,17 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
       }
 
       const value =
-        'triggerName' in options ? context?.getFieldValue(name) : context?.getFieldValue(name)
-      const descriptor: Rules = { [name]: rules }
+        'triggerName' in options
+          ? context?.getFieldValue(namePath)
+          : context?.getFieldValue(namePath)
+
+      const nameStr = namePath.join('.')
+      const descriptor: Rules = { [nameStr]: rules }
       const validator = new Schema(descriptor)
 
       setValidating(true)
       try {
-        await validator.validate({ [name]: value }, { suppressWarning: true })
+        await validator.validate({ [nameStr]: value }, { suppressWarning: true })
         setErrors([])
         return null
       } catch (e) {
@@ -88,15 +84,15 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         setValidating(false)
       }
     },
-    [context, name, rules],
+    [context, name, namePath, rules],
   )
 
   const getErrors = useCallback(() => errorsRef.current, [])
-  const getName = useCallback(() => name || '', [name])
+  const getNamePathFunc = useCallback(() => namePath, [namePath])
   const isFieldValidating = useCallback(() => validatingRef.current, [])
   const isFieldTouched = useCallback(
-    () => (name ? context?.isFieldTouched(name) || false : false),
-    [name, context],
+    () => (name ? context?.isFieldTouched(namePath) || false : false),
+    [name, namePath, context],
   )
 
   useLayoutEffect(() => {
@@ -105,7 +101,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
       const unregister = register?.({
         onStoreChange,
         validateRules,
-        getName,
+        getNamePath: getNamePathFunc,
         getErrors,
         isFieldValidating,
         isFieldTouched,
@@ -119,7 +115,7 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     context,
     onStoreChange,
     validateRules,
-    getName,
+    getNamePathFunc,
     getErrors,
     isFieldValidating,
     isFieldTouched,
@@ -128,14 +124,24 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
 
   if (!name || !context) {
     return (
-      <ItemWrapper className={`compass-form-item ${className || ''}`} style={style}>
-        {label && <Label>{label}</Label>}
+      <ItemWrapper
+        className={`compass-form-item ${className || ''} ${globalClassNames?.item || ''}`}
+        style={{ ...style, ...globalStyles?.item }}
+      >
+        {label && (
+          <Label
+            className={`compass-form-item-label ${globalClassNames?.label || ''}`}
+            style={globalStyles?.label}
+          >
+            {label}
+          </Label>
+        )}
         {children}
       </ItemWrapper>
     )
   }
 
-  const value = context.getFieldValue(name)
+  const value = context.getFieldValue(namePath)
 
   // Handle events
   const getControlled = (child: ReactElement) => {
@@ -143,7 +149,13 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
 
     mergeProps.value = value === undefined ? '' : value
     // Pass name to child component for browser password manager recognition
-    mergeProps.name = name
+    // Join with dots for string representation
+    mergeProps.name = namePath.join('.')
+
+    // Pass validatation status to child component
+    if (errors.length > 0) {
+      mergeProps.status = 'error'
+    }
 
     const triggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
 
@@ -167,10 +179,10 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
           }
 
           newValue = val
-          context.setFieldValue(name, newValue)
+          context.setFieldValue(namePath, newValue)
 
           const hooks = context.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
-          hooks?.notifyFieldChange(name)
+          hooks?.notifyFieldChange(namePath)
         }
 
         if (rules.length > 0) {
@@ -187,15 +199,32 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
 
   return (
     <ItemWrapper
-      className={`compass-form-item ${className || ''}`}
-      style={style}
+      className={`compass-form-item ${className || ''} ${globalClassNames?.item || ''}`}
+      style={{ ...style, ...globalStyles?.item }}
       hasError={hasError}
     >
-      {label && <Label className="compass-form-item-label">{label}</Label>}
+      {label && (
+        <Label
+          className={`compass-form-item-label ${globalClassNames?.label || ''}`}
+          style={globalStyles?.label}
+        >
+          {label}
+        </Label>
+      )}
       {getControlled(children)}
       {hasError && (
-        <ErrorMessage className="compass-form-item-error-message">{errorMessage}</ErrorMessage>
+        <>
+          <ErrorMessage
+            className={`compass-form-item-error-message ${globalClassNames?.error || ''}`}
+            style={globalStyles?.error}
+          >
+            {errorMessage}
+          </ErrorMessage>
+          <MarginOffset />
+        </>
       )}
     </ItemWrapper>
   )
 }
+
+FormItem.displayName = 'FormItem'

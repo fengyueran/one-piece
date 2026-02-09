@@ -70,6 +70,9 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
     className,
     style,
     fullWidth = false,
+    styles,
+    classNames,
+    status,
   } = props
 
   const [isOpen, setIsOpen] = useState(false)
@@ -223,14 +226,17 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
   return (
     <StyledDatePicker
       ref={ref}
-      className={`compass-date-range-picker ${className || ''}`}
-      style={style}
+      className={`compass-date-range-picker ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
       fullWidth={fullWidth}
     >
       <div ref={refs.setReference} {...getReferenceProps()}>
         <StyledRangeWrapper
           focused={isOpen}
           disabled={disabled}
+          error={status === 'error'}
+          className={classNames?.input}
+          style={styles?.input}
           onMouseEnter={() => setInputHover(true)}
           onMouseLeave={() => setInputHover(false)}
         >
@@ -278,8 +284,8 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
               style={{ ...floatingStyles, zIndex: 1000 }}
               {...getFloatingProps()}
             >
-              <StyledCalendar>
-                <StyledHeader>
+              <StyledCalendar className={classNames?.popup} style={styles?.popup}>
+                <StyledHeader className={classNames?.header} style={styles?.header}>
                   <StyledHeaderButtonGroup>
                     <StyledHeaderButton onClick={prevYear}>
                       <DoubleLeftOutlined />
@@ -302,7 +308,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                     </StyledHeaderButton>
                   </StyledHeaderButtonGroup>
                 </StyledHeader>
-                <StyledPickerBody>
+                <StyledPickerBody className={classNames?.body} style={styles?.body}>
                   <StyledDatePanel>
                     <StyledWeekDays>
                       {weekDays.map((day) => (
@@ -317,6 +323,8 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                         return (
                           <StyledDay
                             key={index}
+                            className={classNames?.day}
+                            style={styles?.day}
                             isCurrentMonth={day.isCurrentMonth}
                             isToday={day.isToday}
                             isSelected={!!selected}
@@ -339,7 +347,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
                   )}
                 </StyledPickerBody>
                 {showTime && (
-                  <StyledFooter>
+                  <StyledFooter className={classNames?.footer} style={styles?.footer}>
                     <Button
                       size="small"
                       variant="primary"

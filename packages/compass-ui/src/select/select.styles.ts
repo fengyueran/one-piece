@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
+import { token } from '../theme/token-utils'
 
 const rotate = keyframes`
   from {
@@ -37,44 +38,44 @@ export const SelectTrigger = styled.div<{
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: ${({ size, theme }) => {
-    const paddings = theme.components?.select?.padding
+  padding: ${({ size }) => {
     switch (size) {
       case 'small':
-        return paddings?.sm || '1px 8px'
+        return token('components.select.padding.sm', '1px 8px')
       case 'large':
-        return paddings?.lg || '6px 16px'
+        return token('components.select.padding.lg', '6px 16px')
       default:
         // medium
-        return paddings?.md || '3px 12px'
+        return token('components.select.padding.md', '3px 12px')
     }
   }};
-  font-size: ${({ size, theme }) => {
-    const fontSizes = theme.components?.select?.fontSize
-    return size === 'small' ? fontSizes?.sm || '12px' : fontSizes?.md || '14px'
+  font-size: ${({ size }) => {
+    return size === 'small'
+      ? token('components.select.fontSize.sm', '12px')
+      : token('components.select.fontSize.md', '14px')
   }};
   line-height: 1.5;
-  background-color: ${({ theme }) =>
-    theme.components?.select?.backgroundColor || theme.colors?.background || '#fff'};
+  background-color: ${token(
+    'components.select.backgroundColor',
+    token('colors.background', '#fff'),
+  )};
   border: 1px solid
-    ${({ theme, active, status }) => {
-      if (status === 'error') return theme.colors?.error || '#f5222d'
-      if (status === 'warning') return theme.colors?.warning || '#faad14'
+    ${({ active, status }) => {
+      if (status === 'error') return token('colors.error', '#f5222d')
+      if (status === 'warning') return token('colors.warning', '#faad14')
       if (active)
-        return theme.components?.select?.activeBorderColor || theme.colors?.primary || '#1890ff'
-      return theme.components?.select?.borderColor || theme.colors?.border || '#d9d9d9'
+        return token('components.select.activeBorderColor', token('colors.primary', '#1890ff'))
+      return token('components.select.borderColor', token('colors.border', '#d9d9d9'))
     }};
-  border-radius: ${({ theme }) =>
-    theme.components?.select?.borderRadius ||
-    (theme.borderRadius?.md ? `${theme.borderRadius.md}px` : '4px')};
+  border-radius: ${token('components.select.borderRadius', token('borderRadius.md', '4px'))};
   transition: all 0.3s;
-  box-shadow: ${({ active, theme }) =>
-    active ? `0 0 0 2px ${theme.colors?.primary || '#1890ff'}20` : 'none'};
+  box-shadow: ${({ active }) =>
+    active ? `0 0 0 2px ${token('colors.primary', '#1890ff')}20` : 'none'};
 
   &:hover {
-    border-color: ${({ theme, status }) => {
+    border-color: ${({ status }) => {
       if (status) return undefined
-      return theme.components?.select?.hoverBorderColor || theme.colors?.primary || '#1890ff'
+      return token('components.select.hoverBorderColor', token('colors.primary', '#1890ff'))
     }};
   }
 `
@@ -98,14 +99,13 @@ export const SelectedContent = styled.div<{ size?: 'small' | 'medium' | 'large' 
 `
 
 export const Placeholder = styled.span`
-  color: ${({ theme }) =>
-    theme.components?.select?.placeholderColor || theme.colors?.textSecondary || '#bfbfbf'};
+  color: ${token('components.select.placeholderColor', token('colors.textSecondary', '#bfbfbf'))};
 `
 
 export const SelectDropdown = styled.div`
   padding: 4px 0;
-  background-color: ${({ theme }) => theme.colors?.background || '#fff'};
-  border-radius: ${({ theme }) => (theme.borderRadius?.md ? `${theme.borderRadius.md}px` : '4px')};
+  background-color: ${token('colors.background', '#fff')};
+  border-radius: ${token('borderRadius.md', '4px')};
   box-shadow:
     0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 6px 16px 0 rgba(0, 0, 0, 0.08),
@@ -124,22 +124,23 @@ export const StyledOption = styled.div<{
   min-height: 32px;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   transition: all 0.3s;
-  background-color: ${({ selected, active, theme }) => {
-    if (selected) return theme.components?.select?.optionSelectedBg || '#e6f7ff'
-    if (active) return theme.components?.select?.optionHoverBg || '#e6e6e6'
+  background-color: ${({ selected, active }) => {
+    if (selected) return token('components.select.optionSelectedBg', '#e6f7ff')
+    if (active) return token('components.select.optionHoverBg', '#e6e6e6')
     return 'transparent'
   }};
-  color: ${({ selected, disabled, theme }) => {
-    if (disabled) return theme.colors?.textDisabled || '#00000040'
+  color: ${({ selected, disabled }) => {
+    if (disabled) return token('colors.textDisabled', '#00000040')
     if (selected)
-      return (
-        theme.components?.select?.optionSelectedColor || theme.colors?.text || 'rgba(0, 0, 0, 0.88)'
+      return token(
+        'components.select.optionSelectedColor',
+        token('colors.text', 'rgba(0, 0, 0, 0.88)'),
       )
-    return theme.components?.select?.optionColor || theme.colors?.text || 'rgba(0, 0, 0, 0.88)'
+    return token('components.select.optionColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))
   }};
 
   .compass-icon-check {
-    color: ${({ theme, selected }) => (selected ? theme.colors?.primary || '#1890ff' : 'inherit')};
+    color: ${({ selected }) => (selected ? token('colors.primary', '#1890ff') : 'inherit')};
   }
 
   font-weight: 400;
@@ -148,10 +149,10 @@ export const StyledOption = styled.div<{
   justify-content: space-between;
 
   &:hover {
-    background-color: ${({ disabled, selected, theme }) => {
+    background-color: ${({ disabled, selected }) => {
       if (disabled) return 'transparent'
-      if (selected) return theme.components?.select?.optionSelectedBg || '#e6f7ff'
-      return theme.components?.select?.optionHoverBg || '#e6e6e6'
+      if (selected) return token('components.select.optionSelectedBg', '#e6f7ff')
+      return token('components.select.optionHoverBg', '#e6e6e6')
     }};
   }
 `
@@ -163,13 +164,9 @@ export const Tag = styled.span`
   padding: 0 8px;
   font-size: 12px;
   line-height: normal;
-  background: ${({ theme }) =>
-    theme.components?.select?.tagBg || theme.colors?.backgroundSecondary || '#f5f5f5'};
-  color: ${({ theme }) => theme.components?.select?.tagColor || 'inherit'};
-  border: ${({ theme }) =>
-    theme.components?.select?.tagBorderColor
-      ? `1px solid ${theme.components.select.tagBorderColor}`
-      : 'none'};
+  background: ${token('components.select.tagBg', token('colors.backgroundSecondary', '#f5f5f5'))};
+  color: ${token('components.select.tagColor', 'inherit')};
+  border: 1px solid ${token('components.select.tagBorderColor', 'transparent')};
   border-radius: 4px;
   margin-right: 4px;
   margin-top: 1px;
@@ -193,19 +190,19 @@ export const TagCloseIcon = styled.span`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: ${({ theme }) => theme.colors?.textSecondary || 'rgba(0, 0, 0, 0.45)'};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   line-height: 0;
   transform: scale(0.8);
 
   &:hover {
-    color: ${({ theme }) => theme.colors?.text || 'rgba(0, 0, 0, 0.88)'};
+    color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
   }
 `
 
 export const SuffixIcon = styled.span`
   display: flex;
   align-items: center;
-  color: ${({ theme }) => theme.colors?.textSecondary || 'rgba(0, 0, 0, 0.25)'};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.25)')};
   font-size: 12px;
   line-height: 0;
 `

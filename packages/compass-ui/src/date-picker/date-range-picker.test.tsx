@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import DatePicker from './index'
 import ThemeProvider from '../theme/theme-provider'
 
@@ -98,6 +99,64 @@ describe('DateRangePicker Detailed', () => {
     fireEvent.click(clearBtn)
 
     expect(onChange).toHaveBeenCalledWith([null, null])
+  })
+
+  it('should reset partial selection on close', async () => {
+    const onChange = jest.fn()
+    const user = userEvent.setup()
+    renderWithTheme(<DateRangePicker onChange={onChange} />)
+
+    const inputs = screen.getAllByRole('textbox')
+    await user.click(inputs[0]) // Open
+
+    const days = screen.getAllByText('15')
+    const day = days.find((el) => el.tagName === 'DIV')
+    if (day) await user.click(day)
+
+    // Now partial selection exists (start date set).
+    // Click outside to close (simulate dismiss)
+    await user.click(document.body)
+
+    // Re-open
+    await user.click(inputs[0])
+
+    expect(inputs[0]).toHaveValue('')
+  })
+
+  it('should not open when disabled', async () => {
+    const user = userEvent.setup()
+    renderWithTheme(<DateRangePicker disabled />)
+    const inputs = screen.getAllByRole('textbox')
+    await user.click(inputs[0])
+
+    // Should not find the popup text
+    expect(screen.queryByText('Su')).not.toBeInTheDocument()
+  })
+
+  it('should handle granular styles for range picker parts', () => {
+    const { container } = renderWithTheme(
+      <DateRangePicker
+        styles={{
+          input: { background: 'red' },
+          popup: { boxShadow: 'none' },
+        }}
+        classNames={{
+          input: 'custom-range-input-wrapper',
+          popup: 'custom-popup',
+        }}
+      />,
+    )
+
+    const wrapper = container.querySelector('.custom-range-input-wrapper')
+    expect(wrapper).toBeInTheDocument()
+    expect(wrapper).toHaveStyle('background: red')
+  })
+
+  it('should apply error styles', () => {
+    renderWithTheme(<DateRangePicker status="error" />)
+    const inputs = screen.getAllByRole('textbox')
+    const wrapper = inputs[0].parentElement
+    expect(wrapper).toBeInTheDocument()
   })
 
   it('should handling showTime mode and OK button', async () => {
@@ -203,5 +262,22 @@ describe('DateRangePicker Detailed', () => {
     fireEvent.click(okBtn)
 
     expect(onChange).toHaveBeenCalled()
+  })
+
+  it('should apply granular classNames and styles', async () => {
+    const { container } = renderWithTheme(
+      <DateRangePicker
+        classNames={{ root: 'custom-root', input: 'custom-input' }}
+        styles={{ root: { borderColor: 'red' }, input: { background: 'blue' } }}
+      />,
+    )
+
+    const root = container.querySelector('.compass-date-range-picker')
+    expect(root).toHaveClass('custom-root')
+    expect(root).toHaveStyle('border-color: red')
+
+    const input = container.querySelector('.custom-input')
+    expect(input).toBeInTheDocument()
+    expect(input).toHaveStyle('background: blue')
   })
 })

@@ -2,8 +2,13 @@ import React from 'react'
 import { InputFieldProps } from '../input-field/types'
 
 export interface AutoCompleteOption {
+  /** The value of the option */
   value: string
+  /** The label to display for the option */
   label?: React.ReactNode
+  /** Whether the option is disabled */
+  disabled?: boolean
+  /** Allow additional custom fields */
   [key: string]: unknown
 }
 
@@ -54,4 +59,24 @@ export interface AutoCompleteProps extends Omit<InputFieldProps, 'onChange' | 'o
    * Content to show when no options match
    */
   notFoundContent?: React.ReactNode
+
+  /**
+   * Semantic DOM class names
+   */
+  classNames?: {
+    root?: string
+    input?: string
+    dropdown?: string
+    option?: string
+  }
+
+  /**
+   * Semantic DOM styles
+   */
+  styles?: {
+    root?: React.CSSProperties
+    input?: React.CSSProperties
+    dropdown?: React.CSSProperties
+    option?: React.CSSProperties
+  }
 }

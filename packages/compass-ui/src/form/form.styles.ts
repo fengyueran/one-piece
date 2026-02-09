@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { token } from '../theme/token-utils'
 
 export const StyledForm = styled.form`
   &.compass-form-horizontal {
@@ -9,7 +10,7 @@ export const StyledForm = styled.form`
 
       .compass-form-item-label {
         flex: 0 0 auto;
-        margin-right: 16px;
+        margin-right: ${token('spacing.md', '16px')};
         margin-bottom: 0;
         padding-top: 5px;
       }
@@ -30,7 +31,7 @@ export const StyledForm = styled.form`
   &.compass-form-inline {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: ${token('spacing.md', '16px')};
 
     .compass-form-item {
       display: inline-flex;
@@ -39,7 +40,7 @@ export const StyledForm = styled.form`
       margin-bottom: 0;
 
       .compass-form-item-label {
-        margin-right: 8px;
+        margin-right: ${token('spacing.sm', '8px')};
         margin-bottom: 0;
       }
     }

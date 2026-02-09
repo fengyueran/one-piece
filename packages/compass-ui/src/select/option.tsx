@@ -6,7 +6,7 @@ import { StyledOption } from './select.styles'
 import { CheckIcon } from '../icons'
 
 const Option: React.FC<OptionProps> = ({ value, children, disabled, className, style, label }) => {
-  const { value: selectedValue, onSelect, multiple } = useSelectContext()
+  const { value: selectedValue, onSelect, multiple, menuItemSelectedIcon } = useSelectContext()
 
   const isSelected = useMemo(() => {
     if (multiple && Array.isArray(selectedValue)) {
@@ -35,7 +35,7 @@ const Option: React.FC<OptionProps> = ({ value, children, disabled, className, s
       aria-selected={isSelected}
     >
       <span className="compass-select-option-content">{children}</span>
-      {isSelected && <CheckIcon />}
+      {isSelected && (menuItemSelectedIcon || <CheckIcon />)}
     </StyledOption>
   )
 }

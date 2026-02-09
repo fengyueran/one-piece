@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { getThemeToken, getComponentTheme } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const AutoCompleteContainer = styled.div<{ fullWidth?: boolean }>`
   position: relative;
@@ -11,42 +11,50 @@ export const Dropdown = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: ${({ theme }) => getComponentTheme(theme, 'dropdown').zIndex};
+  z-index: ${token('components.dropdown.zIndex', '1050')};
   box-sizing: border-box;
   padding: 4px;
   overflow: auto;
-  font-size: ${({ theme }) => getThemeToken(theme, 'fontSize').sm}px;
+  font-size: ${token('fontSize.sm', '12px')};
   max-height: 256px;
-  background-color: ${({ theme }) => getComponentTheme(theme, 'select').backgroundColor};
-  border-radius: ${({ theme }) => getComponentTheme(theme, 'select').borderRadius};
-  box-shadow: ${({ theme }) => getComponentTheme(theme, 'dropdown').boxShadow};
+  background-color: ${token(
+    'components.select.backgroundColor',
+    token('colors.background', '#fff'),
+  )};
+  border-radius: ${token('components.select.borderRadius', token('borderRadius.md', '4px'))};
+  box-shadow: ${token(
+    'components.dropdown.boxShadow',
+    token(
+      'shadows.lg',
+      '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+    ),
+  )};
   outline: none;
 `
 
 export const OptionItem = styled.div<{ active?: boolean }>`
   position: relative;
-  display: flex;
-  align-items: center;
   padding: 8px 12px;
-  color: ${({ theme }) => getComponentTheme(theme, 'select').optionColor};
+  word-break: break-word;
+  color: ${token('components.select.optionColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))};
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s;
-  background-color: ${({ active, theme }) =>
-    active ? getComponentTheme(theme, 'select').optionHoverBg : 'transparent'};
+  background-color: ${({ active }) =>
+    active ? token('components.select.optionHoverBg', '#f5f5f5') : 'transparent'};
 
   &:hover {
-    background-color: ${({ theme }) => getComponentTheme(theme, 'select').optionHoverBg};
+    background-color: ${token('components.select.optionHoverBg', '#f5f5f5')};
   }
 `
 
 export const NotFoundContent = styled.div`
   padding: 8px 12px;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   text-align: center;
 `
 
 export const Highlight = styled.span`
-  color: ${({ theme }) => getThemeToken(theme, 'colors').primary};
+  color: ${token('colors.primary', '#1890ff')};
   font-weight: 500;
 `

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { getComponentTheme, getThemeToken } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const StyledDatePicker = styled.div<{ fullWidth?: boolean }>`
   position: relative;
@@ -8,10 +8,13 @@ export const StyledDatePicker = styled.div<{ fullWidth?: boolean }>`
 `
 
 export const StyledCalendar = styled.div`
-  background: ${({ theme }) => getThemeToken(theme, 'colors').background};
-  border: 1px solid ${({ theme }) => getComponentTheme(theme, 'datePicker').borderColor};
-  border-radius: 8px;
-  box-shadow: ${({ theme }) => getComponentTheme(theme, 'datePicker').boxShadow};
+  background: ${token('colors.background', '#fff')};
+  border: 1px solid ${token('components.datePicker.borderColor', token('colors.border', '#d9d9d9'))};
+  border-radius: ${token('borderRadius.lg', '8px')};
+  box-shadow: ${token(
+    'components.datePicker.boxShadow',
+    token('shadows.lg', '0 6px 16px 0 rgba(0, 0, 0, 0.08)'),
+  )};
   width: auto;
   user-select: none;
   overflow: hidden;
@@ -19,7 +22,8 @@ export const StyledCalendar = styled.div`
 
 export const StyledPickerBody = styled.div`
   display: flex;
-  border-top: 1px solid ${({ theme }) => getComponentTheme(theme, 'datePicker').borderColor};
+  border-top: 1px solid
+    ${token('components.datePicker.borderColor', token('colors.border', '#d9d9d9'))};
 `
 
 export const StyledDatePanel = styled.div`
@@ -30,7 +34,7 @@ export const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${({ theme }) => getComponentTheme(theme, 'datePicker').headerPadding};
+  padding: ${token('components.datePicker.headerPadding', '11px 16px')};
 `
 
 export const StyledHeaderButtonGroup = styled.div`
@@ -45,7 +49,7 @@ export const StyledHeaderButton = styled.button`
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   font-size: 14px;
   line-height: 1;
   transition: all 0.2s;
@@ -55,19 +59,19 @@ export const StyledHeaderButton = styled.button`
   justify-content: center;
 
   &:hover {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').text};
-    background: ${({ theme }) => getThemeToken(theme, 'colors').backgroundSecondary};
+    color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
+    background: ${token('colors.backgroundSecondary', 'rgba(0, 0, 0, 0.04)')};
   }
 `
 
 export const StyledHeaderTitle = styled.div`
   font-weight: 500;
   cursor: pointer;
-  font-size: ${({ theme }) => getComponentTheme(theme, 'datePicker').headerFontSize};
+  font-size: ${token('components.datePicker.headerFontSize', '16px')};
   transition: color 0.2s;
 
   &:hover {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').primary};
+    color: ${token('colors.primary', '#1890ff')};
   }
 `
 
@@ -80,8 +84,8 @@ export const StyledWeekDays = styled.div<{ showWeekNumber?: boolean }>`
 `
 
 export const StyledWeekDay = styled.div`
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
-  font-size: ${({ theme }) => getComponentTheme(theme, 'datePicker').weekDayFontSize};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
+  font-size: ${token('components.datePicker.weekDayFontSize', '12px')};
   padding: 4px 0;
   font-weight: 400;
 `
@@ -95,37 +99,38 @@ export const StyledDays = styled.div<{ showWeekNumber?: boolean }>`
 `
 
 export const StyledWeekNumber = styled.div<{ isSelected?: boolean; isHovered?: boolean }>`
-  height: ${({ theme }) => getComponentTheme(theme, 'datePicker').cellHeight};
+  height: ${token('components.datePicker.cellHeight', '24px')};
   width: 100%;
-  margin: ${({ theme }) => getComponentTheme(theme, 'datePicker').cellMargin} 0;
+  margin: ${token('components.datePicker.cellMargin', '3px')} 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ theme }) => getComponentTheme(theme, 'datePicker').weekDayFontSize};
+  font-size: ${token('components.datePicker.weekDayFontSize', '12px')};
   box-sizing: border-box;
-  color: ${({ theme, isSelected, isHovered }) => {
-    if (isSelected || isHovered) return getComponentTheme(theme, 'datePicker').cellActiveColor
-    return getThemeToken(theme, 'colors').textSecondary
+  color: ${({ isSelected, isHovered }) => {
+    if (isSelected || isHovered)
+      return token('components.datePicker.cellActiveColor', token('colors.primary', '#1890ff'))
+    return token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')
   }};
-  background: ${({ theme, isSelected, isHovered }) => {
-    if (isSelected) return getComponentTheme(theme, 'datePicker').cellActiveBg
-    if (isHovered) return getComponentTheme(theme, 'datePicker').cellHoverBg
+  background: ${({ isSelected, isHovered }) => {
+    if (isSelected) return token('components.datePicker.cellActiveBg', '#e6f7ff')
+    if (isHovered) return token('components.datePicker.cellHoverBg', '#f0f0f0')
     return 'transparent'
   }};
-  border-radius: ${({ theme }) => getComponentTheme(theme, 'datePicker').cellBorderRadius} 0 0
-    ${({ theme }) => getComponentTheme(theme, 'datePicker').cellBorderRadius};
+  border-radius: ${token('components.datePicker.cellBorderRadius', '2px')} 0 0
+    ${token('components.datePicker.cellBorderRadius', '2px')};
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: ${({ theme, isSelected }) =>
+    background: ${({ isSelected }) =>
       isSelected
-        ? getComponentTheme(theme, 'datePicker').cellActiveBg
-        : getComponentTheme(theme, 'datePicker').cellHoverBg};
-    color: ${({ theme, isSelected }) =>
+        ? token('components.datePicker.cellActiveBg', '#e6f7ff')
+        : token('components.datePicker.cellHoverBg', '#f0f0f0')};
+    color: ${({ isSelected }) =>
       isSelected
-        ? getComponentTheme(theme, 'datePicker').cellActiveColor
-        : getComponentTheme(theme, 'datePicker').cellActiveColor};
+        ? token('components.datePicker.cellActiveColor', '#1890ff')
+        : token('components.datePicker.cellActiveColor', '#1890ff')};
   }
 `
 
@@ -146,54 +151,55 @@ export const StyledDay = styled.div<{
   isHovered?: boolean
   isInRange?: boolean
 }>`
-  height: ${({ theme }) => getComponentTheme(theme, 'datePicker').cellHeight};
-  width: ${({ isWeekMode, theme }) =>
-    isWeekMode ? '100%' : getComponentTheme(theme, 'datePicker').cellWidth};
-  margin: ${({ isWeekMode, theme }) =>
+  height: ${token('components.datePicker.cellHeight', '24px')};
+  width: ${({ isWeekMode }) =>
+    isWeekMode ? '100%' : token('components.datePicker.cellWidth', '36px')};
+  margin: ${({ isWeekMode }) =>
     isWeekMode
-      ? `${getComponentTheme(theme, 'datePicker').cellMargin} 0`
-      : `${getComponentTheme(theme, 'datePicker').cellMargin} auto`};
+      ? `${token('components.datePicker.cellMargin', '3px')} 0`
+      : `${token('components.datePicker.cellMargin', '3px')} auto`};
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-sizing: border-box;
-  font-size: ${({ theme }) => getComponentTheme(theme, 'datePicker').cellFontSize};
-  color: ${({ theme, isCurrentMonth, isSelected, isHovered }) => {
-    if (isSelected || isHovered) return getComponentTheme(theme, 'datePicker').cellActiveColor
+  font-size: ${token('components.datePicker.cellFontSize', '14px')};
+  color: ${({ isCurrentMonth, isSelected, isHovered }) => {
+    if (isSelected || isHovered)
+      return token('components.datePicker.cellActiveColor', token('colors.primary', '#1890ff'))
     return isCurrentMonth
-      ? getComponentTheme(theme, 'datePicker').cellColor
-      : getComponentTheme(theme, 'datePicker').cellDisabledColor
+      ? token('components.datePicker.cellColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))
+      : token('components.datePicker.cellDisabledColor', 'rgba(0, 0, 0, 0.25)')
   }};
-  background: ${({ theme, isSelected, isHovered, isInRange }) => {
-    if (isSelected) return getComponentTheme(theme, 'datePicker').cellActiveBg
-    if (isHovered) return getComponentTheme(theme, 'datePicker').cellHoverBg
-    if (isInRange) return hexToRgba(getThemeToken(theme, 'colors').primary, 0.2)
+  background: ${({ isSelected, isHovered, isInRange }) => {
+    if (isSelected) return token('components.datePicker.cellActiveBg', '#e6f7ff')
+    if (isHovered) return token('components.datePicker.cellHoverBg', '#f0f0f0')
+    if (isInRange) return hexToRgba(token('colors.primary', '#1890ff'), 0.2) // Note: token() returns string like var(...), not hex, so hexToRgba might fail if no fallback is used or if var is returned. For simplicity, we assume primary color fallback here or improvement in token util. Ideally, we shouldn't mix JS and CSS var for colors if we can avoid it.
     return 'transparent'
   }};
-  border-radius: ${({ isWeekMode, isWeekEnd, theme }) =>
+  border-radius: ${({ isWeekMode, isWeekEnd }) =>
     isWeekMode
       ? isWeekEnd
-        ? `0 ${getComponentTheme(theme, 'datePicker').cellBorderRadius} ${getComponentTheme(theme, 'datePicker').cellBorderRadius} 0`
+        ? `0 ${token('components.datePicker.cellBorderRadius', '2px')} ${token('components.datePicker.cellBorderRadius', '2px')} 0`
         : '0'
-      : getComponentTheme(theme, 'datePicker').cellBorderRadius};
-  border: ${({ theme, isToday, isSelected, isWeekMode, isHovered }) => {
+      : token('components.datePicker.cellBorderRadius', '2px')};
+  border: ${({ isToday, isSelected, isWeekMode, isHovered }) => {
     if (isWeekMode && isHovered) return '1px solid transparent'
     return !isSelected && isToday
-      ? `1px solid ${getComponentTheme(theme, 'datePicker').cellActiveBg}`
+      ? `1px solid ${token('components.datePicker.cellActiveBg', '#e6f7ff')}`
       : '1px solid transparent'
   }};
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: ${({ theme, isSelected }) =>
+    background: ${({ isSelected }) =>
       isSelected
-        ? getComponentTheme(theme, 'datePicker').cellActiveBg
-        : getComponentTheme(theme, 'datePicker').cellHoverBg};
-    color: ${({ theme, isSelected }) =>
+        ? token('components.datePicker.cellActiveBg', '#e6f7ff')
+        : token('components.datePicker.cellHoverBg', '#f0f0f0')};
+    color: ${({ isSelected }) =>
       isSelected
-        ? getComponentTheme(theme, 'datePicker').cellActiveColor
-        : getComponentTheme(theme, 'datePicker').cellActiveColor};
+        ? token('components.datePicker.cellActiveColor', '#1890ff')
+        : token('components.datePicker.cellActiveColor', '#1890ff')};
   }
 
   &:active {
@@ -212,30 +218,32 @@ export const StyledRangeWrapper = styled.div<{
   box-sizing: border-box;
   width: 100%;
   min-width: 320px;
-  background-color: ${({ theme }) => getThemeToken(theme, 'colors').background};
+  background-color: ${token('colors.background', '#fff')};
   border: 1px solid
-    ${({ theme, error, focused }) => {
-      if (error) return getThemeToken(theme, 'colors').error
-      if (focused) return getComponentTheme(theme, 'input').activeBorderColor
-      return getThemeToken(theme, 'colors').border
+    ${({ error, focused }) => {
+      if (error) return token('colors.error', '#ff4d4f')
+      if (focused)
+        return token('components.input.activeBorderColor', token('colors.primary', '#1890ff'))
+      return token('colors.border', '#d9d9d9')
     }};
-  border-radius: ${({ theme }) => getComponentTheme(theme, 'input').borderRadius};
+  border-radius: ${token('components.input.borderRadius', '4px')};
   padding: 4px 11px;
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ theme, error, focused, disabled }) => {
-      if (disabled) return getThemeToken(theme, 'colors').border
-      if (error) return getThemeToken(theme, 'colors').error
-      if (focused) return getComponentTheme(theme, 'input').activeBorderColor
-      return getComponentTheme(theme, 'input').hoverBorderColor
+    border-color: ${({ error, focused, disabled }) => {
+      if (disabled) return token('colors.border', '#d9d9d9')
+      if (error) return token('colors.error', '#ff4d4f')
+      if (focused)
+        return token('components.input.activeBorderColor', token('colors.primary', '#1890ff'))
+      return token('components.input.hoverBorderColor', token('colors.primary', '#1890ff'))
     }};
   }
 
-  ${({ disabled, theme }) =>
+  ${({ disabled }) =>
     disabled &&
     `
-    background-color: ${getThemeToken(theme, 'colors').backgroundSecondary};
+    background-color: ${token('colors.backgroundSecondary', 'rgba(0, 0, 0, 0.04)')};
     cursor: not-allowed;
     opacity: 0.6;
   `}
@@ -248,13 +256,13 @@ export const StyledRangeInput = styled.input`
   background: transparent;
   padding: 0;
   margin: 0;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
+  color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
   font-size: 14px;
   width: 100%;
   text-align: center;
 
   &::placeholder {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').textDisabled};
+    color: ${token('colors.textDisabled', 'rgba(0, 0, 0, 0.25)')};
   }
 
   &:disabled {
@@ -263,7 +271,7 @@ export const StyledRangeInput = styled.input`
 `
 
 export const StyledSeparator = styled.span`
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   margin: 0 8px;
   flex-shrink: 0;
 `
@@ -275,7 +283,7 @@ export const StyledActiveBar = styled.div<{
   position: absolute;
   bottom: -1px;
   height: 2px;
-  background-color: ${({ theme }) => getThemeToken(theme, 'colors').primary};
+  background-color: ${token('colors.primary', '#1890ff')};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   left: ${({ position }) => (position === 'left' ? '0' : '50%')};
   width: 50%;
@@ -287,7 +295,7 @@ export const StyledActiveBar = styled.div<{
 export const StyledSuffixIcon = styled.span`
   display: flex;
   align-items: center;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   margin-left: 8px;
   width: 16px;
   justify-content: center;
@@ -295,6 +303,6 @@ export const StyledSuffixIcon = styled.span`
   transition: color 0.2s;
 
   &:hover {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').text};
+    color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
   }
 `

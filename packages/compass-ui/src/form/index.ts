@@ -21,9 +21,8 @@ Form.Item = FormItem
 Form.useForm = useForm
 Form.useWatch = useWatch
 
-export type { FormProps } from './form'
-export type { FormItemProps } from './form-item'
+export type { FormProps, FormItemProps } from './types'
 export type { RuleItem } from 'async-validator'
-export type { FormInstance, ValidateErrorEntity, FieldData } from './types'
+export type { FormInstance, ValidateErrorEntity, FieldData, NamePath } from './types'
 
 export default Form

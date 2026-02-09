@@ -1,12 +1,21 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import { FormStore } from './form-store'
-import { FormInstance, InternalHooks, Store, FieldData } from './types'
+import { FormInstance, InternalHooks, Store, FieldData, NamePath, FormProps } from './types'
 
-const FormContext = createContext<FormInstance<unknown> | null>(null)
+const FormContext = createContext<
+  | (FormInstance<unknown> & { classNames?: FormProps['classNames']; styles?: FormProps['styles'] })
+  | null
+>(null)
 
-export const useFormContext = <Values = unknown,>(): FormInstance<Values> => {
+export const useFormContext = <Values = unknown,>(): FormInstance<Values> & {
+  classNames?: FormProps['classNames']
+  styles?: FormProps['styles']
+} => {
   const context = useContext(FormContext)
-  return context as FormInstance<Values>
+  return context as FormInstance<Values> & {
+    classNames?: FormProps['classNames']
+    styles?: FormProps['styles']
+  }
 }
 
 export const useForm = <Values extends Record<string, unknown> = Record<string, unknown>>(
@@ -21,17 +30,17 @@ export const useForm = <Values extends Record<string, unknown> = Record<string, 
     }
 
     return {
-      getFieldValue: (name: string) => defaultStore.getFieldValue(name),
-      setFieldValue: (name: string, value: unknown) => defaultStore.setFieldValue(name, value),
-      validateFields: (nameList?: string[]) =>
+      getFieldValue: (name: NamePath) => defaultStore.getFieldValue(name),
+      setFieldValue: (name: NamePath, value: unknown) => defaultStore.setFieldValue(name, value),
+      validateFields: (nameList?: NamePath[]) =>
         defaultStore.validateFields(nameList) as Promise<Values>,
       getFieldsValue: () => defaultStore.getFieldsValue() as Values,
       setFieldsValue: (values: Store) => defaultStore.setFieldsValue(values),
-      getFieldError: (name: string) => defaultStore.getFieldError(name),
-      isFieldsTouched: (nameList?: string[]) => defaultStore.isFieldsTouched(nameList),
-      isFieldTouched: (name: string) => defaultStore.isFieldTouched(name),
-      isFieldValidating: () => defaultStore.isFieldValidating(),
-      resetFields: (fields?: string[]) => defaultStore.resetFields(fields),
+      getFieldError: (name: NamePath) => defaultStore.getFieldError(name),
+      isFieldsTouched: (nameList?: NamePath[]) => defaultStore.isFieldsTouched(nameList),
+      isFieldTouched: (name: NamePath) => defaultStore.isFieldTouched(name),
+      isFieldValidating: (name: NamePath) => defaultStore.isFieldValidating(name),
+      resetFields: (fields?: NamePath[]) => defaultStore.resetFields(fields),
       setFields: (fields: FieldData[]) => defaultStore.setFields(fields),
       submit: () => defaultStore.submit(),
       getInternalHooks: (secret: string): InternalHooks | null => {

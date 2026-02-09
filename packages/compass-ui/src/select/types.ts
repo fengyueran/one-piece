@@ -6,7 +6,6 @@ export interface SelectOption {
   label: React.ReactNode
   value: string | number
   disabled?: boolean
-  [key: string]: unknown
 }
 
 export interface SelectProps {
@@ -66,16 +65,6 @@ export interface SelectProps {
   allowClear?: boolean
 
   /**
-   * Custom class name
-   */
-  className?: string
-
-  /**
-   * Custom style
-   */
-  style?: React.CSSProperties
-
-  /**
    * Size of the select input
    * @default 'medium'
    */
@@ -106,6 +95,48 @@ export interface SelectProps {
    * @default 'click'
    */
   trigger?: 'click' | 'hover'
+  /** Custom class name */
+  className?: string
+  /** Custom style */
+  style?: React.CSSProperties
+
+  /**
+   * Granular styles for internal components
+   */
+  styles?: {
+    root?: React.CSSProperties
+    trigger?: React.CSSProperties
+    dropdown?: React.CSSProperties
+    option?: React.CSSProperties
+    tag?: React.CSSProperties
+  }
+
+  /**
+   * Granular class names for internal components
+   */
+  classNames?: {
+    root?: string
+    trigger?: string
+    dropdown?: string
+    option?: string
+    tag?: string
+  }
+
+  /**
+   * Custom option renderer
+   */
+  optionRender?: (
+    option: SelectOption,
+    info: { index: number; selected: boolean },
+  ) => React.ReactNode
+  /**
+   * Custom label renderer (for the selected value in the trigger)
+   */
+  labelRender?: (props: SelectOption) => React.ReactNode
+  /**
+   * Custom selected icon in the dropdown menu
+   */
+  menuItemSelectedIcon?: React.ReactNode
 }
 
 export interface OptionProps {
@@ -114,6 +145,7 @@ export interface OptionProps {
   disabled?: boolean
   className?: string
   style?: React.CSSProperties
+  menuItemSelectedIcon?: React.ReactNode
   /**
    * Internal prop to pass label if children is complex
    */
@@ -127,4 +159,5 @@ export interface SelectContextType {
   searchValue: string
   activeValue: string | number | null
   setActiveValue: (value: string | number | null) => void
+  menuItemSelectedIcon?: React.ReactNode
 }
