@@ -41,4 +41,28 @@ export interface InputNumberProps
    * @default true
    */
   keyboard?: boolean
+  /**
+   * Semantic class names for internal elements
+   */
+  classNames?: {
+    root?: string
+    input?: string
+    inputWrapper?: string
+    prefix?: string
+    suffix?: string
+    upHandler?: string
+    downHandler?: string
+  }
+  /**
+   * Semantic styles for internal elements
+   */
+  styles?: {
+    root?: React.CSSProperties
+    input?: React.CSSProperties
+    inputWrapper?: React.CSSProperties
+    prefix?: React.CSSProperties
+    suffix?: React.CSSProperties
+    upHandler?: React.CSSProperties
+    downHandler?: React.CSSProperties
+  }
 }

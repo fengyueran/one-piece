@@ -8,7 +8,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       children,
       variant = 'default',
-      size = 'default',
+      size = 'medium',
       shape = 'default',
       disabled = false,
       loading = false,
@@ -19,6 +19,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onClick,
       className,
       style,
+      classNames,
+      styles,
       ...rest
     },
     ref,
@@ -32,8 +34,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <StyledButton
         ref={ref}
         type={type}
-        className={`compass-button compass-button--${variant} ${className || ''}`}
-        style={style}
+        className={`compass-button compass-button--${variant} ${className || ''} ${classNames?.root || ''}`}
+        style={{ ...style, ...styles?.root }}
         $variant={variant}
         $size={size}
         $shape={shape}
@@ -44,10 +46,26 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick}
         {...rest}
       >
-        <TextWrapper $loading={loading}>
+        <TextWrapper
+          $loading={loading}
+          className={`compass-button-content ${classNames?.text || ''}`}
+          style={styles?.text}
+        >
           {(loading || icon) && (
-            <IconWrapper $hasText={!!children}>
-              {loading ? <Spinner aria-hidden /> : icon}
+            <IconWrapper
+              $hasText={!!children}
+              className={`compass-button-icon ${classNames?.icon || ''}`}
+              style={styles?.icon}
+            >
+              {loading ? (
+                <Spinner
+                  aria-hidden
+                  className={`compass-button-loading ${classNames?.loading || ''}`}
+                  style={styles?.loading}
+                />
+              ) : (
+                icon
+              )}
             </IconWrapper>
           )}
           {children}

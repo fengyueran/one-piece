@@ -6,12 +6,10 @@ export interface InputFieldProps
    * The type of input.
    * @default 'text'
    */
-  /**
-   * The helper text content.
-   */
   type?: 'text' | 'password' | 'search'
   /**
    * If `true`, the input will take up the full width of its container.
+   * @default false
    */
   fullWidth?: boolean
   /**
@@ -24,6 +22,7 @@ export interface InputFieldProps
   suffix?: React.ReactNode
   /**
    * If `true`, a clear icon will appear when the input has value.
+   * @default false
    */
   allowClear?: boolean
   /**
@@ -43,4 +42,38 @@ export interface InputFieldProps
    * The callback function that is triggered when Enter key is pressed.
    */
   onPressEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void
+  /**
+   * The validation status.
+   */
+  status?: 'error' | 'warning'
+  /**
+   * Semantic class names for internal elements
+   */
+  classNames?: {
+    /** Class name for the root element */
+    root?: string
+    /** Class name for the input element */
+    input?: string
+    /** Class name for the prefix element */
+    prefix?: string
+    /** Class name for the suffix element */
+    suffix?: string
+    /** Class name for the clear button */
+    clear?: string
+  }
+  /**
+   * Semantic styles for internal elements
+   */
+  styles?: {
+    /** Style for the root element */
+    root?: React.CSSProperties
+    /** Style for the input element */
+    input?: React.CSSProperties
+    /** Style for the prefix element */
+    prefix?: React.CSSProperties
+    /** Style for the suffix element */
+    suffix?: React.CSSProperties
+    /** Style for the clear button */
+    clear?: React.CSSProperties
+  }
 }

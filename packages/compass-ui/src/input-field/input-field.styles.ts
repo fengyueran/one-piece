@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { getComponentTheme, getThemeToken } from '../theme/utils'
+import { token } from '../theme/token-utils'
 
 export const Container = styled.div<{ fullWidth?: boolean }>`
   display: inline-flex;
@@ -11,7 +11,7 @@ export const Adornment = styled.span<{ $position?: 'start' | 'end' }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   flex-shrink: 0;
   line-height: 0;
   margin-right: ${({ $position }) => ($position === 'start' ? '8px' : '0')};
@@ -24,7 +24,7 @@ export const ClearButton = styled.button<{ visible?: boolean; $isHoverShow?: boo
   padding: 0;
   margin: 0 4px 0 8px;
   cursor: pointer;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').textTertiary};
+  color: ${token('colors.textTertiary', 'rgba(0, 0, 0, 0.25)')};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,7 +46,7 @@ export const ClearButton = styled.button<{ visible?: boolean; $isHoverShow?: boo
   }};
 
   &:hover {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').textSecondary};
+    color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.45)')};
   }
 `
 
@@ -57,15 +57,21 @@ export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }
   background: transparent;
   padding: 0;
   margin: 0;
-  color: ${({ theme }) => getThemeToken(theme, 'colors').text};
-  font-size: ${({ theme, $size }) => {
-    const map = { small: 'sm', medium: 'md', large: 'lg' } as const
-    return getComponentTheme(theme, 'input').fontSize[map[$size || 'medium']]
+  color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
+  font-size: ${({ $size }) => {
+    switch ($size) {
+      case 'small':
+        return token('components.input.fontSize.sm', token('fontSize.sm', '12px'))
+      case 'large':
+        return token('components.input.fontSize.lg', token('fontSize.lg', '16px'))
+      default:
+        return token('components.input.fontSize.md', token('fontSize.md', '14px'))
+    }
   }};
   width: 100%;
 
   &::placeholder {
-    color: ${({ theme }) => getThemeToken(theme, 'colors').textDisabled};
+    color: ${token('colors.textDisabled', 'rgba(0, 0, 0, 0.25)')};
   }
 
   &:disabled {
@@ -92,6 +98,7 @@ export const StyledInput = styled.input<{ $size?: 'small' | 'medium' | 'large' }
 export const InputWrapper = styled.div<{
   disabled?: boolean
   focused?: boolean
+  status?: 'error' | 'warning'
   size?: 'small' | 'medium' | 'large'
 }>`
   display: flex;
@@ -99,28 +106,36 @@ export const InputWrapper = styled.div<{
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  background-color: ${({ theme }) => getThemeToken(theme, 'colors').background};
+  background-color: ${token('colors.background', '#fff')};
   border: 1px solid
-    ${({ theme, focused }) => {
-      const colors = getThemeToken(theme, 'colors')
-      const inputTheme = getComponentTheme(theme, 'input')
-      if (focused) return inputTheme.activeBorderColor
-      return colors.border
+    ${({ focused, status }) => {
+      if (status === 'error') return token('colors.error', '#ff4d4f')
+      if (status === 'warning') return token('colors.warning', '#faad14')
+      if (focused)
+        return token('components.input.activeBorderColor', token('colors.primary', '#1890ff'))
+      return token('colors.border', '#d9d9d9')
     }};
-  border-radius: ${({ theme }) => getComponentTheme(theme, 'input').borderRadius};
-  padding: ${({ theme, size }) => {
-    const map = { small: 'sm', medium: 'md', large: 'lg' } as const
-    return getComponentTheme(theme, 'input').padding[map[size || 'medium']]
+  border-radius: ${token('components.input.borderRadius', token('borderRadius.md', '6px'))};
+  padding: ${({ size }) => {
+    switch (size) {
+      case 'small':
+        return token('components.input.padding.sm', '1px 7px')
+      case 'large':
+        return token('components.input.padding.lg', '6px 11px')
+      default:
+        return token('components.input.padding.md', '4px 11px')
+    }
   }};
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ theme, focused, disabled }) => {
-      const colors = getThemeToken(theme, 'colors')
-      const inputTheme = getComponentTheme(theme, 'input')
-      if (disabled) return colors.border
-      if (focused) return inputTheme.activeBorderColor
-      return inputTheme.hoverBorderColor
+    border-color: ${({ focused, disabled, status }) => {
+      if (disabled) return token('colors.border', '#d9d9d9')
+      if (status === 'error') return token('colors.errorHover', '#ff7875') // lighten error
+      if (status === 'warning') return token('colors.warningHover', '#ffc53d') // lighten warning
+      if (focused)
+        return token('components.input.activeBorderColor', token('colors.primary', '#1890ff'))
+      return token('components.input.hoverBorderColor', token('colors.primary', '#1890ff'))
     }};
 
     .compass-input-clear-button[data-visible='true'] {
@@ -129,10 +144,10 @@ export const InputWrapper = styled.div<{
     }
   }
 
-  ${({ disabled, theme }) =>
+  ${({ disabled }) =>
     disabled &&
     `
-    background-color: ${getThemeToken(theme, 'colors').backgroundSecondary};
+    background-color: ${token('colors.backgroundSecondary', '#f5f5f5')};
     cursor: not-allowed;
     opacity: 0.6;
   `}

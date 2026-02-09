@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 
 import { InputFieldProps } from './types'
 import { Container, InputWrapper, StyledInput, Adornment, ClearButton } from './input-field.styles'
-
 import { CloseCircleIcon, EyeIcon, EyeInvisibleIcon, SearchIcon } from '../icons'
 
 /**
@@ -26,6 +25,9 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
     onBlur,
     onPressEnter,
     onKeyDown,
+    status,
+    classNames,
+    styles,
     ...rest
   } = props
 
@@ -102,9 +104,10 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
       <ClearButton
         type="button"
         visible={true}
+        className={`compass-input-field-clear ${classNames?.clear || ''}`}
+        style={{ marginLeft: 8, ...styles?.clear }}
         onClick={handleTogglePassword}
         tabIndex={-1}
-        style={{ marginLeft: 8 }}
       >
         {showPassword ? <EyeIcon /> : <EyeInvisibleIcon />}
       </ClearButton>
@@ -114,14 +117,27 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
   }
 
   return (
-    <Container fullWidth={fullWidth} className={className} style={style}>
+    <Container
+      fullWidth={fullWidth}
+      className={`compass-input-field ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
+    >
       <InputWrapper
         disabled={disabled}
         focused={focused}
         size={size}
-        className={`compass-input-field compass-input-field--${size}`}
+        status={status}
+        className={`compass-input-field-wrapper compass-input-field--${size}`}
       >
-        {renderedPrefix && <Adornment $position="start">{renderedPrefix}</Adornment>}
+        {renderedPrefix && (
+          <Adornment
+            $position="start"
+            className={`compass-input-field-prefix ${classNames?.prefix || ''}`}
+            style={styles?.prefix}
+          >
+            {renderedPrefix}
+          </Adornment>
+        )}
         <StyledInput
           ref={innerRef}
           type={inputType}
@@ -132,12 +148,15 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           $size={size}
+          className={`compass-input-field-input ${classNames?.input || ''}`}
+          style={styles?.input}
           {...rest}
         />
         {allowClear && !disabled && (
           <ClearButton
             type="button"
-            className="compass-input-clear-button"
+            className={`compass-input-field-clear ${classNames?.clear || ''}`}
+            style={styles?.clear}
             visible={!!showClear}
             $isHoverShow={true}
             data-visible={!!showClear}
@@ -147,7 +166,15 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
             <CloseCircleIcon />
           </ClearButton>
         )}
-        {renderedSuffix && <Adornment $position="end">{renderedSuffix}</Adornment>}
+        {renderedSuffix && (
+          <Adornment
+            $position="end"
+            className={`compass-input-field-suffix ${classNames?.suffix || ''}`}
+            style={styles?.suffix}
+          >
+            {renderedSuffix}
+          </Adornment>
+        )}
       </InputWrapper>
     </Container>
   )

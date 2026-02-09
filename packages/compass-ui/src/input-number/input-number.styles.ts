@@ -5,6 +5,7 @@ import {
   Container,
   Adornment,
 } from '../input-field/input-field.styles'
+import { token } from '../theme/token-utils'
 
 export { StyledInput, Container, Adornment }
 
@@ -27,9 +28,9 @@ export const StepperWrapper = styled.div<{ size?: 'small' | 'medium' | 'large' }
   top: 0;
   height: 100%;
   width: 22px;
-  border-left: 1px solid ${({ theme }) => theme.colors?.border || '#d9d9d9'};
-  border-radius: 0 ${({ theme }) => theme.components?.input?.borderRadius || '4px'}
-    ${({ theme }) => theme.components?.input?.borderRadius || '4px'} 0;
+  border-left: 1px solid ${token('colors.border', '#d9d9d9')};
+  border-radius: 0 ${token('components.input.borderRadius', token('borderRadius.md', '4px'))}
+    ${token('components.input.borderRadius', token('borderRadius.md', '4px'))} 0;
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.2s;
@@ -45,12 +46,18 @@ export const StepperWrapper = styled.div<{ size?: 'small' | 'medium' | 'large' }
 
   // Sync border color with parent hover state
   .compass-input-number:hover & {
-    border-left-color: ${({ theme }) => theme.components?.input?.hoverBorderColor || '#4096ff'};
+    border-left-color: ${token(
+      'components.input.hoverBorderColor',
+      token('colors.primary', '#4096ff'),
+    )};
   }
 
   // Sync border color with parent focus state
   .compass-input-number:focus-within & {
-    border-left-color: ${({ theme }) => theme.components?.input?.activeBorderColor || '#40a9ff'};
+    border-left-color: ${token(
+      'components.input.activeBorderColor',
+      token('colors.primary', '#40a9ff'),
+    )};
   }
 `
 
@@ -65,19 +72,25 @@ export const StepperButton = styled.button<{
   width: 22px;
   padding: 0;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.colors?.border || '#d9d9d9'};
+  border-bottom: 1px solid ${token('colors.border', '#d9d9d9')};
   background: transparent;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  color: ${({ theme, disabled }) =>
-    disabled ? theme.colors?.textTertiary || '#bfbfbf' : theme.colors?.textSecondary || '#595959'};
+  color: ${({ disabled }) =>
+    disabled ? token('colors.textTertiary', '#bfbfbf') : token('colors.textSecondary', '#595959')};
   transition: all 0.2s;
 
   // Sync separator border color
   .compass-input-number:hover & {
-    border-bottom-color: ${({ theme }) => theme.components?.input?.hoverBorderColor || '#4096ff'};
+    border-bottom-color: ${token(
+      'components.input.hoverBorderColor',
+      token('colors.primary', '#4096ff'),
+    )};
   }
   .compass-input-number:focus-within & {
-    border-bottom-color: ${({ theme }) => theme.components?.input?.activeBorderColor || '#40a9ff'};
+    border-bottom-color: ${token(
+      'components.input.activeBorderColor',
+      token('colors.primary', '#40a9ff'),
+    )};
   }
 
   &:last-of-type {
@@ -86,12 +99,12 @@ export const StepperButton = styled.button<{
 
   &:hover:not(:disabled) {
     flex: 1.4; // Expand height on hover (60/40 ratio)
-    background: ${({ theme }) => theme.colors?.backgroundSecondary || '#f5f5f5'};
-    color: ${({ theme }) => theme.colors?.text || '#000'};
+    background: ${token('colors.backgroundSecondary', '#f5f5f5')};
+    color: ${token('colors.text', '#000')};
   }
 
   &:active:not(:disabled) {
-    background: ${({ theme }) => theme.colors?.backgroundTertiary || '#e6e6e6'};
+    background: ${token('colors.backgroundTertiary', '#e6e6e6')};
   }
 
   svg {

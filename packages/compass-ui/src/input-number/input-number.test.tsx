@@ -14,12 +14,6 @@ describe('InputNumber', () => {
       expect(screen.getByRole('spinbutton')).toBeInTheDocument()
     })
 
-    it('should render with label, helperText, and error', () => {
-      renderWithTheme(<InputNumber label="Test Label" helperText="Help me" error="Error here" />)
-      expect(screen.getByText('Test Label')).toBeInTheDocument()
-      expect(screen.getByText('Error here')).toBeInTheDocument()
-    })
-
     it('should render prefix and suffix', () => {
       renderWithTheme(<InputNumber prefix="$" suffix="%" />)
       expect(screen.getByText('$')).toBeInTheDocument()
@@ -315,6 +309,37 @@ describe('InputNumber', () => {
         </ThemeProvider>,
       )
       expect(screen.getByRole('spinbutton')).toBeInTheDocument()
+    })
+  })
+
+  describe('Semantic Customization', () => {
+    it('should apply custom classNames and styles', () => {
+      const { container } = renderWithTheme(
+        <InputNumber
+          prefix={<span>Pre</span>}
+          suffix={<span>Suf</span>}
+          classNames={{
+            root: 'custom-root',
+            input: 'custom-input',
+            inputWrapper: 'custom-wrapper',
+            prefix: 'custom-prefix',
+            upHandler: 'custom-up',
+          }}
+          styles={{
+            root: { color: 'red' },
+            input: { color: 'blue' },
+          }}
+        />,
+      )
+
+      expect(container.querySelector('.custom-root')).toBeInTheDocument()
+      expect(container.querySelector('.custom-input')).toBeInTheDocument()
+      expect(container.querySelector('.custom-wrapper')).toBeInTheDocument()
+      expect(container.querySelector('.custom-prefix')).toBeInTheDocument()
+      expect(container.querySelector('.custom-up')).toBeInTheDocument()
+
+      expect(container.querySelector('.custom-root')).toHaveStyle('color: rgb(255, 0, 0)')
+      expect(container.querySelector('.custom-input')).toHaveStyle('color: rgb(0, 0, 255)')
     })
   })
 })

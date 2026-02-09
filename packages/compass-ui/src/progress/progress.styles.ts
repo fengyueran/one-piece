@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { token } from '../theme/token-utils'
 import { ProgressSize, ProgressStatus } from './types'
 
 interface StyledProgressProps {
@@ -9,7 +10,7 @@ interface StyledProgressProps {
 export const StyledProgressContainer = styled.div<StyledProgressProps>`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.sm || 8}px;
+  gap: ${token('spacing.sm', '8px')};
   ${({ size }) => {
     if (typeof size === 'object' && 'width' in size) {
       return `width: ${size.width}px;`
@@ -20,9 +21,11 @@ export const StyledProgressContainer = styled.div<StyledProgressProps>`
 
 export const StyledLinearProgress = styled.div<StyledProgressProps>`
   flex: 1;
-  background-color: ${({ theme }) =>
-    theme?.components?.progress?.trackColor || theme?.colors?.backgroundSecondary || '#fafafa'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.xl || 12}px;
+  background-color: ${token(
+    'components.progress.trackColor',
+    token('colors.backgroundSecondary', '#fafafa'),
+  )};
+  border-radius: ${token('borderRadius.xl', '12px')};
   overflow: hidden;
   height: ${({ size }) => {
     if (typeof size === 'number') {
@@ -57,37 +60,36 @@ interface StyledProgressBarProps extends StyledProgressProps {
 export const StyledProgressBar = styled.div<StyledProgressBarProps>`
   height: 100%;
   border-radius: inherit;
-  transition: ${({ theme }) =>
-    theme?.transitions?.normal || 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)'};
+  transition: ${token('transitions.normal', 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)')};
   width: ${({ percent }) => Math.min(Math.max(percent, 0), 100)}%;
-  background: ${({ strokeColor, status, theme }) => {
+  background: ${({ strokeColor, status }) => {
     if (strokeColor) return strokeColor
     switch (status) {
       case 'success':
-        return theme?.components?.progress?.successColor || theme?.colors?.success || '#52c41a'
+        return token('components.progress.successColor', token('colors.success', '#52c41a'))
       case 'error':
-        return theme?.components?.progress?.errorColor || theme?.colors?.error || '#ff4d4f'
+        return token('components.progress.errorColor', token('colors.error', '#ff4d4f'))
       case 'warning':
-        return theme?.components?.progress?.warningColor || theme?.colors?.warning || '#faad14'
+        return token('components.progress.warningColor', token('colors.warning', '#faad14'))
       default:
-        return theme?.components?.progress?.infoColor || theme?.colors?.primary || '#1890ff'
+        return token('components.progress.infoColor', token('colors.primary', '#1890ff'))
     }
   }};
 `
 
 export const StyledProgressText = styled.span<StyledProgressProps>`
-  font-size: ${({ size, theme }) => {
+  font-size: ${({ size }) => {
     switch (size) {
       case 'small':
-        return theme?.fontSize?.xs || 12
+        return token('fontSize.xs', '12px')
       case 'large':
-        return theme?.fontSize?.md || 16
+        return token('fontSize.md', '16px')
       case 'medium':
       default:
-        return theme?.fontSize?.sm || 14
+        return token('fontSize.sm', '14px')
     }
-  }}px;
-  color: ${({ theme }) => theme?.colors?.text || 'rgba(0, 0, 0, 0.88)'};
+  }};
+  color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
   white-space: nowrap;
   min-width: ${({ size }) => {
     switch (size) {
@@ -122,25 +124,26 @@ interface StyledCirclePathProps {
 
 export const StyledCircleTrail = styled.circle`
   fill: none;
-  stroke: ${({ theme }) =>
-    theme?.components?.progress?.trackColor || theme?.colors?.backgroundSecondary || '#fafafa'};
+  stroke: ${token(
+    'components.progress.trackColor',
+    token('colors.backgroundSecondary', '#fafafa'),
+  )};
 `
 
 export const StyledCirclePath = styled.circle<StyledCirclePathProps>`
   fill: none;
-  transition: ${({ theme }) =>
-    theme?.transitions?.normal || 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)'};
-  stroke: ${({ strokeColor, status, theme }) => {
+  transition: ${token('transitions.normal', 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)')};
+  stroke: ${({ strokeColor, status }) => {
     if (strokeColor) return strokeColor
     switch (status) {
       case 'success':
-        return theme?.components?.progress?.successColor || theme?.colors?.success || '#52c41a'
+        return token('components.progress.successColor', token('colors.success', '#52c41a'))
       case 'error':
-        return theme?.components?.progress?.errorColor || theme?.colors?.error || '#ff4d4f'
+        return token('components.progress.errorColor', token('colors.error', '#ff4d4f'))
       case 'warning':
-        return theme?.components?.progress?.warningColor || theme?.colors?.warning || '#faad14'
+        return token('components.progress.warningColor', token('colors.warning', '#faad14'))
       default:
-        return theme?.components?.progress?.infoColor || theme?.colors?.primary || '#1890ff'
+        return token('components.progress.infoColor', token('colors.primary', '#1890ff'))
     }
   }};
   stroke-linecap: round;
@@ -152,12 +155,12 @@ export const StyledCircleText = styled.div<{ width: number; size?: ProgressSize 
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: ${({ size, theme, width }) => {
-    if (size === 'small' || width < 60) return theme?.fontSize?.xs || 12
-    if (size === 'large' || width > 120) return theme?.fontSize?.md || 16
-    return theme?.fontSize?.sm || 14
-  }}px;
-  color: ${({ theme }) => theme?.colors?.text || 'rgba(0, 0, 0, 0.88)'};
+  font-size: ${({ size, width }) => {
+    if (size === 'small' || width < 60) return token('fontSize.xs', '12px')
+    if (size === 'large' || width > 120) return token('fontSize.md', '16px')
+    return token('fontSize.sm', '14px')
+  }};
+  color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
   white-space: nowrap;
 `
 

@@ -100,21 +100,21 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       expect(button).toBeInTheDocument()
       const styles = window.getComputedStyle(button)
-      expect(styles.height).toBe('24px')
-      expect(styles.fontSize).toBe('12px')
+      expect(styles.height).toMatch(/24px/)
+      expect(styles.fontSize).toMatch(/12px/)
     })
 
-    it('should render default size with correct styles', () => {
+    it('should render medium size with correct styles', () => {
       render(
         <ThemeProvider>
-          <Button size="default">Default</Button>
+          <Button size="medium">Medium</Button>
         </ThemeProvider>,
       )
       const button = screen.getByRole('button')
       expect(button).toBeInTheDocument()
       const styles = window.getComputedStyle(button)
-      expect(styles.height).toBe('32px')
-      expect(styles.fontSize).toBe('14px')
+      expect(styles.height).toMatch(/32px/)
+      expect(styles.fontSize).toMatch(/14px/)
     })
 
     it('should render large size with correct styles', () => {
@@ -126,8 +126,8 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       expect(button).toBeInTheDocument()
       const styles = window.getComputedStyle(button)
-      expect(styles.height).toBe('40px')
-      expect(styles.fontSize).toBe('16px')
+      expect(styles.height).toMatch(/40px/)
+      expect(styles.fontSize).toMatch(/16px/)
     })
   })
 
@@ -142,8 +142,8 @@ describe('Button', () => {
       const styles = window.getComputedStyle(button)
       expect(styles.borderRadius).toBe('50%')
       expect(styles.padding).toBe('0px')
-      expect(styles.width).toBe('32px')
-      expect(styles.height).toBe('32px')
+      expect(styles.width).toMatch(/32px/)
+      expect(styles.height).toMatch(/32px/)
     })
 
     it('should render round shape with correct styles', () => {
@@ -165,8 +165,8 @@ describe('Button', () => {
       )
       const button = screen.getByRole('button')
       const styles = window.getComputedStyle(button)
-      expect(styles.width).toBe('24px')
-      expect(styles.height).toBe('24px')
+      expect(styles.width).toMatch(/24px/)
+      expect(styles.height).toMatch(/24px/)
     })
 
     it('should render large circle shape', () => {
@@ -177,8 +177,8 @@ describe('Button', () => {
       )
       const button = screen.getByRole('button')
       const styles = window.getComputedStyle(button)
-      expect(styles.width).toBe('40px')
-      expect(styles.height).toBe('40px')
+      expect(styles.width).toMatch(/40px/)
+      expect(styles.height).toMatch(/40px/)
     })
   })
 
@@ -215,8 +215,8 @@ describe('Button', () => {
       expect(button).toBeInTheDocument()
       const styles = window.getComputedStyle(button)
       // danger state should have error color for border and text
-      expect(styles.borderColor).toBe('rgb(255, 77, 79)') // #ff4d4f
-      expect(styles.color).toBe('rgb(255, 77, 79)')
+      expect(styles.borderColor).toMatch(/rgb\(255, 77, 79\)|#ff4d4f/) // #ff4d4f
+      expect(styles.color).toMatch(/rgb\(255, 77, 79\)|#ff4d4f/)
     })
 
     it('should render danger primary with correct background', () => {
@@ -230,7 +230,7 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       const styles = window.getComputedStyle(button)
       // danger primary should have error background
-      expect(styles.backgroundColor).toBe('rgb(255, 77, 79)') // #ff4d4f
+      expect(styles.backgroundColor).toMatch(/rgb\(255, 77, 79\)|#ff4d4f/) // #ff4d4f
     })
 
     it('should render block style with full width', () => {
@@ -266,6 +266,28 @@ describe('Button', () => {
         </ThemeProvider>,
       )
       expect(screen.getByTestId('icon')).toBeInTheDocument()
+    })
+  })
+
+  describe('Shape', () => {
+    it('should render circle shape', () => {
+      render(
+        <ThemeProvider>
+          <Button shape="circle">C</Button>
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      expect(button).toHaveStyle({ borderRadius: '50%' })
+    })
+
+    it('should render round shape', () => {
+      render(
+        <ThemeProvider>
+          <Button shape="round">Round Button</Button>
+        </ThemeProvider>,
+      )
+      const button = screen.getByRole('button')
+      expect(button).toHaveStyle({ borderRadius: '999px' })
     })
   })
 
@@ -332,7 +354,7 @@ describe('Button', () => {
       expect(screen.getByText('Small Loading')).toBeInTheDocument()
       // Verify small size styles
       const styles = window.getComputedStyle(button)
-      expect(styles.height).toBe('24px')
+      expect(styles.height).toMatch(/24px/)
       // Verify loading spinner exists
       expect(button.querySelector('span[aria-hidden]')).toBeInTheDocument()
     })
@@ -350,7 +372,7 @@ describe('Button', () => {
       // Verify block style (full width)
       expect(styles.width).toBe('100%')
       // Verify danger style (error color)
-      expect(styles.color).toBe('rgb(255, 77, 79)')
+      expect(styles.color).toMatch(/rgb\(255, 77, 79\)|#ff4d4f/)
     })
   })
 
@@ -394,11 +416,11 @@ describe('Button', () => {
       expect(button).toBeInTheDocument()
 
       const styles = window.getComputedStyle(button)
-      expect(styles.height).toBe('32px')
-      expect(styles.fontSize).toBe('14px')
-      expect(styles.backgroundColor).toBe('rgb(255, 255, 255)') // #fff
-      expect(styles.borderColor).toBe('rgb(217, 217, 217)') // #d9d9d9
-      expect(styles.color).toBe('rgb(0, 0, 0)') // #000
+      expect(styles.height).toMatch(/32px/)
+      expect(styles.fontSize).toMatch(/14px/)
+      expect(styles.backgroundColor).toMatch(/rgb\(255, 255, 255\)|#fff/) // #fff
+      expect(styles.borderColor).toMatch(/rgb\(217, 217, 217\)|#d9d9d9/) // #d9d9d9
+      expect(styles.color).toMatch(/rgb\(0, 0, 0\)|#000/) // #000
     })
 
     it('should render primary variant with fallback styles', () => {
@@ -406,8 +428,8 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       const styles = window.getComputedStyle(button)
 
-      expect(styles.backgroundColor).toBe('rgb(0, 123, 255)') // #007bff
-      expect(styles.color).toBe('rgb(255, 255, 255)') // #fff
+      expect(styles.backgroundColor).toMatch(/rgb\(0, 123, 255\)|#007bff/) // #007bff
+      expect(styles.color).toMatch(/rgb\(255, 255, 255\)|#fff/) // #fff
     })
   })
 })

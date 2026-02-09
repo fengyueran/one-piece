@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { ButtonBase } from '../button-base'
 import { ButtonProps } from './types'
+import { token } from '../theme'
 
 export const StyledButton = styled(ButtonBase)<{
   $variant: ButtonProps['variant']
@@ -22,169 +23,191 @@ export const StyledButton = styled(ButtonBase)<{
   box-sizing: border-box;
   position: relative;
   white-space: nowrap;
-  font-weight: ${({ theme }) => theme?.fontWeight?.normal || '400'};
-  transition: ${({ theme }) => theme?.transitions?.normal || 'all 0.3s'};
+  white-space: nowrap;
+  font-weight: ${token('fontWeight.normal', '400')};
+  transition: ${token('transitions.normal', 'all 0.3s')};
 
   &:disabled {
     cursor: not-allowed;
     opacity: 0.6;
   }
 
-  ${({ $size, $shape, theme }) => {
+  ${({ $size, $shape }) => {
     const isCircle = $shape === 'circle'
     switch ($size) {
       case 'small':
         return `
-          height: 24px;
-          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.sm || `0 ${theme?.spacing?.sm || 8}px`};
-          font-size: ${theme?.components?.button?.fontSize?.sm || `${theme?.fontSize?.xs || 12}px`};
+          height: ${token('components.button.height.sm', '24px')};
+          padding: ${isCircle ? '0' : token('components.button.padding.sm', token('spacing.sm', '0 8px'))};
+          font-size: ${token('components.button.fontSize.sm', token('fontSize.xs', '12px'))};
           border-radius: ${
             $shape === 'round'
-              ? '999px' // 自动适应任何高度的胶囊形
+              ? '999px' // Capsule shape that automatically adapts to any height
               : isCircle
                 ? '50%'
-                : theme?.components?.button?.borderRadius?.sm || `${theme?.borderRadius?.sm || 4}px`
+                : token('components.button.borderRadius.sm', token('borderRadius.sm', '4px'))
           };
-          ${isCircle ? 'width: 24px; min-width: 24px;' : ''}
+          ${isCircle ? `width: ${token('components.button.height.sm', '24px')}; min-width: ${token('components.button.height.sm', '24px')};` : ''}
         `
       case 'large':
         return `
-          height: 40px;
-          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
-          font-size: ${theme?.components?.button?.fontSize?.lg || `${theme?.fontSize?.md || 16}px`};
+          height: ${token('components.button.height.lg', '40px')};
+          padding: ${isCircle ? '0' : token('components.button.padding.lg', token('spacing.lg', '0 16px'))};
+          font-size: ${token('components.button.fontSize.lg', token('fontSize.md', '16px'))};
           border-radius: ${
             $shape === 'round'
               ? '999px'
               : isCircle
                 ? '50%'
-                : theme?.components?.button?.borderRadius?.lg || `${theme?.borderRadius?.lg || 8}px`
+                : token('components.button.borderRadius.lg', token('borderRadius.lg', '8px'))
           };
-          ${isCircle ? 'width: 40px; min-width: 40px;' : ''}
+          ${isCircle ? `width: ${token('components.button.height.lg', '40px')}; min-width: ${token('components.button.height.lg', '40px')};` : ''}
         `
+      case 'medium':
       default:
         return `
-          height: 32px;
-          padding: ${isCircle ? '0' : theme?.components?.button?.padding?.md || `0 ${theme?.spacing?.md || 16}px`};
-          font-size: ${theme?.components?.button?.fontSize?.md || `${theme?.fontSize?.sm || 14}px`};
+          height: ${token('components.button.height.md', '32px')};
+          padding: ${isCircle ? '0' : token('components.button.padding.md', token('spacing.md', '0 16px'))};
+          font-size: ${token('components.button.fontSize.md', token('fontSize.sm', '14px'))};
           border-radius: ${
             $shape === 'round'
               ? '999px'
               : isCircle
                 ? '50%'
-                : theme?.components?.button?.borderRadius?.md || `${theme?.borderRadius?.md || 6}px`
+                : token('components.button.borderRadius.md', token('borderRadius.md', '6px'))
           };
-          ${isCircle ? 'width: 32px; min-width: 32px;' : ''}
+          ${isCircle ? `width: ${token('components.button.height.md', '32px')}; min-width: ${token('components.button.height.md', '32px')};` : ''}
         `
     }
   }}
 
-  ${({ $variant, theme }) => {
+  ${({ $variant }) => {
     switch ($variant) {
       case 'primary':
         return `
-          background-color: ${theme?.colors?.primary || '#007bff'};
-          border-color: ${theme?.colors?.primary || '#007bff'};
-          color: #fff;
+          background-color: ${token('colors.primary', '#007bff')};
+          border-color: ${token('colors.primary', '#007bff')};
+          color: ${token('colors.white', '#fff')};
           
           &:hover:not(:disabled) {
-            background-color: ${theme?.colors?.primaryHover || '#0056b3'};
-            border-color: ${theme?.colors?.primaryHover || '#0056b3'};
+            background-color: ${token(
+              'colors.primaryHover',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, white 20%)`,
+            )};
+            border-color: ${token(
+              'colors.primaryHover',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, white 20%)`,
+            )};
           }
           
           &:active:not(:disabled) {
-            background-color: ${theme?.colors?.primaryActive || '#004085'};
-            border-color: ${theme?.colors?.primaryActive || '#004085'};
+            background-color: ${token(
+              'colors.primaryActive',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, black 20%)`,
+            )};
+            border-color: ${token(
+              'colors.primaryActive',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, black 20%)`,
+            )};
           }
         `
       case 'dashed':
         return `
-          background-color: ${theme?.colors?.background || '#fff'};
-          border-color: ${theme?.colors?.border || '#d9d9d9'};
+          background-color: ${token('colors.background', '#fff')};
+          border-color: ${token('colors.border', '#d9d9d9')};
           border-style: dashed;
-          color: ${theme?.colors?.text || '#000'};
+          color: ${token('colors.text', '#000')};
           
           &:hover:not(:disabled) {
-            border-color: ${theme?.colors?.borderHover || '#40a9ff'};
-            color: ${theme?.colors?.borderHover || '#40a9ff'};
+            border-color: ${token('colors.borderHover', '#40a9ff')};
+            color: ${token('colors.borderHover', '#40a9ff')};
+            background-color: ${token(
+              'colors.primaryHoverBg',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, ${token('colors.background', '#fff')} 99%)`,
+            )};
           }
         `
       case 'text':
         return `
           background-color: transparent;
           border-color: transparent;
-          color: ${theme?.colors?.text || '#000'};
+          color: ${token('colors.text', '#000')};
           
           &:hover:not(:disabled) {
-            background-color: ${theme?.colors?.backgroundTertiary || 'rgba(0, 0, 0, 0.018)'};
+            background-color: ${token('colors.backgroundTertiary', 'rgba(0, 0, 0, 0.018)')};
           }
         `
       case 'link':
         return `
           background-color: transparent;
           border-color: transparent;
-          color: ${theme?.colors?.primary || '#007bff'};
+          color: ${token('colors.primary', '#007bff')};
           
           &:hover:not(:disabled) {
-            color: ${theme?.colors?.primaryHover || '#0056b3'};
+            color: ${token('colors.primaryHover', '#0056b3')};
           }
         `
       default:
         return `
-          background-color: ${theme?.colors?.background || '#fff'};
-          border-color: ${theme?.colors?.border || '#d9d9d9'};
-          color: ${theme?.colors?.text || '#000'};
+          background-color: ${token('colors.background', '#fff')};
+          border-color: ${token('colors.border', '#d9d9d9')};
+          color: ${token('colors.text', '#000')};
           
           &:hover:not(:disabled) {
-            border-color: ${theme?.colors?.borderHover || '#40a9ff'};
-            color: ${theme?.colors?.borderHover || '#40a9ff'};
+            border-color: ${token('colors.borderHover', '#40a9ff')};
+            color: ${token('colors.borderHover', '#40a9ff')};
+            background-color: ${token(
+              'colors.primaryHoverBg',
+              `color-mix(in srgb, ${token('colors.primary', '#007bff')}, ${token('colors.background', '#fff')} 99%)`,
+            )};
           }
         `
     }
   }}
 
 
-  ${({ $danger, $variant, theme }) =>
+  ${({ $danger, $variant }) =>
     $danger &&
     `
       ${
         $variant === 'primary'
           ? `
-        background-color: ${theme?.colors?.error || '#ff4d4f'};
-        border-color: ${theme?.colors?.error || '#ff4d4f'};
+        background-color: ${token('colors.error', '#ff4d4f')};
+        border-color: ${token('colors.error', '#ff4d4f')};
         
         &:hover:not(:disabled) {
-          background-color: #ff7875;
-          border-color: #ff7875;
+          background-color: ${token('colors.errorHover', '#ff7875')};
+          border-color: ${token('colors.errorHover', '#ff7875')};
         }
       `
           : $variant === 'link'
             ? `
-        color: ${theme?.colors?.error || '#ff4d4f'};
+        color: ${token('colors.error', '#ff4d4f')};
         border-color: transparent;
         background-color: transparent;
         
         &:hover:not(:disabled) {
-            color: #ff7875;
+            color: ${token('colors.errorHover', '#ff7875')};
             border-color: transparent;
             background-color: transparent;
         }
       `
             : `
-        border-color: ${theme?.colors?.error || '#ff4d4f'};
-        color: ${theme?.colors?.error || '#ff4d4f'};
+        border-color: ${token('colors.error', '#ff4d4f')};
+        color: ${token('colors.error', '#ff4d4f')};
         
         &:hover:not(:disabled) {
           ${
             $variant === 'text'
               ? `
-            background-color: #fff2f0;
+            background-color: ${token('colors.errorBg', '#fff2f0')};
           `
               : `
-            background-color: #fff2f0;
-            border-color: #ff7875;
+            background-color: ${token('colors.errorBg', '#fff2f0')};
+            border-color: ${token('colors.errorHover', '#ff7875')};
           `
           }
-          color: #ff7875;
+          color: ${token('colors.errorHover', '#ff7875')};
         }
       `
       }

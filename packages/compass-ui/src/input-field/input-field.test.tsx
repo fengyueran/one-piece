@@ -19,11 +19,6 @@ describe('InputField', () => {
   })
 
   describe('Props', () => {
-    it('should render full width', () => {
-      const { container } = renderWithTheme(<InputField fullWidth />)
-      expect(container.firstChild).toHaveStyle('width: 100%')
-    })
-
     it('should render with different sizes', () => {
       const { container } = renderWithTheme(
         <>
@@ -35,6 +30,12 @@ describe('InputField', () => {
       expect(container.querySelector('.compass-input-field--small')).toBeInTheDocument()
       expect(container.querySelector('.compass-input-field--medium')).toBeInTheDocument()
       expect(container.querySelector('.compass-input-field--large')).toBeInTheDocument()
+    })
+
+    it('should render full width', () => {
+      renderWithTheme(<InputField fullWidth />)
+      const container = screen.getByRole('textbox').closest('div')
+      expect(container).toHaveStyle({ width: '100%' })
     })
 
     it('should render start adornment', () => {
@@ -186,6 +187,32 @@ describe('InputField', () => {
       const ref = React.createRef<HTMLInputElement>()
       renderWithTheme(<InputField ref={ref} />)
       expect(ref.current).toBeInstanceOf(HTMLInputElement)
+    })
+  })
+
+  describe('Semantic Customization', () => {
+    it('should apply custom classNames and styles', () => {
+      const { container } = renderWithTheme(
+        <InputField
+          classNames={{
+            root: 'custom-root',
+            input: 'custom-input',
+            prefix: 'custom-prefix',
+          }}
+          styles={{
+            root: { color: 'red' },
+            input: { color: 'blue' },
+          }}
+          prefix={<span>Prefix</span>}
+        />,
+      )
+
+      expect(container.querySelector('.custom-root')).toBeInTheDocument()
+      expect(container.querySelector('.custom-input')).toBeInTheDocument()
+      expect(container.querySelector('.custom-prefix')).toBeInTheDocument()
+
+      expect(container.querySelector('.custom-root')).toHaveStyle('color: rgb(255, 0, 0)')
+      expect(container.querySelector('.custom-input')).toHaveStyle('color: rgb(0, 0, 255)')
     })
   })
 })

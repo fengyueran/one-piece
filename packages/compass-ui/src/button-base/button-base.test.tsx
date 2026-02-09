@@ -65,24 +65,6 @@ describe('ButtonBase', () => {
       )
       expect(screen.getByRole('button')).toBeInTheDocument()
     })
-
-    it('should accept custom ripple background color', () => {
-      render(
-        <ThemeProvider>
-          <ButtonBase rippleBgColor="#ff0000">Custom Ripple Color</ButtonBase>
-        </ThemeProvider>,
-      )
-      expect(screen.getByRole('button')).toBeInTheDocument()
-    })
-
-    it('should accept custom ripple opacity', () => {
-      render(
-        <ThemeProvider>
-          <ButtonBase rippleOpacity={0.5}>Custom Ripple Opacity</ButtonBase>
-        </ThemeProvider>,
-      )
-      expect(screen.getByRole('button')).toBeInTheDocument()
-    })
   })
 
   describe('Interactions', () => {

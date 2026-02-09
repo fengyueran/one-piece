@@ -67,7 +67,7 @@ export const TouchRipple = forwardRef((props: { bgColor?: string; opacity?: numb
 
   const stop = () => {
     if (ripples.length) {
-      setRipples((prev) => prev.slice(1)) // Use functional update for safety/correctness
+      setRipples((prev) => prev.slice(1))
     }
   }
 

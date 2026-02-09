@@ -31,6 +31,9 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
     fullWidth = false,
     className,
     style,
+    status,
+    classNames,
+    styles,
     ...rest
   } = props
 
@@ -185,15 +188,29 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
   }
 
   return (
-    <Container fullWidth={fullWidth} className={className} style={style}>
+    <Container
+      fullWidth={fullWidth}
+      className={`compass-input-number ${className || ''} ${classNames?.root || ''}`}
+      style={{ ...style, ...styles?.root }}
+    >
       <InputWrapper
         disabled={disabled}
         focused={focused}
         size={size}
         controls={controls}
-        className={`compass-input-number compass-input-number--${size}`}
+        status={status}
+        className={`compass-input-number-wrapper compass-input-number--${size} ${classNames?.inputWrapper || ''}`}
+        style={styles?.inputWrapper}
       >
-        {prefix && <Adornment $position="start">{prefix}</Adornment>}
+        {prefix && (
+          <Adornment
+            $position="start"
+            className={`compass-input-number-prefix ${classNames?.prefix || ''}`}
+            style={styles?.prefix}
+          >
+            {prefix}
+          </Adornment>
+        )}
         <StyledInput
           ref={innerRef}
           type="text"
@@ -209,9 +226,19 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
           onKeyDown={handleKeyDown}
           disabled={disabled}
           $size={size}
+          className={`compass-input-number-input ${classNames?.input || ''}`}
+          style={styles?.input}
           {...rest}
         />
-        {suffix && <Adornment $position="end">{suffix}</Adornment>}
+        {suffix && (
+          <Adornment
+            $position="end"
+            className={`compass-input-number-suffix ${classNames?.suffix || ''}`}
+            style={styles?.suffix}
+          >
+            {suffix}
+          </Adornment>
+        )}
         {controls && !disabled && (
           <StepperWrapper size={size}>
             <StepperButton
@@ -220,6 +247,8 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
               onClick={() => handleStep('up')}
               onMouseDown={(e) => e.preventDefault()}
               $size={size}
+              className={`compass-input-number-handler-up ${classNames?.upHandler || ''}`}
+              style={styles?.upHandler}
             >
               <svg viewBox="0 0 12 12" fill="currentColor">
                 <path d="M6 3l4 4H2z" />
@@ -231,6 +260,8 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>((props,
               onClick={() => handleStep('down')}
               onMouseDown={(e) => e.preventDefault()}
               $size={size}
+              className={`compass-input-number-handler-down ${classNames?.downHandler || ''}`}
+              style={styles?.downHandler}
             >
               <svg viewBox="0 0 12 12" fill="currentColor">
                 <path d="M6 9l4-4H2z" />

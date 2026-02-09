@@ -4,7 +4,7 @@ export interface ButtonProps extends ButtonBaseProps {
   /** Button type */
   variant?: 'primary' | 'default' | 'dashed' | 'text' | 'link'
   /** Button size */
-  size?: 'small' | 'default' | 'large'
+  size?: 'small' | 'medium' | 'large'
   /** Button shape */
   shape?: 'default' | 'circle' | 'round'
   /** Whether the button is disabled */
@@ -17,4 +17,18 @@ export interface ButtonProps extends ButtonBaseProps {
   block?: boolean
   /** Button icon */
   icon?: React.ReactNode
+  /** Custom class names for internal elements */
+  classNames?: {
+    root?: string
+    icon?: string
+    text?: string
+    loading?: string
+  }
+  /** Custom styles for internal elements */
+  styles?: {
+    root?: React.CSSProperties
+    icon?: React.CSSProperties
+    text?: React.CSSProperties
+    loading?: React.CSSProperties
+  }
 }

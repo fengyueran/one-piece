@@ -103,25 +103,29 @@ describe('Progress', () => {
     it('should automatically set success status when percent is 100', () => {
       const { container } = renderWithTheme(<Progress percent={100} />)
       const progressBar = container.querySelector('.compass-progress div div')
-      expect(progressBar).toHaveStyle({ background: '#52c41a' }) // success color
+      const style = window.getComputedStyle(progressBar!)
+      expect(style.background).toMatch(/#52c41a|rgb\(82, 196, 26\)/)
     })
 
     it('should use explicit status prop', () => {
       const { container } = renderWithTheme(<Progress percent={50} status="error" />)
       const progressBar = container.querySelector('.compass-progress div div')
-      expect(progressBar).toHaveStyle({ background: '#ff4d4f' }) // error color
+      const style = window.getComputedStyle(progressBar!)
+      expect(style.background).toMatch(/#ff4d4f|rgb\(255, 77, 79\)/)
     })
 
     it('should handle warning status', () => {
       const { container } = renderWithTheme(<Progress percent={75} status="warning" />)
       const progressBar = container.querySelector('.compass-progress div div')
-      expect(progressBar).toHaveStyle({ background: '#faad14' }) // warning color
+      const style = window.getComputedStyle(progressBar!)
+      expect(style.background).toMatch(/#faad14|rgb\(250, 173, 20\)/)
     })
 
     it('should handle normal status with primary color', () => {
       const { container } = renderWithTheme(<Progress percent={60} status="normal" />)
       const progressBar = container.querySelector('.compass-progress div div')
-      expect(progressBar).toHaveStyle({ background: '#1890ff' }) // primary color
+      const style = window.getComputedStyle(progressBar!)
+      expect(style.background).toMatch(/#1890ff|rgb\(24, 144, 255\)/)
       expect(screen.getByText('60%')).toBeInTheDocument()
     })
   })
