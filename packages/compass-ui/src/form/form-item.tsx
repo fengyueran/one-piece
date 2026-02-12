@@ -66,9 +66,11 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
       const validator = new Schema(descriptor)
 
       setValidating(true)
+      validatingRef.current = true
       try {
         await validator.validate({ [nameStr]: value }, { suppressWarning: true })
         setErrors([])
+        errorsRef.current = []
         return null
       } catch (e) {
         if (e && typeof e === 'object' && 'errors' in e) {
@@ -76,12 +78,16 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
             (err) => err.message || '',
           )
           setErrors(errorList)
+          errorsRef.current = errorList
           return errorList
         }
         console.error('[FormItem] Validation error:', e)
-        return [e instanceof Error ? e.message : String(e)]
+        const fallbackErrors = [e instanceof Error ? e.message : String(e)]
+        errorsRef.current = fallbackErrors
+        return fallbackErrors
       } finally {
         setValidating(false)
+        validatingRef.current = false
       }
     },
     [context, name, namePath, rules],

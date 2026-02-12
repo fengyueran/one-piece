@@ -127,7 +127,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>((props, r
         focused={focused}
         size={size}
         status={status}
-        className={`compass-input-field-wrapper compass-input-field--${size}`}
+        className={`compass-input-field-wrapper compass-input-field--${size}${status ? ` compass-input-field--${status}` : ''}`}
       >
         {renderedPrefix && (
           <Adornment
