@@ -1,5 +1,13 @@
 # @xinghunm/compass-ui
 
+## 0.7.1
+
+### Patch Changes
+
+- ### Bug Fixes
+  - **FormItem**: 使用 ref 同步校验状态和错误信息，修复异步校验中状态不一致的问题
+  - **InputField**: 修复 status 样式类名未正确添加的问题，补充 `compass-input-field--${status}` class
+
 ## 0.7.0
 
 ### Minor Changes
