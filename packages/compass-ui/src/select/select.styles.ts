@@ -92,9 +92,14 @@ export const SelectedContent = styled.div<{ size?: 'small' | 'medium' | 'large' 
   align-items: center;
   gap: 4px;
   min-height: ${({ size }) => {
-    if (size === 'small') return '20px'
-    if (size === 'large') return '26px'
-    return '24px' // medium
+    switch (size) {
+      case 'small':
+        return token('components.select.minHeight.sm', '20px')
+      case 'large':
+        return token('components.select.minHeight.lg', '26px')
+      default:
+        return token('components.select.minHeight.md', '24px')
+    }
   }};
 `
 
@@ -103,15 +108,15 @@ export const Placeholder = styled.span`
 `
 
 export const SelectDropdown = styled.div`
-  padding: 4px 0;
-  background-color: ${token('colors.background', '#fff')};
-  border-radius: ${token('borderRadius.md', '4px')};
-  box-shadow:
-    0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 6px 16px 0 rgba(0, 0, 0, 0.08),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-  z-index: 1050;
-  max-height: 256px;
+  padding: ${token('components.select.dropdownPadding', '4px 0')};
+  background-color: ${token('components.select.dropdownBg', token('colors.background', '#fff'))};
+  border-radius: ${token('components.select.borderRadius', token('borderRadius.md', '4px'))};
+  box-shadow: ${token(
+    'components.select.dropdownBoxShadow',
+    '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+  )};
+  z-index: ${token('components.select.dropdownZIndex', '1050')};
+  max-height: ${token('components.select.dropdownMaxHeight', '256px')};
   overflow-y: auto;
 `
 
@@ -120,9 +125,11 @@ export const StyledOption = styled.div<{
   active?: boolean
   disabled?: boolean
 }>`
-  padding: 0 12px;
-  min-height: 32px;
+  padding: ${token('components.select.optionPadding', '0 12px')};
+  min-height: ${token('components.select.optionMinHeight', '32px')};
+  font-size: ${token('components.select.optionFontSize', '14px')};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+
   transition: all 0.3s;
   background-color: ${({ selected, active }) => {
     if (selected) return token('components.select.optionSelectedBg', '#e6f7ff')
@@ -160,15 +167,16 @@ export const StyledOption = styled.div<{
 export const Tag = styled.span`
   display: inline-flex;
   align-items: center;
-  height: 24px;
-  padding: 0 8px;
-  font-size: 12px;
+  height: ${token('components.select.tagHeight', '24px')};
+  padding: ${token('components.select.tagPadding', '0 8px')};
+  font-size: ${token('components.select.tagFontSize', '12px')};
   line-height: normal;
   background: ${token('components.select.tagBg', token('colors.backgroundSecondary', '#f5f5f5'))};
   color: ${token('components.select.tagColor', 'inherit')};
   border: 1px solid ${token('components.select.tagBorderColor', 'transparent')};
-  border-radius: 4px;
+  border-radius: ${token('components.select.tagBorderRadius', '4px')};
   margin-right: 4px;
+
   margin-top: 1px;
   margin-bottom: 1px;
 

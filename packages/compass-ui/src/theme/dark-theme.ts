@@ -82,6 +82,7 @@ export const darkTheme: Theme = {
       errorColor: '#a61d24',
     },
     table: {
+      ...defaultTheme.components.table,
       headerBg: '#1f1f1f',
       headerColor: 'rgba(255, 255, 255, 0.85)',
       rowHoverBg: '#262626',
@@ -89,6 +90,15 @@ export const darkTheme: Theme = {
       bodyBg: '#141414',
       color: 'rgba(255, 255, 255, 0.85)',
       cellPadding: '16px 16px',
+    },
+    select: {
+      ...defaultTheme.components.select,
+      dropdownBoxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.48), 0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 9px 28px 8px rgba(0, 0, 0, 0.2)',
+      optionSelectedBg: '#111d2c',
+      optionHoverBg: '#262626',
+      tagBg: '#262626',
+      tagBorderColor: '#303030',
     },
   },
 }

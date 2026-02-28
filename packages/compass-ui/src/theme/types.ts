@@ -163,14 +163,30 @@ export interface SelectTheme {
   activeBorderColor: string
   placeholderColor: string
 
+  // Dropdown
+  dropdownBg: string
+  dropdownBoxShadow: string
+  dropdownPadding: string
+  dropdownZIndex: number
+  dropdownMaxHeight: string
+
+  // Options
   optionSelectedBg: string
   optionHoverBg: string
   optionColor: string
   optionSelectedColor: string
+  optionPadding: string
+  optionMinHeight: string
+  optionFontSize: string
 
+  // Tags
   tagBg: string
   tagColor: string
   tagBorderColor: string
+  tagHeight: string
+  tagPadding: string
+  tagFontSize: string
+  tagBorderRadius: string
 
   padding: {
     sm: string
@@ -178,6 +194,11 @@ export interface SelectTheme {
     lg: string
   }
   fontSize: {
+    sm: string
+    md: string
+    lg: string
+  }
+  minHeight: {
     sm: string
     md: string
     lg: string

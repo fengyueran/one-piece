@@ -133,6 +133,7 @@ export const defaultTheme: Theme = {
       bodyPadding: '24px',
       footerPadding: '10px 16px',
       zIndex: 1000,
+      padding: '24px',
     },
     progress: {
       trackColor: '#f5f5f5',
@@ -238,16 +239,51 @@ export const defaultTheme: Theme = {
       hoverBorderColor: '#4096ff',
       activeBorderColor: '#1890ff',
       placeholderColor: 'rgba(0, 0, 0, 0.25)',
+
+      // Dropdown
+      dropdownBg: '#ffffff',
+      dropdownBoxShadow:
+        '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+      dropdownPadding: '4px 0',
+      dropdownZIndex: 1050,
+      dropdownMaxHeight: '256px',
+
+      // Options
       optionSelectedBg: '#e6f7ff',
       optionHoverBg: '#f5f5f5',
       optionColor: 'rgba(0, 0, 0, 0.88)',
       optionSelectedColor: 'rgba(0, 0, 0, 0.88)',
+      optionPadding: '0 12px',
+      optionMinHeight: '32px',
+      optionFontSize: '14px',
+
+      // Tags
       tagBg: '#f5f5f5',
       tagColor: 'rgba(0, 0, 0, 0.88)',
       tagBorderColor: '#f0f0f0',
-      padding: { sm: '0 8px', md: '0 11px', lg: '0 11px' },
-      fontSize: { sm: '12px', md: '14px', lg: '16px' },
+      tagHeight: '24px',
+      tagPadding: '0 8px',
+      tagFontSize: '12px',
+      tagBorderRadius: '4px',
+
+      // Sizes
+      padding: {
+        sm: '1px 8px',
+        md: '3px 12px',
+        lg: '6px 16px',
+      },
+      fontSize: {
+        sm: '12px',
+        md: '14px',
+        lg: '16px',
+      },
+      minHeight: {
+        sm: '20px',
+        md: '24px',
+        lg: '26px',
+      },
     },
+
     form: {
       itemMarginBottom: '16px',
       labelColor: 'rgba(0, 0, 0, 0.88)',
