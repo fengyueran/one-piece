@@ -117,6 +117,14 @@ export const SelectDropdown = styled.div`
   )};
   z-index: ${token('components.select.dropdownZIndex', '1050')};
   max-height: ${token('components.select.dropdownMaxHeight', '256px')};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`
+
+export const SelectMenu = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 `
 

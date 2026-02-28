@@ -137,6 +137,11 @@ export interface SelectProps {
    * Custom selected icon in the dropdown menu
    */
   menuItemSelectedIcon?: React.ReactNode
+
+  /**
+   * Custom popup content renderer. Receives default menu node.
+   */
+  popupRender?: (menu: React.ReactNode) => React.ReactNode
 }
 
 export interface OptionProps {

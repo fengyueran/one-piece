@@ -277,5 +277,78 @@ describe('Select', () => {
     it('size prop renders without crashing', () => {
       render(<Select size="large" />)
     })
+
+    it('should render popup content from popupRender', async () => {
+      const user = userEvent.setup()
+      const { container } = render(
+        <Select
+          options={options}
+          popupRender={(menu) => (
+            <div>
+              {menu}
+              <div data-testid="popup-extra">Custom Footer</div>
+            </div>
+          )}
+        />,
+      )
+
+      await user.click(container.querySelector('.compass-select')!)
+
+      expect(container.querySelector('.compass-select-menu')).toBeInTheDocument()
+      expect(screen.getByTestId('popup-extra')).toBeInTheDocument()
+      expect(screen.getByText('Option 1')).toBeInTheDocument()
+    })
+
+    it('should pass default menu node into popupRender', async () => {
+      const user = userEvent.setup()
+      const popupRender = jest.fn((menu) => <div data-testid="wrapped-menu">{menu}</div>)
+      const { container } = render(<Select options={options} popupRender={popupRender} />)
+
+      await user.click(container.querySelector('.compass-select')!)
+
+      expect(popupRender).toHaveBeenCalled()
+      expect(screen.getByTestId('wrapped-menu')).toBeInTheDocument()
+      expect(screen.getByText('Option 2')).toBeInTheDocument()
+    })
+
+    it('should keep option selection working with popupRender', async () => {
+      const user = userEvent.setup()
+      const handleChange = jest.fn()
+      const { container } = render(
+        <Select
+          options={options}
+          onChange={handleChange}
+          popupRender={(menu) => (
+            <div>
+              {menu}
+              <div>Action Area</div>
+            </div>
+          )}
+        />,
+      )
+
+      await user.click(container.querySelector('.compass-select')!)
+      await user.click(screen.getByText('Option 3'))
+
+      expect(handleChange).toHaveBeenCalledWith(
+        '3',
+        expect.objectContaining({ value: '3', label: 'Option 3' }),
+      )
+    })
+
+    it('should work with optionRender and popupRender together', async () => {
+      const user = userEvent.setup()
+      const { container } = render(
+        <Select
+          options={options}
+          optionRender={(option) => <span>{`rendered-${option.value}`}</span>}
+          popupRender={(menu) => <div>{menu}</div>}
+        />,
+      )
+
+      await user.click(container.querySelector('.compass-select')!)
+      expect(screen.getByText('rendered-1')).toBeInTheDocument()
+      expect(screen.getByText('rendered-2')).toBeInTheDocument()
+    })
   })
 })

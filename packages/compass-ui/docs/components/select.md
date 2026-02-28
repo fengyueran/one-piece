@@ -446,6 +446,54 @@ export default () => {
 }
 ```
 
+### 扩展菜单
+
+使用 `popupRender` 对下拉菜单进行自由扩展。
+
+```tsx
+import React, { useState } from 'react'
+import { Select, InputField, Button } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [name, setName] = useState('')
+  const [items, setItems] = useState(['jack', 'lucy'])
+
+  const options = items.map((item) => ({ label: item, value: item }))
+
+  const addItem = () => {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    setItems((prev) => [...prev, trimmed])
+    setName('')
+  }
+
+  return (
+    <Select
+      style={{ width: 300 }}
+      placeholder="custom dropdown render"
+      options={options}
+      popupRender={(menu) => (
+        <>
+          {menu}
+          <div style={{ borderTop: '1px solid #f0f0f0', margin: '8px 0' }} />
+          <div style={{ display: 'flex', gap: 8, padding: '0 8px 8px' }}>
+            <InputField
+              placeholder="Please enter item"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+            <Button variant="text" onClick={addItem}>
+              Add item
+            </Button>
+          </div>
+        </>
+      )}
+    />
+  )
+}
+```
+
 ## API
 
 ### Select
@@ -468,6 +516,7 @@ export default () => {
 | styles       | 内部组件样式           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
 | classNames   | 内部组件类名           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
 | optionRender | 自定义下拉选项渲染     | `(option: SelectOption, info: { index: number; selected: boolean }) => ReactNode` | -          |
+| popupRender  | 自定义下拉弹层渲染     | `(menu: ReactNode) => ReactNode`                                                  | -          |
 | labelRender  | 自定义选择框标签渲染   | `(props: SelectOption) => ReactNode`                                              | -          |
 
 ### SelectOption

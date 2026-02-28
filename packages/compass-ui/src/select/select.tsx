@@ -22,6 +22,7 @@ import {
   SelectContainer,
   SelectTrigger,
   SelectDropdown,
+  SelectMenu,
   SelectedContent,
   Placeholder,
   Tag,
@@ -59,6 +60,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     optionRender,
     labelRender,
     menuItemSelectedIcon,
+    popupRender,
   } = props
 
   const isMultiple = multiple || mode === 'multiple' || mode === 'tags'
@@ -345,6 +347,36 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const triggerRef = refs.setReference as (node: HTMLElement | null) => void
 
+  const menuNode = (
+    <SelectMenu className="compass-select-menu">
+      {filteredOptions.length > 0 ? (
+        filteredOptions.map((opt, index) => {
+          const isSelected = isMultiple
+            ? Array.isArray(currentValue) && currentValue.includes(opt.value)
+            : currentValue === opt.value
+
+          return (
+            <Option
+              key={opt.value}
+              value={opt.value}
+              disabled={opt.disabled}
+              label={opt.label}
+              style={styles?.option}
+              className={`${classNames?.option || ''}`}
+              menuItemSelectedIcon={optionRender ? <></> : undefined}
+            >
+              {optionRender ? optionRender(opt, { index, selected: isSelected }) : opt.label}
+            </Option>
+          )
+        })
+      ) : (
+        <div style={{ padding: '8px 12px', color: '#999', textAlign: 'center' }}>No Data</div>
+      )}
+    </SelectMenu>
+  )
+
+  const popupContent = popupRender ? popupRender(menuNode) : menuNode
+
   return (
     <SelectContext.Provider value={contextValue}>
       <SelectContainer
@@ -402,33 +434,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
               className={`compass-select-dropdown ${dropdownClassName || ''} ${classNames?.dropdown || ''}`}
               {...getFloatingProps()}
             >
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((opt, index) => {
-                  const isSelected = isMultiple
-                    ? Array.isArray(currentValue) && currentValue.includes(opt.value)
-                    : currentValue === opt.value
-
-                  return (
-                    <Option
-                      key={opt.value}
-                      value={opt.value}
-                      disabled={opt.disabled}
-                      label={opt.label}
-                      style={styles?.option}
-                      className={`${classNames?.option || ''}`}
-                      menuItemSelectedIcon={optionRender ? <></> : undefined}
-                    >
-                      {optionRender
-                        ? optionRender(opt, { index, selected: isSelected })
-                        : opt.label}
-                    </Option>
-                  )
-                })
-              ) : (
-                <div style={{ padding: '8px 12px', color: '#999', textAlign: 'center' }}>
-                  No Data
-                </div>
-              )}
+              {popupContent}
             </SelectDropdown>
           </FloatingPortal>
         )}
