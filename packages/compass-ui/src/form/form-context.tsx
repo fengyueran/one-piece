@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import { FormStore } from './form-store'
-import { FormInstance, InternalHooks, Store, FieldData, NamePath, FormProps } from './types'
+import {
+  FormInstance,
+  InternalHooks,
+  Store,
+  FieldData,
+  NamePath,
+  FormProps,
+  ValidateFieldsOptions,
+} from './types'
 
 const FormContext = createContext<
   | (FormInstance<unknown> & { classNames?: FormProps['classNames']; styles?: FormProps['styles'] })
@@ -32,8 +40,10 @@ export const useForm = <Values extends Record<string, unknown> = Record<string, 
     return {
       getFieldValue: (name: NamePath) => defaultStore.getFieldValue(name),
       setFieldValue: (name: NamePath, value: unknown) => defaultStore.setFieldValue(name, value),
-      validateFields: (nameList?: NamePath[]) =>
-        defaultStore.validateFields(nameList) as Promise<Values>,
+      validateFields: (
+        nameList?: NamePath[] | ValidateFieldsOptions,
+        options?: ValidateFieldsOptions,
+      ) => defaultStore.validateFields(nameList, options) as Promise<Values>,
       getFieldsValue: () => defaultStore.getFieldsValue() as Values,
       setFieldsValue: (values: Store) => defaultStore.setFieldsValue(values),
       getFieldError: (name: NamePath) => defaultStore.getFieldError(name),

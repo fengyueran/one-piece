@@ -458,6 +458,61 @@ export default () => {
 }
 ```
 
+### 使用 validateOnly 控制提交状态（推荐）
+
+`validateFields()` 默认会触发错误展示。  
+如果你只想判断“当前是否可提交”（例如控制按钮禁用态），推荐使用
+`validateFields({ validateOnly: true })`，避免提前展示未编辑字段错误。
+注意：`validateOnly` 模式下不会出现红框/错误文案，这是设计行为；如需展示错误，请使用普通
+`validateFields()` 或 `form.submit()`。
+
+```tsx
+import React, { useEffect, useState } from 'react'
+import { Form, InputField, Button } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [form] = Form.useForm()
+  const [isSubmittable, setIsSubmittable] = useState(false)
+
+  const updateSubmittable = () => {
+    form
+      .validateFields({ validateOnly: true })
+      .then(() => setIsSubmittable(true))
+      .catch(() => setIsSubmittable(false))
+  }
+
+  useEffect(() => {
+    updateSubmittable()
+  }, [])
+
+  return (
+    <Form form={form} onValuesChange={updateSubmittable} onFinish={(values) => console.log(values)}>
+      <Form.Item
+        label="项目名称"
+        name="name"
+        rules={[{ required: true, message: '请输入项目名称' }]}
+      >
+        <InputField />
+      </Form.Item>
+      <Form.Item
+        label="邮箱"
+        name="email"
+        rules={[
+          { required: true, message: '请输入邮箱' },
+          { type: 'email', message: '邮箱格式不正确' },
+        ]}
+      >
+        <InputField />
+      </Form.Item>
+
+      <Button variant="primary" type="submit" disabled={!isSubmittable}>
+        提交
+      </Button>
+    </Form>
+  )
+}
+```
+
 ### 监听字段变化
 
 使用 `Form.useWatch` 监听特定字段的值变化。
@@ -735,6 +790,12 @@ export default () => {
 | values      | 当前表单的所有值   | `object`                                 |
 | errorFields | 验证失败的字段列表 | `{ name: NamePath; errors: string[] }[]` |
 | outOfDate   | 错误信息是否过期   | `boolean`                                |
+
+### FormInstance 方法
+
+| 方法           | 说明                                                                                 | 类型                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| validateFields | 校验字段并返回表单值；传入 `validateOnly: true` 时只计算是否合法，不更新错误展示状态 | `(nameList?: NamePath[] \| { validateOnly?: boolean }, options?: { validateOnly?: boolean }) => Promise<Values>` |
 
 ### FieldData
 

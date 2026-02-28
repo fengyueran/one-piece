@@ -359,6 +359,43 @@ describe('Form', () => {
       })
     })
 
+    it('should support validateOnly without displaying validation errors', async () => {
+      const TestComponent = () => {
+        const [form] = useForm()
+        const [isSubmittable, setIsSubmittable] = React.useState(true)
+
+        return (
+          <Form form={form}>
+            <FormItem name="username" rules={[{ required: true, message: 'Username is required' }]}>
+              <Input aria-label="username" />
+            </FormItem>
+            <button
+              type="button"
+              onClick={() => {
+                form
+                  .validateFields({ validateOnly: true })
+                  .then(() => setIsSubmittable(true))
+                  .catch(() => setIsSubmittable(false))
+              }}
+            >
+              Check
+            </button>
+            <div data-testid="submittable">{isSubmittable ? 'Yes' : 'No'}</div>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Check'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('submittable')).toHaveTextContent('No')
+      })
+
+      expect(screen.queryByText('Username is required')).not.toBeInTheDocument()
+    })
+
     it('should trigger onValuesChange when setFields is called', () => {
       const onValuesChange = jest.fn()
       const TestComponent = () => {

@@ -51,7 +51,9 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   }, [])
 
   const validateRules = useCallback(
-    async (options: { triggerName?: string } = {}): Promise<string[] | null> => {
+    async (
+      options: { triggerName?: string; validateOnly?: boolean } = {},
+    ): Promise<string[] | null> => {
       if (!name || !rules || rules.length === 0) {
         return null
       }
@@ -64,30 +66,41 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
       const nameStr = namePath.join('.')
       const descriptor: Rules = { [nameStr]: rules }
       const validator = new Schema(descriptor)
+      const { validateOnly = false } = options
 
-      setValidating(true)
-      validatingRef.current = true
+      if (!validateOnly) {
+        setValidating(true)
+        validatingRef.current = true
+      }
       try {
         await validator.validate({ [nameStr]: value }, { suppressWarning: true })
-        setErrors([])
-        errorsRef.current = []
+        if (!validateOnly) {
+          setErrors([])
+          errorsRef.current = []
+        }
         return null
       } catch (e) {
         if (e && typeof e === 'object' && 'errors' in e) {
           const errorList = (e as { errors: ValidateError[] }).errors.map(
             (err) => err.message || '',
           )
-          setErrors(errorList)
-          errorsRef.current = errorList
+          if (!validateOnly) {
+            setErrors(errorList)
+            errorsRef.current = errorList
+          }
           return errorList
         }
         console.error('[FormItem] Validation error:', e)
         const fallbackErrors = [e instanceof Error ? e.message : String(e)]
-        errorsRef.current = fallbackErrors
+        if (!validateOnly) {
+          errorsRef.current = fallbackErrors
+        }
         return fallbackErrors
       } finally {
-        setValidating(false)
-        validatingRef.current = false
+        if (!validateOnly) {
+          setValidating(false)
+          validatingRef.current = false
+        }
       }
     },
     [context, name, namePath, rules],

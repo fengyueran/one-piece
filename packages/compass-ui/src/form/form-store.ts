@@ -9,6 +9,7 @@ import {
   FieldData,
   NamePath,
   InternalNamePath,
+  ValidateFieldsOptions,
 } from './types'
 import { getNamePath, getValue, setValue, matchNamePath, containsNamePath } from './utils'
 
@@ -267,9 +268,34 @@ export class FormStore {
     this.callbacks = { ...this.callbacks, ...callbacks }
   }
 
-  public validateFields = async (nameList?: NamePath[]) => {
+  private parseValidateFieldsArgs = (
+    nameListOrOptions?: NamePath[] | ValidateFieldsOptions,
+    options?: ValidateFieldsOptions,
+  ): { nameList?: NamePath[]; validateOnly: boolean } => {
+    if (
+      nameListOrOptions &&
+      !Array.isArray(nameListOrOptions) &&
+      typeof nameListOrOptions === 'object'
+    ) {
+      return {
+        nameList: undefined,
+        validateOnly: !!nameListOrOptions.validateOnly,
+      }
+    }
+
+    return {
+      nameList: nameListOrOptions as NamePath[] | undefined,
+      validateOnly: !!options?.validateOnly,
+    }
+  }
+
+  public validateFields = async (
+    nameListOrOptions?: NamePath[] | ValidateFieldsOptions,
+    options?: ValidateFieldsOptions,
+  ) => {
+    const { nameList, validateOnly } = this.parseValidateFieldsArgs(nameListOrOptions, options)
     const values = this.getFieldsValue()
-    const promiseList: Promise<string[] | null>[] = []
+    const validateTaskList: { name: InternalNamePath; promise: Promise<string[] | null> }[] = []
 
     this.fieldEntities.forEach((entity) => {
       const namePath = entity.getNamePath()
@@ -277,25 +303,27 @@ export class FormStore {
       if (!namePath.length) return
 
       if (!nameList || containsNamePath(nameList, namePath)) {
-        promiseList.push(entity.validateRules())
+        validateTaskList.push({
+          name: namePath,
+          promise: entity.validateRules({ validateOnly }),
+        })
       }
     })
 
-    const results = await Promise.all(promiseList)
-    const hasError = results.some((r) => Array.isArray(r) && r.length > 0)
-
-    if (!hasError) {
-      return values
-    }
-
-    const errorFields: FieldError[] = this.fieldEntities
-      .map((entity) => {
-        const namePath = entity.getNamePath()
-        if (!namePath.length) return null
-        const errors = entity.getErrors()
-        return errors.length > 0 ? { name: namePath, errors } : null
+    const results = await Promise.all(validateTaskList.map((task) => task.promise))
+    const errorFields: FieldError[] = results
+      .map((errors, index) => {
+        if (!errors || errors.length === 0) return null
+        return {
+          name: validateTaskList[index].name,
+          errors,
+        }
       })
       .filter((item): item is FieldError => item !== null)
+
+    if (errorFields.length === 0) {
+      return values
+    }
 
     const errorEntity: ValidateErrorEntity = {
       values,

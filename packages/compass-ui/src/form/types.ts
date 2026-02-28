@@ -36,7 +36,10 @@ export interface InternalFieldData extends Meta {
  */
 export interface FieldEntity {
   onStoreChange: () => void
-  validateRules: (options?: { triggerName?: string }) => Promise<string[] | null>
+  validateRules: (options?: {
+    triggerName?: string
+    validateOnly?: boolean
+  }) => Promise<string[] | null>
   getNamePath: () => InternalNamePath
   getErrors: () => string[]
   isFieldValidating: () => boolean
@@ -56,6 +59,10 @@ export interface ValidateErrorEntity<Values = Record<string, unknown>> {
   values: Values
   errorFields: { name: InternalNamePath; errors: string[] }[]
   outOfDate: boolean
+}
+
+export interface ValidateFieldsOptions {
+  validateOnly?: boolean
 }
 
 // Internal hooks for communication between Form and FormItem
@@ -80,7 +87,10 @@ export interface FormInstance<Values = Record<string, unknown>> {
   setFields: (fields: FieldData[]) => void
   setFieldValue: (name: NamePath, value: unknown) => void
   setFieldsValue: (values: RecursivePartial<Values>) => void
-  validateFields: (nameList?: NamePath[]) => Promise<Values>
+  validateFields: (
+    nameList?: NamePath[] | ValidateFieldsOptions,
+    options?: ValidateFieldsOptions,
+  ) => Promise<Values>
   submit: () => void
   getInternalHooks: (secret: string) => InternalHooks | null
 }
