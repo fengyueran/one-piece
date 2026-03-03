@@ -118,6 +118,34 @@ export default () => {
 }
 ```
 
+### 最大输入长度
+
+通过 `maxLength` 限制最大输入长度。
+
+```tsx
+import React, { useState } from 'react'
+import { InputField } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [value, setValue] = useState('')
+  const maxLength = 20
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: 320 }}>
+      <InputField
+        placeholder="最多输入 20 个字符"
+        value={value}
+        maxLength={maxLength}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <div style={{ color: '#999', fontSize: 12 }}>
+        {value.length}/{maxLength}
+      </div>
+    </div>
+  )
+}
+```
+
 ### 事件示例
 
 演示 `onChange` 和 `onPressEnter` 事件。
@@ -238,6 +266,7 @@ export default () => (
 | value        | 输入框内容               | `string`                                 | -          |
 | defaultValue | 输入框默认内容           | `string`                                 | -          |
 | placeholder  | 占位文本                 | `string`                                 | -          |
+| maxLength    | 最大输入长度             | `number`                                 | -          |
 | size         | 输入框大小               | `'small' \| 'medium' \| 'large'`         | `'medium'` |
 | disabled     | 是否禁用                 | `boolean`                                | `false`    |
 | status       | 校验状态                 | `'error' \| 'warning'`                   | -          |

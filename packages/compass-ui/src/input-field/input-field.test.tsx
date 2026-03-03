@@ -53,6 +53,11 @@ describe('InputField', () => {
       expect(screen.getByRole('textbox')).toBeDisabled()
     })
 
+    it('should support maxLength attribute', () => {
+      renderWithTheme(<InputField maxLength={10} />)
+      expect(screen.getByRole('textbox')).toHaveAttribute('maxLength', '10')
+    })
+
     it('should render password input', () => {
       renderWithTheme(<InputField type="password" placeholder="Password" />)
       const input = screen.getByPlaceholderText('Password')

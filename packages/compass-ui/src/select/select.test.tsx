@@ -32,7 +32,25 @@ jest.mock('@floating-ui/react', () => {
           },
         }
       },
-      getFloatingProps: () => ({}),
+      getFloatingProps: (userProps: any = {}) => {
+        const interactionProps = list.reduce((acc, i) => ({ ...acc, ...(i?.floating || {}) }), {})
+        return {
+          ...interactionProps,
+          ...userProps,
+          onClick: (e: any) => {
+            interactionProps.onClick?.(e)
+            userProps.onClick?.(e)
+          },
+          onMouseDown: (e: any) => {
+            interactionProps.onMouseDown?.(e)
+            userProps.onMouseDown?.(e)
+          },
+          onPointerDown: (e: any) => {
+            interactionProps.onPointerDown?.(e)
+            userProps.onPointerDown?.(e)
+          },
+        }
+      },
     }),
     useClick: (context: any) => ({
       reference: {
@@ -349,6 +367,29 @@ describe('Select', () => {
       await user.click(container.querySelector('.compass-select')!)
       expect(screen.getByText('rendered-1')).toBeInTheDocument()
       expect(screen.getByText('rendered-2')).toBeInTheDocument()
+    })
+
+    it('should not close dropdown when clicking input inside popupRender', async () => {
+      const user = userEvent.setup()
+      const { container } = render(
+        <Select
+          options={options}
+          popupRender={(menu) => (
+            <div>
+              {menu}
+              <input aria-label="popup-input" />
+            </div>
+          )}
+        />,
+      )
+
+      await user.click(container.querySelector('.compass-select')!)
+      expect(screen.getByText('Option 1')).toBeInTheDocument()
+
+      await user.click(screen.getByLabelText('popup-input'))
+
+      expect(screen.getByText('Option 1')).toBeInTheDocument()
+      expect(document.querySelector('.compass-select-dropdown')).toBeInTheDocument()
     })
   })
 })

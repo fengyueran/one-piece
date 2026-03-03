@@ -432,7 +432,13 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
                 ...styles?.dropdown,
               }}
               className={`compass-select-dropdown ${dropdownClassName || ''} ${classNames?.dropdown || ''}`}
-              {...getFloatingProps()}
+              {...getFloatingProps({
+                // Clicks inside popupRender content bubble through React tree to reference.
+                // Prevent bubbling to avoid useClick toggling dropdown closed.
+                onClick: (e) => e.stopPropagation(),
+                onMouseDown: (e) => e.stopPropagation(),
+                onPointerDown: (e) => e.stopPropagation(),
+              })}
             >
               {popupContent}
             </SelectDropdown>
