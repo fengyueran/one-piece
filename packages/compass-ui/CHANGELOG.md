@@ -1,5 +1,32 @@
 # @xinghunm/compass-ui
 
+## 0.8.0
+
+### Minor Changes
+
+- ### Features
+  - **Select**
+    - 新增 `popupRender(menu)`，支持对下拉弹层内容进行二次扩展。
+    - 优化扩展菜单布局：菜单区独立滚动，扩展区可固定显示，长列表下无需滚到底。
+    - 同步补充 Select 文档示例与相关测试覆盖。
+  - **Form**
+    - `validateFields` 新增 `validateOnly` 模式（`validateFields({ validateOnly: true })`）。
+    - `validateOnly` 仅计算合法性，不更新错误展示状态，适合仅控制 `isSubmittable` 场景。
+    - 补充类型、文档和测试覆盖。
+  - **Theme / Select Tokens**
+    - 增强 Select 主题 token（dropdown/options/tags/minHeight 等）。
+    - 增强深色主题覆盖（含 select/table 相关 token 继承与覆盖）。
+    - 修正 InputField clear 按钮选择器命名。
+
+  ### Fixes
+  - **Select**
+    - 修复 `popupRender` 内部输入框点击导致下拉自动收起的问题（阻止浮层事件冒泡触发 reference toggle）。
+
+  ### Docs / Tests
+  - InputField 文档新增 `maxLength` API 与使用示例。
+  - InputField 增加 `maxLength` 属性测试。
+  - Select 增加 `popupRender` 相关回归测试（含输入框点击不收起场景）。
+
 ## 0.7.1
 
 ### Patch Changes

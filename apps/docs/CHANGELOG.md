@@ -1,5 +1,12 @@
 # @one-piece/docs
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @xinghunm/compass-ui@0.8.0
+
 ## 0.0.8
 
 ### Patch Changes
