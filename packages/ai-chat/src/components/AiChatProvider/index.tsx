@@ -19,6 +19,8 @@ export const AiChatProvider = ({
   children,
 }: AiChatProviderProps) => {
   const storeRef = useRef(createChatStore())
+  // Stable ref populated by ChatComposer on mount; allows ChatThread to trigger sends.
+  const sendRef = useRef<(content: string) => Promise<void>>(async () => {})
 
   const axiosInstance = useMemo(
     () => axios.create({ baseURL: apiBaseUrl, headers: { Authorization: authToken } }),
@@ -32,6 +34,7 @@ export const AiChatProvider = ({
       apiBaseUrl,
       authToken,
       labels: { ...DEFAULT_AI_CHAT_LABELS, ...labels },
+      sendRef,
     }),
     [axiosInstance, apiBaseUrl, authToken, labels],
   )
