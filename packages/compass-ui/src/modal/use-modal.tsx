@@ -16,6 +16,7 @@ import {
   Content,
   ConfirmFooter,
 } from './confirm-styles'
+import { AnimationDuration } from './modal.styles'
 
 interface HookModalProps extends ModalFuncProps {
   afterClose?: () => void
@@ -172,10 +173,29 @@ export default function useModal(): [ModalInstance, ReactElement] {
       const props = withFunc(config)
 
       let currentConfig = { ...props, isOpen: false }
+      let destroyTimer: number | null = null
+
+      const remove = () => {
+        if (holderRef.current) {
+          holderRef.current.removeElement(uuid)
+        }
+      }
+
+      const clearDestroyTimer = () => {
+        if (destroyTimer !== null) {
+          window.clearTimeout(destroyTimer)
+          destroyTimer = null
+        }
+      }
 
       const close = () => {
         currentConfig = { ...currentConfig, isOpen: false }
         render(currentConfig)
+        clearDestroyTimer()
+        destroyTimer = window.setTimeout(() => {
+          destroyTimer = null
+          remove()
+        }, AnimationDuration)
       }
 
       const render = (renderProps: ModalFuncProps & { isOpen?: boolean }) => {
@@ -189,9 +209,8 @@ export default function useModal(): [ModalInstance, ReactElement] {
               isOpen={!!renderProps.isOpen}
               closeModal={close}
               afterClose={() => {
-                if (holderRef.current) {
-                  holderRef.current.removeElement(uuid)
-                }
+                clearDestroyTimer()
+                remove()
               }}
             />,
           )
