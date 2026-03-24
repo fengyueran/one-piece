@@ -16,10 +16,6 @@ export const PDEAIExecutionConfirmationCard = ({
   onConfirm,
   onRevise,
 }: PDEAIExecutionConfirmationCardProps) => {
-  const canApply = typeof onApply === 'function'
-  const canConfirm = typeof onConfirm === 'function'
-  const canRevise = typeof onRevise === 'function'
-
   return (
     <Card data-testid="pde-ai-execution-confirmation-card">
       <Header>
@@ -44,30 +40,29 @@ export const PDEAIExecutionConfirmationCard = ({
       ) : null}
       {interactive ? (
         <Actions>
-          <ActionButton
-            type="button"
-            data-testid="pde-ai-confirmation-apply"
-            disabled={!canApply}
-            onClick={onApply}
-          >
-            Apply to Parameters
-          </ActionButton>
-          <ActionButton
-            type="button"
-            data-testid="pde-ai-confirmation-confirm"
-            disabled={!canConfirm}
-            onClick={onConfirm}
-          >
-            Confirm Execution
-          </ActionButton>
-          <SecondaryActionButton
-            type="button"
-            data-testid="pde-ai-confirmation-revise"
-            disabled={!canRevise}
-            onClick={onRevise}
-          >
-            Revise Plan
-          </SecondaryActionButton>
+          {onApply && (
+            <ActionButton type="button" data-testid="pde-ai-confirmation-apply" onClick={onApply}>
+              Apply to Parameters
+            </ActionButton>
+          )}
+          {onConfirm && (
+            <ActionButton
+              type="button"
+              data-testid="pde-ai-confirmation-confirm"
+              onClick={onConfirm}
+            >
+              Confirm Execution
+            </ActionButton>
+          )}
+          {onRevise && (
+            <SecondaryActionButton
+              type="button"
+              data-testid="pde-ai-confirmation-revise"
+              onClick={onRevise}
+            >
+              Revise Plan
+            </SecondaryActionButton>
+          )}
         </Actions>
       ) : null}
     </Card>

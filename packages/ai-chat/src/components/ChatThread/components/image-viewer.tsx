@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useEffect, type MouseEvent } from 'react'
+import { useEffect, useRef, type MouseEvent } from 'react'
 
 const Overlay = styled.div`
   position: fixed;
@@ -26,6 +26,8 @@ interface ImageViewerProps {
 }
 
 export const ImageViewer = ({ src, alt, onClose }: ImageViewerProps) => {
+  const overlayRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -34,10 +36,21 @@ export const ImageViewer = ({ src, alt, onClose }: ImageViewerProps) => {
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
 
+  useEffect(() => {
+    overlayRef.current?.focus()
+  }, [])
+
   const stopPropagation = (e: MouseEvent) => e.stopPropagation()
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Image viewer"
+      tabIndex={-1}
+      onClick={onClose}
+    >
       <Img src={src} alt={alt ?? ''} onClick={stopPropagation} />
     </Overlay>
   )
