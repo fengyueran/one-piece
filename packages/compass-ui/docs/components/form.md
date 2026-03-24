@@ -515,7 +515,7 @@ export default () => {
 
 ### 监听字段变化
 
-使用 `Form.useWatch` 监听特定字段的值变化。
+使用 `Form.useWatch` 监听特定字段的值变化，支持字符串和数组形式的 `NamePath`。
 
 ```tsx
 import React from 'react'
@@ -558,6 +558,11 @@ export default () => {
 
 使用 `onValuesChange` 监听表单值的变化。
 
+说明：
+
+- 用户输入、`setFieldValue`、`setFields` 更新单个嵌套字段时，`changedValues` 会使用点路径 key，例如 `{ 'user.name': 'Alice' }`
+- `setFieldsValue` 批量更新时，`changedValues` 保持传入对象结构
+
 ```tsx
 import React, { useState } from 'react'
 import { Form, InputField } from '@xinghunm/compass-ui'
@@ -567,8 +572,7 @@ export default () => {
   const [lastChange, setLastChange] = useState('')
 
   const onValuesChange = (changedValues, allValues) => {
-    const changedKey = Object.keys(changedValues)[0]
-    const msg = `字段 '${changedKey}' 变更为 '${changedValues[changedKey]}'`
+    const msg = `changedValues: ${JSON.stringify(changedValues)}`
     setLastChange(msg)
   }
 
@@ -757,17 +761,25 @@ export default () => {
 
 ### Form.Item
 
-| 参数           | 说明       | 类型                                                  | 默认值  |
-| -------------- | ---------- | ----------------------------------------------------- | ------- |
-| name           | 字段名     | `NamePath` (string \| number \| (string \| number)[]) | -       |
-| label          | 标签文本   | `ReactNode`                                           | -       |
-| rules          | 校验规则   | `Rule[]`                                              | -       |
-| required       | 是否必填   | `boolean`                                             | `false` |
-| help           | 提示信息   | `ReactNode`                                           | -       |
-| validateStatus | 校验状态   | `'success' \| 'warning' \| 'error' \| 'validating'`   | -       |
-| dependencies   | 依赖字段   | `NamePath[]`                                          | -       |
-| className      | 自定义类名 | `string`                                              | -       |
-| style          | 自定义样式 | `React.CSSProperties`                                 | -       |
+| 参数            | 说明         | 类型                                                  | 默认值       |
+| --------------- | ------------ | ----------------------------------------------------- | ------------ |
+| name            | 字段名       | `NamePath` (string \| number \| (string \| number)[]) | -            |
+| label           | 标签文本     | `ReactNode`                                           | -            |
+| rules           | 校验规则     | `Rule[]`                                              | -            |
+| children        | 表单控件     | `ReactElement`                                        | -            |
+| help            | 提示信息     | `ReactNode`                                           | -            |
+| validateTrigger | 校验触发时机 | `string \| string[]`                                  | `'onChange'` |
+| dependencies    | 依赖字段     | `NamePath[]`                                          | -            |
+| className       | 自定义类名   | `string`                                              | -            |
+| style           | 自定义样式   | `React.CSSProperties`                                 | -            |
+
+### NamePath
+
+字段路径类型，支持扁平字段和嵌套字段。
+
+```ts
+type NamePath = string | number | (string | number)[]
+```
 
 ### Rule
 
@@ -785,29 +797,47 @@ export default () => {
 
 表单验证失败时的错误信息对象。
 
-| 参数        | 说明               | 类型                                     |
-| ----------- | ------------------ | ---------------------------------------- |
-| values      | 当前表单的所有值   | `object`                                 |
-| errorFields | 验证失败的字段列表 | `{ name: NamePath; errors: string[] }[]` |
-| outOfDate   | 错误信息是否过期   | `boolean`                                |
+| 参数        | 说明               | 类型                                                 |
+| ----------- | ------------------ | ---------------------------------------------------- |
+| values      | 当前表单的所有值   | `object`                                             |
+| errorFields | 验证失败的字段列表 | `{ name: (string \| number)[]; errors: string[] }[]` |
+| outOfDate   | 错误信息是否过期   | `boolean`                                            |
+
+### Form 静态方法
+
+| 方法            | 说明               | 类型                                               |
+| --------------- | ------------------ | -------------------------------------------------- |
+| `Form.useForm`  | 创建表单实例       | `() => [FormInstance]`                             |
+| `Form.useWatch` | 监听指定字段值变化 | `(name: NamePath, form?: FormInstance) => unknown` |
 
 ### FormInstance 方法
 
-| 方法           | 说明                                                                                 | 类型                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| validateFields | 校验字段并返回表单值；传入 `validateOnly: true` 时只计算是否合法，不更新错误展示状态 | `(nameList?: NamePath[] \| { validateOnly?: boolean }, options?: { validateOnly?: boolean }) => Promise<Values>` |
+| 方法                | 说明                                                                                 | 类型                                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `getFieldValue`     | 获取单个字段值                                                                       | `(name: NamePath) => unknown`                                                                                    |
+| `getFieldsValue`    | 获取当前所有字段值                                                                   | `() => Values`                                                                                                   |
+| `getFieldError`     | 获取单个字段的错误信息列表                                                           | `(name: NamePath) => string[]`                                                                                   |
+| `isFieldsTouched`   | 判断指定字段列表或任意字段是否已被操作过                                             | `(nameList?: NamePath[]) => boolean`                                                                             |
+| `isFieldTouched`    | 判断单个字段是否已被操作过                                                           | `(name: NamePath) => boolean`                                                                                    |
+| `isFieldValidating` | 判断单个字段是否正在校验                                                             | `(name: NamePath) => boolean`                                                                                    |
+| `resetFields`       | 重置指定字段或全部字段到初始值                                                       | `(fields?: NamePath[]) => void`                                                                                  |
+| `setFields`         | 批量设置字段值和字段状态                                                             | `(fields: FieldData[]) => void`                                                                                  |
+| `setFieldValue`     | 设置单个字段值                                                                       | `(name: NamePath, value: unknown) => void`                                                                       |
+| `setFieldsValue`    | 批量设置字段值，支持嵌套结构                                                         | `(values: RecursivePartial<Values>) => void`                                                                     |
+| `validateFields`    | 校验字段并返回表单值；传入 `validateOnly: true` 时只计算是否合法，不更新错误展示状态 | `(nameList?: NamePath[] \| { validateOnly?: boolean }, options?: { validateOnly?: boolean }) => Promise<Values>` |
+| `submit`            | 触发表单提交流程                                                                     | `() => void`                                                                                                     |
 
 ### FieldData
 
 字段的完整状态信息。
 
-| 参数       | 说明             | 类型       |
-| ---------- | ---------------- | ---------- |
-| name       | 字段名           | `string`   |
-| value      | 字段值           | `unknown`  |
-| touched    | 是否被用户操作过 | `boolean`  |
-| validating | 是否正在验证     | `boolean`  |
-| errors     | 错误信息列表     | `string[]` |
+| 参数       | 说明             | 类型                   |
+| ---------- | ---------------- | ---------------------- |
+| name       | 字段路径         | `(string \| number)[]` |
+| value      | 字段值           | `unknown`              |
+| touched    | 是否被用户操作过 | `boolean`              |
+| validating | 是否正在验证     | `boolean`              |
+| errors     | 错误信息列表     | `string[]`             |
 
 ## 主题变量 (Design Token)
 
