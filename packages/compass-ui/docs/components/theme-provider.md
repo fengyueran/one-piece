@@ -17,7 +17,7 @@ group:
 - 需要高度自定义 Design Token 时。
 - 需要实现动态主题切换（Light/Dark）时。
 
-## 内置主题
+### 内置主题
 
 Compass UI 内置了两套主题配置：
 
@@ -181,13 +181,16 @@ export default () => (
 
 ## API
 
-| 参数        | 说明                       | 类型                 | 默认值    |
-| ----------- | -------------------------- | -------------------- | --------- |
-| theme       | 通用主题配置，覆盖所有模式 | `DeepPartial<Theme>` | -         |
-| lightTheme  | 仅 Light 模式配置          | `DeepPartial<Theme>` | -         |
-| darkTheme   | 仅 Dark 模式配置           | `DeepPartial<Theme>` | -         |
-| defaultMode | 默认主题模式               | `'light' \| 'dark'`  | `'light'` |
-| children    | 子组件                     | `ReactNode`          | -         |
+通用属性参考：[通用属性](/guide/common-props)
+
+| 参数        | 说明                          | 类型                 | 默认值    |
+| ----------- | ----------------------------- | -------------------- | --------- |
+| theme       | 通用主题配置，覆盖所有模式    | `DeepPartial<Theme>` | -         |
+| lightTheme  | 仅 Light 模式配置             | `DeepPartial<Theme>` | -         |
+| darkTheme   | 仅 Dark 模式配置              | `DeepPartial<Theme>` | -         |
+| defaultMode | 默认主题模式                  | `'light' \| 'dark'`  | `'light'` |
+| global      | 是否将 CSS 变量注入到 `:root` | `boolean`            | -         |
+| children    | 子组件                        | `ReactNode`          | -         |
 
 ## Hooks
 

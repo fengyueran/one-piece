@@ -21,29 +21,54 @@ const StyledButtonBase = styled.button`
 `
 
 export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>((props, ref) => {
-  const { hasRipple = true, className, children, ...res } = props
+  const {
+    hasRipple = true,
+    className,
+    children,
+    onMouseDown,
+    onMouseUp,
+    onMouseLeave,
+    ...res
+  } = props
   const { theme } = useTheme()
   const rippleOpacity = getComponentTheme(theme, 'button').rippleOpacity
 
   const rippleRef = useRef<Handlers>()
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onMouseDown?.(e)
+
+    if (e.defaultPrevented) {
+      return
+    }
+
     if (hasRipple && rippleRef.current) {
       rippleRef.current.start(e)
     }
   }
 
-  const handleMouseUp = (e: React.MouseEvent) => {
+  const handleMouseUp = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onMouseUp?.(e)
+
     if (hasRipple && rippleRef.current) {
       rippleRef.current.stop(e)
     }
   }
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onMouseLeave?.(e)
+
+    if (hasRipple && rippleRef.current) {
+      rippleRef.current.stop(e)
+    }
+  }
+
   return (
     <StyledButtonBase
       ref={ref}
       {...res}
       className={className}
-      onMouseLeave={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
       onMouseDown={handleMouseDown}
     >

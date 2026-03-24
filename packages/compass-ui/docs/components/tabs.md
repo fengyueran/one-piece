@@ -359,22 +359,25 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Tabs
 
-| 参数               | 说明                                               | 类型                                                     | 默认值        |
-| ------------------ | -------------------------------------------------- | -------------------------------------------------------- | ------------- |
-| activeKey          | 当前激活 tab 面板的 key                            | `string`                                                 | -             |
-| defaultActiveKey   | 初始化选中面板的 key                               | `string`                                                 | -             |
-| items              | 配置选项卡内容                                     | [TabItem[]](#tabitem)                                    | `[]`          |
-| type               | 页签的基本样式                                     | `'line' \| 'card' \| 'editable-card'`                    | `'line'`      |
-| size               | 大小                                               | `'small' \| 'default' \| 'large'`                        | `'default'`   |
-| tabPosition        | 页签样式位置（控制边框、InkBar位置）               | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `'top'`       |
-| tabBarPosition     | 页签布局位置（控制Tab Bar相对于Content的物理位置） | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `tabPosition` |
-| tabBarExtraContent | 标签栏附加内容                                     | `ReactNode`                                              | -             |
-| onChange           | 切换面板的回调                                     | `(activeKey: string) => void`                            | -             |
-| onEdit             | 编辑标签的回调                                     | `(targetKey: string, action: 'add' \| 'remove') => void` | -             |
-| tabBarStyle        | Tab Bar 自定义样式                                 | `CSSProperties`                                          | -             |
-| tabBarClassName    | Tab Bar 自定义类名                                 | `string`                                                 | -             |
+| 参数               | 说明                                                   | 类型                                                     | 默认值        |
+| ------------------ | ------------------------------------------------------ | -------------------------------------------------------- | ------------- |
+| activeKey          | 当前激活 tab 面板的 key                                | `string`                                                 | -             |
+| defaultActiveKey   | 初始化选中面板的 key                                   | `string`                                                 | -             |
+| items              | 配置选项卡内容                                         | [TabItem[]](#tabitem)                                    | `[]`          |
+| children           | 使用 `TabPane` 方式配置的子节点                        | `ReactNode`                                              | -             |
+| type               | 页签的基本样式                                         | `'line' \| 'card' \| 'editable-card'`                    | `'line'`      |
+| size               | 大小                                                   | `'small' \| 'default' \| 'large'`                        | `'default'`   |
+| tabPosition        | 页签样式位置（控制边框、InkBar位置）                   | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `'top'`       |
+| tabBarPosition     | 页签布局位置（控制 Tab Bar 相对于 Content 的物理位置） | `'top' \| 'right' \| 'bottom' \| 'left'`                 | `tabPosition` |
+| tabBarExtraContent | 标签栏附加内容                                         | `ReactNode`                                              | -             |
+| onChange           | 切换面板的回调                                         | `(activeKey: string) => void`                            | -             |
+| onEdit             | 编辑标签的回调                                         | `(targetKey: string, action: 'add' \| 'remove') => void` | -             |
+| styles             | 内部组件样式                                           | `{ root, nav, inkBar, content }`                         | -             |
+| classNames         | 内部组件类名                                           | `{ root, nav, inkBar, content }`                         | -             |
 
 ### TabItem
 
@@ -386,6 +389,16 @@ export default () => {
 | disabled | 是否禁用                                   | `boolean`   | `false` |
 | closable | 是否显示关闭按钮 (type="editable-card" 时) | `boolean`   | `true`  |
 | icon     | 选项卡图标                                 | `ReactNode` | -       |
+
+### TabPane
+
+| 参数     | 说明                 | 类型        | 默认值  |
+| -------- | -------------------- | ----------- | ------- |
+| key      | 选项卡唯一标识       | `string`    | -       |
+| tab      | 选项卡头显示文字     | `ReactNode` | -       |
+| children | 选项卡内容           | `ReactNode` | -       |
+| disabled | 是否禁用             | `boolean`   | `false` |
+| active   | 是否激活（内部使用） | `boolean`   | -       |
 
 ## 主题变量 (Design Token)
 

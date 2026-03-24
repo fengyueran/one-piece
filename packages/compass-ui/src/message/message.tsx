@@ -57,6 +57,7 @@ interface MessageContainerProps {
 export interface MessageContainerRef {
   add: (message: MessageProps) => void
   remove: (key: string) => void
+  clear: () => void
 }
 
 export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageContainerProps>(
@@ -77,6 +78,10 @@ export const MessageContainerWrapper = forwardRef<MessageContainerRef, MessageCo
       remove: (key: string) => {
         setMessages((prev) => prev.filter((m) => m.key !== key))
         nodeRefs.delete(key)
+      },
+      clear: () => {
+        setMessages([])
+        nodeRefs.clear()
       },
     }))
 

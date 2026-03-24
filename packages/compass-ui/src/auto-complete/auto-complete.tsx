@@ -195,9 +195,10 @@ const AutoComplete: React.FC<AutoCompleteProps> = (props) => {
 
   const handleBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
+      setOpen(false)
       rest.onBlur?.(e)
     },
-    [rest],
+    [rest, setOpen],
   )
 
   const renderOptionContent = (option: AutoCompleteOption) => {
@@ -247,6 +248,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = (props) => {
                     className={`compass-auto-complete-option ${
                       index === activeIndex ? 'compass-auto-complete-option--active' : ''
                     } ${classNames?.option || ''}`}
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => handleSelect(option)}
                     onMouseEnter={() => setActiveIndex(index)}
                   >

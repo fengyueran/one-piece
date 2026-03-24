@@ -115,7 +115,7 @@ describe('useMessage Hook', () => {
     expect(screen.queryByText('Message Key Test')).not.toBeInTheDocument()
   })
 
-  it('should handle destroy without key (TODO check)', async () => {
+  it('should handle destroy without key', async () => {
     render(<HookTest />)
     fireEvent.click(screen.getByText('Open Object'))
     act(() => {
@@ -127,6 +127,8 @@ describe('useMessage Hook', () => {
     act(() => {
       jest.runAllTimers()
     })
+
+    expect(screen.queryByText('Message Open Obj')).not.toBeInTheDocument()
   })
 
   it('should handle open before mount (safe check)', () => {

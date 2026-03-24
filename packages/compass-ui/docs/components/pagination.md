@@ -188,6 +188,8 @@ export default () => (
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Pagination
 
 | 参数            | 说明                           | 类型                                                    | 默认值              |
@@ -206,6 +208,8 @@ export default () => (
 | simple          | 是否使用简单模式               | `boolean`                                               | `false`             |
 | size            | 当为 small 时，是小尺寸分页    | `'default' \| 'small'`                                  | `'default'`         |
 | totalAlign      | 指定总数文字的对齐方式         | `'left' \| 'right'`                                     | `'left'`            |
+| styles          | 内部组件样式                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
+| classNames      | 内部组件类名                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
 
 ## 主题变量 (Design Token)
 

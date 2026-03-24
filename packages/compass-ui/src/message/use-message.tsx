@@ -32,8 +32,10 @@ export default function useMessage(): [MessageInstance, React.ReactElement] {
   const destroy = (key?: string) => {
     if (key) {
       holderRef.current?.remove(key)
+      return
     }
-    // TODO: Implement clear all if key is undefined
+
+    holderRef.current?.clear()
   }
 
   const fns: MessageInstance = {

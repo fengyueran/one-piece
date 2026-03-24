@@ -129,4 +129,21 @@ describe('AutoComplete', () => {
 
     expect(onBlur).toHaveBeenCalled()
   })
+
+  it('closes dropdown when input loses focus', async () => {
+    render(<AutoComplete options={options} />)
+    const input = screen.getByRole('textbox')
+
+    fireEvent.change(input, { target: { value: 'Option' } })
+
+    await waitFor(() => {
+      expect(document.querySelector('.compass-auto-complete-dropdown')).toBeInTheDocument()
+    })
+
+    fireEvent.blur(input)
+
+    await waitFor(() => {
+      expect(document.querySelector('.compass-auto-complete-dropdown')).not.toBeInTheDocument()
+    })
+  })
 })

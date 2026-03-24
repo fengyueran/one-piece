@@ -45,6 +45,23 @@ describe('TreeSelect', () => {
     expect(handleChange).toHaveBeenCalledWith('2', 'Node 2', expect.anything())
   })
 
+  it('should toggle selected nodes in multiple mode without duplicates', async () => {
+    const handleChange = jest.fn()
+    render(<TreeSelect treeData={treeData} multiple defaultValue={['2']} onChange={handleChange} />)
+
+    fireEvent.click(screen.getByRole('combobox'))
+    await waitFor(() => {
+      expect(document.querySelectorAll('.compass-tree-title')).toHaveLength(2)
+    })
+
+    const nodeTitles = document.querySelectorAll('.compass-tree-title')
+    fireEvent.click(nodeTitles[1])
+    expect(handleChange).toHaveBeenCalledWith([], [], expect.anything())
+
+    fireEvent.click(nodeTitles[1])
+    expect(handleChange).toHaveBeenLastCalledWith(['2'], ['Node 2'], expect.anything())
+  })
+
   it('should handle checkable mode', async () => {
     const handleChange = jest.fn()
     render(<TreeSelect treeData={treeData} treeCheckable onChange={handleChange} />)

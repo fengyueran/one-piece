@@ -64,10 +64,10 @@ import type { ButtonProps, Theme } from '@xinghunm/compass-ui'
 
 - **[开发指南](./DEVELOPMENT.md)** - 组件开发和贡献指南
 - **[贡献指南](./CONTRIBUTING.md)** - 如何参与项目贡献
-- **[Storybook 文档](http://localhost:6006)** - 交互式组件示例
+- **[组件文档](./components/index.md)** - 组件示例与 API 说明
 
 ```bash
-pnpm storybook
+pnpm docs:dev
 ```
 
 ## 问题反馈

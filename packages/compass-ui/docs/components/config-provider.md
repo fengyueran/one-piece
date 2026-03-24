@@ -131,6 +131,8 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 | 参数     | 说明                         | 类型          | 默认值                     |
 | -------- | ---------------------------- | ------------- | -------------------------- |
 | locale   | 语言包配置，用于国际化       | `Locale`      | -                          |
@@ -157,5 +159,6 @@ interface ThemeConfig {
   token?: DeepPartial<Theme> // 全局 Token 覆盖
   light?: DeepPartial<Theme> // 浅色模式专用 Token 覆盖
   dark?: DeepPartial<Theme> // 深色模式专用 Token 覆盖
+  global?: boolean // Inject CSS variables into :root
 }
 ```

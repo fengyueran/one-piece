@@ -525,40 +525,56 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Table
 
-| 参数         | 说明                   | 类型                                             | 默认值      |
-| ------------ | ---------------------- | ------------------------------------------------ | ----------- |
-| columns      | 表格列的配置           | [ColumnType[]](#columntype)                      | `[]`        |
-| dataSource   | 数据数组               | `object[]`                                       | `[]`        |
-| bordered     | 是否展示外边框和列边框 | `boolean`                                        | `false`     |
-| loading      | 页面是否加载中         | `boolean`                                        | `false`     |
-| rowSelection | 行选择配置             | [RowSelection](#rowselection)                    | -           |
-| rowKey       | 表格行 key 的取值      | `string \| (record) => string`                   | `'key'`     |
-| pagination   | 分页配置               | `PaginationConfig \| false`                      | -           |
-| size         | 表格大小               | `'small' \| 'medium' \| 'large'`                 | `'medium'`  |
-| emptyText    | 空数据文案             | `ReactNode`                                      | `'No Data'` |
-| scroll       | 滚动设置               | `{ x?: string \| number, y?: string \| number }` | -           |
-| onHeaderRow  | 设置头部行属性         | `(columns, index) => object`                     | -           |
-| onRow        | 设置行属性             | `(record, index) => object`                      | -           |
+| 参数             | 说明                   | 类型                                                                                      | 默认值      |
+| ---------------- | ---------------------- | ----------------------------------------------------------------------------------------- | ----------- |
+| columns          | 表格列的配置           | [ColumnType<T>[]](#columntype)                                                            | `[]`        |
+| dataSource       | 数据数组               | `T[]`                                                                                     | `[]`        |
+| bordered         | 是否展示外边框和列边框 | `boolean`                                                                                 | `false`     |
+| loading          | 页面是否加载中         | `boolean`                                                                                 | `false`     |
+| loadingIndicator | 自定义加载中内容       | `ReactNode`                                                                               | -           |
+| rowSelection     | 行选择配置             | [RowSelection<T>](#rowselection)                                                          | -           |
+| rowKey           | 表格行 key 的取值      | `string \| (record: T) => string`                                                         | `'key'`     |
+| pagination       | 分页配置               | `PaginationProps \| false`                                                                | -           |
+| size             | 表格大小               | `'small' \| 'medium' \| 'large'`                                                          | `'medium'`  |
+| emptyText        | 空数据文案             | `ReactNode`                                                                               | `'No Data'` |
+| scroll           | 滚动设置               | `{ x?: string \| number, y?: string \| number }`                                          | -           |
+| onHeaderRow      | 设置头部行属性         | `(columns: ColumnType<T>[], index?: number) => React.HTMLAttributes<HTMLTableRowElement>` | -           |
+| onRow            | 设置行属性             | `(record: T, index?: number) => React.HTMLAttributes<HTMLTableRowElement>`                | -           |
+| styles           | 内部组件样式           | `{ root, table, thead, tbody, tr, th, td, pagination, empty, loadingOverlay }`            | -           |
+| classNames       | 内部组件类名           | `{ root, table, thead, tbody, tr, th, td, pagination, empty, loadingOverlay }`            | -           |
 
 ### ColumnType
 
-| 参数      | 说明                       | 类型                                 | 默认值   |
-| --------- | -------------------------- | ------------------------------------ | -------- |
-| title     | 列头显示文字               | `ReactNode`                          | -        |
-| dataIndex | 列数据在数据项中对应的路径 | `string`                             | -        |
-| key       | React 需要的 key           | `string`                             | -        |
-| width     | 列宽度                     | `string \| number`                   | -        |
-| align     | 设置列的对齐方式           | `'left' \| 'center' \| 'right'`      | `'left'` |
-| render    | 生成复杂数据的渲染函数     | `(text, record, index) => ReactNode` | -        |
-| sorter    | 排序函数                   | `(a, b) => number`                   | -        |
-| fixed     | 列是否固定                 | `'left' \| 'right' \| boolean`       | -        |
+| 参数      | 说明                       | 类型                                                  | 默认值   |
+| --------- | -------------------------- | ----------------------------------------------------- | -------- |
+| title     | 列头显示文字               | `ReactNode`                                           | -        |
+| dataIndex | 列数据在数据项中对应的路径 | `keyof T`                                             | -        |
+| key       | React 需要的 key           | `React.Key`                                           | -        |
+| width     | 列宽度                     | `string \| number`                                    | -        |
+| align     | 设置列的对齐方式           | `'left' \| 'center' \| 'right'`                       | `'left'` |
+| render    | 生成复杂数据的渲染函数     | `(value: any, record: T, index: number) => ReactNode` | -        |
+| sorter    | 排序函数                   | `(a: T, b: T) => number`                              | -        |
+| fixed     | 列是否固定                 | `'left' \| 'right' \| boolean`                        | -        |
 
 ### RowSelection
 
-| 参数            | 说明                   | 类型                                      | 默认值       |
-| --------------- | ---------------------- | ----------------------------------------- | ------------ |
-| selectedRowKeys | 指定选中项的 key 数组  | `string[]`                                | `[]`         |
-| onChange        | 选中项发生变化时的回调 | `(selectedRowKeys, selectedRows) => void` | -            |
-| type            | 多选/单选              | `'checkbox' \| 'radio'`                   | `'checkbox'` |
+| 参数            | 说明                   | 类型                                                        | 默认值 |
+| --------------- | ---------------------- | ----------------------------------------------------------- | ------ |
+| selectedRowKeys | 指定选中项的 key 数组  | `React.Key[]`                                               | `[]`   |
+| onChange        | 选中项发生变化时的回调 | `(selectedRowKeys: React.Key[], selectedRows: T[]) => void` | -      |
+
+## 主题变量
+
+| Token Name                     | Description      |
+| ------------------------------ | ---------------- |
+| `components.table.headerBg`    | 表头背景色       |
+| `components.table.headerColor` | 表头文字颜色     |
+| `components.table.rowHoverBg`  | 行悬停背景色     |
+| `components.table.borderColor` | 表格边框颜色     |
+| `components.table.bodyBg`      | 表格主体背景色   |
+| `components.table.color`       | 表格主体文字颜色 |
+| `components.table.cellPadding` | 单元格内边距     |

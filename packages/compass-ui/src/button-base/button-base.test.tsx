@@ -127,6 +127,33 @@ describe('ButtonBase', () => {
       fireEvent.mouseLeave(button)
       expect(button).toBeInTheDocument()
     })
+
+    it('should preserve user mouse event handlers', () => {
+      const handleMouseDown = jest.fn()
+      const handleMouseUp = jest.fn()
+      const handleMouseLeave = jest.fn()
+
+      render(
+        <ThemeProvider>
+          <ButtonBase
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+          >
+            Button
+          </ButtonBase>
+        </ThemeProvider>,
+      )
+
+      const button = screen.getByRole('button')
+      fireEvent.mouseDown(button)
+      fireEvent.mouseUp(button)
+      fireEvent.mouseLeave(button)
+
+      expect(handleMouseDown).toHaveBeenCalledTimes(1)
+      expect(handleMouseUp).toHaveBeenCalledTimes(1)
+      expect(handleMouseLeave).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('Ripple Effect', () => {

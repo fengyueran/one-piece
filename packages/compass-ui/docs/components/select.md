@@ -559,28 +559,35 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Select
 
-| 参数         | 说明                   | 类型                                                                              | 默认值     |
-| ------------ | ---------------------- | --------------------------------------------------------------------------------- | ---------- |
-| options      | 数据化配置选项内容     | `SelectOption[]`                                                                  | `[]`       |
-| value        | 指定当前选中的条目     | `SelectValue`                                                                     | -          |
-| defaultValue | 指定默认选中的条目     | `SelectValue`                                                                     | -          |
-| onChange     | 选中 option 时调用     | `(value: SelectValue, option: SelectOption \| SelectOption[]) => void`            | -          |
-| disabled     | 是否禁用               | `boolean`                                                                         | `false`    |
-| loading      | 加载中状态             | `boolean`                                                                         | `false`    |
-| allowClear   | 支持清除               | `boolean`                                                                         | `false`    |
-| placeholder  | 选择框默认文字         | `string`                                                                          | -          |
-| multiple     | 支持多选               | `boolean`                                                                         | `false`    |
-| mode         | 设置 Select 的模式     | `'multiple' \| 'tags'`                                                            | -          |
-| size         | 选择框大小             | `'small' \| 'medium' \| 'large'`                                                  | `'medium'` |
-| status       | 设置校验状态           | `'error' \| 'warning'`                                                            | -          |
-| filterOption | 是否根据输入项进行筛选 | `boolean \| ((inputValue, option) => boolean)`                                    | `true`     |
-| styles       | 内部组件样式           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
-| classNames   | 内部组件类名           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
-| optionRender | 自定义下拉选项渲染     | `(option: SelectOption, info: { index: number; selected: boolean }) => ReactNode` | -          |
-| popupRender  | 自定义下拉弹层渲染     | `(menu: ReactNode) => ReactNode`                                                  | -          |
-| labelRender  | 自定义选择框标签渲染   | `(props: SelectOption) => ReactNode`                                              | -          |
+| 参数                 | 说明                   | 类型                                                                              | 默认值     |
+| -------------------- | ---------------------- | --------------------------------------------------------------------------------- | ---------- |
+| options              | 数据化配置选项内容     | `SelectOption[]`                                                                  | `[]`       |
+| value                | 指定当前选中的条目     | `SelectValue`                                                                     | -          |
+| defaultValue         | 指定默认选中的条目     | `SelectValue`                                                                     | -          |
+| onChange             | 选中 option 时调用     | `(value: SelectValue, option?: SelectOption \| SelectOption[]) => void`           | -          |
+| children             | JSX 方式配置选项       | `ReactNode`                                                                       | -          |
+| disabled             | 是否禁用               | `boolean`                                                                         | `false`    |
+| loading              | 加载中状态             | `boolean`                                                                         | `false`    |
+| allowClear           | 支持清除               | `boolean`                                                                         | `false`    |
+| placeholder          | 选择框默认文字         | `string`                                                                          | -          |
+| multiple             | 支持多选               | `boolean`                                                                         | `false`    |
+| mode                 | 设置 Select 的模式     | `'multiple' \| 'tags'`                                                            | -          |
+| showSearch           | 是否展示搜索框         | `boolean`                                                                         | `false`    |
+| trigger              | 打开下拉菜单的触发方式 | `'click' \| 'hover'`                                                              | `'click'`  |
+| size                 | 选择框大小             | `'small' \| 'medium' \| 'large'`                                                  | `'medium'` |
+| status               | 设置校验状态           | `'error' \| 'warning'`                                                            | -          |
+| dropdownStyle        | 下拉菜单样式           | `React.CSSProperties`                                                             | -          |
+| dropdownClassName    | 下拉菜单类名           | `string`                                                                          | -          |
+| menuItemSelectedIcon | 下拉选项选中图标       | `ReactNode`                                                                       | -          |
+| styles               | 内部组件样式           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
+| classNames           | 内部组件类名           | `{ root, trigger, dropdown, option, tag }`                                        | -          |
+| optionRender         | 自定义下拉选项渲染     | `(option: SelectOption, info: { index: number; selected: boolean }) => ReactNode` | -          |
+| popupRender          | 自定义下拉弹层渲染     | `(menu: ReactNode) => ReactNode`                                                  | -          |
+| labelRender          | 自定义选择框标签渲染   | `(props: SelectOption) => ReactNode`                                              | -          |
 
 ### SelectOption
 

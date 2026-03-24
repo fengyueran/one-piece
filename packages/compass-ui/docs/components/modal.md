@@ -351,7 +351,7 @@ export default () => {
 
   return (
     <>
-      <Button type="primary" onClick={() => setIsOpen(true)}>
+      <Button variant="primary" onClick={() => setIsOpen(true)}>
         打开 Styled Modal
       </Button>
       <StyledModal title="Styled Modal" isOpen={isOpen} onCancel={() => setIsOpen(false)}>
@@ -401,25 +401,28 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Modal
 
-| 参数           | 说明                                              | 类型                                       | 默认值   |
-| -------------- | ------------------------------------------------- | ------------------------------------------ | -------- |
-| isOpen         | 对话框是否可见                                    | `boolean`                                  | `false`  |
-| title          | 标题                                              | `ReactNode`                                | -        |
-| onOk           | 点击确定回调                                      | `(e: MouseEvent) => void \| Promise<void>` | -        |
-| onCancel       | 点击遮罩层或右上角叉或取消按钮的回调              | `() => void`                               | -        |
-| footer         | 底部内容，当不需要默认底部按钮时，可以设为 `null` | `ReactNode`                                | -        |
-| header         | 头部内容，当不需要默认头部时，可以设为 `null`     | `ReactNode`                                | -        |
-| okText         | 确认按钮文字                                      | `ReactNode`                                | `'确定'` |
-| cancelText     | 取消按钮文字                                      | `ReactNode`                                | `'取消'` |
-| confirmLoading | 确定按钮 loading                                  | `boolean`                                  | `false`  |
-| closable       | 是否显示右上角的关闭按钮                          | `boolean`                                  | `true`   |
-| maskVisible    | 是否显示遮罩层                                    | `boolean`                                  | `true`   |
-| width          | 宽度                                              | `string \| number`                         | `500px`  |
-| afterClose     | Modal 完全关闭后的回调                            | `() => void`                               | -        |
-| className      | 自定义类名                                        | `string`                                   | -        |
-| style          | 自定义样式                                        | `CSSProperties`                            | -        |
+| 参数           | 说明                                              | 类型                                                           | 默认值   |
+| -------------- | ------------------------------------------------- | -------------------------------------------------------------- | -------- |
+| isOpen         | 对话框是否可见                                    | `boolean`                                                      | `false`  |
+| title          | 标题                                              | `ReactNode`                                                    | -        |
+| children       | 内容                                              | `ReactNode`                                                    | -        |
+| onOk           | 点击确定回调                                      | `(e?: React.MouseEvent<HTMLElement>) => void \| Promise<void>` | -        |
+| onCancel       | 点击遮罩层或右上角叉或取消按钮的回调              | `(e?: React.MouseEvent<HTMLElement>) => void`                  | -        |
+| footer         | 底部内容，当不需要默认底部按钮时，可以设为 `null` | `ReactNode`                                                    | -        |
+| header         | 头部内容，当不需要默认头部时，可以设为 `null`     | `ReactNode`                                                    | -        |
+| okText         | 确认按钮文字                                      | `ReactNode`                                                    | `'确定'` |
+| cancelText     | 取消按钮文字                                      | `ReactNode`                                                    | `'取消'` |
+| confirmLoading | 确定按钮 loading                                  | `boolean`                                                      | `false`  |
+| closable       | 是否显示右上角的关闭按钮                          | `boolean`                                                      | `true`   |
+| maskVisible    | 是否显示遮罩层                                    | `boolean`                                                      | `true`   |
+| width          | 宽度                                              | `string \| number`                                             | `500px`  |
+| afterClose     | Modal 完全关闭后的回调                            | `() => void`                                                   | -        |
+| styles         | 内部组件样式                                      | `{ root, mask, content, header, body, footer }`                | -        |
+| classNames     | 内部组件类名                                      | `{ root, mask, content, header, body, footer }`                | -        |
 
 ## 主题变量 (Design Token)
 

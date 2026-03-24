@@ -155,6 +155,33 @@ describe('Form', () => {
         expect(screen.queryByText('Invalid email')).not.toBeInTheDocument()
       })
     })
+
+    it('should keep field values when validateTrigger is onBlur', async () => {
+      const onFinish = jest.fn()
+
+      render(
+        <Form onFinish={onFinish}>
+          <FormItem
+            name="username"
+            validateTrigger="onBlur"
+            rules={[{ required: true, message: 'Username is required' }]}
+          >
+            <Input aria-label="username" />
+          </FormItem>
+          <button type="submit">Submit</button>
+        </Form>,
+      )
+
+      const input = screen.getByLabelText('username')
+
+      fireEvent.change(input, { target: { value: 'admin' } })
+      fireEvent.blur(input)
+      fireEvent.click(screen.getByText('Submit'))
+
+      await waitFor(() => {
+        expect(onFinish).toHaveBeenCalledWith({ username: 'admin' })
+      })
+    })
   })
 
   describe('State', () => {

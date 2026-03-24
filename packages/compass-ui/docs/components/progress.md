@@ -30,9 +30,9 @@ export default () => (
   <div style={{ width: 320 }}>
     <Progress percent={30} />
     <br />
-    <Progress percent={50} status="active" />
+    <Progress percent={50} status="warning" />
     <br />
-    <Progress percent={70} status="exception" />
+    <Progress percent={70} status="error" />
     <br />
     <Progress percent={100} />
     <br />
@@ -52,7 +52,7 @@ import { Progress } from '@xinghunm/compass-ui'
 export default () => (
   <div style={{ display: 'flex', gap: '20px' }}>
     <Progress type="circle" percent={75} />
-    <Progress type="circle" percent={70} status="exception" />
+    <Progress type="circle" percent={70} status="error" />
     <Progress type="circle" percent={100} />
   </div>
 )
@@ -180,7 +180,7 @@ import { Progress } from '@xinghunm/compass-ui'
 export default () => (
   <div style={{ display: 'flex', gap: '20px' }}>
     <Progress type="circle" percent={75} format={(percent) => `${percent} Days`} />
-    <Progress type="circle" percent={100} format={() => 'Done'} />
+    <Progress type="circle" percent={100} format={() => 'Done'} success="Done" />
   </div>
 )
 ```
@@ -219,24 +219,24 @@ export default () => (
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Progress
 
-| 参数          | 说明                               | 类型                                                        | 默认值                     |
-| ------------- | ---------------------------------- | ----------------------------------------------------------- | -------------------------- |
-| type          | 进度条类型                         | `'line' \| 'circle'`                                        | `'line'`                   |
-| percent       | 进度百分比                         | `number`                                                    | `0`                        |
-| format        | 内容的模板函数                     | `(percent: number, successPercent: number) => ReactNode`    | `percent => percent + '%'` |
-| status        | 状态                               | `'success' \| 'exception' \| 'normal' \| 'active'`          | -                          |
-| showInfo      | 是否显示进度数值或状态图标         | `boolean`                                                   | `true`                     |
-| strokeColor   | 进度条的色彩                       | `string \| { from: string; to: string; direction: string }` | -                          |
-| strokeLinecap | 进度条的样式                       | `'round' \| 'square'`                                       | `'round'`                  |
-| trailColor    | 未完成分段的颜色                   | `string`                                                    | -                          |
-| size          | 进度条尺寸                         | `number \| string \| { width: number, height: number }`     | `'medium'`                 |
-| gapDegree     | 圆形进度条缺口角度，可取值 0 ~ 360 | `number`                                                    | `0`                        |
-| gapPosition   | 圆形进度条缺口位置                 | `'top' \| 'bottom' \| 'left' \| 'right'`                    | `'top'`                    |
-| strokeWidth   | 圆形进度条线的宽度                 | `number`                                                    | -                          |
-| className     | 自定义类名                         | `string`                                                    | -                          |
-| style         | 自定义样式                         | `CSSProperties`                                             | -                          |
+| 参数        | 说明                               | 类型                                                         | 默认值                     |
+| ----------- | ---------------------------------- | ------------------------------------------------------------ | -------------------------- |
+| type        | 进度条类型                         | `'line' \| 'circle'`                                         | `'line'`                   |
+| percent     | 进度百分比                         | `number`                                                     | `0`                        |
+| size        | 进度条尺寸                         | `number \| string \| { width: number, height: number }`      | `'medium'`                 |
+| status      | 状态                               | `'normal' \| 'success' \| 'error' \| 'warning'`              | -                          |
+| showInfo    | 是否显示进度数值或状态图标         | `boolean`                                                    | `true`                     |
+| format      | 内容的模板函数                     | `(percent?: number) => ReactNode`                            | `percent => percent + '%'` |
+| strokeColor | 进度条的色彩                       | `string \| { from: string; to: string; direction?: string }` | -                          |
+| trailColor  | 未完成分段的颜色                   | `string`                                                     | -                          |
+| success     | 进度完成时展示的自定义内容         | `ReactNode`                                                  | -                          |
+| strokeWidth | 进度条线的宽度                     | `number`                                                     | -                          |
+| gapDegree   | 圆形进度条缺口角度，可取值 0 ~ 360 | `number`                                                     | `0`                        |
+| gapPosition | 圆形进度条缺口位置                 | `'top' \| 'bottom' \| 'left' \| 'right'`                     | `'top'`                    |
 
 ## 主题变量 (Design Token)
 

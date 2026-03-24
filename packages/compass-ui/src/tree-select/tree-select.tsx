@@ -107,11 +107,6 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     onOpenChange: (nextOpen) => {
       if (disabled) return
 
-      // Prevent closing when user is actively typing/searching
-      if (!nextOpen && (inputValue || searchValue)) {
-        return
-      }
-
       setOpen(nextOpen)
       if (!nextOpen) {
         setSearchValue('')
@@ -174,7 +169,7 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     _selectedKeys: (string | number)[],
     info: { node: DataNode; selected: boolean; event: React.MouseEvent },
   ) => {
-    const { node, selected } = info
+    const { node } = info
     const key = node.key
 
     if (treeCheckable) return // Should use onCheck
@@ -182,7 +177,8 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     if (multiple) {
       // Multiple selection mode (without checkboxes)
       const currentArray = (Array.isArray(currentValue) ? currentValue : []) as (string | number)[]
-      const newArray = selected ? [...currentArray, key] : currentArray.filter((k) => k !== key) // Toggle
+      const isSelected = currentArray.includes(key)
+      const newArray = isSelected ? currentArray.filter((k) => k !== key) : [...currentArray, key]
 
       const newLabels = newArray.map((k) => getLabel(k))
       triggerChange(newArray, newLabels, { triggerNode: node, ...info })
@@ -195,7 +191,6 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
     } else {
       // Single selection mode
       triggerChange(key, node.title, { triggerNode: node, ...info })
-      setOpen(false)
       setOpen(false)
       setSearchValue('')
       setInputValue('')
