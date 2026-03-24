@@ -144,9 +144,9 @@ const ChatThreadView = ({
 export const ChatThread = () => {
   const activeSessionId = useChatStore((s) => s.activeSessionId)
   const sessions = useChatStore((s) => s.sessions)
-  const messages = useChatStore((s) => s.messagesBySession[activeSessionId ?? ''] ?? [])
-  const streamingMessage = useChatStore((s) => s.streamingMessageBySession[activeSessionId ?? ''])
-  const error = useChatStore((s) => s.errorBySession[activeSessionId ?? ''])
+  const messages = useChatStore((s) => s.messagesBySession[s.activeSessionId ?? ''] ?? [])
+  const streamingMessage = useChatStore((s) => s.streamingMessageBySession[s.activeSessionId ?? ''])
+  const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
   const { sendRef } = useChatContext()
 
