@@ -12,7 +12,8 @@
 4. `## 何时使用`
 5. `## 代码演示`
 6. `## API`
-7. 组件 token 或全局 token 章节（仅在确实需要时添加）
+7. `通用属性参考：[通用属性](/guide/common-props)`
+8. 组件 token 或全局 token 章节（仅在确实需要时添加）
 
 ## Frontmatter 形态
 
@@ -44,7 +45,13 @@ group:
 
 ## API 章节要求
 
+在 `## API` 标题下面，先补这一行：
+
+`通用属性参考：[通用属性](/guide/common-props)`
+
 用 Markdown 表格描述公共 props。
+
+如果某个属性已经属于通用属性，例如 `className`、`style`，不要在组件自己的 API 表里重复列出。
 
 表头顺序优先保持和 Button 一致：
 
