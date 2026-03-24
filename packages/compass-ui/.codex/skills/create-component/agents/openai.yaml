@@ -1,0 +1,4 @@
+interface:
+  display_name: '创建组件'
+  short_description: '按仓库约定创建 Compass UI 组件'
+  default_prompt: '使用 $create-component 在当前仓库中新增一个 Compass UI 组件。'
