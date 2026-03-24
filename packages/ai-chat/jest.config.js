@@ -19,6 +19,7 @@ module.exports = {
           moduleResolution: 'node',
           esModuleInterop: true,
           strict: true,
+          types: ['jest', 'node'],
         },
       },
     ],
