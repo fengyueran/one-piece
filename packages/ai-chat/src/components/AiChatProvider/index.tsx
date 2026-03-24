@@ -36,7 +36,7 @@ export const AiChatProvider = ({
       labels: { ...DEFAULT_AI_CHAT_LABELS, ...labels },
       sendRef,
     }),
-    [axiosInstance, apiBaseUrl, authToken, labels],
+    [axiosInstance, apiBaseUrl, authToken, labels, sendRef],
   )
 
   return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>

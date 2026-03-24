@@ -143,16 +143,26 @@ const ChatThreadView = ({
 
 export const ChatThread = () => {
   const activeSessionId = useChatStore((s) => s.activeSessionId)
-  const sessions = useChatStore((s) => s.sessions)
+  const hasSessions = useChatStore((s) => s.sessions.length > 0)
+  const activeSessionMode = useChatStore(
+    (s) =>
+      s.sessions.find((x) => x.sessionId === s.activeSessionId)?.mode ?? DEFAULT_CHAT_AGENT_MODE,
+  )
   const messages = useChatStore((s) => s.messagesBySession[s.activeSessionId ?? ''] ?? [])
   const streamingMessage = useChatStore((s) => s.streamingMessageBySession[s.activeSessionId ?? ''])
   const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
+  const clearSessionError = useChatStore((s) => s.clearSessionError)
   const { sendRef } = useChatContext()
 
-  const activeSession = sessions.find((s) => s.sessionId === activeSessionId)
-  const activeSessionMode = activeSession?.mode ?? DEFAULT_CHAT_AGENT_MODE
-  const hasSessions = sessions.length > 0
+  const handleRetry = useCallback(() => {
+    if (!activeSessionId) return
+    const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')
+    clearSessionError(activeSessionId)
+    if (lastUserMessage?.content) {
+      void sendRef.current(lastUserMessage.content)
+    }
+  }, [activeSessionId, messages, clearSessionError, sendRef])
 
   const handleQuestionnaireSubmit = useCallback(
     (submission: PlanQuestionnaireSubmission) => {
@@ -186,6 +196,7 @@ export const ChatThread = () => {
       historyMessages={messages}
       streamingMessage={streamingMessage}
       error={error}
+      onRetry={handleRetry}
       onConfirmationSubmit={handleConfirmationSubmit}
       onQuestionnaireSubmit={handleQuestionnaireSubmit}
     />
