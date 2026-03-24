@@ -216,7 +216,19 @@ module.exports = {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
   },
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        // ts-jest runs in Node/CJS — override "bundler" moduleResolution to "node"
+        tsconfig: {
+          jsx: 'react-jsx',
+          jsxImportSource: '@emotion/react',
+          moduleResolution: 'node',
+          esModuleInterop: true,
+          strict: true,
+        },
+      },
+    ],
   },
 }
 ```
@@ -962,7 +974,7 @@ export const ChatContext = createContext<ChatContextValue | null>(null)
 
 ```ts
 import { useContext } from 'react'
-import { useStore } from 'zustand'
+import { useStore } from 'zustand/react'
 import { ChatContext } from './chat-context'
 import type { ChatStore } from '../store/chat-store'
 
