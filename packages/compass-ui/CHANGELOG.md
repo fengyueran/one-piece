@@ -1,5 +1,45 @@
 # @xinghunm/compass-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- ### Features
+  - **Tooltip**
+    - 新增 `Tooltip` 组件。
+    - 支持 `hover` / `click` 触发方式。
+    - 支持 12 个方向的 `placement`。
+    - 支持气泡箭头，并根据最终方向自动定位。
+    - 支持受控与非受控显示状态。
+    - 支持 `classNames` / `styles` 自定义样式扩展。
+    - 接入默认主题与暗色主题 token。
+    - 补充组件测试与文档。
+
+  ### Refactors
+  - **Form**
+    - 重构 `Form` 内部实现，统一嵌套字段处理逻辑。
+    - 优化 `validateFields` 对父路径的处理，支持通过父路径覆盖子字段校验。
+    - 优化依赖字段在父分支整体更新时的重新校验行为。
+    - 优化 `Form.useWatch` 对数组路径的订阅稳定性，减少重复订阅。
+    - 保持 `onValuesChange` 兼容语义：
+      - `setFieldValue` / `setFields` 返回 dot-path 形式的变更对象。
+      - `setFieldsValue` 保持对象 patch 语义。
+
+  ### Docs
+  - **Form**
+    - 补全文档中的 `Form` / `Form.Item` / `FormInstance` / `Form.useForm` / `Form.useWatch` API。
+    - 补充 `NamePath`、`FieldData`、`ValidateErrorEntity` 等类型说明。
+    - 明确 `onValuesChange` 在嵌套字段场景下的行为说明。
+  - **Components**
+    - 补充和扩展多个组件文档中的样式示例与说明：
+      - `AutoComplete`
+      - `Button`
+      - `DatePicker`
+      - `Dropdown`
+      - `Modal`
+      - `Select`
+      - `TreeSelect`
+
 ## 0.8.0
 
 ### Minor Changes
