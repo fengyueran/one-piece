@@ -281,3 +281,27 @@ export interface ChatStreamPacket {
   type: 'message_start' | 'delta' | 'message_complete' | 'stream_end' | 'error'
   data: ChatStreamPacketData | string | { message?: string }
 }
+
+export interface AiChatLabels {
+  sendButton?: string
+  stopButton?: string
+  placeholder?: string
+  modeLabelAsk?: string
+  modeLabelPlan?: string
+  modeLabelAgent?: string
+  newChat?: string
+  emptyStateTitle?: string
+  emptyStateSubtitle?: string
+}
+
+export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
+  sendButton: 'Send',
+  stopButton: 'Stop',
+  placeholder: 'Ask something...',
+  modeLabelAsk: 'Ask',
+  modeLabelPlan: 'Plan',
+  modeLabelAgent: 'Agent',
+  newChat: 'New Chat',
+  emptyStateTitle: 'How can I help you?',
+  emptyStateSubtitle: 'Start a conversation',
+}

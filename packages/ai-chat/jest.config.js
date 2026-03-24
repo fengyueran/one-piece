@@ -19,7 +19,7 @@ module.exports = {
           moduleResolution: 'node',
           esModuleInterop: true,
           strict: true,
-          types: ['jest', 'node'],
+          types: ['jest', 'node', '@testing-library/jest-dom'],
         },
       },
     ],
