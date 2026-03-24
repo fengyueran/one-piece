@@ -531,12 +531,12 @@ export default () => {
 
 | 参数             | 说明                   | 类型                                                                                      | 默认值      |
 | ---------------- | ---------------------- | ----------------------------------------------------------------------------------------- | ----------- |
-| columns          | 表格列的配置           | [ColumnType<T>[]](#columntype)                                                            | `[]`        |
+| columns          | 表格列的配置           | [`ColumnType<T>[]`](#columntype)                                                          | `[]`        |
 | dataSource       | 数据数组               | `T[]`                                                                                     | `[]`        |
 | bordered         | 是否展示外边框和列边框 | `boolean`                                                                                 | `false`     |
 | loading          | 页面是否加载中         | `boolean`                                                                                 | `false`     |
 | loadingIndicator | 自定义加载中内容       | `ReactNode`                                                                               | -           |
-| rowSelection     | 行选择配置             | [RowSelection<T>](#rowselection)                                                          | -           |
+| rowSelection     | 行选择配置             | [`RowSelection<T>`](#rowselection)                                                        | -           |
 | rowKey           | 表格行 key 的取值      | `string \| (record: T) => string`                                                         | `'key'`     |
 | pagination       | 分页配置               | `PaginationProps \| false`                                                                | -           |
 | size             | 表格大小               | `'small' \| 'medium' \| 'large'`                                                          | `'medium'`  |
