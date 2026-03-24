@@ -75,7 +75,12 @@ packages/ai-chat/
   "@xinghunm/compass-ui": ">=0.8.0",
   "@emotion/react": ">=11",
   "@emotion/styled": ">=11",
-  "axios": ">=1.0"
+  "axios": ">=1.0",
+  "zustand": ">=4",
+  "react-markdown": ">=9",
+  "remark-gfm": ">=4",
+  "remark-math": ">=6",
+  "rehype-katex": ">=7"
 }
 ```
 
@@ -87,20 +92,31 @@ packages/ai-chat/
 
 ```tsx
 import { AiChat } from '@xinghunm/ai-chat'
-
 ;<AiChat
   apiBaseUrl="https://api.example.com"
   authToken="Bearer xxx"
   defaultMode="ask" // 可选，默认 'ask'
   onError={(err) => {}} // 可选
+  labels={{
+    // 可选，覆盖默认文案
+    sendButton: 'Send',
+    stopButton: 'Stop',
+    placeholder: 'Ask something...',
+    modeLabelAsk: 'Ask',
+    modeLabelPlan: 'Plan',
+    modeLabelAgent: 'Agent',
+  }}
 />
 ```
+
+### i18n 策略
+
+包内不依赖 `react-i18next`，所有 UI 文案内置英文默认值。消费方通过 `labels` prop 传入任意语言的覆盖文案。`AiChatProvider` 和各子组件均接受 `labels` prop（可选），未传则使用默认英文文案。
 
 ### 可组合方式
 
 ```tsx
 import { AiChatProvider, ChatConversationList, ChatThread, ChatComposer } from '@xinghunm/ai-chat'
-
 ;<AiChatProvider apiBaseUrl="..." authToken="...">
   <div className="my-layout">
     <ChatConversationList />
@@ -126,7 +142,8 @@ import { AiChatProvider, ChatConversationList, ChatThread, ChatComposer } from '
 | `ChatAgentMode`        | 类型 | `'ask' \| 'plan' \| 'agent'`     |
 | `ChatMessageStatus`    | 类型 | 消息状态枚举                     |
 | `ChatMessageBlock`     | 类型 | 结构化消息块类型                 |
-| `AiChatConfig`         | 类型 | 配置类型                         |
+| `AiChatConfig`         | 类型 | 配置类型（含 labels）            |
+| `AiChatLabels`         | 类型 | 文案覆盖 prop 类型               |
 
 ---
 
@@ -147,16 +164,31 @@ interface ChatStore {
   isStreamingBySession: Record<string, boolean>
   errorBySession: Record<string, string | null>
 
-  // Actions
-  createSession: () => void
+  // Session 管理
+  createSession: (session: ChatSession) => void // 创建新会话（含草稿会话）
   setActiveSession: (id: string) => void
-  send: (content: string, attachments?: Attachment[]) => Promise<void>
-  stop: () => void
+  replaceSessionId: (draftId: string, realId: string) => void // 草稿 → 真实 ID 替换
+  setPreferredMode: (mode: ChatAgentMode) => void
+  setSessionMode: (sessionId: string, mode: ChatAgentMode) => void
+
+  // 消息操作
+  appendMessage: (sessionId: string, message: ChatMessage) => void
+  startStreamingMessage: (sessionId: string, message: ChatMessage) => void
+  updateStreamingMessage: (sessionId: string, delta: string) => void
+  completeStreamingMessage: (sessionId: string) => void
+  finalizeStoppedStreamingMessage: (sessionId: string) => void
   updateQuestionnaireAnswers: (
     sessionId: string,
     messageId: string,
     answers: Record<string, unknown>,
   ) => void
+
+  // 错误 & 流控
+  clearSessionError: (sessionId: string) => void
+
+  // 高阶 actions（调用上述底层 actions）
+  send: (content: string, attachments?: Attachment[]) => Promise<void>
+  stop: () => void
 }
 ```
 
@@ -171,16 +203,26 @@ interface ChatStore {
   → 错误/中止：写入 error 状态
 ```
 
-### 配置注入
+### 配置注入与 authToken 流向
 
-`AiChatProvider` 接收配置并创建共享 axios 实例：
+`AiChatProvider` 接收配置，创建共享 axios 实例和 SSE 请求参数，并存入 store context，供所有内部请求使用：
 
 ```ts
+// AiChatProvider 内部
 const axiosInstance = axios.create({
   baseURL: apiBaseUrl,
   headers: { Authorization: authToken },
 })
+
+// SSE 流请求也从 context 读取 authToken，不再依赖 useSession()
+// startChatStream({ url, authToken, ... })
 ```
+
+`authToken` 生命周期：`AiChatProvider` props → store context → axios headers / SSE fetch headers。消费方更新 `authToken` prop 时，Provider 重新创建 axios 实例。
+
+### 图片预览
+
+移除对 unitary-studio 专有 `FullscreenImageViewer` 的依赖，在包内实现轻量级图片全屏预览组件（`ImageViewer`），仅依赖 `@emotion/styled`，不引入额外依赖。
 
 ---
 
@@ -202,6 +244,11 @@ export default defineConfig({
     '@emotion/react',
     '@emotion/styled',
     'axios',
+    'zustand',
+    'react-markdown',
+    'remark-gfm',
+    'remark-math',
+    'rehype-katex',
   ],
   esbuildOptions(options) {
     options.jsxImportSource = '@emotion/react'
