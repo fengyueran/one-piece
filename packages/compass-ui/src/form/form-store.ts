@@ -11,7 +11,16 @@ import {
   InternalNamePath,
   ValidateFieldsOptions,
 } from './types'
-import { getNamePath, getValue, setValue, matchNamePath, containsNamePath } from './utils'
+import {
+  applyStoreValues,
+  buildFlatChangedValues,
+  containsNamePath,
+  getNamePath,
+  getValue,
+  isRelatedNamePath,
+  matchNamePath,
+  setValue,
+} from './utils'
 
 export class FormStore {
   private store: Store = {}
@@ -92,38 +101,24 @@ export class FormStore {
   public notifyFieldChange = (namePath: InternalNamePath) => {
     if (this.callbacks.onFieldsChange) {
       const changedField = this.getFieldData(namePath)
-      const allFields = this.fieldEntities
-        .map((entity) => {
-          const entityName = entity.getNamePath()
-          return entityName ? this.getFieldData(entityName) : null
-        })
-        .filter((item): item is FieldData => item !== null)
-
-      this.callbacks.onFieldsChange([changedField], allFields)
+      this.callbacks.onFieldsChange([changedField], this.getAllFieldData())
     }
   }
 
   public resetFields = (nameList?: NamePath[]) => {
-    // 1. Get fields to reset
     const fieldsToReset =
       nameList?.map(getNamePath) ||
-      this.fieldEntities.map((e) => e.getNamePath()).filter((n) => !!n && n.length > 0)
+      this.getNamedFieldEntities().map((entity) => entity.getNamePath())
 
-    // 2. Reset store values
     fieldsToReset.forEach((namePath) => {
       const initialValue = getValue(this.initialValues, namePath)
       this.store = setValue(this.store, namePath, initialValue)
-
-      // Reset errors
-      const entity = this.getFieldEntity(namePath)
-      if (entity) {
-        entity.setErrors([])
-      }
+      this.setFieldErrors(namePath, [])
     })
 
-    // 3. Notify changes
     fieldsToReset.forEach((namePath) => {
       this.notify(namePath)
+      this.notifyFieldChange(namePath)
     })
   }
 
@@ -134,72 +129,47 @@ export class FormStore {
     if (prevValue !== value) {
       this.store = setValue(this.store, namePath, value)
       this.notify(namePath)
+      this.notifyFieldChange(namePath)
 
-      // Notify onValuesChange
       if (this.callbacks.onValuesChange) {
-        this.callbacks.onValuesChange({ [namePath.join('.')]: value }, this.store)
+        this.callbacks.onValuesChange(buildFlatChangedValues(this.store, [namePath]), this.store)
       }
     }
   }
 
   public setFields = (fields: FieldData[]) => {
+    const changedValueFields: InternalNamePath[] = []
+
     fields.forEach((field) => {
       const { name, value, errors } = field
       const namePath = getNamePath(name)
 
       if (value !== undefined) {
         this.store = setValue(this.store, namePath, value)
+        changedValueFields.push(namePath)
       }
       if (errors !== undefined) {
-        const entity = this.getFieldEntity(namePath)
-        if (entity) {
-          entity.setErrors(errors)
-        }
+        this.setFieldErrors(namePath, errors)
       }
       this.notify(namePath)
+      this.notifyFieldChange(namePath)
     })
 
-    if (this.callbacks.onValuesChange) {
-      // Create a partial store for changed values
-      // Note: This constructs a flat object with string keys for now as a simple representation
-      // Ideally it should be a deep object matching the structure
-      fields.forEach(({ value }) => {
-        if (value !== undefined) {
-          // For simplicity in onValuesChange param, we might just use dot notation or similar
-          // But strict Store type expects Record<string, StoreValue>
-          // Let's just put it under the first key if it's simple, or reconstruct object
-          // For now, let's keep it simple:
-          this.callbacks.onValuesChange?.(this.store, this.store)
-        }
-      })
+    if (this.callbacks.onValuesChange && changedValueFields.length > 0) {
+      this.callbacks.onValuesChange(
+        buildFlatChangedValues(this.store, changedValueFields),
+        this.store,
+      )
     }
   }
 
   public setFieldsValue = (values: Store) => {
-    // values is a deep object (RecursivePartial<Values>), but typed as Store (Record<string, unknown>) in signature for simplicity?
-    // Actually setFieldsValue expects a deep object usually.
-    // Let's assume values is an object structure that mirrors store.
-
-    // Deep merge or recursive set needed.
-    // For simplicity, let's assume `values` is the new store state branch for the keys provided.
-    // We can iterate keys of values and update store.
-
-    // Simplest recursive merge:
-    const updateStore = (current: StoreValue, path: InternalNamePath = []) => {
-      if (current && typeof current === 'object' && !Array.isArray(current)) {
-        Object.keys(current as object).forEach((key) => {
-          updateStore((current as Record<string, StoreValue>)[key], [...path, key])
-        })
-      } else {
-        // leaf value
-        if (path.length > 0) {
-          this.store = setValue(this.store, path, current)
-          this.notify(path)
-        }
-      }
-    }
-
-    updateStore(values)
+    const { store, changedPaths } = applyStoreValues(this.store, values)
+    this.store = store
+    changedPaths.forEach((namePath) => {
+      this.notify(namePath)
+      this.notifyFieldChange(namePath)
+    })
 
     if (this.callbacks.onValuesChange) {
       this.callbacks.onValuesChange(values, this.store)
@@ -209,7 +179,6 @@ export class FormStore {
   public registerField = (entity: FieldEntity) => {
     this.fieldEntities.push(entity)
 
-    // Set initial value if present in store/initialValues
     const namePath = entity.getNamePath()
     const initialValue = getValue(this.initialValues, namePath)
     const storeValue = getValue(this.store, namePath)
@@ -220,6 +189,14 @@ export class FormStore {
 
     return () => {
       this.fieldEntities = this.fieldEntities.filter((item) => item !== entity)
+
+      if (namePath.length > 0) {
+        queueMicrotask(() => {
+          if (!this.getFieldEntity(namePath)) {
+            this.notifyFieldChange(namePath)
+          }
+        })
+      }
     }
   }
 
@@ -232,28 +209,12 @@ export class FormStore {
 
   private notify = (namePath: InternalNamePath) => {
     this.fieldEntities.forEach((entity) => {
-      const { dependencies } = entity.props
       const entityName = entity.getNamePath()
 
       if (matchNamePath(entityName, namePath)) {
         entity.onStoreChange()
-      } else if (dependencies) {
-        // Trigger validation for dependent fields only if the field has been touched
-        // Check if any dependency matches the changed namePath
-        const isDependent = dependencies.some((dep) => {
-          // Check if dependency path contains or equals the changed path
-          // For example if dependency is ['user'] and changed is ['user', 'name'], it should trigger
-          const depPath = getNamePath(dep)
-          return (
-            matchNamePath(depPath, namePath) ||
-            (namePath.length > depPath.length &&
-              matchNamePath(namePath.slice(0, depPath.length), depPath))
-          )
-        })
-
-        if (isDependent && entity.isFieldTouched()) {
-          entity.validateRules()
-        }
+      } else if (this.shouldValidateDependency(entity, namePath)) {
+        entity.validateRules()
       }
     })
 
@@ -360,5 +321,31 @@ export class FormStore {
           this.callbacks.onFinishFailed(errorInfo)
         }
       })
+  }
+
+  private getNamedFieldEntities = (): FieldEntity[] => {
+    return this.fieldEntities.filter((entity) => entity.getNamePath().length > 0)
+  }
+
+  private getAllFieldData = (): FieldData[] => {
+    return this.getNamedFieldEntities().map((entity) => this.getFieldData(entity.getNamePath()))
+  }
+
+  private setFieldErrors = (namePath: InternalNamePath, errors: string[]) => {
+    const entity = this.getFieldEntity(namePath)
+    entity?.setErrors(errors)
+  }
+
+  private shouldValidateDependency = (
+    entity: FieldEntity,
+    changedNamePath: InternalNamePath,
+  ): boolean => {
+    if (!entity.isFieldTouched() || !entity.props.dependencies?.length) {
+      return false
+    }
+
+    return entity.props.dependencies.some((dependency) => {
+      return isRelatedNamePath(getNamePath(dependency), changedNamePath)
+    })
   }
 }

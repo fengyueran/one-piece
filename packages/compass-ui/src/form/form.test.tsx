@@ -396,6 +396,76 @@ describe('Form', () => {
       expect(screen.queryByText('Username is required')).not.toBeInTheDocument()
     })
 
+    it('should validate nested fields when validateFields receives parent path', async () => {
+      const onValidate = jest.fn()
+
+      const TestComponent = () => {
+        const [form] = useForm()
+
+        return (
+          <Form form={form}>
+            <FormItem
+              name={['user', 'name']}
+              rules={[{ required: true, message: 'Name is required' }]}
+            >
+              <Input aria-label="user-name" />
+            </FormItem>
+            <button
+              type="button"
+              onClick={() => {
+                form
+                  .validateFields([['user']])
+                  .then(() => onValidate('resolved'))
+                  .catch((error) => onValidate(error))
+              }}
+            >
+              Validate User
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Validate User'))
+
+      await waitFor(() => {
+        expect(onValidate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            errorFields: [
+              {
+                name: ['user', 'name'],
+                errors: ['Name is required'],
+              },
+            ],
+          }),
+        )
+      })
+
+      expect(screen.getByText('Name is required')).toBeInTheDocument()
+    })
+
+    it('should keep dot-path changedValues when nested field updates through input', async () => {
+      const onValuesChange = jest.fn()
+
+      render(
+        <Form onValuesChange={onValuesChange}>
+          <FormItem name={['user', 'name']}>
+            <Input aria-label="nested-name" />
+          </FormItem>
+        </Form>,
+      )
+
+      await userEvent.type(screen.getByLabelText('nested-name'), 'A')
+
+      expect(onValuesChange).toHaveBeenLastCalledWith(
+        { 'user.name': 'A' },
+        expect.objectContaining({
+          user: { name: 'A' },
+        }),
+      )
+    })
+
     it('should trigger onValuesChange when setFields is called', () => {
       const onValuesChange = jest.fn()
       const TestComponent = () => {
@@ -423,6 +493,155 @@ describe('Form', () => {
       )
       expect(screen.getByLabelText('test')).toHaveValue('new-value')
       expect(screen.getByText('error')).toBeInTheDocument()
+    })
+
+    it('should keep dot-path changedValues when setFields updates nested value', () => {
+      const onValuesChange = jest.fn()
+
+      const TestComponent = () => {
+        const [form] = useForm()
+        return (
+          <Form form={form} onValuesChange={onValuesChange}>
+            <FormItem name={['user', 'name']}>
+              <Input aria-label="nested-name" />
+            </FormItem>
+            <button
+              type="button"
+              onClick={() =>
+                form.setFields([{ name: ['user', 'name'], value: 'Alice', errors: [] }])
+              }
+            >
+              Set Nested Fields
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Set Nested Fields'))
+
+      expect(onValuesChange).toHaveBeenCalledWith(
+        { 'user.name': 'Alice' },
+        expect.objectContaining({
+          user: { name: 'Alice' },
+        }),
+      )
+    })
+
+    it('should emit a fresh field snapshot after deleting a dynamic field', async () => {
+      const onFieldsChange = jest.fn()
+
+      const DynamicFields = ({ form }: { form: FormInstance }) => {
+        const rows = (Form.useWatch('rows', form) as Array<{ name?: string }>) || []
+
+        return (
+          <>
+            {rows.map((_, index) => (
+              <FormItem key={index} name={['rows', index, 'name']}>
+                <Input aria-label={`row-${index}`} />
+              </FormItem>
+            ))}
+          </>
+        )
+      }
+
+      const TestComponent = () => {
+        const [form] = useForm()
+
+        return (
+          <Form
+            form={form}
+            initialValues={{ rows: [{ name: '' }] }}
+            onFieldsChange={onFieldsChange}
+          >
+            <DynamicFields form={form} />
+            <button
+              type="button"
+              onClick={() => {
+                form.setFields([{ name: ['rows', 0, 'name'], errors: ['Required'] }])
+              }}
+            >
+              Seed Dynamic Error
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const nextRows = [
+                  ...((form.getFieldValue('rows') as Array<{ name?: string }>) || []),
+                ]
+                nextRows.splice(0, 1)
+                form.setFieldValue('rows', nextRows)
+                form.setFields([{ name: ['rows', 0, 'name'], errors: [] }])
+              }}
+            >
+              Delete Dynamic Row
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Seed Dynamic Error'))
+
+      await waitFor(() => {
+        expect(onFieldsChange.mock.calls.at(-1)?.[1]).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              name: ['rows', 0, 'name'],
+              errors: ['Required'],
+            }),
+          ]),
+        )
+      })
+
+      fireEvent.click(screen.getByText('Delete Dynamic Row'))
+
+      await waitFor(() => {
+        expect(screen.queryByLabelText('row-0')).not.toBeInTheDocument()
+      })
+
+      await waitFor(() => {
+        expect(onFieldsChange.mock.calls.at(-1)?.[1]).not.toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              name: ['rows', 0, 'name'],
+            }),
+          ]),
+        )
+      })
+    })
+
+    it('should not loop when onFieldsChange updates parent state', async () => {
+      const TestComponent = () => {
+        const [form] = useForm()
+        const [, forceUpdate] = React.useState(0)
+
+        return (
+          <Form form={form} onFieldsChange={() => forceUpdate((count) => count + 1)}>
+            <FormItem name="username">
+              <Input aria-label="username" />
+            </FormItem>
+            <button
+              type="button"
+              onClick={() => {
+                form.setFields([{ name: ['username'], errors: ['Required'] }])
+              }}
+            >
+              Trigger Field Change
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Trigger Field Change'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Required')).toBeInTheDocument()
+      })
     })
 
     it('should trigger onValuesChange when setFieldsValue is called', () => {
@@ -472,6 +691,88 @@ describe('Form', () => {
         expect(screen.getByTestId('touched-specific')).toHaveTextContent('Touched')
         expect(screen.getByTestId('touched-all')).toHaveTextContent('Any Touched')
       })
+    })
+
+    it('should update child watcher when parent branch is replaced', async () => {
+      const Watcher = ({ control }: { control: FormInstance }) => {
+        const value = Form.useWatch(['user', 'name'], control)
+        return <div data-testid="watch-user-name">{value as string}</div>
+      }
+
+      const TestComponent = () => {
+        const [form] = useForm()
+
+        return (
+          <Form form={form}>
+            <Watcher control={form} />
+            <button type="button" onClick={() => form.setFieldsValue({ user: { name: 'Alice' } })}>
+              Replace User
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      fireEvent.click(screen.getByText('Replace User'))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('watch-user-name')).toHaveTextContent('Alice')
+      })
+    })
+
+    it('should not resubscribe useWatch on unrelated rerender with array name path', () => {
+      const registerWatchCount = jest.fn()
+      const Watcher = ({ control }: { control: FormInstance }) => {
+        Form.useWatch(['user', 'name'], control)
+        return null
+      }
+
+      const TestComponent = () => {
+        const [form] = useForm()
+        const [tick, setTick] = React.useState(0)
+
+        const instrumentedForm = React.useMemo<FormInstance>(() => {
+          const originalGetInternalHooks = form.getInternalHooks
+
+          return {
+            ...form,
+            getInternalHooks: (secret) => {
+              const hooks = originalGetInternalHooks(secret)
+              if (!hooks) {
+                return null
+              }
+
+              return {
+                ...hooks,
+                registerWatch: (callback) => {
+                  registerWatchCount()
+                  return hooks.registerWatch(callback)
+                },
+              }
+            },
+          }
+        }, [form])
+
+        return (
+          <>
+            <Form form={instrumentedForm}>
+              <Watcher control={instrumentedForm} />
+            </Form>
+            <button type="button" onClick={() => setTick((value) => value + 1)}>
+              Rerender {tick}
+            </button>
+          </>
+        )
+      }
+
+      render(<TestComponent />)
+
+      expect(registerWatchCount).toHaveBeenCalledTimes(1)
+
+      fireEvent.click(screen.getByText(/Rerender/))
+
+      expect(registerWatchCount).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -547,6 +848,59 @@ describe('Form', () => {
       // Confirm field should re-validate and show error
       await waitFor(() => {
         expect(screen.getByText('Passwords do not match')).toBeInTheDocument()
+      })
+    })
+
+    it('should validate dependent field when parent branch is replaced', async () => {
+      const TestComponent = () => {
+        const [form] = useForm()
+        return (
+          <Form form={form}>
+            <FormItem name={['user', 'password']}>
+              <Input aria-label="nested-password" />
+            </FormItem>
+            <FormItem
+              name={['user', 'confirm']}
+              dependencies={[['user', 'password']]}
+              rules={[
+                {
+                  validator: async (_: unknown, value: unknown) => {
+                    if (!value || form.getFieldValue(['user', 'password']) === value) {
+                      return Promise.resolve()
+                    }
+                    throw new Error('Nested passwords do not match')
+                  },
+                } as any,
+              ]}
+            >
+              <Input aria-label="nested-confirm" />
+            </FormItem>
+            <button
+              type="button"
+              onClick={() =>
+                form.setFieldValue('user', {
+                  password: '456',
+                  confirm: '123',
+                })
+              }
+            >
+              Replace User Branch
+            </button>
+          </Form>
+        )
+      }
+
+      render(<TestComponent />)
+
+      await userEvent.type(screen.getByLabelText('nested-password'), '123')
+      await userEvent.type(screen.getByLabelText('nested-confirm'), '123')
+
+      expect(screen.queryByText('Nested passwords do not match')).not.toBeInTheDocument()
+
+      fireEvent.click(screen.getByText('Replace User Branch'))
+
+      await waitFor(() => {
+        expect(screen.getByText('Nested passwords do not match')).toBeInTheDocument()
       })
     })
   })

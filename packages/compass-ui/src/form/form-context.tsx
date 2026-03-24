@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import { FormStore } from './form-store'
+import { FORM_INTERNAL_HOOKS } from './internal-hooks'
 import {
   FormInstance,
   InternalHooks,
@@ -54,7 +55,7 @@ export const useForm = <Values extends Record<string, unknown> = Record<string, 
       setFields: (fields: FieldData[]) => defaultStore.setFields(fields),
       submit: () => defaultStore.submit(),
       getInternalHooks: (secret: string): InternalHooks | null => {
-        if (secret === 'COMPASS_FORM_INTERNAL_HOOKS') {
+        if (secret === FORM_INTERNAL_HOOKS) {
           return {
             registerField: defaultStore.registerField,
             registerWatch: defaultStore.registerWatch,

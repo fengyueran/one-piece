@@ -10,7 +10,7 @@ export const getNamePath = (path: NamePath | null): InternalNamePath => {
 export const containsNamePath = (nameList: NamePath[], name: NamePath): boolean => {
   const list = nameList.map(getNamePath)
   const path = getNamePath(name)
-  return list.some((item) => matchNamePath(item, path))
+  return list.some((item) => matchNamePath(item, path) || startsWithNamePath(path, item))
 }
 
 export const matchNamePath = (nameA: InternalNamePath, nameB: InternalNamePath): boolean => {
@@ -18,6 +18,25 @@ export const matchNamePath = (nameA: InternalNamePath, nameB: InternalNamePath):
     return false
   }
   return nameA.every((unit, index) => unit === nameB[index])
+}
+
+export const startsWithNamePath = (
+  namePath: InternalNamePath,
+  prefix: InternalNamePath,
+): boolean => {
+  if (prefix.length > namePath.length) {
+    return false
+  }
+
+  return prefix.every((unit, index) => unit === namePath[index])
+}
+
+export const isRelatedNamePath = (nameA: InternalNamePath, nameB: InternalNamePath): boolean => {
+  return (
+    matchNamePath(nameA, nameB) ||
+    startsWithNamePath(nameA, nameB) ||
+    startsWithNamePath(nameB, nameA)
+  )
 }
 
 export const getValue = (store: Store, namePath: InternalNamePath): StoreValue => {
@@ -60,6 +79,54 @@ export const setValue = (store: Store, namePath: InternalNamePath, value: StoreV
   }
 
   return newStore
+}
+
+export const applyStoreValues = (
+  store: Store,
+  values: Store,
+): { store: Store; changedPaths: InternalNamePath[] } => {
+  let nextStore = store
+  const changedPaths: InternalNamePath[] = []
+
+  const visit = (current: StoreValue, path: InternalNamePath = []) => {
+    if (current && typeof current === 'object' && !Array.isArray(current)) {
+      Object.keys(current as object).forEach((key) => {
+        visit((current as Record<string, StoreValue>)[key], [...path, key])
+      })
+      return
+    }
+
+    if (!path.length) {
+      return
+    }
+
+    nextStore = setValue(nextStore, path, current)
+    changedPaths.push(path)
+  }
+
+  visit(values)
+
+  return {
+    store: nextStore,
+    changedPaths,
+  }
+}
+
+export const buildChangedValues = (store: Store, namePaths: InternalNamePath[]): Store => {
+  return namePaths.reduce<Store>((acc, namePath) => {
+    return setValue(acc, namePath, getValue(store, namePath))
+  }, {})
+}
+
+export const buildFlatChangedValues = (store: Store, namePaths: InternalNamePath[]): Store => {
+  return namePaths.reduce<Store>((acc, namePath) => {
+    if (!namePath.length) {
+      return acc
+    }
+
+    acc[namePath.join('.')] = getValue(store, namePath)
+    return acc
+  }, {})
 }
 
 export function defaultGetValueFromEvent(valuePropName: string, ...args: unknown[]) {

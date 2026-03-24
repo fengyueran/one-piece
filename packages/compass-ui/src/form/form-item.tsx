@@ -10,9 +10,10 @@ import React, {
 } from 'react'
 import Schema, { Rules, ValidateError } from 'async-validator'
 import { useFormContext } from './form-context'
+import { getFormInternalHooks } from './internal-hooks'
 import { ItemWrapper, Label, ErrorMessage, MarginOffset } from './form-item.styles'
 import { FormItemProps } from './types'
-import { getNamePath } from './utils'
+import { defaultGetValueFromEvent, getNamePath } from './utils'
 
 export const FormItem: React.FC<FormItemProps> = (props) => {
   const {
@@ -33,15 +34,23 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   const errorsRef = useRef(errors)
   const validatingRef = useRef(validating)
   const namePath = useMemo(() => getNamePath(name || []), [name])
+  const internalHooks = useMemo(() => getFormInternalHooks(context), [context])
+
+  const updateErrors = useCallback((nextErrors: string[]) => {
+    errorsRef.current = nextErrors
+    setErrors(nextErrors)
+  }, [])
+
+  const updateValidating = useCallback((nextValidating: boolean) => {
+    validatingRef.current = nextValidating
+    setValidating(nextValidating)
+  }, [])
 
   useEffect(() => {
-    errorsRef.current = errors
-    validatingRef.current = validating
-    if (name && context) {
-      const hooks = context.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
-      hooks?.notifyFieldChange(namePath)
+    if (name && internalHooks) {
+      internalHooks.notifyFieldChange(namePath)
     }
-  }, [errors, validating, name, namePath, context])
+  }, [errors, validating, name, namePath, internalHooks])
 
   // Force update to re-render when store changes
   const [, forceUpdate] = useState({})
@@ -58,25 +67,19 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         return null
       }
 
-      const value =
-        'triggerName' in options
-          ? context?.getFieldValue(namePath)
-          : context?.getFieldValue(namePath)
-
+      const value = context?.getFieldValue(namePath)
       const nameStr = namePath.join('.')
       const descriptor: Rules = { [nameStr]: rules }
       const validator = new Schema(descriptor)
       const { validateOnly = false } = options
 
       if (!validateOnly) {
-        setValidating(true)
-        validatingRef.current = true
+        updateValidating(true)
       }
       try {
         await validator.validate({ [nameStr]: value }, { suppressWarning: true })
         if (!validateOnly) {
-          setErrors([])
-          errorsRef.current = []
+          updateErrors([])
         }
         return null
       } catch (e) {
@@ -85,25 +88,23 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
             (err) => err.message || '',
           )
           if (!validateOnly) {
-            setErrors(errorList)
-            errorsRef.current = errorList
+            updateErrors(errorList)
           }
           return errorList
         }
         console.error('[FormItem] Validation error:', e)
         const fallbackErrors = [e instanceof Error ? e.message : String(e)]
         if (!validateOnly) {
-          errorsRef.current = fallbackErrors
+          updateErrors(fallbackErrors)
         }
         return fallbackErrors
       } finally {
         if (!validateOnly) {
-          setValidating(false)
-          validatingRef.current = false
+          updateValidating(false)
         }
       }
     },
-    [context, name, namePath, rules],
+    [context, name, namePath, rules, updateErrors, updateValidating],
   )
 
   const getErrors = useCallback(() => errorsRef.current, [])
@@ -115,8 +116,8 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   )
 
   useLayoutEffect(() => {
-    if (name && context) {
-      const register = context.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')?.registerField
+    if (name && internalHooks) {
+      const register = internalHooks.registerField
       const unregister = register?.({
         onStoreChange,
         validateRules,
@@ -124,20 +125,21 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         getErrors,
         isFieldValidating,
         isFieldTouched,
-        setErrors: (newErrors: string[]) => setErrors(newErrors),
+        setErrors: updateErrors,
         props,
       })
       return unregister
     }
   }, [
     name,
-    context,
+    internalHooks,
     onStoreChange,
     validateRules,
     getNamePathFunc,
     getErrors,
     isFieldValidating,
     isFieldTouched,
+    updateErrors,
     props,
   ])
 
@@ -187,21 +189,8 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
         let newValue: unknown
 
         if (trigger === 'onChange') {
-          const event = args[0]
-          let val = event
-          if (
-            event &&
-            typeof event === 'object' &&
-            (event as { target?: { value?: unknown } }).target
-          ) {
-            val = (event as { target: { value: unknown } }).target.value
-          }
-
-          newValue = val
+          newValue = defaultGetValueFromEvent('value', ...args)
           context.setFieldValue(namePath, newValue)
-
-          const hooks = context.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
-          hooks?.notifyFieldChange(namePath)
         }
 
         if (rules.length > 0) {

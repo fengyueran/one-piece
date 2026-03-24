@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { FormContext, useForm } from './form-context'
+import { getFormInternalHooks } from './internal-hooks'
 import { FormProps, Store, ValidateErrorEntity } from './types'
 import { StyledForm } from './form.styles'
 
@@ -22,7 +23,7 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps<Record<string, u
     ref,
   ) => {
     const [formInstance] = useForm(form)
-    const internalHooks = formInstance.getInternalHooks('COMPASS_FORM_INTERNAL_HOOKS')
+    const internalHooks = useMemo(() => getFormInternalHooks(formInstance), [formInstance])
     const initialValuesSetRef = useRef(false)
 
     useLayoutEffect(() => {
@@ -44,8 +45,13 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps<Record<string, u
       }
     }, [onFinish, onFinishFailed, onValuesChange, onFieldsChange, internalHooks])
 
+    const contextValue = useMemo(
+      () => ({ ...formInstance, classNames, styles }),
+      [formInstance, classNames, styles],
+    )
+
     return (
-      <FormContext.Provider value={{ ...formInstance, classNames, styles }}>
+      <FormContext.Provider value={contextValue}>
         <StyledForm
           ref={ref}
           className={`compass-form compass-form--${layout} ${className || ''} ${classNames?.form || ''}`}
