@@ -179,6 +179,16 @@ export const defaultTheme: Theme = {
       activeBorderColor: '#40a9ff',
       hoverBorderColor: '#4096ff',
     },
+    tooltip: {
+      zIndex: 1070,
+      backgroundColor: 'rgba(0, 0, 0, 0.85)',
+      contentColor: '#ffffff',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      borderRadius: '8px',
+      padding: '6px 10px',
+      maxWidth: '240px',
+      fontSize: '12px',
+    },
     dropdown: {
       zIndex: 1050,
       backgroundColor: '#ffffff',

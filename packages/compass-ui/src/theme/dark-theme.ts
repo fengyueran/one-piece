@@ -76,6 +76,12 @@ export const darkTheme: Theme = {
       activeBorderColor: '#177ddc',
       hoverBorderColor: '#177ddc',
     },
+    tooltip: {
+      ...defaultTheme.components.tooltip,
+      backgroundColor: 'rgba(255, 255, 255, 0.92)',
+      contentColor: '#141414',
+      boxShadow: '0 6px 16px rgba(0, 0, 0, 0.45)',
+    },
     form: {
       ...defaultTheme.components.form,
       labelColor: 'rgba(255, 255, 255, 0.85)',

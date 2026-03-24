@@ -94,6 +94,7 @@ export interface Theme {
     progress: ProgressTheme
     steps: StepsTheme
     input: InputTheme
+    tooltip: TooltipTheme
     dropdown: DropdownTheme
     menu: MenuTheme
     datePicker: DatePickerTheme
@@ -336,6 +337,17 @@ export interface InputTheme {
   borderRadius: string
   activeBorderColor: string
   hoverBorderColor: string
+}
+
+export interface TooltipTheme {
+  zIndex: number
+  backgroundColor: string
+  contentColor: string
+  boxShadow: string
+  borderRadius: string
+  padding: string
+  maxWidth: string
+  fontSize: string
 }
 
 export interface DropdownTheme {

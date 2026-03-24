@@ -16,6 +16,9 @@ export type { TreeSelectProps } from './tree-select'
 export { default as Dropdown } from './dropdown'
 export type { DropdownProps } from './dropdown'
 
+export { default as Tooltip } from './tooltip'
+export type { TooltipProps, TooltipPlacement } from './tooltip'
+
 export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 
