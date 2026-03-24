@@ -15,10 +15,12 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "jest",
+    "test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=lcov",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf dist"
   },
@@ -29,7 +31,7 @@
     "@emotion/react": ">=11",
     "@emotion/styled": ">=11",
     "axios": ">=1.0",
-    "zustand": ">=4",
+    "zustand": ">=5",
     "react-markdown": ">=9",
     "remark-gfm": ">=4",
     "remark-math": ">=6",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
+    "identity-obj-proxy": "^3.0.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.5",
