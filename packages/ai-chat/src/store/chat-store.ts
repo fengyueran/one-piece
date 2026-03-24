@@ -71,18 +71,6 @@ const resolveSessionTitleFromMessage = (message: ChatMessage): string => {
   return DEFAULT_CHAT_SESSION_TITLE
 }
 
-const ensureSessionState = (state: ChatState, sessionId: string): void => {
-  if (state.messagesBySession[sessionId] === undefined) {
-    state.messagesBySession[sessionId] = []
-  }
-  if (state.errorBySession[sessionId] === undefined) {
-    state.errorBySession[sessionId] = null
-  }
-  if (state.isStreamingBySession[sessionId] === undefined) {
-    state.isStreamingBySession[sessionId] = false
-  }
-}
-
 const finalizeStreamingMessage = (
   state: ChatState,
   sessionId: string,
@@ -123,19 +111,15 @@ const finalizeStreamingMessage = (
 // Factory
 // ---------------------------------------------------------------------------
 
-const initialState: ChatState = {
-  activeSessionId: null,
-  preferredMode: DEFAULT_CHAT_AGENT_MODE,
-  sessions: [],
-  messagesBySession: {},
-  streamingMessageBySession: {},
-  isStreamingBySession: {},
-  errorBySession: {},
-}
-
 export const createChatStore = () =>
   createStore<ChatStore>((set, get) => ({
-    ...initialState,
+    activeSessionId: null,
+    preferredMode: DEFAULT_CHAT_AGENT_MODE,
+    sessions: [],
+    messagesBySession: {},
+    streamingMessageBySession: {},
+    isStreamingBySession: {},
+    errorBySession: {},
 
     // ---- Session management ------------------------------------------------
 
