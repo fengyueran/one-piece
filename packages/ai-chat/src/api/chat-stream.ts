@@ -29,7 +29,11 @@ const parseSseEvent = (eventText: string): ChatStreamPacket | null => {
   const raw = dataLine.slice(5).trim()
   if (!raw) return null
 
-  return JSON.parse(raw) as ChatStreamPacket
+  try {
+    return JSON.parse(raw) as ChatStreamPacket
+  } catch {
+    return null
+  }
 }
 
 /**

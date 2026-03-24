@@ -13,6 +13,8 @@ export const terminateChat = async (
   client: AxiosInstance,
   sessionId?: string,
 ): Promise<ChatTerminateResponse> => {
+  // Session ID is sent both in the header and body to support
+  // different backend routing strategies (header-based and body-based).
   const response = await client.post<ChatTerminateResponse>(
     CHAT_TERMINATE_PATH,
     sessionId ? { session_id: sessionId } : {},
