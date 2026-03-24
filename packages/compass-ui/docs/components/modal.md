@@ -312,6 +312,57 @@ export default () => {
 }
 ```
 
+### 配合 styled-components 使用
+
+利用 `styled` 可以非常方便地封装带有一致样式的组件。因为 Modal 的内容渲染在 Portal（根节点之外）中，我们可以直接利用组件内部的静态类名（如 `.compass-modal-content`）进行样式覆盖：
+
+```tsx
+/**
+ * title: 配合 styled-components / emotion
+ * description: 针对 Portal 渲染的组件，利用全局静态 className 进行样式覆盖。
+ */
+import React, { useState } from 'react'
+import styled from '@emotion/styled'
+import { Modal, Button } from '@xinghunm/compass-ui'
+
+const StyledModal = styled(Modal)`
+  /* 覆盖内容区 */
+  .compass-modal-content {
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    border: 2px solid #1890ff;
+  }
+
+  /* 覆盖头部 */
+  .compass-modal-header {
+    border-bottom: none;
+    padding: 24px 24px 12px;
+  }
+
+  /* 覆盖底部按钮区 */
+  .compass-modal-footer {
+    border-top: none;
+    padding: 12px 24px 24px;
+  }
+`
+
+export default () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <>
+      <Button type="primary" onClick={() => setIsOpen(true)}>
+        打开 Styled Modal
+      </Button>
+      <StyledModal title="Styled Modal" isOpen={isOpen} onCancel={() => setIsOpen(false)}>
+        <p>这个 Modal 的样式完全由 styled 封装。</p>
+        <p>这种写法在使用 CSS-in-JS 时最符合直觉。</p>
+      </StyledModal>
+    </>
+  )
+}
+```
+
 ### 自定义主题
 
 通过 `ConfigProvider` 定制模态框主题。

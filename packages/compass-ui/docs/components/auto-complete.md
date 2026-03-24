@@ -230,51 +230,6 @@ export default () => {
 }
 ```
 
-### 自定义样式
-
-通过 `classNames` 和 `styles` 传入对象可以自定义 AutoComplete 的语义化结构样式。
-
-支持的语义化结构：`root`, `input`, `dropdown`, `option`。
-
-```tsx
-import React, { useState } from 'react'
-import { AutoComplete } from '@xinghunm/compass-ui'
-
-export default () => {
-  const options = [{ value: 'Option 1' }, { value: 'Option 2' }, { value: 'Option 3' }]
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <style>
-        {`
-          .my-dropdown-class {
-            border: 1px solid #1677ff;
-            background-color: #e6f7ff;
-          }
-          .my-option-class {
-            font-weight: bold;
-          }
-        `}
-      </style>
-      <AutoComplete
-        style={{ width: 300 }}
-        options={options}
-        placeholder="Custom Semantic Styles"
-        styles={{
-          input: { height: 40, borderRadius: 20 },
-          dropdown: { backgroundColor: '#f6ffed', border: '1px solid #b7eb8f' },
-          option: { color: 'green' },
-        }}
-        classNames={{
-          dropdown: 'my-dropdown-class',
-          option: 'my-option-class',
-        }}
-      />
-    </div>
-  )
-}
-```
-
 ### 带有图标
 
 通过 `prefix` 或 `suffix` 属性可以添加前缀或后缀图标，支持自定义图标组件。
@@ -409,6 +364,118 @@ export default () => {
         )}
       </div>
     </div>
+  )
+}
+```
+
+### 自定义样式
+
+通过 `classNames` 和 `styles` 传入对象可以自定义 AutoComplete 的语义化结构样式。
+
+支持的语义化结构：`root`, `input`, `dropdown`, `option`。
+
+```tsx
+import React, { useState } from 'react'
+import { AutoComplete } from '@xinghunm/compass-ui'
+
+export default () => {
+  const options = [{ value: 'Option 1' }, { value: 'Option 2' }, { value: 'Option 3' }]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <style>
+        {`
+          .my-dropdown-class {
+            border: 1px solid #1677ff;
+            background-color: #e6f7ff;
+          }
+          .my-option-class {
+            font-weight: bold;
+          }
+        `}
+      </style>
+      <AutoComplete
+        style={{ width: 300 }}
+        options={options}
+        placeholder="Custom Semantic Styles"
+        styles={{
+          input: { height: 40, borderRadius: 20 },
+          dropdown: { backgroundColor: '#f6ffed', border: '1px solid #b7eb8f' },
+          option: { color: 'green' },
+        }}
+        classNames={{
+          dropdown: 'my-dropdown-class',
+          option: 'my-option-class',
+        }}
+      />
+    </div>
+  )
+}
+```
+
+### 配合 styled-components 使用
+
+利用 `styled` 可以方便地封装带有一致样式的组件。同理，你需要将 className 转发给 `dropdownClassName` 或者 `classNames.dropdown` 来覆盖下拉框样式：
+
+```tsx
+/**
+ * title: 配合 styled-components / emotion
+ * description: 针对 Portal 渲染的组件，将 className 转发给下拉浮层即可优雅地封装样式。
+ */
+import React, { useState } from 'react'
+import styled from '@emotion/styled'
+import { AutoComplete } from '@xinghunm/compass-ui'
+import type { AutoCompleteProps } from '@xinghunm/compass-ui/src/auto-complete/types'
+
+// 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
+const AutoCompleteWrapper = ({ className, classNames, ...props }: AutoCompleteProps) => (
+  <AutoComplete
+    className={className}
+    classNames={{ ...classNames, dropdown: `${classNames?.dropdown || ''} ${className}` }} // 关键点
+    {...props}
+  />
+)
+
+// 2. 利用内部静态类名进行样式覆盖
+const StyledAutoComplete = styled(AutoCompleteWrapper)`
+  /* 1. 针对输入框的样式 */
+  &.compass-auto-complete {
+    width: 250px;
+
+    .compass-input-field-wrapper {
+      border-radius: 20px;
+      border: 2px solid #52c41a;
+    }
+  }
+
+  /* 2. 针对下拉浮层的样式 */
+  &.compass-auto-complete-dropdown {
+    border-radius: 12px;
+    border: 1px solid #52c41a;
+    overflow: hidden;
+
+    .compass-auto-complete-option {
+      padding: 10px 16px;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #f6ffed;
+        color: #389e0d;
+        padding-left: 24px;
+      }
+    }
+  }
+`
+
+export default () => {
+  const [options, setOptions] = useState<{ value: string }[]>([])
+
+  const onSearch = (val: string) => {
+    setOptions(val ? [{ value: val }, { value: val + val }] : [])
+  }
+
+  return (
+    <StyledAutoComplete options={options} onSearch={onSearch} placeholder="Styled AutoComplete" />
   )
 }
 ```

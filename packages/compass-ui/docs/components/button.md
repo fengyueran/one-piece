@@ -209,6 +209,24 @@ export default () => (
 )
 ```
 
+### Ripple 效果
+
+默认开启点击波纹效果，可以通过 `hasRipple` 属性关闭。
+
+```tsx
+import React from 'react'
+import { Button } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <Button variant="primary">With Ripple</Button>
+    <Button variant="primary" hasRipple={false}>
+      Without Ripple
+    </Button>
+  </div>
+)
+```
+
 ### 自定义样式
 
 通过 `classNames` 和 `styles` 属性可以精确控制按钮内部元素的样式。
@@ -278,24 +296,6 @@ export default () => (
       </Button>
     </div>
   </>
-)
-```
-
-### Ripple 效果
-
-默认开启点击波纹效果，可以通过 `hasRipple` 属性关闭。
-
-```tsx
-import React from 'react'
-import { Button } from '@xinghunm/compass-ui'
-
-export default () => (
-  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-    <Button variant="primary">With Ripple</Button>
-    <Button variant="primary" hasRipple={false}>
-      Without Ripple
-    </Button>
-  </div>
 )
 ```
 

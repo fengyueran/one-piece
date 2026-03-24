@@ -288,6 +288,83 @@ export default () => {
 }
 ```
 
+### 配合 styled-components 使用
+
+利用 `styled` 可以非常方便地封装带有一致样式的组件。因为 TreeSelect 的下拉弹层渲染在 Portal 中，为了让样式覆盖到弹层，我们同样需要把 className 透传给 `dropdownClassName`：
+
+```tsx
+/**
+ * title: 配合 styled-components / emotion
+ * description: 针对 Portal 渲染的组件，将 className 转发给下拉浮层即可优雅地封装样式。
+ */
+import React, { useState } from 'react'
+import styled from '@emotion/styled'
+import { TreeSelect } from '@xinghunm/compass-ui'
+import type { TreeSelectProps } from '@xinghunm/compass-ui/src/tree-select/types'
+
+// 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
+const TreeSelectWrapper = ({ className, ...props }: TreeSelectProps) => (
+  <TreeSelect
+    className={className}
+    dropdownClassName={className} // 关键点
+    {...props}
+  />
+)
+
+// 2. 利用内部静态类名进行样式覆盖
+const StyledTreeSelect = styled(TreeSelectWrapper)`
+  /* 1. 针对触发器的样式 */
+  &.compass-tree-select {
+    width: 250px;
+
+    .compass-select-selector {
+      border-radius: 8px;
+      background-color: #f0f5ff;
+    }
+  }
+
+  /* 2. 针对下拉浮层和里面树的样式 */
+  &.compass-tree-select-dropdown {
+    border-radius: 12px;
+    padding: 8px;
+
+    .compass-tree-node-content-wrapper {
+      border-radius: 4px;
+      &:hover {
+        background-color: #e6f4ff;
+      }
+    }
+
+    .compass-tree-node-selected {
+      background-color: #bae0ff;
+    }
+  }
+`
+
+export default () => {
+  const [value, setValue] = useState<string>()
+
+  const treeData = [
+    {
+      key: '1',
+      title: 'Node 1',
+      children: [{ key: '1-1', title: 'Child Node 1' }],
+    },
+    { key: '2', title: 'Node 2' },
+  ]
+
+  return (
+    <StyledTreeSelect
+      value={value}
+      onChange={setValue}
+      treeData={treeData}
+      placeholder="Styled TreeSelect"
+      treeDefaultExpandAll
+    />
+  )
+}
+```
+
 ## API
 
 ### TreeSelect

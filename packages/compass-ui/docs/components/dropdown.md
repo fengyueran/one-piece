@@ -252,6 +252,52 @@ export default () => (
 )
 ```
 
+### 配合 styled-components 使用
+
+利用 `overlayClassName` 可以非常方便地适配 `styled-components`，实现样式的完美封装。
+
+```tsx
+/**
+ * title: 配合 styled-components (通用方案)
+ * description: 通过内联组件转发 className，既优雅又兼容所有 CSS-in-JS 库。
+ */
+import React from 'react'
+import styled from '@emotion/styled'
+import { Dropdown, Button, Menu } from '@xinghunm/compass-ui'
+
+const StyledDropdown = styled(({ className, ...props }) => (
+  <Dropdown {...props} overlayClassName={className} />
+))`
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  // 自定义内部菜单项样式
+  .compass-menu-item {
+    color: #389e0d;
+    &:hover {
+      background-color: #d9f7be;
+    }
+  }
+`
+
+export default () => (
+  <StyledDropdown
+    overlay={
+      <Menu>
+        <Menu.Item>Green Item 1</Menu.Item>
+        <Menu.Item>Green Item 2</Menu.Item>
+      </Menu>
+    }
+  >
+    <Button type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}>
+      Styled Dropdown (Green)
+    </Button>
+  </StyledDropdown>
+)
+```
+
 ### 自定义主题
 
 通过 `ConfigProvider` 覆盖主题变量。
@@ -330,52 +376,6 @@ export default () => (
       <Button danger>Red Overlay</Button>
     </Dropdown>
   </Wrapper>
-)
-```
-
-### 配合 styled-components 使用
-
-利用 `overlayClassName` 可以非常方便地适配 `styled-components`，实现样式的完美封装。
-
-```tsx
-/**
- * title: 配合 styled-components (通用方案)
- * description: 通过内联组件转发 className，既优雅又兼容所有 CSS-in-JS 库。
- */
-import React from 'react'
-import styled from '@emotion/styled'
-import { Dropdown, Button, Menu } from '@xinghunm/compass-ui'
-
-const StyledDropdown = styled(({ className, ...props }) => (
-  <Dropdown {...props} overlayClassName={className} />
-))`
-  background-color: #f6ffed;
-  border: 1px solid #b7eb8f;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-  // 自定义内部菜单项样式
-  .compass-menu-item {
-    color: #389e0d;
-    &:hover {
-      background-color: #d9f7be;
-    }
-  }
-`
-
-export default () => (
-  <StyledDropdown
-    overlay={
-      <Menu>
-        <Menu.Item>Green Item 1</Menu.Item>
-        <Menu.Item>Green Item 2</Menu.Item>
-      </Menu>
-    }
-  >
-    <Button type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}>
-      Styled Dropdown (Green)
-    </Button>
-  </StyledDropdown>
 )
 ```
 

@@ -494,6 +494,69 @@ export default () => {
 }
 ```
 
+### 配合 styled-components 使用
+
+利用 `styled` 可以非常方便地封装带有一致样式的组件。为了能让样式覆盖到在 Portal 渲染的浮层，推荐使用高阶组件转发 `className`：
+
+```tsx
+/**
+ * title: 配合 styled-components / emotion
+ * description: 针对 Portal 渲染的组件，将 className 同时转发给下拉浮层即可优雅地封装样式。
+ */
+import React from 'react'
+import styled from '@emotion/styled'
+import { Select, SelectProps } from '@xinghunm/compass-ui'
+
+// 1. 制作一个透明转发的 Wrapper，让下拉框浮层也带上 styled 的哈希类名
+const SelectWrapper = ({ className, ...props }: SelectProps) => (
+  <Select
+    className={className}
+    dropdownClassName={className} // 关键点
+    {...props}
+  />
+)
+
+// 2. 利用内部静态类名进行样式覆盖
+const StyledSelect = styled(SelectWrapper)`
+  /* 1. 针对触发器本身的样式 */
+  &.compass-select {
+    width: 200px;
+
+    .compass-select-selector {
+      border-radius: 8px;
+      border-color: #13c2c2;
+      background-color: #f6ffed;
+    }
+  }
+
+  /* 2. 针对下拉浮层的样式 */
+  &.compass-select-dropdown {
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    .compass-select-option {
+      border-radius: 4px;
+      color: #13c2c2;
+
+      &:hover {
+        background: #f6ffed;
+      }
+    }
+  }
+`
+
+export default () => {
+  const options = [
+    { label: 'Jack', value: 'jack' },
+    { label: 'Lucy', value: 'lucy' },
+    { label: 'Yiminghe', value: 'yiminghe' },
+  ]
+
+  return <StyledSelect options={options} placeholder="Styled Select" />
+}
+```
+
 ## API
 
 ### Select

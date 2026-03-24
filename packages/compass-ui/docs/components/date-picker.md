@@ -250,6 +250,63 @@ export default () => {
 }
 ```
 
+### 配合 styled-components 使用
+
+利用 `styled` 可以非常方便地封装带有一致样式的组件。因为 DatePicker 的弹层是渲染在 Portal（根节点之外）中，为了让样式覆盖到弹层，可以通过高阶组件透传 `popupClassName`（或在 `classNames` 中传入）：
+
+```tsx
+/**
+ * title: 配合 styled-components / emotion
+ * description: 针对 Portal 渲染的组件，将 className 转发给下拉浮层即可优雅地封装样式。
+ */
+import React, { useState } from 'react'
+import styled from '@emotion/styled'
+import { DatePicker } from '@xinghunm/compass-ui'
+import type { DatePickerProps } from '@xinghunm/compass-ui/src/date-picker/types'
+
+// 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
+const DatePickerWrapper = ({ className, ...props }: DatePickerProps) => (
+  <DatePicker
+    className={className}
+    classNames={{ popup: className }} // 关键点：让弹层也带上哈希类名
+    {...props}
+  />
+)
+
+// 2. 利用内部静态类名进行样式覆盖
+const StyledDatePicker = styled(DatePickerWrapper)`
+  /* 1. 针对触发器(输入框)的样式 */
+  &.compass-date-picker {
+    width: 240px;
+
+    .compass-input-field-wrapper {
+      border-radius: 8px;
+      border-color: #eb2f96;
+    }
+  }
+
+  /* 2. 针对弹出面板的样式 */
+  &.compass-date-picker-popup {
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 4px 20px rgba(235, 47, 150, 0.2);
+
+    .compass-date-picker-cell-inner {
+      border-radius: 6px;
+    }
+
+    .compass-date-picker-cell-selected .compass-date-picker-cell-inner {
+      background: #eb2f96;
+    }
+  }
+`
+
+export default () => {
+  const [date, setDate] = useState<Date | null>(null)
+  return <StyledDatePicker value={date} onChange={setDate} placeholder="Styled DatePicker" />
+}
+```
+
 ### 自定义主题
 
 通过 `ConfigProvider` 覆盖主题变量。
