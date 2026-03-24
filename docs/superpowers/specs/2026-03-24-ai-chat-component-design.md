@@ -111,7 +111,7 @@ import { AiChat } from '@xinghunm/ai-chat'
 
 ### i18n 策略
 
-包内不依赖 `react-i18next`，所有 UI 文案内置英文默认值。消费方通过 `labels` prop 传入任意语言的覆盖文案。`AiChatProvider` 和各子组件均接受 `labels` prop（可选），未传则使用默认英文文案。
+包内不依赖 `react-i18next`，所有 UI 文案内置英文默认值。消费方通过 `labels` prop 传入任意语言的覆盖文案。`labels` 传给 `AiChatProvider`（或 `AiChat`）后，通过 Context 向下透传给所有子组件，子组件无需单独接受 `labels` prop。
 
 ### 可组合方式
 
