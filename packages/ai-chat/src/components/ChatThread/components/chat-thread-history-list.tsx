@@ -1,4 +1,4 @@
-import { memo, type RefObject } from 'react'
+import { memo, type RefObject, type Ref } from 'react'
 import styled from '@emotion/styled'
 import type {
   ChatAgentMode,
@@ -31,7 +31,11 @@ export const ChatThreadHistoryList = memo(
       {historyMessages.map((message) => (
         <MessageSlot
           key={message.id}
-          ref={message.id === latestUserMessageId ? latestUserMessageRef : null}
+          ref={
+            message.id === latestUserMessageId
+              ? (latestUserMessageRef as Ref<HTMLDivElement>)
+              : null
+          }
           data-testid={message.id === latestUserMessageId ? 'chat-latest-user-anchor' : undefined}
           style={
             message.id === latestUserMessageId
