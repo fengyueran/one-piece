@@ -46,6 +46,8 @@ export interface ChatComposerViewProps {
   isStreaming: boolean
   /** Whether a stop request has been sent but not yet finalized. */
   isStopping: boolean
+  /** Whether image attachment uploads are enabled. */
+  enableImageAttachments: boolean
   modeLabels: { ask: string; plan: string; agent: string }
   onValueChange: (value: string) => void
   onPickImages: (files: FileList | File[]) => void
@@ -74,6 +76,7 @@ export const ChatComposerView = ({
   hasModels,
   isStreaming,
   isStopping,
+  enableImageAttachments,
   modeLabels,
   onValueChange,
   onPickImages,
@@ -123,15 +126,17 @@ export const ChatComposerView = ({
   return (
     <Container>
       <Surface data-testid="chat-composer-surface">
-        <input
-          ref={imageInputRef}
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          multiple
-          hidden
-          data-testid="chat-composer-image-input"
-          onChange={handlePickImages}
-        />
+        {enableImageAttachments ? (
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            multiple
+            hidden
+            data-testid="chat-composer-image-input"
+            onChange={handlePickImages}
+          />
+        ) : null}
         <ChatComposerAttachmentList
           attachments={attachments}
           onRemoveAttachment={onRemoveAttachment}
@@ -146,19 +151,21 @@ export const ChatComposerView = ({
           value={value}
           onChange={(event) => onValueChange(event.target.value)}
           onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
+          onPaste={enableImageAttachments ? handlePaste : undefined}
           placeholder={placeholder}
         />
         <Footer>
           <Actions data-testid="chat-composer-actions">
-            <AttachButton
-              type="button"
-              data-testid="chat-composer-attach-image"
-              aria-label="Attach image"
-              onClick={() => imageInputRef.current?.click()}
-            >
-              <PlusIcon />
-            </AttachButton>
+            {enableImageAttachments ? (
+              <AttachButton
+                type="button"
+                data-testid="chat-composer-attach-image"
+                aria-label="Attach image"
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <PlusIcon />
+              </AttachButton>
+            ) : null}
             <ChatModeControl
               value={selectedMode}
               disabled={isStreaming}
@@ -189,12 +196,15 @@ export const ChatComposerView = ({
 }
 
 export const ChatComposer = () => {
-  const { labels, sendRef } = useChatContext()
+  const { labels, sendRef, retryRef, enableImageAttachments } = useChatContext()
   const { state, actions } = useChatComposer()
 
   // Keep sendRef current so ChatThread can trigger sends without importing ChatComposer.
   // Direct ref mutation in render is valid — refs are exempt from React's side-effect rule.
   sendRef.current = actions.send
+  retryRef.current = async () => {
+    actions.retry()
+  }
 
   const modeLabels = {
     ask: labels.modeLabelAsk,
@@ -217,6 +227,7 @@ export const ChatComposer = () => {
       hasModels={state.hasModels}
       isStreaming={state.isStreaming}
       isStopping={state.isStopping}
+      enableImageAttachments={enableImageAttachments}
       modeLabels={modeLabels}
       onValueChange={actions.setValue}
       onPickImages={actions.pickImages}

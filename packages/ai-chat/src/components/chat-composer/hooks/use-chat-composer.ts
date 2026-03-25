@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DEFAULT_CHAT_AGENT_MODE, type ChatAgentMode, type ChatModel } from '../../../types'
+import {
+  DEFAULT_CHAT_AGENT_MODE,
+  type ChatAgentMode,
+  type ChatModel,
+  type ChatStreamPacketUpdate,
+} from '../../../types'
 import { useChatContext, useChatStore } from '../../../context/use-chat-context'
-import { getChatModels, terminateChat } from '../../../api'
-import { startChatStream } from '../../../api/chat-stream'
 import {
   canSendChatMessage,
   createAssistantStreamingMessage,
@@ -19,8 +22,20 @@ const ATTACHMENT_NOTICE_DURATION_MS = 3000
 const STOP_WAIT_TIMEOUT_MS = 3000
 type AttachmentNotice = 'limit_reached' | null
 
+const resolveAccumulatedContent = (currentContent: string, update: ChatStreamPacketUpdate) => {
+  if (update.content !== undefined) {
+    return update.content
+  }
+
+  if (update.contentDelta) {
+    return currentContent + update.contentDelta
+  }
+
+  return currentContent
+}
+
 export const useChatComposer = () => {
-  const { axios: axiosInstance, apiBaseUrl, authToken } = useChatContext()
+  const { transport, enableImageAttachments } = useChatContext()
 
   // -- Store state -----------------------------------------------------------
   const activeSessionId = useChatStore((s) => s.activeSessionId)
@@ -41,7 +56,7 @@ export const useChatComposer = () => {
   const replaceSessionId = useChatStore((s) => s.replaceSessionId)
   const appendMessage = useChatStore((s) => s.appendMessage)
   const startStreamingMessage = useChatStore((s) => s.startStreamingMessage)
-  const updateStreamingMessage = useChatStore((s) => s.updateStreamingMessage)
+  const patchStreamingMessage = useChatStore((s) => s.patchStreamingMessage)
   const completeStreamingMessage = useChatStore((s) => s.completeStreamingMessage)
   const requestStopStreaming = useChatStore((s) => s.requestStopStreaming)
   const finalizeStoppedStreamingMessage = useChatStore((s) => s.finalizeStoppedStreamingMessage)
@@ -59,15 +74,14 @@ export const useChatComposer = () => {
     setIsModelsLoading(true)
     setIsModelsError(false)
     try {
-      // getChatModels returns ChatModelsResponse which has a `data` array field
-      const modelsResponse = await getChatModels(axiosInstance)
+      const modelsResponse = await transport.getModels()
       setAvailableModels(modelsResponse.data)
     } catch {
       setIsModelsError(true)
     } finally {
       setIsModelsLoading(false)
     }
-  }, [axiosInstance])
+  }, [transport])
 
   useEffect(() => {
     void fetchModels()
@@ -81,7 +95,7 @@ export const useChatComposer = () => {
   const [selectedMode, setSelectedModeLocal] = useState<ChatAgentMode>(DEFAULT_CHAT_AGENT_MODE)
   const [attachmentNotice, setAttachmentNotice] = useState<AttachmentNotice>(null)
 
-  const { attachments, appendFiles, removeAttachment, clearAttachments, createMessageAttachments } =
+  const { attachments, appendFiles, removeAttachment, takeMessageAttachments } =
     useComposerAttachments()
 
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -170,8 +184,6 @@ export const useChatComposer = () => {
       model: string
       mode: ChatAgentMode
     }) => {
-      if (!authToken) return
-
       clearStopRequest()
       let currentSessionId = localSessionId
 
@@ -192,10 +204,8 @@ export const useChatComposer = () => {
       let accumulated = ''
 
       try {
-        await startChatStream({
-          apiBaseUrl,
+        await transport.startStream({
           sessionId,
-          authToken,
           model,
           mode,
           content,
@@ -212,13 +222,14 @@ export const useChatComposer = () => {
               mode,
             }
           },
-          onPacket: (packet) => {
-            if (packet.type !== 'delta') return
-            if (typeof packet.data === 'string' || !('payload' in packet.data)) return
-            const delta = packet.data.payload[0]?.delta?.content ?? ''
-            if (!delta) return
-            accumulated += delta
-            updateStreamingMessage(currentSessionId, accumulated)
+          onUpdate: (update) => {
+            accumulated = resolveAccumulatedContent(accumulated, update)
+            patchStreamingMessage(currentSessionId, {
+              ...(update.blocks ? { blocks: update.blocks } : {}),
+              ...(update.content !== undefined || update.contentDelta
+                ? { content: accumulated }
+                : {}),
+            })
           },
           onDone: () => {
             if (stopRequestRef.current?.sessionId === currentSessionId) {
@@ -241,17 +252,16 @@ export const useChatComposer = () => {
           },
         })
       } catch {
-        // startChatStream re-throws after calling onError; absorb here.
+        // Transport implementations may reject after notifying onError; absorb here.
         abortControllerRef.current = null
       }
     },
     [
-      authToken,
-      apiBaseUrl,
+      transport,
       clearSessionError,
       startStreamingMessage,
       replaceSessionId,
-      updateStreamingMessage,
+      patchStreamingMessage,
       completeStreamingMessage,
       finalizeStoppedStreamingMessage,
       setSessionError,
@@ -278,10 +288,7 @@ export const useChatComposer = () => {
         return
       }
 
-      if (
-        hasText &&
-        (!authToken || !(selectedModel || activeSession?.model || availableModels[0]?.id))
-      ) {
+      if (hasText && !(selectedModel || activeSession?.model || availableModels[0]?.id)) {
         return
       }
 
@@ -298,7 +305,7 @@ export const useChatComposer = () => {
 
       if (session) createSession(session)
 
-      const messageAttachments = createMessageAttachments()
+      const messageAttachments = takeMessageAttachments()
       const userMessage = createUserMessage({
         sessionId: localSessionId,
         content,
@@ -309,7 +316,6 @@ export const useChatComposer = () => {
       })
 
       appendMessage(localSessionId, userMessage)
-      clearAttachments()
       setAttachmentNotice(null)
       setValue('')
 
@@ -329,16 +335,14 @@ export const useChatComposer = () => {
       isModelsLoading,
       isModelsError,
       hasModels,
-      authToken,
       selectedModel,
       activeSession,
       availableModels,
       activeSessionId,
       selectedMode,
       createSession,
-      createMessageAttachments,
+      takeMessageAttachments,
       appendMessage,
-      clearAttachments,
       runStream,
     ],
   )
@@ -361,10 +365,12 @@ export const useChatComposer = () => {
       setValue,
       send,
       pickImages: (files: FileList | File[]) => {
+        if (!enableImageAttachments) return
         const result = appendFiles(files)
         setAttachmentNotice(result.limitExceeded ? 'limit_reached' : null)
       },
       pasteImages: (files: File[]) => {
+        if (!enableImageAttachments) return
         const result = appendFiles(files)
         setAttachmentNotice(result.limitExceeded ? 'limit_reached' : null)
       },
@@ -406,7 +412,7 @@ export const useChatComposer = () => {
         }
 
         try {
-          const result = await terminateChat(axiosInstance, streamingSessionId)
+          const result = await transport.terminateStream(streamingSessionId)
           if (!result.terminated) {
             console.error('Failed to terminate chat session: server returned not terminated')
           }
