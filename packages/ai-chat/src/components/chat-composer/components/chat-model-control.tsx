@@ -30,7 +30,28 @@ export const ChatModelControl = ({
         onClick={onReloadModels}
       >
         <span>Failed to load models</span>
-        <ReloadGlyph aria-hidden="true" />
+        <ReloadIcon
+          aria-hidden="true"
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10.5 6A4.5 4.5 0 1 1 6 1.5a4.47 4.47 0 0 1 3 1.148"
+            stroke="currentColor"
+            strokeWidth="1.25"
+            strokeLinecap="round"
+          />
+          <path
+            d="M9 1.5h1.5V3"
+            stroke="currentColor"
+            strokeWidth="1.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </ReloadIcon>
       </ModelReloadButton>
     )
   }
@@ -97,27 +118,8 @@ const ModelReloadButton = styled.button`
   }
 `
 
-const ReloadGlyph = styled.span`
-  position: relative;
-  width: 11px;
-  height: 11px;
+const ReloadIcon = styled.svg`
   flex-shrink: 0;
-  border: 1.5px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 999px;
-  transform: rotate(40deg);
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    right: -1px;
-    width: 4px;
-    height: 4px;
-    border-top: 1.5px solid currentColor;
-    border-right: 1.5px solid currentColor;
-    transform: rotate(12deg);
-  }
 `
 
 const ModelSelect = styled(Select)`
