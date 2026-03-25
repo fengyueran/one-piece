@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import type {
   ChatAgentMode,
   ChatMessage,
+  ChatMessageBlockRenderer,
   ExecutionConfirmationSubmission,
   PlanQuestionnaireSubmission,
 } from '../../../types'
@@ -16,6 +17,7 @@ interface ChatThreadHistoryListProps {
   latestUserMessageRef: RefObject<HTMLDivElement | null>
   onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  renderMessageBlock?: ChatMessageBlockRenderer
 }
 
 export const ChatThreadHistoryList = memo(
@@ -26,6 +28,7 @@ export const ChatThreadHistoryList = memo(
     latestUserMessageRef,
     onConfirmationSubmit,
     onQuestionnaireSubmit,
+    renderMessageBlock,
   }: ChatThreadHistoryListProps) => (
     <HistoryGroup data-testid="chat-thread-history">
       {historyMessages.map((message) => (
@@ -50,6 +53,7 @@ export const ChatThreadHistoryList = memo(
             message={message}
             onConfirmationSubmit={onConfirmationSubmit}
             onQuestionnaireSubmit={onQuestionnaireSubmit}
+            renderMessageBlock={renderMessageBlock}
           />
         </MessageSlot>
       ))}

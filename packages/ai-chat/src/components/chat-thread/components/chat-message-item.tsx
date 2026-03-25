@@ -10,6 +10,7 @@ import type {
   ChatImageAttachment,
   ChatMessage,
   ChatMessageBlock,
+  ChatMessageBlockRenderer,
   ChatParameterSummaryItem,
   ExecutionConfirmationSubmission,
   PlanQuestion,
@@ -282,6 +283,10 @@ const areMessageBlocksEqual = (
         const comparableBlock = nextBlock as Extract<ChatMessageBlock, { type: 'questionnaire' }>
         return areQuestionnairesEqual(block.questionnaire, comparableBlock.questionnaire)
       }
+      case 'custom': {
+        const comparableBlock = nextBlock as Extract<ChatMessageBlock, { type: 'custom' }>
+        return block.kind === comparableBlock.kind && block.data === comparableBlock.data
+      }
       default:
         return false
     }
@@ -297,6 +302,8 @@ const isSameMessage = (
   nextConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void,
   previousQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void,
   nextQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void,
+  previousRenderMessageBlock?: ChatMessageBlockRenderer,
+  nextRenderMessageBlock?: ChatMessageBlockRenderer,
 ) =>
   previousMessage.id === nextMessage.id &&
   previousMessage.sessionId === nextMessage.sessionId &&
@@ -309,18 +316,21 @@ const isSameMessage = (
   previousMessage.createdAt === nextMessage.createdAt &&
   previousMode === nextMode &&
   previousConfirmationSubmit === nextConfirmationSubmit &&
-  previousQuestionnaireSubmit === nextQuestionnaireSubmit
+  previousQuestionnaireSubmit === nextQuestionnaireSubmit &&
+  previousRenderMessageBlock === nextRenderMessageBlock
 
 const ChatMessageItemView = ({
   message,
   mode = 'agent',
   onConfirmationSubmit,
   onQuestionnaireSubmit,
+  renderMessageBlock,
 }: {
   message: ChatMessage
   mode?: ChatAgentMode
   onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  renderMessageBlock?: ChatMessageBlockRenderer
 }) => {
   const [activeImage, setActiveImage] = useState<
     | {
@@ -405,6 +415,19 @@ const ChatMessageItemView = ({
                   : undefined
               }
             />
+          </Fragment>
+        )
+      case 'custom':
+        return (
+          <Fragment key={`custom-${block.kind}-${index}`}>
+            {renderMessageBlock?.({
+              block,
+              index,
+              message,
+              mode,
+              onConfirmationSubmit,
+              onQuestionnaireSubmit,
+            }) ?? null}
           </Fragment>
         )
       default:
@@ -497,6 +520,8 @@ export const ChatMessageItem = memo(ChatMessageItemView, (previousProps, nextPro
     nextProps.onConfirmationSubmit,
     previousProps.onQuestionnaireSubmit,
     nextProps.onQuestionnaireSubmit,
+    previousProps.renderMessageBlock,
+    nextProps.renderMessageBlock,
   ),
 )
 

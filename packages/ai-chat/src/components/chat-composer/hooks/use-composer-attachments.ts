@@ -31,12 +31,6 @@ const releaseComposerAttachments = (attachments: ComposerImageAttachment[]) => {
   attachments.forEach((attachment) => revokeObjectUrl(attachment.previewUrl))
 }
 
-const cloneComposerAttachmentsForMessage = (attachments: ComposerImageAttachment[]) =>
-  attachments.map(({ file, ...attachment }) => ({
-    ...attachment,
-    previewUrl: createObjectUrl(file),
-  }))
-
 export const useComposerAttachments = () => {
   const [attachments, setAttachments] = useState<ComposerImageAttachment[]>([])
   const attachmentsRef = useRef<ComposerImageAttachment[]>([])
@@ -96,11 +90,27 @@ export const useComposerAttachments = () => {
     })
   }
 
+  const takeMessageAttachments = () => {
+    const currentAttachments = attachmentsRef.current
+    if (!currentAttachments.length) {
+      return []
+    }
+
+    const nextMessageAttachments = currentAttachments.map(({ file: _file, ...attachment }) => ({
+      ...attachment,
+    }))
+
+    attachmentsRef.current = []
+    setAttachments([])
+
+    return nextMessageAttachments
+  }
+
   return {
     attachments,
     appendFiles,
     removeAttachment,
     clearAttachments,
-    createMessageAttachments: () => cloneComposerAttachmentsForMessage(attachments),
+    takeMessageAttachments,
   }
 }

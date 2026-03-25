@@ -4,6 +4,7 @@ import { DEFAULT_CHAT_AGENT_MODE } from '../../types'
 import type {
   ChatAgentMode,
   ChatMessage,
+  ChatMessageBlockRenderer,
   ExecutionConfirmationSubmission,
   PlanQuestionnaireSubmission,
 } from '../../types'
@@ -25,6 +26,7 @@ interface ChatThreadViewProps {
   onRetry?: () => void
   onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  renderMessageBlock?: ChatMessageBlockRenderer
 }
 
 const ChatThreadView = ({
@@ -35,6 +37,7 @@ const ChatThreadView = ({
   onRetry,
   onConfirmationSubmit,
   onQuestionnaireSubmit,
+  renderMessageBlock,
 }: ChatThreadViewProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const latestUserMessageId = useMemo(
@@ -108,6 +111,7 @@ const ChatThreadView = ({
         latestUserMessageRef={latestUserMessageRef}
         onConfirmationSubmit={onConfirmationSubmit}
         onQuestionnaireSubmit={onQuestionnaireSubmit}
+        renderMessageBlock={renderMessageBlock}
       />
       {streamingMessage ? (
         <StreamingGroup data-testid="chat-thread-streaming">
@@ -117,6 +121,7 @@ const ChatThreadView = ({
               message={streamingMessage}
               onConfirmationSubmit={onConfirmationSubmit}
               onQuestionnaireSubmit={onQuestionnaireSubmit}
+              renderMessageBlock={renderMessageBlock}
             />
           </MessageSlot>
         </StreamingGroup>
@@ -159,15 +164,13 @@ export const ChatThread = () => {
   const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
   const clearSessionError = useChatStore((s) => s.clearSessionError)
-  const { sendRef } = useChatContext()
+  const { sendRef, retryRef, renderMessageBlock } = useChatContext()
 
   const handleRetry = useCallback(() => {
     if (!activeSessionId) return
-    const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')
-    if (!lastUserMessage?.content) return
     clearSessionError(activeSessionId)
-    void sendRef.current(lastUserMessage.content)
-  }, [activeSessionId, messages, clearSessionError, sendRef])
+    void retryRef.current()
+  }, [activeSessionId, clearSessionError, retryRef])
 
   const handleQuestionnaireSubmit = useCallback(
     (submission: PlanQuestionnaireSubmission) => {
@@ -204,6 +207,7 @@ export const ChatThread = () => {
       onRetry={handleRetry}
       onConfirmationSubmit={handleConfirmationSubmit}
       onQuestionnaireSubmit={handleQuestionnaireSubmit}
+      renderMessageBlock={renderMessageBlock}
     />
   )
 }

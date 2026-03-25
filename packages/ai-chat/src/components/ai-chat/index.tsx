@@ -7,7 +7,7 @@ import { ChatConversationList } from '../chat-conversation-list'
 /**
  * Props for the all-in-one `AiChat` component.
  */
-export interface AiChatProps extends Omit<AiChatProviderProps, 'children'> {
+export type AiChatProps = Omit<AiChatProviderProps, 'children'> & {
   /** When true, renders the conversation list sidebar. Defaults to false. */
   showConversationList?: boolean
 }
@@ -17,7 +17,7 @@ export interface AiChatProps extends Omit<AiChatProviderProps, 'children'> {
  * chat UI: optional conversation sidebar + thread + composer.
  */
 export const AiChat = ({ showConversationList = false, ...providerProps }: AiChatProps) => (
-  <AiChatProvider {...providerProps}>
+  <AiChatProvider {...(providerProps as AiChatProviderProps)}>
     <Root data-testid="ai-chat">
       {showConversationList ? <ChatConversationList /> : null}
       <Workspace>
