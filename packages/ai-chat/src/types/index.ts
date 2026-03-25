@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 /**
  * Chat role values accepted by the frontend chat domain.
  */
@@ -192,6 +194,7 @@ export type ChatMessageBlock =
   | { type: 'confirmation_card'; proposal: ExecutionProposal }
   | { type: 'result_summary'; summary: ResultSummary }
   | { type: 'questionnaire'; questionnaire: PlanQuestionnaire }
+  | { type: 'custom'; kind: string; data: unknown }
 
 /**
  * Chat message stored in the UI state and rendered by the chat thread.
@@ -207,6 +210,91 @@ export interface ChatMessage {
   status?: ChatMessageStatus
   createdAt: string
 }
+
+/**
+ * Message patch emitted while a streaming response is being assembled.
+ */
+export interface ChatStreamMessagePatch {
+  content?: string
+  blocks?: ChatMessageBlock[]
+}
+
+/**
+ * Normalized update extracted from a single backend stream packet.
+ */
+export interface ChatStreamPacketUpdate {
+  content?: string
+  contentDelta?: string
+  blocks?: ChatMessageBlock[]
+}
+
+/**
+ * Parameters used by a transport implementation when starting a streaming response.
+ */
+export interface ChatTransportStartStreamArgs {
+  /** Existing backend session ID. Omit for a brand new conversation. */
+  sessionId?: string
+  /** Model identifier currently selected in the UI. */
+  model: string
+  /** Agent mode selected in the UI. */
+  mode: ChatAgentMode
+  /** User message content that should be sent to the backend. */
+  content: string
+  /** Abort signal controlled by the chat composer stop action. */
+  signal?: AbortSignal
+  /** Emits normalized streaming patches that should update the assistant message. */
+  onUpdate: (update: ChatStreamPacketUpdate) => void
+  /** Emits the definitive backend session ID once the server creates or upgrades one. */
+  onSessionId?: (sessionId: string) => void
+  /** Called after the stream completes successfully. */
+  onDone?: () => void
+  /** Called when the stream fails and the UI should surface an error. */
+  onError?: (error: Error) => void
+}
+
+/**
+ * Transport interface implemented by host applications to connect chat UI to any backend.
+ */
+export interface ChatTransport {
+  /** Loads the model list shown by the composer model selector. */
+  getModels: () => Promise<ChatModelsResponse>
+  /** Starts a single assistant response stream for the current user message. */
+  startStream: (args: ChatTransportStartStreamArgs) => Promise<void>
+  /** Requests termination of the active backend stream for a session. */
+  terminateStream: (sessionId?: string) => Promise<ChatTerminateResponse>
+}
+
+/**
+ * Arguments passed to custom stream packet transformers.
+ */
+export interface ChatStreamPacketTransformArgs {
+  packet: ChatStreamPacket
+  defaultUpdate: ChatStreamPacketUpdate | null
+}
+
+/**
+ * Optional packet transformer supplied by integrators to adapt custom backend envelopes.
+ */
+export type TransformChatStreamPacket = (
+  args: ChatStreamPacketTransformArgs,
+) => ChatStreamPacketUpdate | null
+
+/**
+ * Arguments passed to custom block renderers.
+ */
+export interface ChatMessageBlockRendererProps {
+  block: ChatMessageBlock
+  index: number
+  message: ChatMessage
+  mode: ChatAgentMode
+  onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
+  onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
+}
+
+/**
+ * Optional renderer used for custom block variants.
+ */
+export type ChatMessageBlockRenderer = (props: ChatMessageBlockRendererProps) => ReactNode
 
 export interface SendMessageParams {
   sessionId: string
@@ -286,9 +374,15 @@ export interface ChatStreamPacketData {
   payload: ChatStreamPayloadItem[]
 }
 
+export interface ChatStructuredStreamPacketData {
+  message?: string
+  content?: string
+  blocks?: ChatMessageBlock[]
+}
+
 export interface ChatStreamPacket {
   type: 'message_start' | 'delta' | 'message_complete' | 'stream_end' | 'error'
-  data: ChatStreamPacketData | string | { message?: string }
+  data: ChatStreamPacketData | ChatStructuredStreamPacketData | string | { message?: string }
 }
 
 /**
