@@ -158,10 +158,9 @@ export const ChatThread = () => {
   const handleRetry = useCallback(() => {
     if (!activeSessionId) return
     const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')
+    if (!lastUserMessage?.content) return
     clearSessionError(activeSessionId)
-    if (lastUserMessage?.content) {
-      void sendRef.current(lastUserMessage.content)
-    }
+    void sendRef.current(lastUserMessage.content)
   }, [activeSessionId, messages, clearSessionError, sendRef])
 
   const handleQuestionnaireSubmit = useCallback(
