@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Button, Select } from '@xinghunm/compass-ui'
+import { Select } from '@xinghunm/compass-ui'
 import type { ChatModel } from '../../../types'
 
 interface ChatModelControlProps {
@@ -71,18 +71,19 @@ const ModelBadge = styled.span`
   line-height: 12px;
 `
 
-const ModelReloadButton = styled(Button)`
+const ModelReloadButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border-radius: 999px;
   height: 24px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.04);
-  padding: 5px 12px;
+  padding: 5px 10px;
   color: rgba(255, 255, 255, 0.72);
   font-size: 12px;
   line-height: 12px;
+  cursor: pointer;
 
   transition:
     background 160ms ease,
@@ -90,9 +91,9 @@ const ModelReloadButton = styled(Button)`
     color 160ms ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.22) !important;
-    color: rgba(255, 255, 255, 0.88) !important;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.88);
   }
 `
 
