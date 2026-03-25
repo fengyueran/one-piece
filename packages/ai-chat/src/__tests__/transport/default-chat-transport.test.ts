@@ -85,4 +85,38 @@ describe('createDefaultChatTransport', () => {
       expect.objectContaining({ method: 'POST' }),
     )
   })
+
+  it('forwards custom stream headers when configured', async () => {
+    const donePacket = JSON.stringify({ type: 'stream_end', data: '[DONE]' })
+    mockFetch.mockResolvedValueOnce(makeStreamResponse([`data: ${donePacket}`]))
+
+    const transport = createDefaultChatTransport({
+      apiBaseUrl: 'http://api.test',
+      authToken: 'Bearer tok',
+      streamHeaders: {
+        'X-Tool-Approval-Required': 'true',
+        'X-Tool-Approval-Timeout': '120',
+      },
+    })
+
+    await transport.startStream({
+      model: 'gpt-4.1',
+      mode: 'agent',
+      content: 'hello',
+      onUpdate: jest.fn(),
+      onDone: jest.fn(),
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer tok',
+          'Content-Type': 'application/json',
+          'X-Tool-Approval-Required': 'true',
+          'X-Tool-Approval-Timeout': '120',
+        }),
+      }),
+    )
+  })
 })

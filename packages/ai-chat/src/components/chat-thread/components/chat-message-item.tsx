@@ -1,3 +1,4 @@
+import type { ComponentPropsWithoutRef } from 'react'
 import { Fragment, memo, useState } from 'react'
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
@@ -30,8 +31,11 @@ import { ImageViewer } from './image-viewer'
 
 const MARKDOWN_REMARK_PLUGINS = [remarkGfm, remarkMath]
 const MARKDOWN_REHYPE_PLUGINS = [rehypeKatex]
+type MarkdownTableProps = ComponentPropsWithoutRef<'table'> & {
+  node?: unknown
+}
 const MARKDOWN_COMPONENTS = {
-  table: ({ node: _node, ...props }: any) => (
+  table: ({ node: _node, ...props }: MarkdownTableProps) => (
     <TableWrapper>
       <table {...props} />
     </TableWrapper>
@@ -349,6 +353,7 @@ const ChatMessageItemView = ({
   const isPlanMode = mode === 'plan'
   const canSubmitConfirmation = isPlanMode && typeof onConfirmationSubmit === 'function'
   const canSubmitQuestionnaire = isPlanMode && typeof onQuestionnaireSubmit === 'function'
+  const shouldShowStreamingCaret = isAssistantStreaming && (!hasStructuredBlocks || hasTextContent)
 
   const renderChatMessageBlock = (block: ChatMessageBlock, index: number) => {
     switch (block.type) {
@@ -435,6 +440,26 @@ const ChatMessageItemView = ({
     }
   }
 
+  const renderTextContent = () => (
+    <>
+      {settledContent ? (
+        <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
+          {renderMarkdownContent(settledContent)}
+        </ContentBlock>
+      ) : null}
+      {freshContent ? (
+        <ContentBlock data-testid="chat-message-fresh-block" data-block-tone="fresh">
+          {renderMarkdownContent(freshContent)}
+        </ContentBlock>
+      ) : null}
+      {!settledContent && !freshContent && hasTextContent ? (
+        <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
+          {renderMarkdownContent(displayedContent)}
+        </ContentBlock>
+      ) : null}
+    </>
+  )
+
   return (
     <>
       <Bubble data-role={message.role} data-status={message.status ?? 'done'}>
@@ -454,27 +479,25 @@ const ChatMessageItemView = ({
           ) : null}
         </Header>
         <Content data-testid="chat-message-content">
-          {hasStructuredBlocks ? (
-            blocks.map((block, index) => renderChatMessageBlock(block, index))
-          ) : (
-            <>
-              {settledContent ? (
-                <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-                  {renderMarkdownContent(settledContent)}
-                </ContentBlock>
+          {hasStructuredBlocks || hasTextContent ? (
+            <ContentStack data-testid="chat-message-body-stack">
+              {hasStructuredBlocks
+                ? blocks.map((block, index) => (
+                    <ContentSegment
+                      key={`${block.type}-${index}`}
+                      data-testid="chat-message-content-segment"
+                    >
+                      {renderChatMessageBlock(block, index)}
+                    </ContentSegment>
+                  ))
+                : null}
+              {hasTextContent ? (
+                <ContentSegment data-testid="chat-message-content-segment">
+                  {renderTextContent()}
+                </ContentSegment>
               ) : null}
-              {freshContent ? (
-                <ContentBlock data-testid="chat-message-fresh-block" data-block-tone="fresh">
-                  {renderMarkdownContent(freshContent)}
-                </ContentBlock>
-              ) : null}
-              {!settledContent && !freshContent && hasTextContent ? (
-                <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-                  {renderMarkdownContent(displayedContent)}
-                </ContentBlock>
-              ) : null}
-            </>
-          )}
+            </ContentStack>
+          ) : null}
           {attachments.length ? (
             <AttachmentGrid data-testid="chat-message-attachment-grid">
               {attachments.map((attachment) => (
@@ -494,7 +517,7 @@ const ChatMessageItemView = ({
               ))}
             </AttachmentGrid>
           ) : null}
-          {isAssistantStreaming && !hasStructuredBlocks ? (
+          {shouldShowStreamingCaret ? (
             <StreamingCaret data-testid="chat-streaming-caret" aria-hidden="true" />
           ) : null}
         </Content>
@@ -611,6 +634,16 @@ const Content = styled.div`
   tbody tr:last-of-type td {
     border-bottom: none;
   }
+`
+
+const ContentStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
+
+const ContentSegment = styled.div`
+  min-width: 0;
 `
 
 const ContentBlock = styled.div`

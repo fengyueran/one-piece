@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { ChatThread } from '../../components/chat-thread'
 import { ChatContext } from '../../context/chat-context'
 import { createChatStore } from '../../store/chat-store'
@@ -39,7 +39,7 @@ describe('ChatThread custom block renderer', () => {
       id: 'assistant-1',
       sessionId: 'session-1',
       role: 'assistant',
-      content: '',
+      content: 'Follow-up text remains visible.',
       blocks: [
         { type: 'custom', kind: 'badge', data: { label: 'Extensible' } } as ChatMessageBlock,
       ],
@@ -69,5 +69,103 @@ describe('ChatThread custom block renderer', () => {
     )
 
     expect(screen.getByTestId('custom-block')).toHaveTextContent('Extensible')
+    expect(screen.getByText('Follow-up text remains visible.')).toBeInTheDocument()
+    expect(screen.getAllByTestId('chat-message-content-segment')).toHaveLength(2)
+  })
+
+  it('keeps rendering streamed text when custom blocks arrive mid-stream', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).toolName)}</div>
+            ) : null,
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    const pushStreamingContent = (content: string) => {
+      act(() => {
+        store.getState().patchStreamingMessage('session-1', { content })
+      })
+      act(() => {
+        jest.advanceTimersByTime(240)
+      })
+    }
+
+    pushStreamingContent('信')
+    expect(screen.getByText('信')).toBeInTheDocument()
+
+    pushStreamingContent('信息')
+    expect(screen.getByText('信息')).toBeInTheDocument()
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        blocks: [
+          {
+            type: 'custom',
+            kind: 'tool_approval_request',
+            data: {
+              requestId: 'req-1',
+              sessionId: 'session-1',
+              mode: 'agent',
+              toolName: 'get_equation',
+              toolInput: "{'id': 55}",
+              timeoutSec: 120,
+            },
+          } as ChatMessageBlock,
+        ],
+      })
+    })
+
+    expect(screen.getByTestId('custom-block')).toHaveTextContent('get_equation')
+    expect(screen.getByText('信息')).toBeInTheDocument()
+
+    pushStreamingContent('信息，')
+    expect(screen.getByText('信息，')).toBeInTheDocument()
+
+    pushStreamingContent('信息，了')
+    expect(screen.getByText('信息，了')).toBeInTheDocument()
+
+    jest.useRealTimers()
   })
 })

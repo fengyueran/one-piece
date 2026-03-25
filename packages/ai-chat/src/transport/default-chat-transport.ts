@@ -29,6 +29,8 @@ export interface CreateDefaultChatTransportOptions {
   apiBaseUrl: string
   /** Authorization header value forwarded to the backend. */
   authToken: string
+  /** Optional extra headers appended to each streaming chat completion request. */
+  streamHeaders?: Record<string, string>
   /** Optional transformer used to normalize custom stream packets. */
   transformStreamPacket?: TransformChatStreamPacket
   /** Optional endpoint overrides for backends that use different paths. */
@@ -43,6 +45,7 @@ export interface CreateDefaultChatTransportOptions {
 export const createDefaultChatTransport = ({
   apiBaseUrl,
   authToken,
+  streamHeaders,
   transformStreamPacket,
   endpoints,
   axiosInstance,
@@ -72,6 +75,7 @@ export const createDefaultChatTransport = ({
         endpointPath: resolvedEndpoints.completions,
         sessionId,
         authToken,
+        requestHeaders: streamHeaders,
         model,
         mode,
         content,

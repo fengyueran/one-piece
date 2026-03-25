@@ -13,6 +13,7 @@ export interface StartChatStreamOptions {
   endpointPath?: string
   sessionId?: string
   authToken: string
+  requestHeaders?: Record<string, string>
   model: string
   mode: ChatAgentMode
   content: string
@@ -98,6 +99,7 @@ export const startChatStream = async ({
   endpointPath = CHAT_COMPLETIONS_PATH,
   sessionId,
   authToken,
+  requestHeaders,
   model,
   mode,
   content,
@@ -111,6 +113,7 @@ export const startChatStream = async ({
     const headers: Record<string, string> = {
       Authorization: authToken,
       'Content-Type': 'application/json',
+      ...requestHeaders,
     }
 
     if (sessionId) {
@@ -146,9 +149,13 @@ export const startChatStream = async ({
     const decoder = new TextDecoder('utf-8')
     let buffer = ''
 
-    while (true) {
+    let isStreamClosed = false
+    while (!isStreamClosed) {
       const { value, done } = await reader.read()
-      if (done) break
+      if (done) {
+        isStreamClosed = true
+        continue
+      }
 
       buffer += decoder.decode(value, { stream: true })
       const events = buffer.split('\n\n')
