@@ -24,18 +24,27 @@ const ArrowUpIcon = () => (
 interface ChatSendActionsProps {
   canSend: boolean
   isStreaming: boolean
+  isStopping: boolean
   onStop: () => void | Promise<void>
   onSend: () => void | Promise<void>
 }
 
-export const ChatSendActions = ({ canSend, isStreaming, onStop, onSend }: ChatSendActionsProps) => {
+export const ChatSendActions = ({
+  canSend,
+  isStreaming,
+  isStopping,
+  onStop,
+  onSend,
+}: ChatSendActionsProps) => {
   return (
     <>
       {isStreaming ? (
         <StopButton
           type="button"
           aria-label="Stop"
+          aria-busy={isStopping}
           data-testid="chat-composer-stop"
+          disabled={isStopping}
           shape="circle"
           onClick={() => void onStop()}
         >

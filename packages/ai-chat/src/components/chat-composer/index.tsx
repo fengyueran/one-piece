@@ -40,6 +40,7 @@ export interface ChatComposerViewProps {
   isModelsError: boolean
   hasModels: boolean
   isStreaming: boolean
+  isStopping: boolean
   modeLabels: { ask: string; plan: string; agent: string }
   onValueChange: (value: string) => void
   onPickImages: (files: FileList | File[]) => void
@@ -65,6 +66,7 @@ export const ChatComposerView = ({
   isModelsError,
   hasModels,
   isStreaming,
+  isStopping,
   modeLabels,
   onValueChange,
   onPickImages,
@@ -168,6 +170,7 @@ export const ChatComposerView = ({
             <ChatSendActions
               canSend={canSend}
               isStreaming={isStreaming}
+              isStopping={isStopping}
               onStop={onStop}
               onSend={onSend}
             />
@@ -206,6 +209,7 @@ export const ChatComposer = () => {
       isModelsError={state.isModelsError}
       hasModels={state.hasModels}
       isStreaming={state.isStreaming}
+      isStopping={state.isStopping}
       modeLabels={modeLabels}
       onValueChange={actions.setValue}
       onPickImages={actions.pickImages}

@@ -18,6 +18,7 @@ export interface ChatState {
   messagesBySession: Record<string, ChatMessage[]>
   streamingMessageBySession: Record<string, ChatMessage | undefined>
   isStreamingBySession: Record<string, boolean>
+  isStoppingBySession: Record<string, boolean>
   errorBySession: Record<string, string | null>
 }
 
@@ -38,6 +39,7 @@ export interface ChatActions {
   startStreamingMessage: (sessionId: string, message: ChatMessage) => void
   updateStreamingMessage: (sessionId: string, content: string) => void
   completeStreamingMessage: (sessionId: string) => void
+  requestStopStreaming: (sessionId: string) => void
   finalizeStoppedStreamingMessage: (sessionId: string) => void
   setSessionError: (sessionId: string, error: string | null) => void
   clearSessionError: (sessionId: string) => void
@@ -101,6 +103,10 @@ const finalizeStreamingMessage = (
       ...state.isStreamingBySession,
       [sessionId]: false,
     },
+    isStoppingBySession: {
+      ...state.isStoppingBySession,
+      [sessionId]: false,
+    },
     errorBySession: clearError
       ? { ...state.errorBySession, [sessionId]: null }
       : state.errorBySession,
@@ -119,6 +125,7 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
     messagesBySession: {},
     streamingMessageBySession: {},
     isStreamingBySession: {},
+    isStoppingBySession: {},
     errorBySession: {},
 
     // ---- Session management ------------------------------------------------
@@ -136,11 +143,13 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
       const nextMessagesBySession = { ...state.messagesBySession }
       const nextErrorBySession = { ...state.errorBySession }
       const nextIsStreamingBySession = { ...state.isStreamingBySession }
+      const nextIsStoppingBySession = { ...state.isStoppingBySession }
 
       const sid = session.sessionId
       if (nextMessagesBySession[sid] === undefined) nextMessagesBySession[sid] = []
       if (nextErrorBySession[sid] === undefined) nextErrorBySession[sid] = null
       if (nextIsStreamingBySession[sid] === undefined) nextIsStreamingBySession[sid] = false
+      if (nextIsStoppingBySession[sid] === undefined) nextIsStoppingBySession[sid] = false
 
       set({
         sessions: nextSessions,
@@ -148,6 +157,7 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
         messagesBySession: nextMessagesBySession,
         errorBySession: nextErrorBySession,
         isStreamingBySession: nextIsStreamingBySession,
+        isStoppingBySession: nextIsStoppingBySession,
       })
     },
 
@@ -196,6 +206,13 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
         delete nextIsStreamingBySession[previousSessionId]
       }
 
+      // Migrate isStoppingBySession
+      const nextIsStoppingBySession = { ...state.isStoppingBySession }
+      if (previousSessionId in nextIsStoppingBySession) {
+        nextIsStoppingBySession[nextSessionId] = nextIsStoppingBySession[previousSessionId] ?? false
+        delete nextIsStoppingBySession[previousSessionId]
+      }
+
       // Migrate errorBySession
       const nextErrorBySession = { ...state.errorBySession }
       if (previousSessionId in nextErrorBySession) {
@@ -212,6 +229,7 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
         messagesBySession: nextMessagesBySession,
         streamingMessageBySession: nextStreamingMessageBySession,
         isStreamingBySession: nextIsStreamingBySession,
+        isStoppingBySession: nextIsStoppingBySession,
         errorBySession: nextErrorBySession,
         activeSessionId: nextActiveSessionId,
       })
@@ -279,6 +297,10 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
           ...state.isStreamingBySession,
           [sessionId]: true,
         },
+        isStoppingBySession: {
+          ...state.isStoppingBySession,
+          [sessionId]: false,
+        },
         errorBySession: {
           ...state.errorBySession,
           [sessionId]: null,
@@ -300,6 +322,16 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
 
     completeStreamingMessage: (sessionId: string) => {
       set((state) => finalizeStreamingMessage(state, sessionId, 'done'))
+    },
+
+    requestStopStreaming: (sessionId: string) => {
+      const state = get()
+      set({
+        isStoppingBySession: {
+          ...state.isStoppingBySession,
+          [sessionId]: true,
+        },
+      })
     },
 
     finalizeStoppedStreamingMessage: (sessionId: string) => {

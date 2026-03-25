@@ -16,6 +16,7 @@ import { useComposerAttachments } from './use-composer-attachments'
 
 const nowIso = () => new Date().toISOString()
 const ATTACHMENT_NOTICE_DURATION_MS = 3000
+const STOP_WAIT_TIMEOUT_MS = 3000
 type AttachmentNotice = 'limit_reached' | null
 
 export const useChatComposer = () => {
@@ -31,6 +32,9 @@ export const useChatComposer = () => {
     (s) => Object.entries(s.isStreamingBySession).find(([, v]) => v)?.[0] ?? null,
   )
   const isStreaming = Boolean(streamingSessionId)
+  const isStopping = useChatStore((s) =>
+    streamingSessionId ? (s.isStoppingBySession[streamingSessionId] ?? false) : false,
+  )
 
   // -- Store actions (stable references in Zustand) -------------------------
   const createSession = useChatStore((s) => s.createSession)
@@ -39,6 +43,7 @@ export const useChatComposer = () => {
   const startStreamingMessage = useChatStore((s) => s.startStreamingMessage)
   const updateStreamingMessage = useChatStore((s) => s.updateStreamingMessage)
   const completeStreamingMessage = useChatStore((s) => s.completeStreamingMessage)
+  const requestStopStreaming = useChatStore((s) => s.requestStopStreaming)
   const finalizeStoppedStreamingMessage = useChatStore((s) => s.finalizeStoppedStreamingMessage)
   const setSessionError = useChatStore((s) => s.setSessionError)
   const clearSessionError = useChatStore((s) => s.clearSessionError)
@@ -80,6 +85,11 @@ export const useChatComposer = () => {
     useComposerAttachments()
 
   const abortControllerRef = useRef<AbortController | null>(null)
+  const stopRequestRef = useRef<{
+    sessionId: string
+    timeoutId: number | null
+    finalized: boolean
+  } | null>(null)
   const lastRequestRef = useRef<{
     localSessionId: string
     sessionId?: string
@@ -114,6 +124,36 @@ export const useChatComposer = () => {
     return () => window.clearTimeout(timeoutId)
   }, [attachmentNotice])
 
+  // -- Stop helpers ----------------------------------------------------------
+
+  const clearStopTimeout = (sessionId?: string) => {
+    if (!stopRequestRef.current) return
+    if (sessionId && stopRequestRef.current.sessionId !== sessionId) return
+    if (stopRequestRef.current.timeoutId !== null) {
+      window.clearTimeout(stopRequestRef.current.timeoutId)
+      stopRequestRef.current.timeoutId = null
+    }
+  }
+
+  const clearStopRequest = (sessionId?: string) => {
+    if (!stopRequestRef.current) return
+    if (sessionId && stopRequestRef.current.sessionId !== sessionId) return
+    clearStopTimeout(sessionId)
+    stopRequestRef.current = null
+  }
+
+  const finalizeStop = (sessionId: string) => {
+    if (stopRequestRef.current?.sessionId === sessionId) {
+      if (stopRequestRef.current.finalized) return
+      stopRequestRef.current.finalized = true
+    }
+    clearStopTimeout(sessionId)
+    abortControllerRef.current?.abort()
+    abortControllerRef.current = null
+    finalizeStoppedStreamingMessage(sessionId)
+    clearStopRequest(sessionId)
+  }
+
   // -- Core stream runner ----------------------------------------------------
 
   const runStream = useCallback(
@@ -132,6 +172,7 @@ export const useChatComposer = () => {
     }) => {
       if (!authToken) return
 
+      clearStopRequest()
       let currentSessionId = localSessionId
 
       clearSessionError(currentSessionId)
@@ -180,14 +221,23 @@ export const useChatComposer = () => {
             updateStreamingMessage(currentSessionId, accumulated)
           },
           onDone: () => {
+            if (stopRequestRef.current?.sessionId === currentSessionId) {
+              finalizeStop(currentSessionId)
+              return
+            }
             completeStreamingMessage(currentSessionId)
             abortControllerRef.current = null
+            clearStopRequest(currentSessionId)
           },
           onError: (streamError) => {
-            // Finalize the streaming message first, then overwrite with error
+            if (stopRequestRef.current?.sessionId === currentSessionId) {
+              finalizeStop(currentSessionId)
+              return
+            }
             finalizeStoppedStreamingMessage(currentSessionId)
             setSessionError(currentSessionId, streamError.message)
             abortControllerRef.current = null
+            clearStopRequest(currentSessionId)
           },
         })
       } catch {
@@ -299,6 +349,7 @@ export const useChatComposer = () => {
       attachments,
       attachmentNotice,
       isStreaming,
+      isStopping,
       selectedModel,
       selectedMode,
       availableModels,
@@ -338,14 +389,31 @@ export const useChatComposer = () => {
       reloadModels: () => void fetchModels(),
       stop: async () => {
         if (!streamingSessionId) return
-        abortControllerRef.current?.abort()
-        abortControllerRef.current = null
-        finalizeStoppedStreamingMessage(streamingSessionId)
-        if (isDraftChatSessionId(streamingSessionId)) return
+        if (isStopping) return
+
+        if (isDraftChatSessionId(streamingSessionId)) {
+          finalizeStop(streamingSessionId)
+          return
+        }
+
+        requestStopStreaming(streamingSessionId)
+        stopRequestRef.current = {
+          sessionId: streamingSessionId,
+          timeoutId: window.setTimeout(() => {
+            finalizeStop(streamingSessionId)
+          }, STOP_WAIT_TIMEOUT_MS),
+          finalized: false,
+        }
+
         try {
-          await terminateChat(axiosInstance, streamingSessionId)
+          const result = await terminateChat(axiosInstance, streamingSessionId)
+          if (!result.terminated) {
+            console.error('Failed to terminate chat session: server returned not terminated')
+          }
+          finalizeStop(streamingSessionId)
         } catch (err) {
           console.error('Failed to terminate chat session', err)
+          finalizeStop(streamingSessionId)
         }
       },
       retry: () => {
