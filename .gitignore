@@ -52,13 +52,9 @@ Thumbs.db
 # Turbo
 .turbo/
 
-# Changesets
-.changeset/ 
-
 .dumi
 docs-dist
 
 .cursor/
 .agent/
 .trae/
-
