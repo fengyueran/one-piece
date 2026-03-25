@@ -21,6 +21,7 @@ export const ChatConversationList = () => {
 
   const handleCreateSession = () => {
     const session = createDraftChatSession({
+      // Model is intentionally deferred: ChatComposer resolves selectedModel at send time.
       model: '',
       mode: preferredMode,
       nowIso: () => new Date().toISOString(),

@@ -111,10 +111,10 @@ const finalizeStreamingMessage = (
 // Factory
 // ---------------------------------------------------------------------------
 
-export const createChatStore = () =>
+export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferredMode'>>) =>
   createStore<ChatStore>((set, get) => ({
     activeSessionId: null,
-    preferredMode: DEFAULT_CHAT_AGENT_MODE,
+    preferredMode: initialState?.preferredMode ?? DEFAULT_CHAT_AGENT_MODE,
     sessions: [],
     messagesBySession: {},
     streamingMessageBySession: {},

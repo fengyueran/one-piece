@@ -15,10 +15,11 @@ export interface AiChatProviderProps {
 export const AiChatProvider = ({
   apiBaseUrl,
   authToken,
+  defaultMode,
   labels,
   children,
 }: AiChatProviderProps) => {
-  const storeRef = useRef(createChatStore())
+  const storeRef = useRef(createChatStore(defaultMode ? { preferredMode: defaultMode } : undefined))
   // Stable ref populated by ChatComposer on mount; allows ChatThread to trigger sends.
   const sendRef = useRef<(content: string) => Promise<void>>(async () => {})
 
@@ -36,7 +37,7 @@ export const AiChatProvider = ({
       labels: { ...DEFAULT_AI_CHAT_LABELS, ...labels },
       sendRef,
     }),
-    [axiosInstance, apiBaseUrl, authToken, labels, sendRef],
+    [axiosInstance, apiBaseUrl, authToken, labels],
   )
 
   return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>
