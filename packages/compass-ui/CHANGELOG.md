@@ -1,5 +1,16 @@
 # @xinghunm/compass-ui
 
+## 0.8.2
+
+### Patch Changes
+
+- 363431c: 包含以下更新：
+  - 移除 Storybook 相关脚本、依赖与示例文件。
+  - 统一组件文档与开发文档。
+  - 在根入口补充 `ThemeProvider` 与 `useTheme` 导出。
+  - 为 `Message` 补充整体清空能力。
+  - 修复 `AutoComplete`、`Form.Item`、`TreeSelect`、`Modal` 和 `Table` 文档中的若干问题。
+
 ## 0.8.1
 
 ### Patch Changes
