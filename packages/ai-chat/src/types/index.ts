@@ -24,6 +24,9 @@ export type ChatAgentMode = (typeof CHAT_AGENT_MODES)[number]
  */
 export const DEFAULT_CHAT_AGENT_MODE: ChatAgentMode = 'agent'
 
+/**
+ * Represents a chat session with its metadata.
+ */
 export interface ChatSession {
   sessionId: string
   title: string
@@ -53,7 +56,7 @@ export interface PlanQuestionOption {
 }
 
 /**
- * Answer value collected from a plan questionnaire.
+ * The value type for a single questionnaire answer.
  */
 export type PlanQuestionnaireAnswerValue = string | string[] | number | boolean
 
@@ -250,10 +253,16 @@ export interface ChatCompletionResponse {
   usage: ChatCompletionUsage
 }
 
+/**
+ * Request payload for terminating an active streaming chat session.
+ */
 export interface ChatTerminateRequest {
   sessionId?: string
 }
 
+/**
+ * Response payload returned after a terminate request has been processed.
+ */
 export interface ChatTerminateResponse {
   terminated: boolean
 }
@@ -282,6 +291,9 @@ export interface ChatStreamPacket {
   data: ChatStreamPacketData | string | { message?: string }
 }
 
+/**
+ * Customizable UI label strings used throughout the chat components.
+ */
 export interface AiChatLabels {
   sendButton?: string
   stopButton?: string
@@ -295,6 +307,9 @@ export interface AiChatLabels {
   attachmentLimitNotice?: string
 }
 
+/**
+ * Default English label values used when no labels are provided.
+ */
 export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   sendButton: 'Send',
   stopButton: 'Stop',

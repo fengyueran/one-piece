@@ -4,8 +4,11 @@ import { ChatThread } from '../chat-thread'
 import { ChatComposer } from '../chat-composer'
 import { ChatConversationList } from '../chat-conversation-list'
 
+/**
+ * Props for the all-in-one `AiChat` component.
+ */
 export interface AiChatProps extends Omit<AiChatProviderProps, 'children'> {
-  /** Show the conversation list sidebar. Defaults to false. */
+  /** When true, renders the conversation list sidebar. Defaults to false. */
   showConversationList?: boolean
 }
 

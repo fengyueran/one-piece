@@ -27,6 +27,9 @@ const PlusIcon = () => (
   </svg>
 )
 
+/**
+ * Props for the presentational `ChatComposerView` component.
+ */
 export interface ChatComposerViewProps {
   value: string
   placeholder: string
@@ -39,7 +42,9 @@ export interface ChatComposerViewProps {
   isModelsLoading: boolean
   isModelsError: boolean
   hasModels: boolean
+  /** Whether a streaming response is currently in progress. */
   isStreaming: boolean
+  /** Whether a stop request has been sent but not yet finalized. */
   isStopping: boolean
   modeLabels: { ask: string; plan: string; agent: string }
   onValueChange: (value: string) => void
@@ -49,7 +54,9 @@ export interface ChatComposerViewProps {
   onSelectedModelChange: (value: string) => void
   onSelectedModeChange: (value: ChatAgentMode) => void
   onReloadModels: () => void
+  /** Called to abort the active streaming response. */
   onStop: () => void | Promise<void>
+  /** Called to send a new user message. */
   onSend: () => void | Promise<void>
 }
 

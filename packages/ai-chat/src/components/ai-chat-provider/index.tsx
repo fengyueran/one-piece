@@ -5,10 +5,15 @@ import { createChatStore } from '../../store/chat-store'
 import { DEFAULT_AI_CHAT_LABELS, type AiChatLabels, type ChatAgentMode } from '../../types'
 
 export interface AiChatProviderProps {
+  /** Base URL of the AI chat backend API. */
   apiBaseUrl: string
+  /** Authorization header value (e.g. "Bearer <token>"). */
   authToken: string
+  /** Initial agent mode for new sessions. */
   defaultMode?: ChatAgentMode
+  /** Optional label overrides for UI strings. */
   labels?: AiChatLabels
+  /** Child elements rendered inside the provider. */
   children: ReactNode
 }
 

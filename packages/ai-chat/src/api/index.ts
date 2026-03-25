@@ -4,11 +4,17 @@ import type { ChatModelsResponse, ChatTerminateResponse } from '../types'
 const CHAT_MODELS_PATH = '/v1/models'
 const CHAT_TERMINATE_PATH = '/v1/chat/terminate'
 
+/**
+ * Fetches the list of available chat models from the backend.
+ */
 export const getChatModels = async (client: AxiosInstance): Promise<ChatModelsResponse> => {
   const response = await client.get<ChatModelsResponse>(CHAT_MODELS_PATH)
   return response.data
 }
 
+/**
+ * Sends a terminate request to stop an active streaming session.
+ */
 export const terminateChat = async (
   client: AxiosInstance,
   sessionId?: string,
