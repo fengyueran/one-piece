@@ -11,6 +11,7 @@ const makeContextValue = () => ({
   apiBaseUrl: 'http://test',
   authToken: 'Bearer tok',
   labels: DEFAULT_AI_CHAT_LABELS,
+  sendRef: { current: async (_content: string) => {} },
 })
 
 describe('useChatContext', () => {
