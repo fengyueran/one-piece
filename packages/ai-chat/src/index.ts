@@ -1,22 +1,22 @@
 // ---------------------------------------------------------------------------
 // Top-level component
 // ---------------------------------------------------------------------------
-export { AiChat } from './components/AiChat'
-export type { AiChatProps } from './components/AiChat'
+export { AiChat } from './components/ai-chat'
+export type { AiChatProps } from './components/ai-chat'
 
 // ---------------------------------------------------------------------------
 // Provider (for custom layouts)
 // ---------------------------------------------------------------------------
-export { AiChatProvider } from './components/AiChatProvider'
-export type { AiChatProviderProps } from './components/AiChatProvider'
+export { AiChatProvider } from './components/ai-chat-provider'
+export type { AiChatProviderProps } from './components/ai-chat-provider'
 
 // ---------------------------------------------------------------------------
 // Individual components (for custom layouts)
 // ---------------------------------------------------------------------------
-export { ChatThread } from './components/ChatThread'
-export { ChatComposer } from './components/ChatComposer'
-export type { ChatComposerViewProps } from './components/ChatComposer'
-export { ChatConversationList } from './components/ChatConversationList'
+export { ChatThread } from './components/chat-thread'
+export { ChatComposer } from './components/chat-composer'
+export type { ChatComposerViewProps } from './components/chat-composer'
+export { ChatConversationList } from './components/chat-conversation-list'
 
 // ---------------------------------------------------------------------------
 // Types

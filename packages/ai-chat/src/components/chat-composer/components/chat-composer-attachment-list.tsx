@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import type { ChatImageAttachment } from '../../../types'
-import { ImageViewer } from '../../ChatThread/components/image-viewer'
+import { ImageViewer } from '../../chat-thread/components/image-viewer'
 
 interface ChatComposerAttachmentListProps {
   attachments: ChatImageAttachment[]

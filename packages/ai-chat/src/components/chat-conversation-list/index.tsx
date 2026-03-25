@@ -1,7 +1,10 @@
 import styled from '@emotion/styled'
 import { DEFAULT_CHAT_AGENT_MODE } from '../../types'
 import { useChatContext, useChatStore } from '../../context/use-chat-context'
-import { createDraftChatSession, createDraftChatSessionId } from '../ChatComposer/lib/chat-composer'
+import {
+  createDraftChatSession,
+  createDraftChatSessionId,
+} from '../chat-composer/lib/chat-composer'
 import { ChatSessionItem } from './components/chat-session-item'
 
 export const ChatConversationList = () => {

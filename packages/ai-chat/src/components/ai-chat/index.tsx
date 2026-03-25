@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
-import { AiChatProvider, type AiChatProviderProps } from '../AiChatProvider'
-import { ChatThread } from '../ChatThread'
-import { ChatComposer } from '../ChatComposer'
-import { ChatConversationList } from '../ChatConversationList'
+import { AiChatProvider, type AiChatProviderProps } from '../ai-chat-provider'
+import { ChatThread } from '../chat-thread'
+import { ChatComposer } from '../chat-composer'
+import { ChatConversationList } from '../chat-conversation-list'
 
 export interface AiChatProps extends Omit<AiChatProviderProps, 'children'> {
   /** Show the conversation list sidebar. Defaults to false. */

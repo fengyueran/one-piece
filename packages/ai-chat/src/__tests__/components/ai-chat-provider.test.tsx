@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { AiChatProvider } from '../../components/AiChatProvider'
+import { AiChatProvider } from '../../components/ai-chat-provider'
 import { useChatStore } from '../../context/use-chat-context'
 
 const TestConsumer = () => {
