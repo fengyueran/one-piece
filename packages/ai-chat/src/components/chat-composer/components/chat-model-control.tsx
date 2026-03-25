@@ -31,9 +31,10 @@ export const ChatModelControl = ({
       >
         <span>Failed to load models</span>
         <ReloadIcon
+          data-testid="chat-model-reload-icon"
           aria-hidden="true"
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 1024 1024"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
@@ -84,15 +85,15 @@ const ModelBadge = styled.span`
 const ModelReloadButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border-radius: 999px;
-  height: 24px;
+  min-height: 28px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.04);
-  padding: 5px 10px;
+  padding: 6px 12px;
   color: rgba(255, 255, 255, 0.72);
   font-size: 12px;
-  line-height: 12px;
+  line-height: 1;
   cursor: pointer;
 
   transition:

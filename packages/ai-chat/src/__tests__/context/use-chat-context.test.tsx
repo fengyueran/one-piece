@@ -20,6 +20,7 @@ const makeContextValue = () => ({
   apiBaseUrl: 'http://test',
   authToken: 'Bearer tok',
   labels: DEFAULT_AI_CHAT_LABELS,
+  enableImageAttachments: true,
   sendRef: { current: async (_content: string) => {} },
   retryRef: { current: async () => {} },
 })

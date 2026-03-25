@@ -55,6 +55,7 @@ describe('ChatThread custom block renderer', () => {
           apiBaseUrl: 'http://test',
           authToken: 'Bearer token',
           labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
           sendRef: { current: async (_content: string) => {} },
           retryRef: { current: async () => {} },
           renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>

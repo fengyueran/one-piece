@@ -37,6 +37,7 @@ const createContextValue = () => {
       apiBaseUrl: 'http://test',
       authToken: 'Bearer token',
       labels: DEFAULT_AI_CHAT_LABELS,
+      enableImageAttachments: true,
       sendRef,
       retryRef,
     },
