@@ -141,6 +141,10 @@ const ChatThreadView = ({
 // Connected component
 // ---------------------------------------------------------------------------
 
+// Stable fallback — avoids creating a new array reference on every selector call,
+// which would cause useSyncExternalStore (Zustand) to trigger infinite re-renders.
+const EMPTY_MESSAGES: ChatMessage[] = []
+
 export const ChatThread = () => {
   const activeSessionId = useChatStore((s) => s.activeSessionId)
   const hasSessions = useChatStore((s) => s.sessions.length > 0)
@@ -148,7 +152,9 @@ export const ChatThread = () => {
     (s) =>
       s.sessions.find((x) => x.sessionId === s.activeSessionId)?.mode ?? DEFAULT_CHAT_AGENT_MODE,
   )
-  const messages = useChatStore((s) => s.messagesBySession[s.activeSessionId ?? ''] ?? [])
+  const messages = useChatStore(
+    (s) => s.messagesBySession[s.activeSessionId ?? ''] ?? EMPTY_MESSAGES,
+  )
   const streamingMessage = useChatStore((s) => s.streamingMessageBySession[s.activeSessionId ?? ''])
   const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
