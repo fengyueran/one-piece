@@ -3,15 +3,25 @@ import { useChatContext, useChatStore } from '../../context/use-chat-context'
 import { ChatContext } from '../../context/chat-context'
 import { createChatStore } from '../../store/chat-store'
 import axios from 'axios'
-import { DEFAULT_AI_CHAT_LABELS } from '../../types'
+import { DEFAULT_AI_CHAT_LABELS, type ChatTransport } from '../../types'
+
+const transport: ChatTransport = {
+  getModels: async () => ({ data: [] }),
+  startStream: async ({ onDone }) => {
+    onDone?.()
+  },
+  terminateStream: async () => ({ terminated: true }),
+}
 
 const makeContextValue = () => ({
   store: createChatStore(),
+  transport,
   axios: axios.create(),
   apiBaseUrl: 'http://test',
   authToken: 'Bearer tok',
   labels: DEFAULT_AI_CHAT_LABELS,
   sendRef: { current: async (_content: string) => {} },
+  retryRef: { current: async () => {} },
 })
 
 describe('useChatContext', () => {

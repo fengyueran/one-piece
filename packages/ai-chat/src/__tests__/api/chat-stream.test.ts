@@ -55,6 +55,10 @@ describe('startChatStream', () => {
       onDone,
     })
 
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({ method: 'POST' }),
+    )
     expect(onSessionId).toHaveBeenCalledWith('sess-123')
     expect(onPacket).toHaveBeenCalledTimes(1)
     expect(onDone).toHaveBeenCalledTimes(1)

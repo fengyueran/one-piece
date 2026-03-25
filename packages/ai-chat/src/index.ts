@@ -11,12 +11,19 @@ export { AiChatProvider } from './components/ai-chat-provider'
 export type { AiChatProviderProps } from './components/ai-chat-provider'
 
 // ---------------------------------------------------------------------------
+// Transport
+// ---------------------------------------------------------------------------
+export { createDefaultChatTransport } from './transport'
+export type { CreateDefaultChatTransportOptions, DefaultChatTransportEndpoints } from './transport'
+
+// ---------------------------------------------------------------------------
 // Individual components (for custom layouts)
 // ---------------------------------------------------------------------------
 export { ChatThread } from './components/chat-thread'
 export { ChatComposer } from './components/chat-composer'
 export type { ChatComposerViewProps } from './components/chat-composer'
 export { ChatConversationList } from './components/chat-conversation-list'
+export { useChatContext, useChatStore } from './context/use-chat-context'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -27,14 +34,22 @@ export type {
   ChatImageAttachment,
   ChatMessage,
   ChatMessageBlock,
+  ChatMessageBlockRenderer,
+  ChatMessageBlockRendererProps,
   ChatMessageStatus,
   ChatModel,
   ChatRole,
   ChatSession,
+  ChatTransport,
+  ChatTransportStartStreamArgs,
+  ChatStreamMessagePatch,
+  ChatStreamPacketTransformArgs,
+  ChatStreamPacketUpdate,
   ExecutionConfirmationSubmission,
   ExecutionProposal,
   PlanQuestionnaire,
   PlanQuestionnaireSubmission,
   ResultSummary,
+  TransformChatStreamPacket,
 } from './types'
 export { CHAT_AGENT_MODES, DEFAULT_CHAT_AGENT_MODE, DEFAULT_AI_CHAT_LABELS } from './types'
