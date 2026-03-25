@@ -4,7 +4,7 @@ import { ChatThread } from '../ChatThread'
 import { ChatComposer } from '../ChatComposer'
 import { ChatConversationList } from '../ChatConversationList'
 
-export interface AiChatProps extends AiChatProviderProps {
+export interface AiChatProps extends Omit<AiChatProviderProps, 'children'> {
   /** Show the conversation list sidebar. Defaults to false. */
   showConversationList?: boolean
 }
