@@ -292,6 +292,7 @@ export interface AiChatLabels {
   newChat?: string
   emptyStateTitle?: string
   emptyStateSubtitle?: string
+  attachmentLimitNotice?: string
 }
 
 export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
@@ -304,4 +305,5 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   newChat: 'New Chat',
   emptyStateTitle: 'How can I help you?',
   emptyStateSubtitle: 'Start a conversation',
+  attachmentLimitNotice: 'Images exceeded the limit. Only the first 10 images were kept.',
 }

@@ -62,17 +62,18 @@ export const useComposerAttachments = () => {
 
     const filesToAppend = validFiles.slice(0, remainingSlots)
 
-    setAttachments((current) => [
-      ...current,
-      ...filesToAppend.map((file) => ({
-        id: createAttachmentId(),
-        file,
-        name: file.name,
-        mimeType: file.type,
-        size: file.size,
-        previewUrl: createObjectUrl(file),
-      })),
-    ])
+    // Create attachments (including Object URLs) outside the updater to avoid
+    // double-invocation in React StrictMode, which would leak the first set of URLs.
+    const newAttachments = filesToAppend.map((file) => ({
+      id: createAttachmentId(),
+      file,
+      name: file.name,
+      mimeType: file.type,
+      size: file.size,
+      previewUrl: createObjectUrl(file),
+    }))
+
+    setAttachments((current) => [...current, ...newAttachments])
 
     return {
       addedCount: filesToAppend.length,

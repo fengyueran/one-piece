@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import styled from '@emotion/styled'
 import type { ChatAgentMode, ChatImageAttachment, ChatModel } from '../../types'
 import { useChatContext } from '../../context/use-chat-context'
@@ -32,6 +32,7 @@ export interface ChatComposerViewProps {
   placeholder: string
   attachments: ChatImageAttachment[]
   attachmentNotice?: 'limit_reached' | null
+  attachmentLimitNotice: string
   selectedModel: string
   selectedMode: ChatAgentMode
   availableModels: ChatModel[]
@@ -56,6 +57,7 @@ export const ChatComposerView = ({
   placeholder,
   attachments,
   attachmentNotice,
+  attachmentLimitNotice,
   selectedModel,
   selectedMode,
   availableModels,
@@ -127,7 +129,7 @@ export const ChatComposerView = ({
         />
         {attachmentNotice === 'limit_reached' ? (
           <AttachmentNotice data-testid="chat-composer-attachment-notice">
-            Images exceeded the limit. Only the first 10 images were kept.
+            {attachmentLimitNotice}
           </AttachmentNotice>
         ) : null}
         <Input
@@ -180,15 +182,14 @@ export const ChatComposer = () => {
   const { labels, sendRef } = useChatContext()
   const { state, actions } = useChatComposer()
 
-  // Keep sendRef current so ChatThread can trigger sends without importing ChatComposer
-  useEffect(() => {
-    sendRef.current = actions.send
-  })
+  // Keep sendRef current so ChatThread can trigger sends without importing ChatComposer.
+  // Direct ref mutation in render is valid — refs are exempt from React's side-effect rule.
+  sendRef.current = actions.send
 
   const modeLabels = {
-    ask: labels.modeLabelAsk ?? 'Ask',
-    plan: labels.modeLabelPlan ?? 'Plan',
-    agent: labels.modeLabelAgent ?? 'Agent',
+    ask: labels.modeLabelAsk,
+    plan: labels.modeLabelPlan,
+    agent: labels.modeLabelAgent,
   }
 
   return (
@@ -196,7 +197,8 @@ export const ChatComposer = () => {
       value={state.value}
       attachments={state.attachments}
       attachmentNotice={state.attachmentNotice}
-      placeholder={labels.placeholder ?? 'Ask something...'}
+      attachmentLimitNotice={labels.attachmentLimitNotice}
+      placeholder={labels.placeholder}
       selectedModel={state.selectedModel}
       selectedMode={state.selectedMode}
       availableModels={state.availableModels}
