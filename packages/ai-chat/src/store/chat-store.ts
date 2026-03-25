@@ -3,6 +3,7 @@ import {
   DEFAULT_CHAT_AGENT_MODE,
   type ChatAgentMode,
   type ChatMessage,
+  type ChatStreamMessagePatch,
   type ChatSession,
   type PlanQuestionnaireAnswerValue,
 } from '../types'
@@ -38,6 +39,7 @@ export interface ChatActions {
   appendMessage: (sessionId: string, message: ChatMessage) => void
   startStreamingMessage: (sessionId: string, message: ChatMessage) => void
   updateStreamingMessage: (sessionId: string, content: string) => void
+  patchStreamingMessage: (sessionId: string, patch: ChatStreamMessagePatch) => void
   completeStreamingMessage: (sessionId: string) => void
   requestStopStreaming: (sessionId: string) => void
   finalizeStoppedStreamingMessage: (sessionId: string) => void
@@ -309,13 +311,17 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
     },
 
     updateStreamingMessage: (sessionId: string, content: string) => {
+      get().patchStreamingMessage(sessionId, { content })
+    },
+
+    patchStreamingMessage: (sessionId: string, patch: ChatStreamMessagePatch) => {
       const state = get()
       const target = state.streamingMessageBySession[sessionId]
       if (!target) return
       set({
         streamingMessageBySession: {
           ...state.streamingMessageBySession,
-          [sessionId]: { ...target, content },
+          [sessionId]: { ...target, ...patch },
         },
       })
     },

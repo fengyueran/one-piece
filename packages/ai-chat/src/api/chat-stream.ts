@@ -1,9 +1,16 @@
-import type { ChatAgentMode, ChatStreamPacket } from '../types'
+import type {
+  ChatAgentMode,
+  ChatStreamPacket,
+  ChatStreamPacketData,
+  ChatStreamPacketUpdate,
+  ChatStructuredStreamPacketData,
+} from '../types'
 
-const CHAT_COMPLETIONS_PATH = '/v1/chat/completions'
+const CHAT_COMPLETIONS_PATH = '/chat/completions'
 
 export interface StartChatStreamOptions {
   apiBaseUrl: string
+  endpointPath?: string
   sessionId?: string
   authToken: string
   model: string
@@ -17,6 +24,15 @@ export interface StartChatStreamOptions {
 }
 
 const SSE_CONTENT_TYPE = 'text/event-stream'
+
+const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const isPayloadPacketData = (value: unknown): value is ChatStreamPacketData =>
+  isObjectRecord(value) && Array.isArray(value.payload)
+
+const isStructuredPacketData = (value: unknown): value is ChatStructuredStreamPacketData =>
+  isObjectRecord(value) && ('content' in value || 'message' in value || 'blocks' in value)
 
 const parseSseEvent = (eventText: string): ChatStreamPacket | null => {
   const dataLine = eventText
@@ -37,11 +53,49 @@ const parseSseEvent = (eventText: string): ChatStreamPacket | null => {
 }
 
 /**
+ * Extracts a normalized message patch from a backend stream packet.
+ */
+export const extractChatStreamUpdate = (
+  packet: ChatStreamPacket,
+): ChatStreamPacketUpdate | null => {
+  if (packet.type !== 'delta' && packet.type !== 'message_complete') {
+    return null
+  }
+
+  if (isPayloadPacketData(packet.data)) {
+    const contentDelta = packet.data.payload[0]?.delta?.content ?? ''
+    return contentDelta ? { contentDelta } : null
+  }
+
+  if (!isStructuredPacketData(packet.data)) {
+    return null
+  }
+
+  const content =
+    typeof packet.data.content === 'string'
+      ? packet.data.content
+      : typeof packet.data.message === 'string'
+        ? packet.data.message
+        : undefined
+  const blocks = Array.isArray(packet.data.blocks) ? packet.data.blocks : undefined
+
+  if (content === undefined && blocks === undefined) {
+    return null
+  }
+
+  return {
+    ...(content !== undefined ? { content } : {}),
+    ...(blocks !== undefined ? { blocks } : {}),
+  }
+}
+
+/**
  * Open a streaming chat response using fetch + ReadableStream and parse the
  * backend's custom SSE packet envelope.
  */
 export const startChatStream = async ({
   apiBaseUrl,
+  endpointPath = CHAT_COMPLETIONS_PATH,
   sessionId,
   authToken,
   model,
@@ -63,7 +117,7 @@ export const startChatStream = async ({
       headers['X-Session-ID'] = sessionId
     }
 
-    const response = await fetch(`${apiBaseUrl}${CHAT_COMPLETIONS_PATH}`, {
+    const response = await fetch(`${apiBaseUrl}${endpointPath}`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
