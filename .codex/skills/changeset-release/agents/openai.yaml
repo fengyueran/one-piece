@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Changeset 发版'
+  short_description: '在此 pnpm monorepo 中执行 Changesets 发版与版本升级流程'
+  default_prompt: '使用 $changeset-release 帮我在这个仓库里创建 changeset、执行版本升级，并检查是否可以发布。'
