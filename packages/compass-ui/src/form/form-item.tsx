@@ -179,22 +179,31 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     }
 
     const triggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
+    const originOnChange = mergeProps.onChange as (...args: unknown[]) => void
+
+    mergeProps.onChange = (...args: unknown[]) => {
+      originOnChange?.(...args)
+
+      const newValue = defaultGetValueFromEvent('value', ...args)
+      context.setFieldValue(namePath, newValue)
+
+      if (triggers.includes('onChange') && rules.length > 0) {
+        validateRules({ triggerName: 'onChange' })
+      }
+    }
 
     triggers.forEach((trigger) => {
+      if (trigger === 'onChange') {
+        return
+      }
+
       const originTrigger = mergeProps[trigger] as (...args: unknown[]) => void
 
       mergeProps[trigger] = (...args: unknown[]) => {
         originTrigger?.(...args)
 
-        let newValue: unknown
-
-        if (trigger === 'onChange') {
-          newValue = defaultGetValueFromEvent('value', ...args)
-          context.setFieldValue(namePath, newValue)
-        }
-
         if (rules.length > 0) {
-          validateRules(trigger === 'onChange' ? { triggerName: 'onChange' } : {})
+          validateRules({ triggerName: trigger })
         }
       }
     })

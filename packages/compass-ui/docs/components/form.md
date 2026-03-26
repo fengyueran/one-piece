@@ -17,8 +17,6 @@ group:
 - 用于创建一个实体或收集信息
 - 需要对输入的数据类型进行校验时
 
-通用属性参考：[通用属性](/guide/common-props)
-
 ## 代码演示
 
 ### 基础用法
@@ -752,6 +750,7 @@ export default () => {
 | form           | 表单控制实例                     | `FormInstance`                                                                                 | -            |
 | layout         | 表单布局                         | `'horizontal' \| 'vertical' \| 'inline'`                                                       | `'vertical'` |
 | initialValues  | 表单默认值                       | `Record<string, unknown>`                                                                      | -            |
+| children       | 表单内容                         | `ReactNode`                                                                                    | -            |
 | onFinish       | 提交表单且数据验证成功后回调事件 | `(values: Record<string, unknown>) => void`                                                    | -            |
 | onFinishFailed | 提交表单且数据验证失败后回调事件 | (errorInfo: [ValidateErrorEntity](#validateerrorentity)) => void                               | -            |
 | onValuesChange | 字段值更新时触发回调事件         | `(changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => void`         | -            |
@@ -765,13 +764,12 @@ export default () => {
 | --------------- | ------------ | ----------------------------------------------------- | ------------ |
 | name            | 字段名       | `NamePath` (string \| number \| (string \| number)[]) | -            |
 | label           | 标签文本     | `ReactNode`                                           | -            |
-| rules           | 校验规则     | `Rule[]`                                              | -            |
+| rules           | 校验规则     | `RuleItem[]`                                          | -            |
 | children        | 表单控件     | `ReactElement`                                        | -            |
 | help            | 提示信息     | `ReactNode`                                           | -            |
+| initialValue    | 字段初始值   | `unknown`                                             | -            |
 | validateTrigger | 校验触发时机 | `string \| string[]`                                  | `'onChange'` |
 | dependencies    | 依赖字段     | `NamePath[]`                                          | -            |
-| className       | 自定义类名   | `string`                                              | -            |
-| style           | 自定义样式   | `React.CSSProperties`                                 | -            |
 
 ### NamePath
 
@@ -781,7 +779,7 @@ export default () => {
 type NamePath = string | number | (string | number)[]
 ```
 
-### Rule
+### RuleItem
 
 | 参数      | 说明       | 类型                       | 默认值  |
 | --------- | ---------- | -------------------------- | ------- |

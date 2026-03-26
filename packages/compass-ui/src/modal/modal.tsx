@@ -16,6 +16,8 @@ import { CloseIcon } from '../icons'
 import { useConfig } from '../config-provider'
 import defaultLocale from '../locale/zh_CN'
 
+const canUseDom = () => typeof document !== 'undefined' && !!document.body
+
 export const BaseModal = (props: ModalBaseProps) => {
   const {
     isOpen,
@@ -158,6 +160,10 @@ export const BaseModal = (props: ModalBaseProps) => {
 
 const Modal = (props: ModalBaseProps) => {
   const { children, ...res } = props
+
+  if (!canUseDom()) {
+    return null
+  }
 
   return ReactDOM.createPortal(<BaseModal {...res}>{children}</BaseModal>, document.body)
 }

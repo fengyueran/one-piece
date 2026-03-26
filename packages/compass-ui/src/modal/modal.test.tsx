@@ -295,5 +295,38 @@ describe('Modal', () => {
 
       expect(afterClose).toHaveBeenCalled()
     })
+
+    it('should not throw during server rendering without document', async () => {
+      const { renderToString } = await import('react-dom/server.node')
+      const bodySpy = jest.spyOn(document, 'body', 'get').mockReturnValue(null)
+
+      expect(() =>
+        renderToString(
+          <ThemeProvider theme={defaultTheme}>
+            <Modal isOpen>
+              <div>SSR Content</div>
+            </Modal>
+          </ThemeProvider>,
+        ),
+      ).not.toThrow()
+
+      bodySpy.mockRestore()
+    })
+
+    it('should return a noop confirm controller without document', () => {
+      const bodySpy = jest.spyOn(document, 'body', 'get').mockReturnValue(null)
+
+      expect(() => {
+        const instance = Modal.confirm({
+          title: 'SSR Confirm',
+          content: 'Content',
+        })
+
+        instance.update({ title: 'Updated' })
+        instance.destroy()
+      }).not.toThrow()
+
+      bodySpy.mockRestore()
+    })
   })
 })

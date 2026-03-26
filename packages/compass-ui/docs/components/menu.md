@@ -40,7 +40,7 @@ export default () => (
 
 ### 数据驱动
 
-通过 `items` 属性配置菜单项，支持 `eventKey`, `label`, `icon`, `disabled`, `danger` 等属性。
+通过 `items` 属性配置菜单项，支持 `key`, `label`, `icon`, `disabled`, `danger` 等属性。
 
 ```tsx
 import React from 'react'
@@ -48,16 +48,16 @@ import { Menu } from '@xinghunm/compass-ui'
 
 export default () => {
   const items = [
-    { eventKey: '1', label: 'Menu Item 1' },
+    { key: '1', label: 'Menu Item 1' },
     {
-      eventKey: '2',
+      key: '2',
       label: 'Menu Item 2 (Disabled)',
       disabled: true,
       icon: <span style={{ marginRight: 8 }}>😊</span>,
     },
-    { eventKey: '3', label: 'Menu Item 3 (Danger)', danger: true },
+    { key: '3', label: 'Menu Item 3 (Danger)', danger: true },
     {
-      eventKey: '4',
+      key: '4',
       label: (
         <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
           Link Item
@@ -271,31 +271,42 @@ export default () => (
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Menu
 
-| 参数                | 说明                    | 类型                                                    | 默认值 |
-| ------------------- | ----------------------- | ------------------------------------------------------- | ------ |
-| items               | 菜单项配置 (数据驱动)   | [ItemType[]](#menuitem-itemtype)                        | `[]`   |
-| children            | 菜单内容 (JSX)          | `ReactNode`                                             | -      |
-| selectedKeys        | 当前选中的 key (受控)   | `(string \| number)[]`                                  | -      |
-| defaultSelectedKeys | 默认选中的 key (非受控) | `(string \| number)[]`                                  | `[]`   |
-| onSelect            | 被选中时调用            | `(keys: (string \| number)[]) => void`                  | -      |
-| onClick             | 点击菜单项时调用        | `(e: React.MouseEvent, key?: string \| number) => void` | -      |
-| classNames          | 语义化类名              | `object`                                                | -      |
-| styles              | 语义化样式              | `object`                                                | -      |
+| 参数                | 说明                    | 类型                                                                                                                    | 默认值 |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------ |
+| items               | 菜单项配置 (数据驱动)   | [ItemType[]](#itemtype)                                                                                                 | `[]`   |
+| children            | 菜单内容 (JSX)          | `ReactNode`                                                                                                             | -      |
+| selectedKeys        | 当前选中的 key (受控)   | `(string \| number)[]`                                                                                                  | -      |
+| defaultSelectedKeys | 默认选中的 key (非受控) | `(string \| number)[]`                                                                                                  | `[]`   |
+| onSelect            | 被选中时调用            | `(keys: (string \| number)[]) => void`                                                                                  | -      |
+| onClick             | 点击菜单项时调用        | `(e: React.MouseEvent, key?: string \| number) => void`                                                                 | -      |
+| classNames          | 语义化类名              | `{ root?: string; item?: string; icon?: string; content?: string }`                                                     | -      |
+| styles              | 语义化样式              | `{ root?: React.CSSProperties; item?: React.CSSProperties; icon?: React.CSSProperties; content?: React.CSSProperties }` | -      |
 
-### Menu.Item (ItemType)
+### Menu.Item
 
-| 参数      | 说明                                                       | 类型                            | 默认值  |
-| --------- | ---------------------------------------------------------- | ------------------------------- | ------- |
-| eventKey  | 唯一标识。用于管理选中状态。如果不填，该项无法被高亮选中。 | `string \| number`              | -       |
-| label     | 菜单项内容                                                 | `ReactNode`                     | -       |
-| icon      | 图标元素                                                   | `ReactNode`                     | -       |
-| disabled  | 是否禁用                                                   | `boolean`                       | `false` |
-| danger    | 危险状态                                                   | `boolean`                       | `false` |
-| onClick   | 点击事件                                                   | `(e: React.MouseEvent) => void` | -       |
-| className | 自定义类名                                                 | `string`                        | -       |
-| style     | 自定义样式                                                 | `React.CSSProperties`           | -       |
+| 参数     | 说明                                                       | 类型                            | 默认值  |
+| -------- | ---------------------------------------------------------- | ------------------------------- | ------- |
+| children | 菜单项内容                                                 | `ReactNode`                     | -       |
+| eventKey | 唯一标识。用于管理选中状态。如果不填，该项无法被高亮选中。 | `string \| number`              | -       |
+| icon     | 图标元素                                                   | `ReactNode`                     | -       |
+| disabled | 是否禁用                                                   | `boolean`                       | `false` |
+| danger   | 危险状态                                                   | `boolean`                       | `false` |
+| onClick  | 点击事件                                                   | `(e: React.MouseEvent) => void` | -       |
+
+### ItemType
+
+| 参数     | 说明                                     | 类型                            | 默认值  |
+| -------- | ---------------------------------------- | ------------------------------- | ------- |
+| key      | 唯一标识。用于数据驱动菜单项的选中管理。 | `string \| number`              | -       |
+| label    | 菜单项内容                               | `ReactNode`                     | -       |
+| icon     | 图标元素                                 | `ReactNode`                     | -       |
+| disabled | 是否禁用                                 | `boolean`                       | `false` |
+| danger   | 危险状态                                 | `boolean`                       | `false` |
+| onClick  | 点击事件                                 | `(e: React.MouseEvent) => void` | -       |
 
 ## 主题变量 (Design Token)
 

@@ -29,6 +29,13 @@ export interface ModalFuncProps extends Omit<ModalBaseProps, 'isOpen' | 'childre
 }
 
 const confirmDialog = (config: ModalFuncProps) => {
+  if (typeof document === 'undefined' || !document.body) {
+    return {
+      destroy: () => {},
+      update: () => {},
+    }
+  }
+
   const div = document.createElement('div')
   document.body.appendChild(div)
   const root = createRoot(div)

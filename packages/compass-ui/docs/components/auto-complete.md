@@ -532,6 +532,8 @@ export default () => {
 | onChange                 | 选中 option，或 input 的 value 变化时，调用此函数                                                                                                | `(value: string) => void`                                                  | -       |
 | onFocus                  | 获得焦点时的回调                                                                                                                                 | `React.FocusEventHandler<HTMLInputElement>`                                | -       |
 | onBlur                   | 失去焦点时的回调                                                                                                                                 | `React.FocusEventHandler<HTMLInputElement>`                                | -       |
+| classNames               | 语义化类名                                                                                                                                       | `{ root, input, dropdown, option }`                                        | -       |
+| styles                   | 语义化样式                                                                                                                                       | `{ root, input, dropdown, option }`                                        | -       |
 
 ## 键盘交互
 
@@ -549,7 +551,7 @@ export default () => {
 | 参数          | 说明                            | 类型              | 默认值  |
 | ------------- | ------------------------------- | ----------------- | ------- |
 | value         | 选项的值                        | `string`          | -       |
-| label         | 选项的显示内容                  | `React.ReactNode` | -       |
+| label         | 选项的显示内容（可选）          | `React.ReactNode` | -       |
 | disabled      | 是否禁用                        | `boolean`         | `false` |
 | [key: string] | 允许包含任意其他自定义属性/字段 | `unknown`         | -       |
 

@@ -50,11 +50,11 @@ pnpm test -- --watch
 # 代码检查
 pnpm lint
 
-# 启动 Storybook
-pnpm storybook
+# 启动文档站
+pnpm docs:dev
 
-# 构建 Storybook
-pnpm build-storybook
+# 构建文档站
+pnpm docs:build
 
 # 清理构建产物
 pnpm clean
@@ -74,6 +74,8 @@ compass-ui/
 │   ├── README.md                 # 文档导航
 │   ├── API.md                    # API 参考文档
 │   ├── DEVELOPMENT.md            # 开发指南（本文件）
+│   ├── components/               # 组件文档
+│   ├── guide/                    # 使用指南
 │   └── CONTRIBUTING.md           # 贡献指南
 ├── dist/                         # 构建产物（自动生成）
 ├── coverage/                     # 测试覆盖率报告
@@ -81,7 +83,6 @@ compass-ui/
 ├── .cursor/                      # Cursor 配置
 │   └── rules/
 │       └── index.mdc             # 开发规则文档
-├── .storybook/                   # Storybook 配置
 ├── jest.config.js                # Jest 配置
 ├── jest.setup.js                 # Jest 设置文件
 ├── tsconfig.json                 # TypeScript 配置
@@ -108,8 +109,8 @@ cd src/my-component
 touch index.ts
 touch my-component.tsx
 touch my-component.test.tsx
-touch my-component.stories.tsx
 touch types.ts  # 如果需要复杂类型定义
+touch docs/components/my-component.md
 ```
 
 #### 步骤 3：导出组件
@@ -163,286 +164,55 @@ pnpm test -- -u
 
 ## 文档编写
 
-### Storybook 文档规范
+### 组件文档规范
 
 #### 1. 基本要求
 
-**每个组件必须有 Storybook stories**，文件命名：`component-name.stories.tsx`（kebab-case）
+每个公开组件都应维护 `docs/components/[component].md` 文档页面，文件名使用 kebab-case。
 
-#### 2. 必须包含的内容
+#### 2. 页面结构
 
-##### 2.1 组件描述与主题 Token 文档
+组件文档默认参考 `docs/components/button.md`，并保持以下结构顺序：
 
-在 `meta` 对象的 `parameters.docs.description.component` 中添加：
+1. YAML frontmatter
+2. `# <组件名> <中文名>`
+3. 一句简短介绍
+4. `## 何时使用`
+5. `## 代码演示`
+6. `## API`
+7. `通用属性参考：[通用属性](/guide/common-props)`
+8. 组件 token 或全局 token 章节（仅组件确实暴露时添加）
 
-- 组件简介和使用场景
-- **组件 Token 文档**（折叠面板）
-- **全局 Token 文档**（折叠面板）
+#### 3. 示例要求
 
-**示例：**
+- 使用真实、可运行的示例代码
+- `## 代码演示` 下优先覆盖基础用法和关键 props
+- 不写 Storybook、argTypes、内部实现文件等说明
+- 仅展示公开 API，避免未导出的内部 props
 
-```typescript
-const meta: Meta<typeof Steps> = {
-  title: 'Components/Steps',
-  component: Steps,
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component: `
-步骤条组件，用于引导用户按照流程完成任务。
+#### 4. API 要求
 
-## 何时使用
+- 表头顺序优先保持：参数 / 说明 / 类型 / 默认值
+- 已属于通用属性的字段，例如 `className`、`style`，不要重复写入组件 API 表
+- 与主题相关的变量，仅在组件真实暴露 token 时补充
 
-- 当任务复杂或者存在先后关系时，将其分解成一系列步骤，从而简化任务。
+#### 5. 参考实现
 
-## 主题变量 (Design Token)
+优先对齐以下文档：
 
-<details>
-<summary>组件 Token</summary>
+- `docs/components/button.md`
+- `docs/components/select.md`
+- `docs/components/modal.md`
 
-| Token Name | Description |
-| --- | --- |
-| \`components.steps.descriptionColor\` | 描述文字颜色 |
-| \`components.steps.titleColor\` | 标题文字颜色 |
-| \`components.steps.iconSize\` | 图标大小 |
-| \`components.steps.dotSize\` | 点状步骤条大小 |
+#### 6. 检查清单
 
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| Token Name | Description |
-| --- | --- |
-| \`colors.borderSecondary\` | 次级边框颜色 |
-| \`colors.primary\` | 主色调 |
-| \`spacing.md\` | 中等间距 |
-
-</details>
-        `,
-      },
-    },
-  },
-}
-```
-
-##### 2.2 可交互的 Controls
-
-**所有属性必须配置 argTypes**，确保在 Storybook UI 中可以动态调整：
-
-```typescript
-argTypes: {
-  variant: {
-    control: 'select',
-    options: ['primary', 'default', 'dashed', 'text', 'link'],
-    description: '按钮样式变体',
-    table: {
-      type: { summary: "'primary' | 'default' | 'dashed' | 'text' | 'link'" },
-      defaultValue: { summary: "'default'" },
-    },
-  },
-  size: {
-    control: 'select',
-    options: ['small', 'default', 'large'],
-    description: '按钮尺寸',
-  },
-  disabled: {
-    control: 'boolean',
-    description: '是否禁用',
-  },
-  // ... 其他属性
-}
-```
-
-**设置默认值**（可选，但推荐）：
-
-```typescript
-args: {
-  variant: 'default',
-  size: 'default',
-  disabled: false,
-}
-```
-
-##### 2.3 所有属性的 Story 示例
-
-**每个重要的 prop 都应该有对应的 Story**：
-
-```typescript
-// 基础用法
-export const Basic: Story = {
-  args: {
-    children: 'Button',
-  },
-}
-
-// 不同 variant
-export const Primary: Story = {
-  args: {
-    variant: 'primary',
-    children: 'Primary Button',
-  },
-}
-
-export const Dashed: Story = {
-  args: {
-    variant: 'dashed',
-    children: 'Dashed Button',
-  },
-}
-
-// 不同 size
-export const Small: Story = {
-  args: {
-    size: 'small',
-    children: 'Small Button',
-  },
-}
-
-// 不同状态
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    children: 'Disabled Button',
-  },
-}
-
-export const Loading: Story = {
-  args: {
-    loading: true,
-    children: 'Loading Button',
-  },
-}
-```
-
-##### 2.4 交互示例
-
-对于需要状态管理的交互，使用 `render` 函数：
-
-```typescript
-export const Clickable: Story = {
-  render: () => {
-    const [current, setCurrent] = React.useState(0)
-    return (
-      <Steps
-        current={current}
-        onChange={setCurrent}
-        items={[
-          { title: '步骤 1', description: '可点击' },
-          { title: '步骤 2', description: '可点击' },
-          { title: '步骤 3', description: '可点击' },
-        ]}
-      />
-    )
-  },
-}
-```
-
-##### 2.5 自定义主题示例
-
-**每个组件必须包含 CustomTheme Story**，展示如何使用 `ThemeProvider` 自定义主题：
-
-```typescript
-export const CustomTheme: Story = {
-  render: (args) => (
-    <ThemeProvider
-      theme={{
-        // 全局 Token
-        colors: {
-          primary: '#722ed1',
-          primaryHover: '#9254de',
-          primaryActive: '#531dab',
-        },
-        // 组件 Token
-        components: {
-          button: {
-            borderRadius: {
-              md: '20px',
-            },
-            padding: {
-              md: '0 30px',
-            },
-            fontSize: {
-              md: '16px',
-            },
-          },
-        },
-      }}
-    >
-      <Button {...args} />
-    </ThemeProvider>
-  ),
-  args: {
-    children: 'Custom Theme Button',
-    variant: 'primary',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '**自定义主题** - 通过 ThemeProvider 覆盖全局和组件级别的主题变量',
-      },
-    },
-  },
-}
-```
-
-#### 3. Story 最佳实践
-
-##### 3.1 Story 命名
-
-- 使用 PascalCase
-- 名称清晰描述功能（如 `Primary`, `WithIcon`, `CustomTheme`）
-
-##### 3.2 Story 描述
-
-使用 `parameters.docs.description.story` 添加说明：
-
-```typescript
-export const Primary: Story = {
-  args: { variant: 'primary', children: 'Primary Button' },
-  parameters: {
-    docs: {
-      description: {
-        story: '**主要按钮** - 用于主要操作，具有最高视觉优先级',
-      },
-    },
-  },
-}
-```
-
-##### 3.3 布局控制
-
-根据需要调整 Story 布局：
-
-```typescript
-export const Block: Story = {
-  args: {
-    block: true,
-    children: 'Block Button',
-  },
-  parameters: {
-    layout: 'padded', // 'centered' | 'padded' | 'fullscreen'
-  },
-}
-```
-
-#### 4. 完整示例
-
-参考 `src/steps/steps.stories.tsx` 和 `src/button/button.stories.tsx` 作为标准模板。
-
-#### 5. 检查清单
-
-提交 Story 前确保：
-
-- [ ] 包含组件描述和使用场景
-- [ ] 包含组件 Token 和全局 Token 文档（折叠面板）
-- [ ] 所有 props 都配置了 argTypes
-- [ ] 每个重要 prop 都有对应的 Story
-- [ ] 包含交互示例（如果适用）
-- [ ] **包含 CustomTheme Story**
-- [ ] Story 描述清晰
-- [ ] 代码格式正确
+- [ ] frontmatter、标题、简介齐全
+- [ ] 包含 `## 何时使用`
+- [ ] 包含 `## 代码演示`
+- [ ] 包含 `## API`
+- [ ] `## API` 下第一行是通用属性引用
+- [ ] 示例代码与当前公开 API 一致
+- [ ] 没有提到 Storybook 或内部实现
 
 ## 样式开发
 
@@ -536,7 +306,7 @@ pnpm build
 - [ ] 测试覆盖率达标 (`pnpm test -- --coverage`)
 - [ ] 代码检查通过 (`pnpm lint`)
 - [ ] 构建成功 (`pnpm build`)
-- [ ] Storybook 正常 (`pnpm storybook`)
+- [ ] 文档站可构建 (`pnpm docs:build`)
 - [ ] 更新 CHANGELOG.md
 - [ ] 更新版本号 (`package.json`)
 
@@ -574,10 +344,10 @@ pnpm build
 
 - `index.ts`: 导出入口
 - `[component].tsx`: 组件实现
-- `[component].styles.ts`: 样式定义 (Emotion)
 - `types.ts`: 类型定义
-- `[component].stories.tsx`: Storybook 文档
 - `[component].test.tsx`: 单元测试
+- `[component].styles.ts`: 样式定义 (Emotion，可按需创建)
+- `docs/components/[component].md`: 组件文档
 
 ## 代码审查清单
 
@@ -587,7 +357,7 @@ pnpm build
 - [ ] 所有 props 都有 JSDoc 注释
 - [ ] 单元测试已编写且通过
 - [ ] 测试覆盖率达标（≥80%）
-- [ ] Storybook stories 已创建
+- [ ] 组件文档已创建并通过自检
 - [ ] 代码通过 lint 检查
 - [ ] 支持可访问性（A11y）
 - [ ] 支持自定义 className 和 style
@@ -597,13 +367,13 @@ pnpm build
 
 ## 调试技巧
 
-### 使用 Storybook 调试
+### 使用文档站调试
 
 ```bash
-pnpm storybook
+pnpm docs:dev
 ```
 
-在浏览器中打开 http://localhost:6006 进行可视化调试。
+在浏览器中打开本地 Dumi 站点进行可视化调试。
 
 ### 使用 Jest 调试
 

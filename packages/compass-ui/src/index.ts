@@ -49,6 +49,9 @@ export type { DatePickerProps, DateRangePickerProps } from './date-picker'
 export { default as ConfigProvider } from './config-provider'
 export type { ConfigProviderProps } from './config-provider'
 
+export { ThemeProvider, useTheme } from './theme'
+export type { Theme, ThemeProviderProps, ThemeMode, DeepPartial } from './theme'
+
 export { InputNumber } from './input-number'
 export type { InputNumberProps } from './input-number'
 

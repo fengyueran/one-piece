@@ -367,24 +367,30 @@ export default () => {
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### TreeSelect
 
-| 参数                    | 说明               | 类型                                                       | 默认值  |
-| ----------------------- | ------------------ | ---------------------------------------------------------- | ------- |
-| value                   | 指定当前选中的条目 | `SelectValue`                                              | -       |
-| defaultValue            | 指定默认选中的条目 | `SelectValue`                                              | -       |
-| treeData                | treeNodes 数据     | `DataNode[]`                                               | `[]`    |
-| onChange                | 选中 option 时调用 | `(value: SelectValue, node: DataNode, extra: any) => void` | -       |
-| disabled                | 是否禁用           | `boolean`                                                  | `false` |
-| multiple                | 是否支持多选       | `boolean`                                                  | `false` |
-| showSearch              | 是否支持搜索       | `boolean`                                                  | `false` |
-| treeCheckable           | 是否显示 Checkbox  | `boolean`                                                  | `false` |
-| treeSelectable          | 是否可选中         | `boolean`                                                  | `true`  |
-| onlyLeafSelect          | 只允许选择叶子节点 | `boolean`                                                  | `false` |
-| treeDefaultExpandAll    | 默认展开所有树节点 | `boolean`                                                  | `false` |
-| treeDefaultExpandedKeys | 默认展开的树节点   | `string[]`                                                 | -       |
-| placeholder             | 选择框默认文字     | `string`                                                   | -       |
-| className               | 自定义类名         | `string`                                                   | -       |
-| style                   | 自定义样式         | `CSSProperties`                                            | -       |
-| dropdownStyle           | 下拉菜单的样式     | `CSSProperties`                                            | -       |
-| dropdownClassName       | 下拉菜单的类名     | `string`                                                   | -       |
+| 参数                    | 说明               | 类型                                                                             | 默认值     |
+| ----------------------- | ------------------ | -------------------------------------------------------------------------------- | ---------- |
+| value                   | 指定当前选中的条目 | `SelectValue`                                                                    | -          |
+| defaultValue            | 指定默认选中的条目 | `SelectValue`                                                                    | -          |
+| treeData                | treeNodes 数据     | `DataNode[]`                                                                     | `[]`       |
+| onChange                | 选中 option 时调用 | `(value: SelectValue, label: ReactNode \| ReactNode[], extra?: unknown) => void` | -          |
+| disabled                | 是否禁用           | `boolean`                                                                        | `false`    |
+| allowClear              | 支持清除           | `boolean`                                                                        | `false`    |
+| multiple                | 是否支持多选       | `boolean`                                                                        | `false`    |
+| showSearch              | 是否支持搜索       | `boolean`                                                                        | `false`    |
+| size                    | 选择框大小         | `'small' \| 'medium' \| 'large'`                                                 | `'medium'` |
+| status                  | 校验状态           | `'error' \| 'warning'`                                                           | -          |
+| treeCheckable           | 是否显示 Checkbox  | `boolean`                                                                        | `false`    |
+| treeSelectable          | 是否可选中         | `boolean`                                                                        | `true`     |
+| onlyLeafSelect          | 只允许选择叶子节点 | `boolean`                                                                        | `false`    |
+| treeDefaultExpandAll    | 默认展开所有树节点 | `boolean`                                                                        | `false`    |
+| treeDefaultExpandedKeys | 默认展开的树节点   | `(string \| number)[]`                                                           | -          |
+| placeholder             | 选择框默认文字     | `string`                                                                         | -          |
+| dropdownStyle           | 下拉菜单的样式     | `React.CSSProperties`                                                            | -          |
+| dropdownClassName       | 下拉菜单的类名     | `string`                                                                         | -          |
+| treeSelectedIcon        | 选中树节点的图标   | `ReactNode`                                                                      | -          |
+| titleRender             | 自定义节点标题渲染 | `(node: DataNode, searchValue: string) => ReactNode`                             | -          |
+| switcherIcon            | 自定义展开图标     | `ReactNode \| ((props: { expanded: boolean }) => ReactNode)`                     | -          |

@@ -175,32 +175,61 @@ export default () => (
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 组件提供了一些静态方法，使用方式和参数如下：
 
-- `message.success(content, [duration], onClose)`
-- `message.error(content, [duration], onClose)`
-- `message.info(content, [duration], onClose)`
-- `message.warning(content, [duration], onClose)`
-- `message.loading(content, [duration], onClose)`
+- `Message.success(content, [duration], onClose)`
+- `Message.error(content, [duration], onClose)`
+- `Message.info(content, [duration], onClose)`
+- `Message.warning(content, [duration], onClose)`
+- `Message.loading(content, [duration], onClose)`
+- `Message.destroy(key?)`
 
-也可以对象的形式传递参数：
+也可以对象的形式传递参数，或通过 Hook 获取实例：
 
-- `message.open(config)`
-- `message.success(config)`
-- `message.error(config)`
-- `message.info(config)`
-- `message.warning(config)`
-- `message.loading(config)`
+- `Message.open(config)`
+- `Message.success(config)`
+- `Message.error(config)`
+- `Message.info(config)`
+- `Message.warning(config)`
+- `Message.loading(config)`
+- `Message.useMessage()`
 
-| 参数      | 说明                                          | 类型                                                       | 默认值   |
-| --------- | --------------------------------------------- | ---------------------------------------------------------- | -------- |
-| content   | 消息内容                                      | `ReactNode`                                                | -        |
-| duration  | 自动关闭的延时，单位秒。设为 0 时不自动关闭。 | `number`                                                   | `3`      |
-| type      | 消息类型                                      | `'info' \| 'success' \| 'error' \| 'warning' \| 'loading'` | `'info'` |
-| onClose   | 关闭时触发的回调函数                          | `() => void`                                               | -        |
-| icon      | 自定义图标                                    | `ReactNode`                                                | -        |
-| className | 自定义 CSS 类名                               | `string`                                                   | -        |
-| style     | 自定义 CSS 样式                               | `CSSProperties`                                            | -        |
+| 参数     | 说明                                          | 类型                                                       | 默认值   |
+| -------- | --------------------------------------------- | ---------------------------------------------------------- | -------- |
+| key      | 消息唯一标识                                  | `string`                                                   | -        |
+| content  | 消息内容                                      | `ReactNode`                                                | -        |
+| duration | 自动关闭的延时，单位秒。设为 0 时不自动关闭。 | `number`                                                   | `3`      |
+| type     | 消息类型                                      | `'info' \| 'success' \| 'error' \| 'warning' \| 'loading'` | `'info'` |
+| onClose  | 关闭时触发的回调函数                          | `() => void`                                               | -        |
+| icon     | 自定义图标                                    | `ReactNode`                                                | -        |
+
+### useMessage
+
+`useMessage` 会返回一组消息实例方法和占位节点，适合在需要继承主题或国际化上下文时使用。
+
+```tsx
+import React from 'react'
+import { Message } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [messageApi, contextHolder] = Message.useMessage()
+
+  return (
+    <div>
+      {contextHolder}
+      <button
+        onClick={() => {
+          messageApi.success({ content: 'Saved successfully' })
+        }}
+      >
+        Show Message
+      </button>
+    </div>
+  )
+}
+```
 
 ## 主题变量 (Design Token)
 

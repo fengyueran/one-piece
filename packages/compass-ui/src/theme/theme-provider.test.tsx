@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { useTheme } from '@emotion/react'
+import * as CompassUI from '../index'
 import ThemeProvider from './theme-provider'
 import { defaultTheme } from './default-theme'
 import { Theme } from './types'
@@ -38,6 +39,11 @@ describe('ThemeProvider', () => {
       expect(getByTestId('primary-color')).toHaveTextContent(defaultTheme.colors.primary)
       expect(getByTestId('spacing-md')).toHaveTextContent(String(defaultTheme.spacing.md))
       expect(getByTestId('font-size-sm')).toHaveTextContent(String(defaultTheme.fontSize.sm))
+    })
+
+    it('should expose ThemeProvider and useTheme from the root entry', () => {
+      expect(CompassUI.ThemeProvider).toBe(ThemeProvider)
+      expect(typeof CompassUI.useTheme).toBe('function')
     })
   })
 
