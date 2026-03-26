@@ -172,6 +172,68 @@ describe('ChatThread custom block renderer', () => {
     jest.useRealTimers()
   })
 
+  it('keeps typewriter reveal when streaming markdown blocks are present', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content: '信息，了解一下',
+        blocks: [{ type: 'markdown', text: '信息，了解一下' }],
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(36)
+    })
+
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent('信')
+    expect(screen.getByTestId('chat-message-content')).not.toHaveTextContent('信息，了解一下')
+
+    jest.useRealTimers()
+  })
+
   it('uses configurable localized labels for message roles and status text', () => {
     const store = createChatStore()
     const transport: ChatTransport = {

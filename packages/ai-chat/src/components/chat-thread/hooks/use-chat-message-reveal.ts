@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import type { ChatMessage } from '../../../types'
 import {
   getNextDisplayedUnitCount,
@@ -15,6 +15,109 @@ export interface UseChatMessageRevealResult {
   freshContent: string
 }
 
+interface RevealState {
+  batchedTargetUnitCount: number
+  displayedUnitCount: number
+  isFreshBlockActive: boolean
+}
+
+type RevealAction =
+  | {
+      type: 'reset-message'
+      isAssistantStreaming: boolean
+      targetUnitCount: number
+    }
+  | {
+      type: 'commit-batched-target'
+      isAssistantStreaming: boolean
+      nextTargetUnitCount: number
+      role: ChatMessage['role']
+    }
+  | {
+      type: 'set-fresh-block-active'
+      isActive: boolean
+    }
+  | {
+      type: 'sync-displayed-target'
+    }
+  | {
+      type: 'advance-reveal'
+      isAssistantStreaming: boolean
+    }
+
+const createRevealState = ({
+  isAssistantStreaming,
+  targetUnitCount,
+}: {
+  isAssistantStreaming: boolean
+  targetUnitCount: number
+}): RevealState => {
+  const initialDisplayedUnitCount = isAssistantStreaming ? 0 : targetUnitCount
+
+  return {
+    batchedTargetUnitCount: initialDisplayedUnitCount,
+    displayedUnitCount: initialDisplayedUnitCount,
+    isFreshBlockActive: false,
+  }
+}
+
+const revealReducer = (state: RevealState, action: RevealAction): RevealState => {
+  switch (action.type) {
+    case 'reset-message':
+      return createRevealState(action)
+    case 'commit-batched-target': {
+      const nextDisplayedUnitCount =
+        action.role === 'assistant'
+          ? getNextDisplayedUnitCount({
+              currentUnits: state.displayedUnitCount,
+              targetUnits: action.nextTargetUnitCount,
+              isStreaming: action.isAssistantStreaming,
+              minimumStep: state.displayedUnitCount > 0 && action.isAssistantStreaming ? 2 : 1,
+            })
+          : action.nextTargetUnitCount
+
+      return {
+        ...state,
+        batchedTargetUnitCount: action.nextTargetUnitCount,
+        displayedUnitCount: nextDisplayedUnitCount,
+      }
+    }
+    case 'set-fresh-block-active':
+      return state.isFreshBlockActive === action.isActive
+        ? state
+        : {
+            ...state,
+            isFreshBlockActive: action.isActive,
+          }
+    case 'sync-displayed-target':
+      return state.displayedUnitCount === state.batchedTargetUnitCount
+        ? state
+        : {
+            ...state,
+            displayedUnitCount: state.batchedTargetUnitCount,
+          }
+    case 'advance-reveal': {
+      if (state.displayedUnitCount >= state.batchedTargetUnitCount) {
+        return state
+      }
+
+      return {
+        ...state,
+        displayedUnitCount: Math.min(
+          state.batchedTargetUnitCount,
+          getNextDisplayedUnitCount({
+            currentUnits: state.displayedUnitCount,
+            targetUnits: state.batchedTargetUnitCount,
+            isStreaming: action.isAssistantStreaming,
+          }),
+        ),
+      }
+    }
+    default:
+      return state
+  }
+}
+
 export const useChatMessageReveal = (message: ChatMessage): UseChatMessageRevealResult => {
   const isAssistantStreaming = message.role === 'assistant' && message.status === 'streaming'
   const targetContent = message.content || ''
@@ -22,46 +125,53 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
   const pendingTargetUnitCountRef = useRef(targetUnits.length)
   const batchedTargetUnitCountRef = useRef(isAssistantStreaming ? 0 : targetUnits.length)
   const inputBatchTimeoutRef = useRef<number | null>(null)
-  const [batchedTargetUnitCount, setBatchedTargetUnitCount] = useState(() =>
-    isAssistantStreaming ? 0 : targetUnits.length,
-  )
   const lastDisplayedBlockCountRef = useRef(0)
-  const [displayedUnitCount, setDisplayedUnitCount] = useState(() =>
-    isAssistantStreaming ? 0 : targetUnits.length,
+  const previousMessageIdRef = useRef(message.id)
+  const [state, dispatch] = useReducer(
+    revealReducer,
+    {
+      isAssistantStreaming,
+      targetUnitCount: targetUnits.length,
+    },
+    createRevealState,
   )
-  const [isFreshBlockActive, setIsFreshBlockActive] = useState(false)
+
+  const { batchedTargetUnitCount, displayedUnitCount, isFreshBlockActive } = state
 
   const commitBatchedTargetUnitCount = useCallback(
     (nextTargetUnitCount: number) => {
       batchedTargetUnitCountRef.current = nextTargetUnitCount
-      setBatchedTargetUnitCount(nextTargetUnitCount)
-      setDisplayedUnitCount((current) =>
-        message.role === 'assistant'
-          ? getNextDisplayedUnitCount({
-              currentUnits: current,
-              targetUnits: nextTargetUnitCount,
-              isStreaming: isAssistantStreaming,
-              minimumStep: current > 0 && isAssistantStreaming ? 2 : 1,
-            })
-          : nextTargetUnitCount,
-      )
+      dispatch({
+        type: 'commit-batched-target',
+        isAssistantStreaming,
+        nextTargetUnitCount,
+        role: message.role,
+      })
     },
     [isAssistantStreaming, message.role],
   )
 
   useEffect(() => {
+    if (previousMessageIdRef.current === message.id) {
+      return
+    }
+
+    previousMessageIdRef.current = message.id
     pendingTargetUnitCountRef.current = targetUnits.length
     batchedTargetUnitCountRef.current = isAssistantStreaming ? 0 : targetUnits.length
-    setBatchedTargetUnitCount(batchedTargetUnitCountRef.current)
-    setDisplayedUnitCount(isAssistantStreaming ? 0 : targetUnits.length)
     lastDisplayedBlockCountRef.current = 0
 
     if (inputBatchTimeoutRef.current !== null) {
       window.clearTimeout(inputBatchTimeoutRef.current)
       inputBatchTimeoutRef.current = null
     }
-    setIsFreshBlockActive(false)
-  }, [message.id])
+
+    dispatch({
+      type: 'reset-message',
+      isAssistantStreaming,
+      targetUnitCount: targetUnits.length,
+    })
+  }, [isAssistantStreaming, message.id, targetUnits.length])
 
   useEffect(() => {
     pendingTargetUnitCountRef.current = targetUnits.length
@@ -120,10 +230,10 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
       return
     }
 
-    setIsFreshBlockActive(true)
+    dispatch({ type: 'set-fresh-block-active', isActive: true })
 
     const timer = window.setTimeout(() => {
-      setIsFreshBlockActive(false)
+      dispatch({ type: 'set-fresh-block-active', isActive: false })
     }, STREAM_FRESH_BLOCK_SETTLE_MS)
 
     return () => {
@@ -139,27 +249,13 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
 
     if (!shouldAnimateReveal) {
       if (displayedUnitCount !== batchedTargetUnitCount) {
-        setDisplayedUnitCount(batchedTargetUnitCount)
+        dispatch({ type: 'sync-displayed-target' })
       }
       return
     }
 
     const timer = window.setInterval(() => {
-      setDisplayedUnitCount((current) => {
-        if (current >= batchedTargetUnitCount) {
-          window.clearInterval(timer)
-          return current
-        }
-
-        return Math.min(
-          batchedTargetUnitCount,
-          getNextDisplayedUnitCount({
-            currentUnits: current,
-            targetUnits: batchedTargetUnitCount,
-            isStreaming: isAssistantStreaming,
-          }),
-        )
-      })
+      dispatch({ type: 'advance-reveal', isAssistantStreaming })
     }, STREAM_REVEAL_TICK_MS)
 
     return () => {
@@ -170,7 +266,7 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
   const settledContent = isFreshBlockActive
     ? contentBlocks.slice(0, -1).join('\n\n')
     : displayedContent
-  const freshContent = isFreshBlockActive ? (contentBlocks.at(-1) ?? '') : ''
+  const freshContent = isFreshBlockActive ? (contentBlocks[contentBlocks.length - 1] ?? '') : ''
 
   return {
     isAssistantStreaming,

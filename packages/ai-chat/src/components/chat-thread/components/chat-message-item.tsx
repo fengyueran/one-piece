@@ -351,11 +351,16 @@ const ChatMessageItemView = ({
   const attachments = message.attachments ?? []
   const blocks = message.blocks ?? []
   const hasStructuredBlocks = blocks.length > 0
+  const hasMarkdownOnlyBlocks =
+    hasStructuredBlocks && blocks.every((block) => block.type === 'markdown')
   const hasTextContent = Boolean(settledContent || freshContent || displayedContent)
+  const shouldRenderStructuredBlocks =
+    hasStructuredBlocks && !(isAssistantStreaming && hasMarkdownOnlyBlocks && hasTextContent)
   const isPlanMode = mode === 'plan'
   const canSubmitConfirmation = isPlanMode && typeof onConfirmationSubmit === 'function'
   const canSubmitQuestionnaire = isPlanMode && typeof onQuestionnaireSubmit === 'function'
-  const shouldShowStreamingCaret = isAssistantStreaming && (!hasStructuredBlocks || hasTextContent)
+  const shouldShowStreamingCaret =
+    isAssistantStreaming && (!shouldRenderStructuredBlocks || hasTextContent)
 
   const renderChatMessageBlock = (block: ChatMessageBlock, index: number) => {
     switch (block.type) {
@@ -481,9 +486,9 @@ const ChatMessageItemView = ({
           ) : null}
         </Header>
         <Content data-testid="chat-message-content">
-          {hasStructuredBlocks || hasTextContent ? (
+          {shouldRenderStructuredBlocks || hasTextContent ? (
             <ContentStack data-testid="chat-message-body-stack">
-              {hasStructuredBlocks
+              {shouldRenderStructuredBlocks
                 ? blocks.map((block, index) => (
                     <ContentSegment
                       key={`${block.type}-${index}`}
