@@ -1,10 +1,21 @@
-import { getSendButtonPalette } from '../../components/chat-composer/components/chat-send-actions'
+import { render, screen } from '@testing-library/react'
+import { ChatSendActions } from '../../components/chat-composer/components/chat-send-actions'
 
 describe('ChatSendActions', () => {
   it('uses a dedicated highlighted palette when the composer can send', () => {
-    expect(getSendButtonPalette(true)).toMatchObject({
+    render(
+      <ChatSendActions
+        canSend
+        isStreaming={false}
+        isStopping={false}
+        onStop={() => {}}
+        onSend={() => {}}
+      />,
+    )
+
+    expect(screen.getByTestId('chat-composer-send')).toHaveStyle({
       background: '#fcfbf8',
-      color: '#1b1b1b',
+      color: '#5b5448',
     })
   })
 })

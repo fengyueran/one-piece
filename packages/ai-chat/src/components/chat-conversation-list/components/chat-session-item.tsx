@@ -26,6 +26,8 @@ export const ChatSessionItem = memo(
   },
 )
 
+ChatSessionItem.displayName = 'ChatSessionItem'
+
 const SessionMeta = styled.div`
   display: flex;
   align-items: center;

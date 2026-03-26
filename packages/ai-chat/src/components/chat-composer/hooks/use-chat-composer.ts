@@ -166,24 +166,27 @@ export const useChatComposer = () => {
     }
   }
 
-  const clearStopRequest = (sessionId?: string) => {
+  const clearStopRequest = useCallback((sessionId?: string) => {
     if (!stopRequestRef.current) return
     if (sessionId && stopRequestRef.current.sessionId !== sessionId) return
     clearStopTimeout(sessionId)
     stopRequestRef.current = null
-  }
+  }, [])
 
-  const finalizeStop = (sessionId: string) => {
-    if (stopRequestRef.current?.sessionId === sessionId) {
-      if (stopRequestRef.current.finalized) return
-      stopRequestRef.current.finalized = true
-    }
-    clearStopTimeout(sessionId)
-    abortControllerRef.current?.abort()
-    abortControllerRef.current = null
-    finalizeStoppedStreamingMessage(sessionId)
-    clearStopRequest(sessionId)
-  }
+  const finalizeStop = useCallback(
+    (sessionId: string) => {
+      if (stopRequestRef.current?.sessionId === sessionId) {
+        if (stopRequestRef.current.finalized) return
+        stopRequestRef.current.finalized = true
+      }
+      clearStopTimeout(sessionId)
+      abortControllerRef.current?.abort()
+      abortControllerRef.current = null
+      finalizeStoppedStreamingMessage(sessionId)
+      clearStopRequest(sessionId)
+    },
+    [clearStopRequest, finalizeStoppedStreamingMessage],
+  )
 
   // -- Core stream runner ----------------------------------------------------
 
@@ -279,6 +282,9 @@ export const useChatComposer = () => {
     [
       transport,
       clearSessionError,
+      clearStopRequest,
+      finalizeStop,
+      labels,
       startStreamingMessage,
       replaceSessionId,
       patchStreamingMessage,

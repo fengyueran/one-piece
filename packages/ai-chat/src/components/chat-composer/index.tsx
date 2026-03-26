@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import styled from '@emotion/styled'
 import type { ChatAgentMode, ChatImageAttachment, ChatModel } from '../../types'
 import { useChatContext } from '../../context/use-chat-context'
@@ -198,13 +198,14 @@ export const ChatComposerView = ({
 export const ChatComposer = () => {
   const { labels, sendRef, retryRef, enableImageAttachments } = useChatContext()
   const { state, actions } = useChatComposer()
+  const { send, retry } = actions
 
-  // Keep sendRef current so ChatThread can trigger sends without importing ChatComposer.
-  // Direct ref mutation in render is valid — refs are exempt from React's side-effect rule.
-  sendRef.current = actions.send
-  retryRef.current = async () => {
-    actions.retry()
-  }
+  useEffect(() => {
+    sendRef.current = send
+    retryRef.current = async () => {
+      retry()
+    }
+  }, [retry, retryRef, send, sendRef])
 
   const modeLabels = {
     ask: labels.modeLabelAsk,
@@ -237,7 +238,7 @@ export const ChatComposer = () => {
       onSelectedModeChange={actions.setSelectedMode}
       onReloadModels={actions.reloadModels}
       onStop={actions.stop}
-      onSend={actions.send}
+      onSend={send}
     />
   )
 }

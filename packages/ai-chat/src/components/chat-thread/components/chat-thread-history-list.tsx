@@ -61,6 +61,8 @@ export const ChatThreadHistoryList = memo(
   ),
 )
 
+ChatThreadHistoryList.displayName = 'ChatThreadHistoryList'
+
 const HistoryGroup = styled.div`
   display: contents;
 `

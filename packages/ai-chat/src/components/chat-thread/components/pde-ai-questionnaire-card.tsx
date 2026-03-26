@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import styled from '@emotion/styled'
 import type {
   PlanQuestion,
@@ -151,7 +151,7 @@ const normalizeQuestionAnswer = (
   }
 }
 
-export const PDEAIQuestionnaireCard = ({
+const PDEAIQuestionnaireCardInner = ({
   questionnaire,
   interactive = false,
   onSubmit,
@@ -160,11 +160,6 @@ export const PDEAIQuestionnaireCard = ({
     createInitialAnswers(questionnaire),
   )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  useEffect(() => {
-    setAnswers(createInitialAnswers(questionnaire))
-    setErrorMessage(null)
-  }, [questionnaire.answers, questionnaire.questionnaireId, questionnaire.questions])
 
   const handleSubmit = () => {
     const missingQuestions = questionnaire.questions.filter(
@@ -445,6 +440,17 @@ export const PDEAIQuestionnaireCard = ({
     </Card>
   )
 }
+
+const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
+  JSON.stringify([
+    questionnaire.questionnaireId,
+    questionnaire.answers ?? {},
+    questionnaire.questions,
+  ])
+
+export const PDEAIQuestionnaireCard = (props: PDEAIQuestionnaireCardProps) => (
+  <PDEAIQuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
+)
 
 const Card = styled.section`
   display: grid;

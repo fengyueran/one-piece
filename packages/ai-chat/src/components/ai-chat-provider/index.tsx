@@ -1,4 +1,4 @@
-import { useRef, useMemo, type ReactNode } from 'react'
+import { useRef, useMemo, useState, type ReactNode } from 'react'
 import axios from 'axios'
 import { ChatContext, type ChatContextValue } from '../../context/chat-context'
 import { createChatStore } from '../../store/chat-store'
@@ -61,7 +61,9 @@ export type AiChatProviderProps = AiChatProviderBaseProps &
 
 export const AiChatProvider = (props: AiChatProviderProps) => {
   const { defaultMode, labels, renderMessageBlock, enableImageAttachments = true, children } = props
-  const storeRef = useRef(createChatStore(defaultMode ? { preferredMode: defaultMode } : undefined))
+  const [store] = useState(() =>
+    createChatStore(defaultMode ? { preferredMode: defaultMode } : undefined),
+  )
   // Stable ref populated by ChatComposer on mount; allows ChatThread to trigger sends.
   const sendRef = useRef<(content: string) => Promise<void>>(async () => {})
   // Stable ref populated by ChatComposer on mount; allows ChatThread to replay the last request.
@@ -109,7 +111,7 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
 
   const contextValue: ChatContextValue = useMemo(
     () => ({
-      store: storeRef.current,
+      store,
       transport,
       axios: axiosInstance,
       apiBaseUrl: defaultApiBaseUrl,
@@ -131,6 +133,7 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
       renderMessageBlock,
       sendRef,
       retryRef,
+      store,
       transport,
     ],
   )

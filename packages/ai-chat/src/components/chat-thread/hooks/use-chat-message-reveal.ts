@@ -19,9 +19,21 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
   const isAssistantStreaming = message.role === 'assistant' && message.status === 'streaming'
   const targetContent = message.content || ''
   const targetUnits = useMemo(() => Array.from(targetContent), [targetContent])
+  const resetSnapshot = useMemo(
+    () => ({
+      messageId: message.id,
+      initialTargetUnitCount: targetUnits.length,
+      initialBatchedTargetUnitCount: isAssistantStreaming ? 0 : targetUnits.length,
+    }),
+    [isAssistantStreaming, message.id, targetUnits.length],
+  )
   const pendingTargetUnitCountRef = useRef(targetUnits.length)
   const batchedTargetUnitCountRef = useRef(isAssistantStreaming ? 0 : targetUnits.length)
   const inputBatchTimeoutRef = useRef<number | null>(null)
+  const commitAnimationFrameRef = useRef<number | null>(null)
+  const freshBlockActivationFrameRef = useRef<number | null>(null)
+  const displayedUnitSyncFrameRef = useRef<number | null>(null)
+  const resetAnimationFrameRef = useRef<number | null>(null)
   const [batchedTargetUnitCount, setBatchedTargetUnitCount] = useState(() =>
     isAssistantStreaming ? 0 : targetUnits.length,
   )
@@ -49,11 +61,23 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
     [isAssistantStreaming, message.role],
   )
 
+  const scheduleBatchedTargetUnitCountCommit = useCallback(
+    (nextTargetUnitCount: number) => {
+      if (commitAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(commitAnimationFrameRef.current)
+      }
+
+      commitAnimationFrameRef.current = window.requestAnimationFrame(() => {
+        commitAnimationFrameRef.current = null
+        commitBatchedTargetUnitCount(nextTargetUnitCount)
+      })
+    },
+    [commitBatchedTargetUnitCount],
+  )
+
   useEffect(() => {
-    pendingTargetUnitCountRef.current = targetUnits.length
-    batchedTargetUnitCountRef.current = isAssistantStreaming ? 0 : targetUnits.length
-    setBatchedTargetUnitCount(batchedTargetUnitCountRef.current)
-    setDisplayedUnitCount(isAssistantStreaming ? 0 : targetUnits.length)
+    pendingTargetUnitCountRef.current = resetSnapshot.initialTargetUnitCount
+    batchedTargetUnitCountRef.current = resetSnapshot.initialBatchedTargetUnitCount
     lastDisplayedBlockCountRef.current = 0
 
     if (inputBatchTimeoutRef.current !== null) {
@@ -61,8 +85,39 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
       inputBatchTimeoutRef.current = null
     }
 
-    setIsFreshBlockActive(false)
-  }, [message.id])
+    if (commitAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(commitAnimationFrameRef.current)
+      commitAnimationFrameRef.current = null
+    }
+
+    if (freshBlockActivationFrameRef.current !== null) {
+      window.cancelAnimationFrame(freshBlockActivationFrameRef.current)
+      freshBlockActivationFrameRef.current = null
+    }
+
+    if (displayedUnitSyncFrameRef.current !== null) {
+      window.cancelAnimationFrame(displayedUnitSyncFrameRef.current)
+      displayedUnitSyncFrameRef.current = null
+    }
+
+    if (resetAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(resetAnimationFrameRef.current)
+    }
+
+    resetAnimationFrameRef.current = window.requestAnimationFrame(() => {
+      resetAnimationFrameRef.current = null
+      setBatchedTargetUnitCount(resetSnapshot.initialBatchedTargetUnitCount)
+      setDisplayedUnitCount(resetSnapshot.initialBatchedTargetUnitCount)
+      setIsFreshBlockActive(false)
+    })
+
+    return () => {
+      if (resetAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(resetAnimationFrameRef.current)
+        resetAnimationFrameRef.current = null
+      }
+    }
+  }, [resetSnapshot])
 
   useEffect(() => {
     pendingTargetUnitCountRef.current = targetUnits.length
@@ -73,7 +128,7 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
         inputBatchTimeoutRef.current = null
       }
 
-      commitBatchedTargetUnitCount(targetUnits.length)
+      scheduleBatchedTargetUnitCountCommit(targetUnits.length)
       return
     }
 
@@ -82,7 +137,7 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
     }
 
     if (batchedTargetUnitCountRef.current === 0) {
-      commitBatchedTargetUnitCount(targetUnits.length)
+      scheduleBatchedTargetUnitCountCommit(targetUnits.length)
       return
     }
 
@@ -101,7 +156,13 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
         inputBatchTimeoutRef.current = null
       }
     }
-  }, [commitBatchedTargetUnitCount, isAssistantStreaming, message.role, targetUnits.length])
+  }, [
+    commitBatchedTargetUnitCount,
+    isAssistantStreaming,
+    message.role,
+    scheduleBatchedTargetUnitCountCommit,
+    targetUnits.length,
+  ])
 
   const displayedContent = useMemo(
     () => targetUnits.slice(0, displayedUnitCount).join(''),
@@ -121,13 +182,20 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
       return
     }
 
-    setIsFreshBlockActive(true)
+    freshBlockActivationFrameRef.current = window.requestAnimationFrame(() => {
+      freshBlockActivationFrameRef.current = null
+      setIsFreshBlockActive(true)
+    })
 
     const timer = window.setTimeout(() => {
       setIsFreshBlockActive(false)
     }, STREAM_FRESH_BLOCK_SETTLE_MS)
 
     return () => {
+      if (freshBlockActivationFrameRef.current !== null) {
+        window.cancelAnimationFrame(freshBlockActivationFrameRef.current)
+        freshBlockActivationFrameRef.current = null
+      }
       window.clearTimeout(timer)
     }
   }, [contentBlocks.length, message.role])
@@ -140,9 +208,17 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
 
     if (!shouldAnimateReveal) {
       if (displayedUnitCount !== batchedTargetUnitCount) {
-        setDisplayedUnitCount(batchedTargetUnitCount)
+        displayedUnitSyncFrameRef.current = window.requestAnimationFrame(() => {
+          displayedUnitSyncFrameRef.current = null
+          setDisplayedUnitCount(batchedTargetUnitCount)
+        })
       }
-      return
+      return () => {
+        if (displayedUnitSyncFrameRef.current !== null) {
+          window.cancelAnimationFrame(displayedUnitSyncFrameRef.current)
+          displayedUnitSyncFrameRef.current = null
+        }
+      }
     }
 
     const timer = window.setInterval(() => {

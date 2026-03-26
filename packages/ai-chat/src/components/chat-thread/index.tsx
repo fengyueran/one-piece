@@ -48,6 +48,7 @@ const ChatThreadView = ({
   )
   const latestUserMessageRef = useRef<HTMLDivElement | null>(null)
   const pendingScrollUserMessageIdRef = useRef<string | undefined>(undefined)
+  const reservedSpaceFrameRef = useRef<number | null>(null)
   const [latestUserMessageReservedSpace, setLatestUserMessageReservedSpace] = useState<{
     messageId?: string
     value: number
@@ -78,17 +79,41 @@ const ChatThreadView = ({
   }, [])
 
   useLayoutEffect(() => {
+    if (reservedSpaceFrameRef.current !== null) {
+      window.cancelAnimationFrame(reservedSpaceFrameRef.current)
+      reservedSpaceFrameRef.current = null
+    }
+
     if (!latestUserMessageId) {
       pendingScrollUserMessageIdRef.current = undefined
-      setLatestUserMessageReservedSpace((current) =>
-        current.messageId === undefined && current.value === 0
-          ? current
-          : { messageId: undefined, value: 0 },
-      )
-      return
+      reservedSpaceFrameRef.current = window.requestAnimationFrame(() => {
+        reservedSpaceFrameRef.current = null
+        setLatestUserMessageReservedSpace((current) =>
+          current.messageId === undefined && current.value === 0
+            ? current
+            : { messageId: undefined, value: 0 },
+        )
+      })
+      return () => {
+        if (reservedSpaceFrameRef.current !== null) {
+          window.cancelAnimationFrame(reservedSpaceFrameRef.current)
+          reservedSpaceFrameRef.current = null
+        }
+      }
     }
+
     pendingScrollUserMessageIdRef.current = latestUserMessageId
-    measureLatestUserMessageReservedSpace(latestUserMessageId)
+    reservedSpaceFrameRef.current = window.requestAnimationFrame(() => {
+      reservedSpaceFrameRef.current = null
+      measureLatestUserMessageReservedSpace(latestUserMessageId)
+    })
+
+    return () => {
+      if (reservedSpaceFrameRef.current !== null) {
+        window.cancelAnimationFrame(reservedSpaceFrameRef.current)
+        reservedSpaceFrameRef.current = null
+      }
+    }
   }, [latestUserMessageId, measureLatestUserMessageReservedSpace])
 
   useLayoutEffect(() => {

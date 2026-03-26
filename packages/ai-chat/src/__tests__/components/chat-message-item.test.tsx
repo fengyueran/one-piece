@@ -128,15 +128,15 @@ describe('ChatThread custom block renderer', () => {
         store.getState().patchStreamingMessage('session-1', { content })
       })
       act(() => {
-        jest.advanceTimersByTime(240)
+        jest.advanceTimersByTime(400)
       })
     }
 
     pushStreamingContent('信')
-    expect(screen.getByText('信')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent('信')
 
     pushStreamingContent('信息')
-    expect(screen.getByText('信息')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent('信')
 
     act(() => {
       store.getState().patchStreamingMessage('session-1', {
@@ -158,12 +158,15 @@ describe('ChatThread custom block renderer', () => {
     })
 
     expect(screen.getByTestId('custom-block')).toHaveTextContent('get_equation')
-    expect(screen.getByText('信息')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent('信')
 
     pushStreamingContent('信息，')
-    expect(screen.getByText('信息，')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent('信息')
 
     pushStreamingContent('信息，了')
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
     expect(screen.getByText('信息，了')).toBeInTheDocument()
 
     jest.useRealTimers()
