@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { ConfigProvider } from '@xinghunm/compass-ui'
 import { AiChatProvider, type AiChatProviderProps } from '../ai-chat-provider'
 import { ChatThread } from '../chat-thread'
 import { ChatComposer } from '../chat-composer'
@@ -17,15 +18,50 @@ export type AiChatProps = Omit<AiChatProviderProps, 'children'> & {
  * chat UI: optional conversation sidebar + thread + composer.
  */
 export const AiChat = ({ showConversationList = false, ...providerProps }: AiChatProps) => (
-  <AiChatProvider {...(providerProps as AiChatProviderProps)}>
-    <Root data-testid="ai-chat">
-      {showConversationList ? <ChatConversationList /> : null}
-      <Workspace>
-        <ChatThread />
-        <ChatComposer />
-      </Workspace>
-    </Root>
-  </AiChatProvider>
+  <ConfigProvider
+    theme={{
+      token: {
+        spacing: {
+          lg: 16,
+        },
+        colors: {
+          primary: '#1f52f0',
+          background: '#1c1c1c',
+          text: '#fcfbf8',
+          textSecondary: '#c5c1ba',
+        },
+        components: {
+          select: {
+            optionColor: '#fcfbf8',
+            optionSelectedBg: 'transparent',
+            optionHoverBg: '#41413f',
+            optionSelectedColor: '#fcfbf8',
+            backgroundColor: '#1c1c1c',
+            dropdownBg: '#1c1c1c',
+            placeholderColor: '#c5c1ba',
+            borderRadius: '12px',
+            dropdownPadding: '4px',
+          },
+          modal: { contentBg: '#1c1c1c', padding: '24px' },
+          dropdown: {
+            backgroundColor: '#1c1c1c',
+            borderRadius: '12px',
+            padding: '4px',
+          },
+        },
+      },
+    }}
+  >
+    <AiChatProvider {...(providerProps as AiChatProviderProps)}>
+      <Root data-testid="ai-chat">
+        {showConversationList ? <ChatConversationList /> : null}
+        <Workspace>
+          <ChatThread />
+          <ChatComposer />
+        </Workspace>
+      </Root>
+    </AiChatProvider>
+  </ConfigProvider>
 )
 
 const Root = styled.div`

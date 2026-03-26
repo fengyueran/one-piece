@@ -35,82 +35,91 @@ export const ChatSendActions = ({
   isStopping,
   onStop,
   onSend,
-}: ChatSendActionsProps) => {
-  return (
-    <>
-      {isStreaming ? (
-        <StopButton
-          type="button"
-          aria-label="Stop"
-          aria-busy={isStopping}
-          data-testid="chat-composer-stop"
-          disabled={isStopping}
-          shape="circle"
-          onClick={() => void onStop()}
-        >
-          <StopGlyph aria-hidden="true" />
-        </StopButton>
-      ) : (
-        <PrimaryButton
-          type="button"
-          variant="primary"
-          icon={<ArrowUpIcon />}
-          aria-label="Send"
-          data-testid="chat-composer-send"
-          disabled={!canSend}
-          shape="circle"
-          onClick={() => void onSend()}
-        />
-      )}
-    </>
-  )
-}
+}: ChatSendActionsProps) => (
+  <>
+    {isStreaming ? (
+      <StopButton
+        type="button"
+        aria-label="Stop"
+        aria-busy={isStopping}
+        data-testid="chat-composer-stop"
+        disabled={isStopping}
+        shape="circle"
+        onClick={() => void onStop()}
+      >
+        <StopGlyph aria-hidden="true" />
+      </StopButton>
+    ) : (
+      <PrimaryButton
+        $canSend={canSend}
+        type="button"
+        icon={<ArrowUpIcon />}
+        aria-label="Send"
+        data-testid="chat-composer-send"
+        disabled={!canSend}
+        shape="circle"
+        onClick={() => void onSend()}
+      />
+    )}
+  </>
+)
 
-const PrimaryButton = styled(Button)`
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
-  background: var(--text-primary);
-  border-radius: 12px;
-  border: none;
+const PrimaryButton = styled(Button)<{ $canSend: boolean }>`
+  && {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    background: ${({ $canSend }) => ($canSend ? '#fcfbf8' : 'rgba(255, 255, 255, 0.3)')};
+    color: ${({ $canSend }) => ($canSend ? '#5b5448' : 'rgba(255, 255, 255, 0.72)')};
+    border-radius: 12px;
+    border: 1px solid ${({ $canSend }) => ($canSend ? 'rgba(198, 188, 170, 0.38)' : 'transparent')};
+    box-shadow: ${({ $canSend }) =>
+      $canSend
+        ? 'inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 8px 18px rgba(0, 0, 0, 0.18)'
+        : 'none'};
+    svg {
+      color: currentColor;
+      stroke: currentColor;
+    }
 
-  &:hover:not(:disabled) {
-    background: rgba(252, 251, 248, 0.8);
-  }
+    &:hover:not(:disabled) {
+      background: ${({ $canSend }) => ($canSend ? '#f7f4ec' : 'rgba(255, 255, 255, 0.3)')};
+      color: ${({ $canSend }) => ($canSend ? '#4f493f' : 'rgba(255, 255, 255, 0.72)')};
+      border-color: ${({ $canSend }) => ($canSend ? 'rgba(198, 188, 170, 0.46)' : 'transparent')};
+    }
 
-  &:disabled {
-    background: rgba(255, 255, 255, 0.3);
-    cursor: not-allowed;
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
+    &:disabled {
+      cursor: not-allowed;
     }
   }
 `
 
 const StopButton = styled(Button)`
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(244, 244, 244, 0.96) 45%,
-    rgba(230, 230, 230, 0.95) 100%
-  );
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 8px 18px rgba(0, 0, 0, 0.18);
-
-  &:hover:not(:disabled) {
+  && {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
     background: radial-gradient(
       circle at 30% 30%,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(249, 249, 249, 0.98) 45%,
-      rgba(236, 236, 236, 0.98) 100%
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(244, 244, 244, 0.96) 45%,
+      rgba(230, 230, 230, 0.95) 100%
     );
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 8px 18px rgba(0, 0, 0, 0.18);
+
+    &:hover:not(:disabled) {
+      background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(249, 249, 249, 0.98) 45%,
+        rgba(236, 236, 236, 0.98) 100%
+      );
+    }
   }
 `
 

@@ -114,7 +114,6 @@ const ReloadIcon = styled.svg`
 
 const ModelSelect = styled(Select)`
   && {
-    flex: 0 1 220px;
     width: auto;
     min-width: 0;
     max-width: 100%;

@@ -168,4 +168,66 @@ describe('ChatThread custom block renderer', () => {
 
     jest.useRealTimers()
   })
+
+  it('uses configurable localized labels for message roles and status text', () => {
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: '你好',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'assistant-1',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '已停止',
+      status: 'stopped',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: {
+            ...DEFAULT_AI_CHAT_LABELS,
+            userRoleLabel: '用户',
+            assistantRoleLabel: '助手',
+            stoppedResponse: '回答已中断',
+            assistantStreamingAriaLabel: '助手生成中',
+          },
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByText('用户')).toBeInTheDocument()
+    expect(screen.getByText('助手')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-stopped-tag')).toHaveTextContent('回答已中断')
+  })
 })

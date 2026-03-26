@@ -57,4 +57,47 @@ describe('useChatComposer', () => {
       status: 'done',
     })
   })
+
+  it('maps raw fetch failures to the localized network error message', async () => {
+    const transport: ChatTransport = {
+      getModels: jest.fn(async () => ({
+        data: [{ id: 'gpt-4.1', object: 'model' }],
+      })),
+      startStream: jest.fn(async ({ onError }) => {
+        onError?.(new Error('Failed to fetch'))
+      }),
+      terminateStream: jest.fn(async () => ({ terminated: true })),
+    }
+
+    const store = createChatStore()
+    const wrapper = ({ children }: PropsWithChildren) => (
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          labels: {
+            ...DEFAULT_AI_CHAT_LABELS,
+            networkError: '网络请求失败，请稍后重试。',
+          },
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        {children}
+      </ChatContext.Provider>
+    )
+
+    const { result } = renderHook(() => useChatComposer(), { wrapper })
+
+    await waitFor(() => expect(result.current.state.hasModels).toBe(true))
+
+    await act(async () => {
+      await result.current.actions.send('hello')
+    })
+
+    await waitFor(() => {
+      expect(Object.values(store.getState().errorBySession)).toContain('网络请求失败，请稍后重试。')
+    })
+  })
 })

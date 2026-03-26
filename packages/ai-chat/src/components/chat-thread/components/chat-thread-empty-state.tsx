@@ -1,13 +1,17 @@
 import styled from '@emotion/styled'
+import { useChatContext } from '../../../context/use-chat-context'
 
 export const ChatThreadEmptyState = () => {
+  const { labels } = useChatContext()
+
   return (
     <EmptyShell data-testid="chat-empty-hero">
       <HeroMark>
         <HeroOrbit />
         <HeroCore>AI</HeroCore>
       </HeroMark>
-      <HeroTitle>Ask anything</HeroTitle>
+      <HeroTitle>{labels.emptyStateTitle}</HeroTitle>
+      <HeroSubtitle>{labels.emptyStateSubtitle}</HeroSubtitle>
     </EmptyShell>
   )
 }
@@ -69,7 +73,14 @@ const HeroCore = styled.div`
 
 const HeroTitle = styled.p`
   margin: 0;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 16px;
   line-height: 24px;
+`
+
+const HeroSubtitle = styled.p`
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  line-height: 20px;
 `

@@ -391,6 +391,7 @@ export interface ChatStreamPacket {
 export interface AiChatLabels {
   sendButton?: string
   stopButton?: string
+  retryButton?: string
   placeholder?: string
   modeLabelAsk?: string
   modeLabelPlan?: string
@@ -399,6 +400,12 @@ export interface AiChatLabels {
   emptyStateTitle?: string
   emptyStateSubtitle?: string
   attachmentLimitNotice?: string
+  userRoleLabel?: string
+  assistantRoleLabel?: string
+  stoppedResponse?: string
+  assistantStreamingAriaLabel?: string
+  networkError?: string
+  genericError?: string
 }
 
 /**
@@ -407,6 +414,7 @@ export interface AiChatLabels {
 export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   sendButton: 'Send',
   stopButton: 'Stop',
+  retryButton: 'Retry',
   placeholder: 'Ask something...',
   modeLabelAsk: 'Ask',
   modeLabelPlan: 'Plan',
@@ -415,4 +423,10 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   emptyStateTitle: 'How can I help you?',
   emptyStateSubtitle: 'Start a conversation',
   attachmentLimitNotice: 'Images exceeded the limit. Only the first 10 images were kept.',
+  userRoleLabel: 'User',
+  assistantRoleLabel: 'Assistant',
+  stoppedResponse: 'Response stopped',
+  assistantStreamingAriaLabel: 'assistant streaming',
+  networkError: 'Network request failed. Please try again.',
+  genericError: 'Something went wrong. Please try again.',
 }

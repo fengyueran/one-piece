@@ -23,6 +23,7 @@ interface ChatThreadViewProps {
   historyMessages: ChatMessage[]
   streamingMessage?: ChatMessage
   error?: string | null
+  retryButtonLabel: string
   onRetry?: () => void
   onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
@@ -34,6 +35,7 @@ const ChatThreadView = ({
   historyMessages,
   streamingMessage,
   error,
+  retryButtonLabel,
   onRetry,
   onConfirmationSubmit,
   onQuestionnaireSubmit,
@@ -132,7 +134,7 @@ const ChatThreadView = ({
           {onRetry ? (
             <ErrorActions>
               <RetryButton type="button" data-testid="chat-thread-retry" onClick={onRetry}>
-                Retry
+                {retryButtonLabel}
               </RetryButton>
             </ErrorActions>
           ) : null}
@@ -164,7 +166,7 @@ export const ChatThread = () => {
   const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
   const clearSessionError = useChatStore((s) => s.clearSessionError)
-  const { sendRef, retryRef, renderMessageBlock } = useChatContext()
+  const { sendRef, retryRef, renderMessageBlock, labels } = useChatContext()
 
   const handleRetry = useCallback(() => {
     if (!activeSessionId) return
@@ -204,6 +206,7 @@ export const ChatThread = () => {
       historyMessages={messages}
       streamingMessage={streamingMessage}
       error={error}
+      retryButtonLabel={labels.retryButton}
       onRetry={handleRetry}
       onConfirmationSubmit={handleConfirmationSubmit}
       onQuestionnaireSubmit={handleQuestionnaireSubmit}

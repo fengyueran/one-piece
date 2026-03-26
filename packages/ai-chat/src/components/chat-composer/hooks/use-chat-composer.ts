@@ -34,8 +34,25 @@ const resolveAccumulatedContent = (currentContent: string, update: ChatStreamPac
   return currentContent
 }
 
+const normalizeChatErrorMessage = (
+  message: string | undefined,
+  labels: { networkError: string; genericError: string },
+) => {
+  const trimmedMessage = message?.trim()
+
+  if (!trimmedMessage) {
+    return labels.genericError
+  }
+
+  if (trimmedMessage === 'Failed to fetch') {
+    return labels.networkError
+  }
+
+  return trimmedMessage
+}
+
 export const useChatComposer = () => {
-  const { transport, enableImageAttachments } = useChatContext()
+  const { transport, enableImageAttachments, labels } = useChatContext()
 
   // -- Store state -----------------------------------------------------------
   const activeSessionId = useChatStore((s) => s.activeSessionId)
@@ -246,7 +263,10 @@ export const useChatComposer = () => {
               return
             }
             finalizeStoppedStreamingMessage(currentSessionId)
-            setSessionError(currentSessionId, streamError.message)
+            setSessionError(
+              currentSessionId,
+              normalizeChatErrorMessage(streamError.message, labels),
+            )
             abortControllerRef.current = null
             clearStopRequest(currentSessionId)
           },

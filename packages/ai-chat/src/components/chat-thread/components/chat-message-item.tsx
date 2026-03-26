@@ -28,6 +28,7 @@ import { PDEAIParameterSummaryCard } from './pde-ai-parameter-summary-card'
 import { PDEAIQuestionnaireCard } from './pde-ai-questionnaire-card'
 import { PDEAIResultSummaryCard } from './pde-ai-result-summary-card'
 import { ImageViewer } from './image-viewer'
+import { useChatContext } from '../../../context/use-chat-context'
 
 const MARKDOWN_REMARK_PLUGINS = [remarkGfm, remarkMath]
 const MARKDOWN_REHYPE_PLUGINS = [rehypeKatex]
@@ -336,6 +337,7 @@ const ChatMessageItemView = ({
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
   renderMessageBlock?: ChatMessageBlockRenderer
 }) => {
+  const { labels } = useChatContext()
   const [activeImage, setActiveImage] = useState<
     | {
         name: string
@@ -467,15 +469,15 @@ const ChatMessageItemView = ({
           {isAssistantStreaming ? (
             <StreamingIndicator
               data-testid="chat-streaming-indicator"
-              aria-label="assistant streaming"
+              aria-label={labels.assistantStreamingAriaLabel}
             >
               <IndicatorSpark />
               <IndicatorSpark data-secondary />
             </StreamingIndicator>
           ) : null}
-          <Role>{message.role}</Role>
+          <Role>{message.role === 'user' ? labels.userRoleLabel : labels.assistantRoleLabel}</Role>
           {isStoppedAssistant ? (
-            <StatusTag data-testid="chat-message-stopped-tag">Response stopped</StatusTag>
+            <StatusTag data-testid="chat-message-stopped-tag">{labels.stoppedResponse}</StatusTag>
           ) : null}
         </Header>
         <Content data-testid="chat-message-content">
