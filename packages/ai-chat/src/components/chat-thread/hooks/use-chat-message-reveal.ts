@@ -13,6 +13,10 @@ export interface UseChatMessageRevealResult {
   displayedContent: string
   settledContent: string
   freshContent: string
+  displayedBlocks: Array<{
+    content: string
+    tone: 'settled' | 'fresh'
+  }>
 }
 
 interface RevealState {
@@ -267,11 +271,27 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
     ? contentBlocks.slice(0, -1).join('\n\n')
     : displayedContent
   const freshContent = isFreshBlockActive ? (contentBlocks[contentBlocks.length - 1] ?? '') : ''
+  const displayedBlocks =
+    isAssistantStreaming && contentBlocks.length > 1
+      ? contentBlocks.map((content, index) => ({
+          content,
+          tone:
+            isFreshBlockActive && index === contentBlocks.length - 1
+              ? ('fresh' as const)
+              : ('settled' as const),
+        }))
+      : [
+          {
+            content: displayedContent,
+            tone: 'settled' as const,
+          },
+        ]
 
   return {
     isAssistantStreaming,
     displayedContent,
     settledContent,
     freshContent,
+    displayedBlocks,
   }
 }

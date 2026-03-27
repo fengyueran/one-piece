@@ -38,4 +38,24 @@ describe('useChatMessageReveal', () => {
 
     expect(result.current.displayedContent).toBe('Hello')
   })
+
+  it('keeps split markdown blocks stable after fresh content settles', () => {
+    const { result } = renderHook(() =>
+      useChatMessageReveal(createStreamingMessage('第一段\n\n第二段')),
+    )
+
+    act(() => {
+      jest.advanceTimersByTime(2000)
+    })
+    act(() => {
+      jest.advanceTimersByTime(300)
+    })
+
+    expect(result.current.displayedContent).toBe('第一段\n\n第二段')
+    expect(result.current.freshContent).toBe('')
+    expect(result.current.displayedBlocks).toEqual([
+      { content: '第一段', tone: 'settled' },
+      { content: '第二段', tone: 'settled' },
+    ])
+  })
 })

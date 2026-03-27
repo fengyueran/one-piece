@@ -345,7 +345,7 @@ const ChatMessageItemView = ({
       }
     | undefined
   >(undefined)
-  const { displayedContent, freshContent, isAssistantStreaming, settledContent } =
+  const { displayedBlocks, displayedContent, freshContent, isAssistantStreaming, settledContent } =
     useChatMessageReveal(message)
   const isStoppedAssistant = message.role === 'assistant' && message.status === 'stopped'
   const attachments = message.attachments ?? []
@@ -449,17 +449,24 @@ const ChatMessageItemView = ({
 
   const renderTextContent = () => (
     <>
-      {settledContent ? (
-        <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-          {renderMarkdownContent(settledContent)}
-        </ContentBlock>
-      ) : null}
-      {freshContent ? (
-        <ContentBlock data-testid="chat-message-fresh-block" data-block-tone="fresh">
-          {renderMarkdownContent(freshContent)}
-        </ContentBlock>
-      ) : null}
-      {!settledContent && !freshContent && hasTextContent ? (
+      {displayedBlocks
+        .filter((block) => block.content)
+        .map((block, index) => (
+          <ContentBlock
+            key={`${block.tone}-${index}`}
+            data-testid={
+              block.tone === 'fresh' ? 'chat-message-fresh-block' : 'chat-message-settled-block'
+            }
+            data-block-tone={block.tone}
+            data-block-index={index}
+          >
+            {renderMarkdownContent(block.content)}
+          </ContentBlock>
+        ))}
+      {!displayedBlocks.some((block) => block.content) &&
+      !settledContent &&
+      !freshContent &&
+      hasTextContent ? (
         <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
           {renderMarkdownContent(displayedContent)}
         </ContentBlock>
