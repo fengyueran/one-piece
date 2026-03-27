@@ -18,4 +18,14 @@ describe('ChatSendActions', () => {
       color: '#5b5448',
     })
   })
+
+  it('shows a loading spinner on the stop button while stopping is pending', () => {
+    render(<ChatSendActions canSend isStreaming isStopping onStop={() => {}} onSend={() => {}} />)
+
+    const stopButton = screen.getByTestId('chat-composer-stop')
+    expect(stopButton).toBeDisabled()
+    expect(stopButton).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByTestId('chat-composer-stop-spinner')).toBeInTheDocument()
+    expect(stopButton).not.toContainElement(screen.queryByTestId('chat-composer-stop-glyph'))
+  })
 })

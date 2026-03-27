@@ -47,7 +47,11 @@ export const ChatSendActions = ({
         shape="circle"
         onClick={() => void onStop()}
       >
-        <StopGlyph aria-hidden="true" />
+        {isStopping ? (
+          <StopSpinner aria-hidden="true" data-testid="chat-composer-stop-spinner" />
+        ) : (
+          <StopGlyph aria-hidden="true" data-testid="chat-composer-stop-glyph" />
+        )}
       </StopButton>
     ) : (
       <PrimaryButton
@@ -129,4 +133,23 @@ const StopGlyph = styled.span`
   border-radius: 2px;
   background: #1b1b1b;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+`
+
+const StopSpinner = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(27, 27, 27, 0.2);
+  border-top-color: #1b1b1b;
+  animation: chat-composer-stop-spin 0.7s linear infinite;
+
+  @keyframes chat-composer-stop-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `

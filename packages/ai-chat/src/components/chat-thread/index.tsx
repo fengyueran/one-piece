@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import styled from '@emotion/styled'
 import { DEFAULT_CHAT_AGENT_MODE } from '../../types'
 import type {
@@ -9,9 +9,8 @@ import type {
   PlanQuestionnaireSubmission,
 } from '../../types'
 import { useChatContext, useChatStore } from '../../context/use-chat-context'
-import { calculateChatThreadScrollSpacerHeight, findLatestUserMessageId } from './lib/chat-thread'
+import { CHAT_THREAD_SCROLL_TOP_GAP } from './lib/chat-thread'
 import { ChatMessageItem } from './components/chat-message-item'
-import { ChatThreadHistoryList } from './components/chat-thread-history-list'
 import { ChatThreadEmptyState } from './components/chat-thread-empty-state'
 
 // ---------------------------------------------------------------------------
@@ -30,6 +29,108 @@ interface ChatThreadViewProps {
   renderMessageBlock?: ChatMessageBlockRenderer
 }
 
+interface ChatConversationTurn {
+  id: string
+  userMessage?: ChatMessage
+  responseMessages: ChatMessage[]
+}
+
+const renderChatMessage = ({
+  message,
+  mode,
+  onConfirmationSubmit,
+  onQuestionnaireSubmit,
+  renderMessageBlock,
+}: {
+  message: ChatMessage
+  mode: ChatAgentMode
+  onConfirmationSubmit?: (submission: ExecutionConfirmationSubmission) => void
+  onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  renderMessageBlock?: ChatMessageBlockRenderer
+}) => (
+  <ChatMessageItem
+    mode={mode}
+    message={message}
+    onConfirmationSubmit={onConfirmationSubmit}
+    onQuestionnaireSubmit={onQuestionnaireSubmit}
+    renderMessageBlock={renderMessageBlock}
+  />
+)
+
+const renderErrorState = ({
+  error,
+  onRetry,
+  retryButtonLabel,
+}: {
+  error: string
+  onRetry?: () => void
+  retryButtonLabel: string
+}): ReactNode => (
+  <ErrorState data-testid="chat-thread-error-state">
+    <ErrorText>{error}</ErrorText>
+    {onRetry ? (
+      <ErrorActions>
+        <RetryButton type="button" data-testid="chat-thread-retry" onClick={onRetry}>
+          {retryButtonLabel}
+        </RetryButton>
+      </ErrorActions>
+    ) : null}
+  </ErrorState>
+)
+
+const groupConversationTurns = (
+  historyMessages: ChatMessage[],
+  streamingMessage?: ChatMessage,
+): ChatConversationTurn[] => {
+  const turns: ChatConversationTurn[] = []
+  let currentTurn: ChatConversationTurn | null = null
+
+  historyMessages.forEach((message) => {
+    if (message.role === 'user') {
+      currentTurn = {
+        id: message.id,
+        userMessage: message,
+        responseMessages: [],
+      }
+      turns.push(currentTurn)
+      return
+    }
+
+    if (!currentTurn) {
+      currentTurn = {
+        id: `assistant-turn-${message.id}`,
+        responseMessages: [message],
+      }
+      turns.push(currentTurn)
+      return
+    }
+
+    currentTurn.responseMessages.push(message)
+  })
+
+  if (!streamingMessage) {
+    return turns
+  }
+
+  const lastTurn = turns[turns.length - 1]
+  if (lastTurn) {
+    return [
+      ...turns.slice(0, -1),
+      {
+        ...lastTurn,
+        responseMessages: [...lastTurn.responseMessages, streamingMessage],
+      },
+    ]
+  }
+
+  return [
+    {
+      id: `assistant-turn-${streamingMessage.id}`,
+      responseMessages: [streamingMessage],
+    },
+  ]
+}
+
 const ChatThreadView = ({
   activeSessionMode = DEFAULT_CHAT_AGENT_MODE,
   historyMessages,
@@ -42,40 +143,50 @@ const ChatThreadView = ({
   renderMessageBlock,
 }: ChatThreadViewProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const latestUserMessageId = useMemo(
-    () => findLatestUserMessageId(historyMessages),
-    [historyMessages],
+  const conversationTurns = useMemo(
+    () => groupConversationTurns(historyMessages, streamingMessage),
+    [historyMessages, streamingMessage],
   )
+  const latestTurn = conversationTurns[conversationTurns.length - 1]
+  const previousTurns = conversationTurns.slice(0, -1)
+  const latestUserMessageId = latestTurn?.userMessage?.id
   const latestUserMessageRef = useRef<HTMLDivElement | null>(null)
-  const pendingScrollUserMessageIdRef = useRef<string | undefined>(undefined)
   const reservedSpaceFrameRef = useRef<number | null>(null)
-  const [latestUserMessageReservedSpace, setLatestUserMessageReservedSpace] = useState<{
-    messageId?: string
-    value: number
-  }>({ messageId: undefined, value: 0 })
+  const [latestTurnMinHeight, setLatestTurnMinHeight] = useState(0)
 
-  const reservedPaddingBottom =
-    24 +
-    (latestUserMessageReservedSpace.messageId === latestUserMessageId
-      ? latestUserMessageReservedSpace.value
-      : 0)
+  const measureLatestTurnMinHeight = useCallback(() => {
+    const container = containerRef.current
+    if (!container) return
 
-  const measureLatestUserMessageReservedSpace = useCallback((messageId: string) => {
+    const computedStyle = window.getComputedStyle(container)
+    const paddingTop = Number.parseFloat(computedStyle.paddingTop || '0') || 0
+    const paddingBottom = Number.parseFloat(computedStyle.paddingBottom || '0') || 0
+    const nextMinHeight = Math.max(0, container.clientHeight - paddingTop - paddingBottom)
+
+    setLatestTurnMinHeight((current) => (current === nextMinHeight ? current : nextMinHeight))
+  }, [])
+
+  const scrollLatestUserMessageToTop = useCallback(() => {
     const container = containerRef.current
     const target = latestUserMessageRef.current
     if (!container || !target) return
 
-    const reservedHeight = calculateChatThreadScrollSpacerHeight({
-      containerClientHeight: container.clientHeight,
-      containerScrollHeight: container.scrollHeight,
-      targetOffsetTop: target.offsetTop,
-    })
+    const containerRect = container.getBoundingClientRect()
+    const targetRect = target.getBoundingClientRect()
+    const nextScrollTop = Math.max(
+      0,
+      container.scrollTop + (targetRect.top - containerRect.top) - CHAT_THREAD_SCROLL_TOP_GAP,
+    )
 
-    setLatestUserMessageReservedSpace((current) => {
-      const next = reservedHeight > 0 ? reservedHeight : 0
-      if (current.messageId === messageId && current.value === next) return current
-      return { messageId, value: next }
-    })
+    if (typeof container.scrollTo === 'function') {
+      container.scrollTo({
+        top: nextScrollTop,
+        behavior: 'auto',
+      })
+      return
+    }
+
+    container.scrollTop = nextScrollTop
   }, [])
 
   useLayoutEffect(() => {
@@ -85,14 +196,9 @@ const ChatThreadView = ({
     }
 
     if (!latestUserMessageId) {
-      pendingScrollUserMessageIdRef.current = undefined
       reservedSpaceFrameRef.current = window.requestAnimationFrame(() => {
         reservedSpaceFrameRef.current = null
-        setLatestUserMessageReservedSpace((current) =>
-          current.messageId === undefined && current.value === 0
-            ? current
-            : { messageId: undefined, value: 0 },
-        )
+        setLatestTurnMinHeight((current) => (current === 0 ? current : 0))
       })
       return () => {
         if (reservedSpaceFrameRef.current !== null) {
@@ -102,10 +208,10 @@ const ChatThreadView = ({
       }
     }
 
-    pendingScrollUserMessageIdRef.current = latestUserMessageId
     reservedSpaceFrameRef.current = window.requestAnimationFrame(() => {
       reservedSpaceFrameRef.current = null
-      measureLatestUserMessageReservedSpace(latestUserMessageId)
+      measureLatestTurnMinHeight()
+      scrollLatestUserMessageToTop()
     })
 
     return () => {
@@ -114,57 +220,97 @@ const ChatThreadView = ({
         reservedSpaceFrameRef.current = null
       }
     }
-  }, [latestUserMessageId, measureLatestUserMessageReservedSpace])
+  }, [latestUserMessageId, measureLatestTurnMinHeight, scrollLatestUserMessageToTop])
 
   useLayoutEffect(() => {
-    if (!latestUserMessageId || pendingScrollUserMessageIdRef.current !== latestUserMessageId)
-      return
-    if (latestUserMessageReservedSpace.messageId !== latestUserMessageId) return
+    if (!latestUserMessageId) return
 
-    latestUserMessageRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
-    pendingScrollUserMessageIdRef.current = undefined
-  }, [latestUserMessageId, latestUserMessageReservedSpace])
+    const handleResize = () => {
+      measureLatestTurnMinHeight()
+      scrollLatestUserMessageToTop()
+    }
+
+    const container = containerRef.current
+    let resizeObserver: ResizeObserver | null = null
+
+    if (container && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize()
+      })
+      resizeObserver.observe(container)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [latestUserMessageId, measureLatestTurnMinHeight, scrollLatestUserMessageToTop])
 
   return (
-    <Container
-      ref={containerRef}
-      data-testid="chat-thread"
-      style={{ paddingBottom: `${reservedPaddingBottom}px` }}
-    >
-      <ChatThreadHistoryList
-        mode={activeSessionMode}
-        historyMessages={historyMessages}
-        latestUserMessageId={latestUserMessageId}
-        latestUserMessageRef={latestUserMessageRef}
-        onConfirmationSubmit={onConfirmationSubmit}
-        onQuestionnaireSubmit={onQuestionnaireSubmit}
-        renderMessageBlock={renderMessageBlock}
-      />
-      {streamingMessage ? (
-        <StreamingGroup data-testid="chat-thread-streaming">
-          <MessageSlot>
-            <ChatMessageItem
-              mode={activeSessionMode}
-              message={streamingMessage}
-              onConfirmationSubmit={onConfirmationSubmit}
-              onQuestionnaireSubmit={onQuestionnaireSubmit}
-              renderMessageBlock={renderMessageBlock}
-            />
-          </MessageSlot>
-        </StreamingGroup>
-      ) : null}
-      {error ? (
-        <ErrorState data-testid="chat-thread-error-state">
-          <ErrorText>{error}</ErrorText>
-          {onRetry ? (
-            <ErrorActions>
-              <RetryButton type="button" data-testid="chat-thread-retry" onClick={onRetry}>
-                {retryButtonLabel}
-              </RetryButton>
-            </ErrorActions>
+    <Container ref={containerRef} data-testid="chat-thread">
+      {previousTurns.map((turn) => (
+        <ConversationTurn key={turn.id} data-testid="chat-thread-turn">
+          {turn.userMessage ? (
+            <MessageSlot>
+              {renderChatMessage({
+                message: turn.userMessage,
+                mode: activeSessionMode,
+                onConfirmationSubmit,
+                onQuestionnaireSubmit,
+                renderMessageBlock,
+              })}
+            </MessageSlot>
           ) : null}
-        </ErrorState>
+          {turn.responseMessages.map((message) => (
+            <MessageSlot key={message.id}>
+              {renderChatMessage({
+                message,
+                mode: activeSessionMode,
+                onConfirmationSubmit,
+                onQuestionnaireSubmit,
+                renderMessageBlock,
+              })}
+            </MessageSlot>
+          ))}
+        </ConversationTurn>
+      ))}
+      {latestTurn ? (
+        <ConversationTurn
+          data-testid="chat-thread-latest-turn"
+          style={latestTurnMinHeight > 0 ? { minHeight: `${latestTurnMinHeight}px` } : undefined}
+        >
+          {latestTurn.userMessage ? (
+            <MessageSlot
+              ref={latestUserMessageRef}
+              data-testid="chat-latest-user-anchor"
+              style={{ scrollMarginTop: `${CHAT_THREAD_SCROLL_TOP_GAP}px` }}
+            >
+              {renderChatMessage({
+                message: latestTurn.userMessage,
+                mode: activeSessionMode,
+                onConfirmationSubmit,
+                onQuestionnaireSubmit,
+                renderMessageBlock,
+              })}
+            </MessageSlot>
+          ) : null}
+          {latestTurn.responseMessages.map((message) => (
+            <MessageSlot key={message.id}>
+              {renderChatMessage({
+                message,
+                mode: activeSessionMode,
+                onConfirmationSubmit,
+                onQuestionnaireSubmit,
+                renderMessageBlock,
+              })}
+            </MessageSlot>
+          ))}
+          {error ? renderErrorState({ error, onRetry, retryButtonLabel }) : null}
+        </ConversationTurn>
       ) : null}
+      {!latestTurn && error ? renderErrorState({ error, onRetry, retryButtonLabel }) : null}
     </Container>
   )
 }
@@ -272,8 +418,10 @@ const MessageSlot = styled.div`
   display: flex;
 `
 
-const StreamingGroup = styled.div`
-  display: contents;
+const ConversationTurn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 `
 
 const ErrorText = styled.div`
