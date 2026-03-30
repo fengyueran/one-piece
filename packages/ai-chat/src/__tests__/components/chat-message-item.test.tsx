@@ -1,6 +1,11 @@
 import axios from 'axios'
 import { act, render, screen } from '@testing-library/react'
 import { ChatThread } from '../../components/chat-thread'
+import {
+  buildAnchoredTimelineSegments,
+  getTimelineBlockKey,
+  getTimelineDisplayUnitCount,
+} from '../../components/chat-thread/lib/chat-message-timeline'
 import { ChatContext } from '../../context/chat-context'
 import { createChatStore } from '../../store/chat-store'
 import {
@@ -19,6 +24,44 @@ jest.mock('remark-math', () => ({}))
 jest.mock('rehype-katex', () => ({}))
 
 describe('ChatThread custom block renderer', () => {
+  it('preserves markdown paragraph boundaries when timeline text is split before a custom block', () => {
+    const approvalBlock = {
+      type: 'custom',
+      kind: 'tool_approval_request',
+      data: { toolName: 'get_equation_default_params' },
+    } as ChatMessageBlock
+    const blockKey = getTimelineBlockKey(approvalBlock, 0)
+    const paragraphBlocks = [
+      { content: '第一步：获取方程列表。', tone: 'settled' as const },
+      { content: '第二步：获取默认参数。', tone: 'settled' as const },
+    ]
+
+    expect(blockKey).not.toBeNull()
+
+    const segments = buildAnchoredTimelineSegments({
+      blocks: [approvalBlock],
+      timelineBlockAnchors: {
+        [blockKey!]: getTimelineDisplayUnitCount(
+          paragraphBlocks.map((block) => block.content).join('\n\n'),
+        ),
+      },
+      timelineDisplayedBlocks: paragraphBlocks,
+      visibleTimelineBlockKeys: {
+        [blockKey!]: true,
+      },
+    })
+
+    expect(segments[0]).toEqual({
+      type: 'text',
+      content: '第一步：获取方程列表。\n\n第二步：获取默认参数。',
+      displayedBlocks: [
+        { content: '第一步：获取方程列表。', tone: 'settled' },
+        { content: '第二步：获取默认参数。', tone: 'settled' },
+      ],
+      useTimelineSegmentation: true,
+    })
+  })
+
   it('renders custom blocks through the provider renderer', () => {
     const store = createChatStore()
     const transport: ChatTransport = {
@@ -366,6 +409,378 @@ describe('ChatThread custom block renderer', () => {
       '首先，我需要获取方程列表来确认一维热方程的ID和type',
     )
     expect(screen.queryByTestId('chat-message-fresh-block')).not.toBeInTheDocument()
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content:
+          '首先，我需要获取方程列表来确认一维热方程的ID和type。接下来，我会获取默认参数配置。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
+
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      '首先，我需要获取方程列表来确认一维热方程的ID和type。get_equation_default_params接下来，我会获取默认参数配置。',
+    )
+
+    jest.useRealTimers()
+  })
+
+  it('settles anchored text tone once a later approval block becomes visible', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).toolName)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content:
+          '首先，我需要获取方程列表来确认1D热方程的ID和类型。\n\n找到了！1D Forward heat equation的ID是55，type是"equation_heat"。现在我需要获取该方程的默认参数配置。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(5000)
+    })
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        blocks: [
+          {
+            type: 'custom',
+            kind: 'tool_approval_request',
+            data: {
+              toolName: 'get_equation_default_params',
+            },
+          } as ChatMessageBlock,
+        ],
+      })
+    })
+
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      '首先，我需要获取方程列表来确认1D热方程的ID和类型。找到了！1D Forward heat equation的ID是55，type是"equation_heat"。现在我需要获取该方程的默认参数配置。get_equation_default_params',
+    )
+    expect(screen.queryByTestId('chat-message-fresh-block')).not.toBeInTheDocument()
+
+    jest.useRealTimers()
+  })
+
+  it('delays anchored approval blocks until preceding streamed text has finished revealing', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).toolName)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content:
+          '首先，我需要获取方程列表来确认1D热方程的ID和类型。\n\n找到了！1D Forward heat equation的ID是55，type是"equation_heat"。现在我需要获取该方程的默认参数配置。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(1500)
+    })
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        blocks: [
+          {
+            type: 'custom',
+            kind: 'tool_approval_request',
+            data: {
+              toolName: 'get_equation_default_params',
+            },
+          } as ChatMessageBlock,
+        ],
+      })
+    })
+
+    expect(screen.queryByTestId('custom-block')).not.toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-content')).toHaveTextContent(
+      '找到了！1D Forward heat equation的ID是55',
+    )
+
+    act(() => {
+      jest.advanceTimersByTime(5000)
+    })
+
+    expect(screen.getByTestId('custom-block')).toHaveTextContent('get_equation_default_params')
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      '首先，我需要获取方程列表来确认1D热方程的ID和类型。找到了！1D Forward heat equation的ID是55，type是"equation_heat"。现在我需要获取该方程的默认参数配置。get_equation_default_params',
+    )
+
+    jest.useRealTimers()
+  })
+
+  it('keeps anchored approval blocks in place after the streaming message completes', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).toolName)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content:
+          '第一步：获取方程列表，确认目标方程的ID和type。\n\n第二步：获取方程默认参数配置。\n\n确认目标方程为"1D Forward heat equation"，其ID为55，type为"equation_heat"。现在我将获取该方程的默认参数配置。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(10000)
+    })
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        blocks: [
+          {
+            type: 'custom',
+            kind: 'tool_approval_request',
+            data: {
+              toolName: 'get_equation_default_params',
+            },
+          } as ChatMessageBlock,
+        ],
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(5000)
+    })
+
+    const bodyStackBeforeComplete = screen.getByTestId('chat-message-body-stack').textContent
+
+    act(() => {
+      store.getState().completeStreamingMessage('session-1')
+    })
+
+    expect(screen.getByTestId('chat-message-body-stack').textContent).toBe(bodyStackBeforeComplete)
+
+    jest.useRealTimers()
+  })
+
+  it('keeps an anchored approval block visible after it has appeared during later stream updates', () => {
+    jest.useFakeTimers()
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-stream',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).toolName)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content: '首先，我需要确认一维热方程的ID和类型。\n\n接下来我将获取方程默认参数配置。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(5000)
+    })
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        blocks: [
+          {
+            type: 'custom',
+            kind: 'tool_approval_request',
+            data: {
+              toolName: 'get_equation_default_params',
+            },
+          } as ChatMessageBlock,
+        ],
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
+
+    expect(screen.getByTestId('custom-block')).toHaveTextContent('get_equation_default_params')
+
+    act(() => {
+      store.getState().patchStreamingMessage('session-1', {
+        content:
+          '首先，我需要确认一维热方程的ID和类型。\n\n接下来我将获取方程默认参数配置。\n\n获取成功后我会继续为您执行下一步。',
+      })
+    })
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
+
+    expect(screen.getByTestId('custom-block')).toHaveTextContent('get_equation_default_params')
 
     jest.useRealTimers()
   })

@@ -271,6 +271,20 @@ const renderMessageBlock = ({ block }: ChatMessageBlockRendererProps) => {
 
 如果你的接入层会在流式文本中途插入审批卡片、工作流卡片或其他结构化 block，可以把 `messageRenderOrder` 设为 `"timeline"`。这样在消息同时存在纯文本和非 markdown block 时，组件会优先保留文本在前，再接上 block，更接近真实到达顺序。
 
+从当前版本开始，`timeline` 模式还会自动记录结构化 block 第一次出现时对应的文本位置。也就是说：
+
+- 当正文已经流出一部分时，后续才收到审批卡或其他自定义 block，`ai-chat` 会把这张卡片锚定在它首次出现的位置。
+- 卡片出现之后继续流出的新文本，会自动渲染到卡片后面。
+- 业务侧不需要再为了“卡片停留在触发点”手动把前文转成 `markdown block`。
+
+这尤其适合下面这种真实流式场景：
+
+1. assistant 先输出一段解释文本
+2. 中途触发 `approval_required` 或其他自定义卡片
+3. assistant 在卡片之后继续输出补充说明
+
+在这种情况下，`timeline` 会自动把消息排成 “前文 -> 卡片 -> 后文”。
+
 ```tsx
 import { AiChatProvider, ChatThread, ChatComposer } from '@xinghunm/ai-chat'
 
@@ -295,4 +309,4 @@ export const CustomChat = () => (
 选择建议：
 
 - 继续使用默认值 `"blocks-first"`：适合静态消息排版，结构化信息应始终优先展示。
-- 使用 `"timeline"`：适合流式响应中途插卡，希望卡片停留在触发事件位置的场景。
+- 使用 `"timeline"`：适合流式响应中途插卡，希望卡片停留在触发事件位置，且不想在业务侧维护额外文本冻结逻辑的场景。

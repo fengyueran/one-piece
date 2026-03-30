@@ -22,6 +22,15 @@ import type {
   ResultSummary,
 } from '../../../types'
 import { useChatMessageReveal } from '../hooks/use-chat-message-reveal'
+import { useTimelineBlockAnchors } from '../hooks/use-timeline-block-anchors'
+import {
+  buildAnchoredTimelineSegments,
+  getTimelineDisplayUnitCount,
+  buildTimelineTextDisplay,
+  getTimelineBlockKey,
+  getTimelineConsumedText,
+  type MessageBodySegment,
+} from '../lib/chat-message-timeline'
 import { splitMarkdownBlocks } from '../lib/message-reveal'
 import { PDEAIExecutionConfirmationCard } from './pde-ai-execution-confirmation-card'
 import { PDEAINoticeCard } from './pde-ai-notice-card'
@@ -61,15 +70,6 @@ const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
     ...(proposal.solverName ? [`- Solver: ${proposal.solverName}`] : []),
     `- Proposal ID: ${proposal.proposalId}`,
   ].join('\n')
-
-type MessageBodySegment =
-  | { type: 'text'; content?: string }
-  | { type: 'markdown'; content: string }
-  | {
-      type: 'block'
-      block: ChatMessageBlock
-      index: number
-    }
 
 const areChatAttachmentsEqual = (
   previousAttachments?: ChatImageAttachment[],
@@ -355,8 +355,14 @@ const ChatMessageItemView = ({
       }
     | undefined
   >(undefined)
-  const { displayedBlocks, displayedContent, freshContent, isAssistantStreaming, settledContent } =
-    useChatMessageReveal(message)
+  const {
+    displayedBlocks,
+    displayedContent,
+    freshContent,
+    isAssistantStreaming,
+    isFreshBlockActive,
+    settledContent,
+  } = useChatMessageReveal(message)
   const isStoppedAssistant = message.role === 'assistant' && message.status === 'stopped'
   const attachments = message.attachments ?? []
   const blocks = message.blocks ?? []
@@ -372,46 +378,25 @@ const ChatMessageItemView = ({
   const shouldShowStreamingCaret =
     isAssistantStreaming && (!shouldRenderStructuredBlocks || hasTextContent)
   const timelineConsumedText =
-    messageRenderOrder === 'timeline'
-      ? blocks
-          .filter(
-            (block): block is Extract<ChatMessageBlock, { type: 'markdown' }> =>
-              block.type === 'markdown',
-          )
-          .map((block) => block.text)
-          .join('')
-      : ''
+    messageRenderOrder === 'timeline' ? getTimelineConsumedText(blocks) : ''
   const hasConsumedTimelineText =
     timelineConsumedText.length > 0 && displayedContent.startsWith(timelineConsumedText)
   const timelineDisplayedContent = hasConsumedTimelineText
     ? displayedContent.slice(timelineConsumedText.length)
     : displayedContent
-  const timelineContentBlocks = splitMarkdownBlocks(timelineDisplayedContent)
-  const timelineSettledContent =
-    isAssistantStreaming && timelineContentBlocks.length > 1
-      ? timelineContentBlocks.slice(0, -1).join('\n\n')
-      : timelineDisplayedContent
-  const timelineFreshContent =
-    isAssistantStreaming && timelineContentBlocks.length > 1
-      ? (timelineContentBlocks[timelineContentBlocks.length - 1] ?? '')
-      : ''
-  const timelineDisplayedTextBlocks =
-    isAssistantStreaming && timelineContentBlocks.length > 1
-      ? timelineContentBlocks.map((content, index) => ({
-          content,
-          tone:
-            timelineFreshContent &&
-            index === timelineContentBlocks.length - 1 &&
-            content === timelineFreshContent
-              ? ('fresh' as const)
-              : ('settled' as const),
-        }))
-      : [
-          {
-            content: timelineDisplayedContent,
-            tone: 'settled' as const,
-          },
-        ]
+  const timelineTextDisplay = buildTimelineTextDisplay(
+    timelineDisplayedContent,
+    isAssistantStreaming,
+    isFreshBlockActive,
+  )
+  const displayedTimelineTextLength = getTimelineDisplayUnitCount(timelineDisplayedContent)
+  const { timelineBlockAnchors, visibleTimelineBlockKeys } = useTimelineBlockAnchors({
+    blocks,
+    displayedTimelineTextLength,
+    isAssistantStreaming,
+    message,
+    messageRenderOrder,
+  })
 
   const renderChatMessageBlock = (block: ChatMessageBlock, index: number) => {
     switch (block.type) {
@@ -498,12 +483,21 @@ const ChatMessageItemView = ({
     }
   }
 
-  const renderTextContent = (options?: { content?: string }) => {
+  const renderTextContent = (options?: {
+    content?: string
+    displayedBlocks?: Array<{ content: string; tone: 'fresh' | 'settled' }>
+    useTimelineSegmentation?: boolean
+  }) => {
     const textContent = options?.content ?? displayedContent
+    const timelineTextDisplay = options?.displayedBlocks
+      ? undefined
+      : options?.useTimelineSegmentation && options.content !== undefined
+        ? buildTimelineTextDisplay(options.content, isAssistantStreaming, isFreshBlockActive)
+        : undefined
     const textBlocks =
-      options?.content !== undefined ? timelineDisplayedTextBlocks : displayedBlocks
-    const settledText = options?.content !== undefined ? timelineSettledContent : settledContent
-    const freshText = options?.content !== undefined ? timelineFreshContent : freshContent
+      options?.displayedBlocks ?? timelineTextDisplay?.displayedBlocks ?? displayedBlocks
+    const settledText = timelineTextDisplay?.settledContent ?? settledContent
+    const freshText = timelineTextDisplay?.freshContent ?? freshContent
 
     return (
       <>
@@ -549,6 +543,20 @@ const ChatMessageItemView = ({
     }
 
     if (messageRenderOrder === 'timeline' && hasTextContent) {
+      const hasAnchoredStructuredBlocks = blocks.some((block, index) => {
+        const blockKey = getTimelineBlockKey(block, index)
+        return blockKey ? timelineBlockAnchors[blockKey] !== undefined : false
+      })
+
+      if (hasAnchoredStructuredBlocks) {
+        return buildAnchoredTimelineSegments({
+          blocks,
+          timelineBlockAnchors,
+          timelineDisplayedBlocks: timelineTextDisplay.displayedBlocks,
+          visibleTimelineBlockKeys,
+        })
+      }
+
       const orderedTimelineSegments = blocks.map((block, index) =>
         block.type === 'markdown'
           ? ({
@@ -616,9 +624,17 @@ const ChatMessageItemView = ({
                 >
                   {segment.type === 'block'
                     ? renderChatMessageBlock(segment.block, segment.index)
-                    : segment.content !== undefined
-                      ? renderStaticTextSegment(segment.content)
-                      : renderTextContent()}
+                    : segment.type === 'text'
+                      ? segment.content !== undefined
+                        ? segment.useTimelineSegmentation
+                          ? renderTextContent({
+                              content: segment.content,
+                              displayedBlocks: segment.displayedBlocks,
+                              useTimelineSegmentation: true,
+                            })
+                          : renderStaticTextSegment(segment.content)
+                        : renderTextContent()
+                      : renderStaticTextSegment(segment.content)}
                 </ContentSegment>
               ))}
             </ContentStack>
