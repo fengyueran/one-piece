@@ -1,10 +1,139 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useReducer } from 'react'
 import type { ChatMessage, ChatMessageRenderOrder } from '../../../types'
 import {
   getTimelineBlockKey,
   getTimelineDisplayUnitCount,
   getTimelineTextStream,
 } from '../lib/chat-message-timeline'
+
+interface TimelineAnchorState {
+  messageId: string
+  previousBlockKeys: string[]
+  timelineBlockAnchors: Record<string, number>
+  visibleTimelineBlockKeys: Record<string, true>
+}
+
+type TimelineAnchorAction =
+  | {
+      type: 'reset-message'
+      messageId: string
+      currentBlockKeys: string[]
+    }
+  | {
+      type: 'sync-anchors'
+      currentBlockKeys: string[]
+      timelineTextStreamLength: number
+    }
+  | {
+      type: 'sync-visible'
+      currentBlockKeys: string[]
+      effectiveTimelineBlockAnchors: Record<string, number>
+      displayedTimelineTextLength: number
+    }
+
+const createTimelineAnchorState = ({
+  messageId,
+  currentBlockKeys,
+}: {
+  messageId: string
+  currentBlockKeys: string[]
+}): TimelineAnchorState => ({
+  messageId,
+  previousBlockKeys: currentBlockKeys,
+  timelineBlockAnchors: {},
+  visibleTimelineBlockKeys: {},
+})
+
+const timelineAnchorReducer = (
+  state: TimelineAnchorState,
+  action: TimelineAnchorAction,
+): TimelineAnchorState => {
+  switch (action.type) {
+    case 'reset-message':
+      if (state.messageId === action.messageId) {
+        return state
+      }
+      return createTimelineAnchorState(action)
+    case 'sync-anchors': {
+      const previousBlockKeys = new Set(state.previousBlockKeys)
+      const nextAnchors = action.currentBlockKeys.reduce<Record<string, number>>(
+        (acc, blockKey) => {
+          const existingAnchor = state.timelineBlockAnchors[blockKey]
+
+          if (existingAnchor !== undefined) {
+            acc[blockKey] = existingAnchor
+            return acc
+          }
+
+          if (!previousBlockKeys.has(blockKey)) {
+            acc[blockKey] = action.timelineTextStreamLength
+          }
+
+          return acc
+        },
+        {},
+      )
+
+      const hasAnchorChanged =
+        Object.keys(nextAnchors).length !== Object.keys(state.timelineBlockAnchors).length ||
+        Object.entries(nextAnchors).some(
+          ([blockKey, anchor]) => state.timelineBlockAnchors[blockKey] !== anchor,
+        )
+
+      const hasPreviousKeysChanged =
+        action.currentBlockKeys.length !== state.previousBlockKeys.length ||
+        action.currentBlockKeys.some(
+          (blockKey, index) => state.previousBlockKeys[index] !== blockKey,
+        )
+
+      if (!hasAnchorChanged && !hasPreviousKeysChanged) {
+        return state
+      }
+
+      return {
+        ...state,
+        previousBlockKeys: action.currentBlockKeys,
+        timelineBlockAnchors: hasAnchorChanged ? nextAnchors : state.timelineBlockAnchors,
+      }
+    }
+    case 'sync-visible': {
+      const nextVisibleBlockKeys = action.currentBlockKeys.reduce<Record<string, true>>(
+        (acc, blockKey) => {
+          if (state.visibleTimelineBlockKeys[blockKey]) {
+            acc[blockKey] = true
+            return acc
+          }
+
+          const anchor = action.effectiveTimelineBlockAnchors[blockKey]
+          if (anchor !== undefined && anchor <= action.displayedTimelineTextLength) {
+            acc[blockKey] = true
+          }
+
+          return acc
+        },
+        {},
+      )
+
+      const hasVisibleBlockChanged =
+        Object.keys(nextVisibleBlockKeys).length !==
+          Object.keys(state.visibleTimelineBlockKeys).length ||
+        Object.keys(nextVisibleBlockKeys).some(
+          (blockKey) => !state.visibleTimelineBlockKeys[blockKey],
+        )
+
+      if (!hasVisibleBlockChanged) {
+        return state
+      }
+
+      return {
+        ...state,
+        visibleTimelineBlockKeys: nextVisibleBlockKeys,
+      }
+    }
+    default:
+      return state
+  }
+}
 
 export const useTimelineBlockAnchors = ({
   blocks,
@@ -19,8 +148,6 @@ export const useTimelineBlockAnchors = ({
   message: ChatMessage
   messageRenderOrder: ChatMessageRenderOrder
 }) => {
-  const [timelineBlockAnchors, setTimelineBlockAnchors] = useState<Record<string, number>>({})
-  const [visibleTimelineBlockKeys, setVisibleTimelineBlockKeys] = useState<Record<string, true>>({})
   const currentTimelineBlockKeys = useMemo(
     () =>
       blocks
@@ -32,26 +159,25 @@ export const useTimelineBlockAnchors = ({
     () => getTimelineDisplayUnitCount(getTimelineTextStream(message.content, blocks)),
     [blocks, message.content],
   )
-  const previousTimelineStateRef = useRef<{
-    messageId: string
-    blockKeys: string[]
-    textLength: number
-  }>({
-    messageId: message.id,
-    blockKeys: currentTimelineBlockKeys,
-    textLength: timelineTextStreamLength,
-  })
+  const [state, dispatch] = useReducer(
+    timelineAnchorReducer,
+    {
+      messageId: message.id,
+      currentBlockKeys: currentTimelineBlockKeys,
+    },
+    createTimelineAnchorState,
+  )
+
   const effectiveTimelineBlockAnchors = useMemo(() => {
     if (messageRenderOrder !== 'timeline' || !isAssistantStreaming) {
-      return timelineBlockAnchors
+      return state.timelineBlockAnchors
     }
 
-    const previousTimelineState = previousTimelineStateRef.current
-    const previousBlockKeys = new Set(previousTimelineState.blockKeys)
+    const previousBlockKeys = new Set(state.previousBlockKeys)
 
     return currentTimelineBlockKeys.reduce<Record<string, number>>(
       (acc, blockKey) => {
-        const existingAnchor = timelineBlockAnchors[blockKey]
+        const existingAnchor = state.timelineBlockAnchors[blockKey]
         if (existingAnchor !== undefined) {
           acc[blockKey] = existingAnchor
           return acc
@@ -63,126 +189,58 @@ export const useTimelineBlockAnchors = ({
 
         return acc
       },
-      { ...timelineBlockAnchors },
+      { ...state.timelineBlockAnchors },
     )
   }, [
     currentTimelineBlockKeys,
     isAssistantStreaming,
     messageRenderOrder,
-    timelineBlockAnchors,
+    state.previousBlockKeys,
+    state.timelineBlockAnchors,
     timelineTextStreamLength,
   ])
 
   useEffect(() => {
-    const previousTimelineState = previousTimelineStateRef.current
+    dispatch({
+      type: 'reset-message',
+      messageId: message.id,
+      currentBlockKeys: currentTimelineBlockKeys,
+    })
+  }, [currentTimelineBlockKeys, message.id])
 
-    if (previousTimelineState.messageId !== message.id) {
-      if (Object.keys(timelineBlockAnchors).length > 0) {
-        setTimelineBlockAnchors({})
-      }
-      if (Object.keys(visibleTimelineBlockKeys).length > 0) {
-        setVisibleTimelineBlockKeys({})
-      }
-      previousTimelineStateRef.current = {
-        messageId: message.id,
-        blockKeys: currentTimelineBlockKeys,
-        textLength: timelineTextStreamLength,
-      }
+  useEffect(() => {
+    if (messageRenderOrder !== 'timeline' || !isAssistantStreaming) {
       return
     }
 
-    if (messageRenderOrder === 'timeline' && isAssistantStreaming) {
-      const previousBlockKeys = new Set(previousTimelineState.blockKeys)
-      const nextAnchors = currentTimelineBlockKeys.reduce<Record<string, number>>(
-        (acc, blockKey) => {
-          const existingAnchor = timelineBlockAnchors[blockKey]
-
-          if (existingAnchor !== undefined) {
-            acc[blockKey] = existingAnchor
-            return acc
-          }
-
-          if (!previousBlockKeys.has(blockKey)) {
-            acc[blockKey] = timelineTextStreamLength
-          }
-
-          return acc
-        },
-        {},
-      )
-
-      const hasAnchorChanged =
-        Object.keys(nextAnchors).length !== Object.keys(timelineBlockAnchors).length ||
-        Object.entries(nextAnchors).some(
-          ([blockKey, anchor]) => timelineBlockAnchors[blockKey] !== anchor,
-        )
-
-      if (hasAnchorChanged) {
-        setTimelineBlockAnchors(nextAnchors)
-      }
-    } else if (messageRenderOrder !== 'timeline' && Object.keys(timelineBlockAnchors).length > 0) {
-      setTimelineBlockAnchors({})
-    }
-
-    previousTimelineStateRef.current = {
-      messageId: message.id,
-      blockKeys: currentTimelineBlockKeys,
-      textLength: timelineTextStreamLength,
-    }
-  }, [
-    currentTimelineBlockKeys,
-    isAssistantStreaming,
-    message.id,
-    message.content,
-    messageRenderOrder,
-    timelineBlockAnchors,
-    timelineTextStreamLength,
-    visibleTimelineBlockKeys,
-  ])
+    dispatch({
+      type: 'sync-anchors',
+      currentBlockKeys: currentTimelineBlockKeys,
+      timelineTextStreamLength,
+    })
+  }, [currentTimelineBlockKeys, isAssistantStreaming, messageRenderOrder, timelineTextStreamLength])
 
   useEffect(() => {
     if (messageRenderOrder !== 'timeline') {
-      if (Object.keys(visibleTimelineBlockKeys).length > 0) {
-        setVisibleTimelineBlockKeys({})
-      }
       return
     }
 
-    const nextVisibleBlockKeys = currentTimelineBlockKeys.reduce<Record<string, true>>(
-      (acc, blockKey) => {
-        if (visibleTimelineBlockKeys[blockKey]) {
-          acc[blockKey] = true
-          return acc
-        }
-
-        const anchor = effectiveTimelineBlockAnchors[blockKey]
-        if (anchor !== undefined && anchor <= displayedTimelineTextLength) {
-          acc[blockKey] = true
-        }
-
-        return acc
-      },
-      {},
-    )
-
-    const hasVisibleBlockChanged =
-      Object.keys(nextVisibleBlockKeys).length !== Object.keys(visibleTimelineBlockKeys).length ||
-      Object.keys(nextVisibleBlockKeys).some((blockKey) => !visibleTimelineBlockKeys[blockKey])
-
-    if (hasVisibleBlockChanged) {
-      setVisibleTimelineBlockKeys(nextVisibleBlockKeys)
-    }
+    dispatch({
+      type: 'sync-visible',
+      currentBlockKeys: currentTimelineBlockKeys,
+      effectiveTimelineBlockAnchors,
+      displayedTimelineTextLength,
+    })
   }, [
     currentTimelineBlockKeys,
     displayedTimelineTextLength,
     effectiveTimelineBlockAnchors,
     messageRenderOrder,
-    timelineBlockAnchors,
-    visibleTimelineBlockKeys,
   ])
 
   return {
-    timelineBlockAnchors: effectiveTimelineBlockAnchors,
-    visibleTimelineBlockKeys,
+    timelineBlockAnchors: messageRenderOrder === 'timeline' ? effectiveTimelineBlockAnchors : {},
+    visibleTimelineBlockKeys:
+      messageRenderOrder === 'timeline' ? state.visibleTimelineBlockKeys : {},
   }
 }
