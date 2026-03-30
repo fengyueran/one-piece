@@ -132,15 +132,16 @@ export const CustomChat = () => (
 
 一体化 `AiChat` 组件的 Props，继承全部 `AiChatProviderProps`（不含 `children`）。
 
-| 属性                     | 类型            | 默认值    | 说明                                                                                            |
-| ------------------------ | --------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| `transport`              | `ChatTransport` | —         | 推荐。由接入方提供的传输适配器。                                                                |
-| `apiBaseUrl`             | `string`        | —         | 兼容模式。创建默认内置 transport。                                                              |
-| `authToken`              | `string`        | —         | 兼容模式下默认 transport 使用的鉴权头。                                                         |
-| `defaultMode`            | `ChatAgentMode` | `"agent"` | 新会话的初始 Agent 模式。                                                                       |
-| `labels`                 | `AiChatLabels`  | —         | 可选的 UI 文案覆盖。                                                                            |
-| `showConversationList`   | `boolean`       | `false`   | 为 `true` 时渲染会话列表侧边栏。                                                                |
-| `enableImageAttachments` | `boolean`       | `true`    | 为 `false` 时隐藏上传按钮、禁用粘贴图片，并使程序化调用 `pickImages`/`pasteImages` 变为 no-op。 |
+| 属性                     | 类型                     | 默认值           | 说明                                                                                                      |
+| ------------------------ | ------------------------ | ---------------- | --------------------------------------------------------------------------------------------------------- |
+| `transport`              | `ChatTransport`          | —                | 推荐。由接入方提供的传输适配器。                                                                          |
+| `apiBaseUrl`             | `string`                 | —                | 兼容模式。创建默认内置 transport。                                                                        |
+| `authToken`              | `string`                 | —                | 兼容模式下默认 transport 使用的鉴权头。                                                                   |
+| `defaultMode`            | `ChatAgentMode`          | `"agent"`        | 新会话的初始 Agent 模式。                                                                                 |
+| `labels`                 | `AiChatLabels`           | —                | 可选的 UI 文案覆盖。                                                                                      |
+| `showConversationList`   | `boolean`                | `false`          | 为 `true` 时渲染会话列表侧边栏。                                                                          |
+| `messageRenderOrder`     | `ChatMessageRenderOrder` | `"blocks-first"` | 混合纯文本与结构化 block 时的渲染顺序。默认结构化卡片在前；设为 `"timeline"` 时按时间线优先保留文本在前。 |
+| `enableImageAttachments` | `boolean`                | `true`           | 为 `false` 时隐藏上传按钮、禁用粘贴图片，并使程序化调用 `pickImages`/`pasteImages` 变为 no-op。           |
 
 ### `AiChatProviderProps`
 
@@ -154,6 +155,7 @@ export const CustomChat = () => (
 | `defaultMode`            | `ChatAgentMode`            | 否   | 新会话的初始 Agent 模式。                                                                                    |
 | `labels`                 | `AiChatLabels`             | 否   | 可选的 UI 文案覆盖。                                                                                         |
 | `renderMessageBlock`     | `ChatMessageBlockRenderer` | 否   | 自定义消息 block 渲染器，用于承接 `type: "custom"` 等扩展。                                                  |
+| `messageRenderOrder`     | `ChatMessageRenderOrder`   | 否   | 混合纯文本与结构化 block 时的渲染顺序。默认 `"blocks-first"`，设为 `"timeline"` 可按时间线优先渲染文本片段。 |
 | `enableImageAttachments` | `boolean`                  | 否   | 为 `false` 时隐藏上传按钮、禁用粘贴图片，并使程序化调用 `pickImages`/`pasteImages` 变为 no-op。默认 `true`。 |
 | `children`               | `ReactNode`                | 是   | Provider 内部渲染的子元素。                                                                                  |
 
@@ -167,6 +169,7 @@ export const CustomChat = () => (
 | `defaultMode`            | `ChatAgentMode`             | 否   | 新会话的初始 Agent 模式。                                                                                    |
 | `labels`                 | `AiChatLabels`              | 否   | 可选的 UI 文案覆盖。                                                                                         |
 | `renderMessageBlock`     | `ChatMessageBlockRenderer`  | 否   | 自定义消息 block 渲染器，用于承接 `type: "custom"` 等扩展。                                                  |
+| `messageRenderOrder`     | `ChatMessageRenderOrder`    | 否   | 混合纯文本与结构化 block 时的渲染顺序。默认 `"blocks-first"`，设为 `"timeline"` 可按时间线优先渲染文本片段。 |
 | `enableImageAttachments` | `boolean`                   | 否   | 为 `false` 时隐藏上传按钮、禁用粘贴图片，并使程序化调用 `pickImages`/`pasteImages` 变为 no-op。默认 `true`。 |
 | `children`               | `ReactNode`                 | 是   | Provider 内部渲染的子元素。                                                                                  |
 
@@ -261,3 +264,35 @@ const renderMessageBlock = ({ block }: ChatMessageBlockRendererProps) => {
 ```
 
 这样业务卡片可以放在接入层或扩展包里，基础包继续只负责通用聊天体验。
+
+## 控制消息渲染顺序
+
+默认情况下，`ai-chat` 采用 `blocks-first` 语义：一条消息同时包含 `content` 和结构化 `blocks` 时，会先渲染卡片类 block，再渲染正文。这适合参数卡、确认卡、结果卡等“先看结构化信息，再看解释文本”的场景。
+
+如果你的接入层会在流式文本中途插入审批卡片、工作流卡片或其他结构化 block，可以把 `messageRenderOrder` 设为 `"timeline"`。这样在消息同时存在纯文本和非 markdown block 时，组件会优先保留文本在前，再接上 block，更接近真实到达顺序。
+
+```tsx
+import { AiChatProvider, ChatThread, ChatComposer } from '@xinghunm/ai-chat'
+
+export const CustomChat = () => (
+  <AiChatProvider
+    transport={transport}
+    messageRenderOrder="timeline"
+    renderMessageBlock={({ block }) => {
+      if (block.type !== 'custom' || block.kind !== 'tool-approval') {
+        return null
+      }
+
+      return <ToolApprovalCard data={block.data} />
+    }}
+  >
+    <ChatThread />
+    <ChatComposer />
+  </AiChatProvider>
+)
+```
+
+选择建议：
+
+- 继续使用默认值 `"blocks-first"`：适合静态消息排版，结构化信息应始终优先展示。
+- 使用 `"timeline"`：适合流式响应中途插卡，希望卡片停留在触发事件位置的场景。

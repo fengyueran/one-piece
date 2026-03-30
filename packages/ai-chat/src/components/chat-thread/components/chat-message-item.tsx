@@ -22,6 +22,7 @@ import type {
   ResultSummary,
 } from '../../../types'
 import { useChatMessageReveal } from '../hooks/use-chat-message-reveal'
+import { splitMarkdownBlocks } from '../lib/message-reveal'
 import { PDEAIExecutionConfirmationCard } from './pde-ai-execution-confirmation-card'
 import { PDEAINoticeCard } from './pde-ai-notice-card'
 import { PDEAIParameterSummaryCard } from './pde-ai-parameter-summary-card'
@@ -60,6 +61,14 @@ const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
     ...(proposal.solverName ? [`- Solver: ${proposal.solverName}`] : []),
     `- Proposal ID: ${proposal.proposalId}`,
   ].join('\n')
+
+type MessageBodySegment =
+  | { type: 'text' }
+  | {
+      type: 'block'
+      block: ChatMessageBlock
+      index: number
+    }
 
 const areChatAttachmentsEqual = (
   previousAttachments?: ChatImageAttachment[],
@@ -337,7 +346,7 @@ const ChatMessageItemView = ({
   onQuestionnaireSubmit?: (submission: PlanQuestionnaireSubmission) => void
   renderMessageBlock?: ChatMessageBlockRenderer
 }) => {
-  const { labels } = useChatContext()
+  const { labels, messageRenderOrder = 'blocks-first' } = useChatContext()
   const [activeImage, setActiveImage] = useState<
     | {
         name: string
@@ -361,6 +370,47 @@ const ChatMessageItemView = ({
   const canSubmitQuestionnaire = isPlanMode && typeof onQuestionnaireSubmit === 'function'
   const shouldShowStreamingCaret =
     isAssistantStreaming && (!shouldRenderStructuredBlocks || hasTextContent)
+  const timelineConsumedText =
+    messageRenderOrder === 'timeline'
+      ? blocks
+          .filter(
+            (block): block is Extract<ChatMessageBlock, { type: 'markdown' }> =>
+              block.type === 'markdown',
+          )
+          .map((block) => block.text)
+          .join('')
+      : ''
+  const hasConsumedTimelineText =
+    timelineConsumedText.length > 0 && displayedContent.startsWith(timelineConsumedText)
+  const timelineDisplayedContent = hasConsumedTimelineText
+    ? displayedContent.slice(timelineConsumedText.length)
+    : displayedContent
+  const timelineContentBlocks = splitMarkdownBlocks(timelineDisplayedContent)
+  const timelineSettledContent =
+    isAssistantStreaming && timelineContentBlocks.length > 1
+      ? timelineContentBlocks.slice(0, -1).join('\n\n')
+      : timelineDisplayedContent
+  const timelineFreshContent =
+    isAssistantStreaming && timelineContentBlocks.length > 1
+      ? (timelineContentBlocks[timelineContentBlocks.length - 1] ?? '')
+      : ''
+  const timelineDisplayedTextBlocks =
+    isAssistantStreaming && timelineContentBlocks.length > 1
+      ? timelineContentBlocks.map((content, index) => ({
+          content,
+          tone:
+            timelineFreshContent &&
+            index === timelineContentBlocks.length - 1 &&
+            content === timelineFreshContent
+              ? ('fresh' as const)
+              : ('settled' as const),
+        }))
+      : [
+          {
+            content: timelineDisplayedContent,
+            tone: 'settled' as const,
+          },
+        ]
 
   const renderChatMessageBlock = (block: ChatMessageBlock, index: number) => {
     switch (block.type) {
@@ -447,32 +497,74 @@ const ChatMessageItemView = ({
     }
   }
 
-  const renderTextContent = () => (
-    <>
-      {displayedBlocks
-        .filter((block) => block.content)
-        .map((block, index) => (
-          <ContentBlock
-            key={`${block.tone}-${index}`}
-            data-testid={
-              block.tone === 'fresh' ? 'chat-message-fresh-block' : 'chat-message-settled-block'
-            }
-            data-block-tone={block.tone}
-            data-block-index={index}
-          >
-            {renderMarkdownContent(block.content)}
+  const renderTextContent = (options?: { content?: string }) => {
+    const textContent = options?.content ?? displayedContent
+    const textBlocks =
+      options?.content !== undefined ? timelineDisplayedTextBlocks : displayedBlocks
+    const settledText = options?.content !== undefined ? timelineSettledContent : settledContent
+    const freshText = options?.content !== undefined ? timelineFreshContent : freshContent
+
+    return (
+      <>
+        {textBlocks
+          .filter((block) => block.content)
+          .map((block, index) => (
+            <ContentBlock
+              key={`${block.tone}-${index}`}
+              data-testid={
+                block.tone === 'fresh' ? 'chat-message-fresh-block' : 'chat-message-settled-block'
+              }
+              data-block-tone={block.tone}
+              data-block-index={index}
+            >
+              {renderMarkdownContent(block.content)}
+            </ContentBlock>
+          ))}
+        {!textBlocks.some((block) => block.content) &&
+        !settledText &&
+        !freshText &&
+        Boolean(textContent) ? (
+          <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
+            {renderMarkdownContent(textContent)}
           </ContentBlock>
-        ))}
-      {!displayedBlocks.some((block) => block.content) &&
-      !settledContent &&
-      !freshContent &&
-      hasTextContent ? (
-        <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-          {renderMarkdownContent(displayedContent)}
-        </ContentBlock>
-      ) : null}
-    </>
-  )
+        ) : null}
+      </>
+    )
+  }
+
+  const bodySegments: MessageBodySegment[] = (() => {
+    if (!shouldRenderStructuredBlocks && hasTextContent) {
+      return [{ type: 'text' }]
+    }
+
+    if (!shouldRenderStructuredBlocks) {
+      return []
+    }
+
+    if (messageRenderOrder === 'timeline' && hasTextContent) {
+      const orderedTimelineSegments = blocks.map((block, index) => ({
+        type: 'block' as const,
+        block,
+        index,
+      }))
+
+      if (!timelineConsumedText) {
+        return [{ type: 'text' }, ...orderedTimelineSegments]
+      }
+
+      return timelineDisplayedContent
+        ? [...orderedTimelineSegments, { type: 'text' }]
+        : orderedTimelineSegments
+    }
+
+    const orderedBlocks = blocks.map((block, index) => ({
+      type: 'block' as const,
+      block,
+      index,
+    }))
+
+    return hasTextContent ? [...orderedBlocks, { type: 'text' }] : orderedBlocks
+  })()
 
   return (
     <>
@@ -495,21 +587,24 @@ const ChatMessageItemView = ({
         <Content data-testid="chat-message-content">
           {shouldRenderStructuredBlocks || hasTextContent ? (
             <ContentStack data-testid="chat-message-body-stack">
-              {shouldRenderStructuredBlocks
-                ? blocks.map((block, index) => (
-                    <ContentSegment
-                      key={`${block.type}-${index}`}
-                      data-testid="chat-message-content-segment"
-                    >
-                      {renderChatMessageBlock(block, index)}
-                    </ContentSegment>
-                  ))
-                : null}
-              {hasTextContent ? (
-                <ContentSegment data-testid="chat-message-content-segment">
-                  {renderTextContent()}
+              {bodySegments.map((segment, index) => (
+                <ContentSegment
+                  key={
+                    segment.type === 'text'
+                      ? `text-${index}`
+                      : `${segment.block.type}-${segment.index}`
+                  }
+                  data-testid="chat-message-content-segment"
+                >
+                  {segment.type === 'text'
+                    ? renderTextContent(
+                        messageRenderOrder === 'timeline'
+                          ? { content: timelineDisplayedContent }
+                          : undefined,
+                      )
+                    : renderChatMessageBlock(segment.block, segment.index)}
                 </ContentSegment>
-              ) : null}
+              ))}
             </ContentStack>
           ) : null}
           {attachments.length ? (

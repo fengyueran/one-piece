@@ -36,6 +36,7 @@ export type {
   ChatMessageBlock,
   ChatMessageBlockRenderer,
   ChatMessageBlockRendererProps,
+  ChatMessageRenderOrder,
   ChatMessageStatus,
   ChatModel,
   ChatRole,
@@ -52,4 +53,9 @@ export type {
   ResultSummary,
   TransformChatStreamPacket,
 } from './types'
-export { CHAT_AGENT_MODES, DEFAULT_CHAT_AGENT_MODE, DEFAULT_AI_CHAT_LABELS } from './types'
+export {
+  CHAT_AGENT_MODES,
+  CHAT_MESSAGE_RENDER_ORDERS,
+  DEFAULT_CHAT_AGENT_MODE,
+  DEFAULT_AI_CHAT_LABELS,
+} from './types'

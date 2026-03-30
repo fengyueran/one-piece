@@ -4,6 +4,7 @@ import type { ChatStoreInstance } from '../store/chat-store'
 import type {
   AiChatLabels,
   ChatMessageBlockRenderer,
+  ChatMessageRenderOrder,
   ChatTransport,
   TransformChatStreamPacket,
 } from '../types'
@@ -24,6 +25,8 @@ export interface ChatContextValue {
   retryRef: MutableRefObject<() => Promise<void>>
   /** Optional block renderer used to extend message rendering with custom block types. */
   renderMessageBlock?: ChatMessageBlockRenderer
+  /** Optional render order used for mixed text and structured message blocks. */
+  messageRenderOrder?: ChatMessageRenderOrder
   /** Optional packet transformer used by the legacy default adapter. */
   transformStreamPacket?: TransformChatStreamPacket
   /** Whether image attachments are enabled. Defaults to true. */

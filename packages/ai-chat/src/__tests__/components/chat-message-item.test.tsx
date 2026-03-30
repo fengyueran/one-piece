@@ -71,6 +71,122 @@ describe('ChatThread custom block renderer', () => {
     expect(screen.getByTestId('custom-block')).toHaveTextContent('Extensible')
     expect(screen.getByText('Follow-up text remains visible.')).toBeInTheDocument()
     expect(screen.getAllByTestId('chat-message-content-segment')).toHaveLength(2)
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      'ExtensibleFollow-up text remains visible.',
+    )
+  })
+
+  it('keeps plain text ahead of structured blocks when timeline render order is enabled', () => {
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'assistant-1',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: 'Follow-up text remains visible.',
+      blocks: [
+        { type: 'custom', kind: 'badge', data: { label: 'Extensible' } } as ChatMessageBlock,
+      ],
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).label)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByTestId('custom-block')).toHaveTextContent('Extensible')
+    expect(screen.getByText('Follow-up text remains visible.')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      'Follow-up text remains visible.Extensible',
+    )
+  })
+
+  it('keeps markdown timeline blocks ahead of later text when timeline render order is enabled', () => {
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'assistant-1',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '已收到审批请求，请确认后继续执行。',
+      blocks: [
+        { type: 'markdown', text: '已收到审批请求，' },
+        { type: 'custom', kind: 'badge', data: { label: 'Approval Card' } } as ChatMessageBlock,
+      ],
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+          renderMessageBlock: ({ block }: ChatMessageBlockRendererProps) =>
+            block.type === 'custom' ? (
+              <div data-testid="custom-block">{String((block.data as any).label)}</div>
+            ) : null,
+          messageRenderOrder: 'timeline',
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
+      '已收到审批请求，Approval Card请确认后继续执行。',
+    )
   })
 
   it('keeps rendering streamed text when custom blocks arrive mid-stream', () => {
