@@ -4,6 +4,7 @@ import { ChatThread } from '../../components/chat-thread'
 import {
   buildAnchoredTimelineSegments,
   getTimelineBlockKey,
+  getTimelineConsumedText,
   getTimelineDisplayUnitCount,
 } from '../../components/chat-thread/lib/chat-message-timeline'
 import { ChatContext } from '../../context/chat-context'
@@ -24,6 +25,42 @@ jest.mock('remark-math', () => ({}))
 jest.mock('rehype-katex', () => ({}))
 
 describe('ChatThread custom block renderer', () => {
+  it('preserves paragraph separators when collecting consumed markdown timeline text', () => {
+    const consumedText = getTimelineConsumedText([
+      { type: 'markdown', text: '第一段' },
+      { type: 'markdown', text: '第二段' },
+    ])
+
+    expect(consumedText).toBe('第一段\n\n第二段')
+  })
+
+  it('distinguishes custom timeline blocks with different payloads', () => {
+    const firstKey = getTimelineBlockKey(
+      {
+        type: 'custom',
+        kind: 'tool_approval_request',
+        data: {
+          requestId: 'req-1',
+          toolName: 'get_equation_default_params',
+        },
+      } as ChatMessageBlock,
+      0,
+    )
+    const secondKey = getTimelineBlockKey(
+      {
+        type: 'custom',
+        kind: 'tool_approval_request',
+        data: {
+          requestId: 'req-2',
+          toolName: 'create_pde_task',
+        },
+      } as ChatMessageBlock,
+      0,
+    )
+
+    expect(firstKey).not.toBe(secondKey)
+  })
+
   it('preserves markdown paragraph boundaries when timeline text is split before a custom block', () => {
     const approvalBlock = {
       type: 'custom',
@@ -60,6 +97,53 @@ describe('ChatThread custom block renderer', () => {
       ],
       useTimelineSegmentation: true,
     })
+  })
+
+  it('renders blocks after an invisible block when a later block is explicitly visible', () => {
+    const invisibleBlock = {
+      type: 'custom',
+      kind: 'tool_approval_request',
+      data: { toolName: 'step_one' },
+    } as ChatMessageBlock
+    const visibleBlock = {
+      type: 'custom',
+      kind: 'tool_approval_request',
+      data: { toolName: 'step_two' },
+    } as ChatMessageBlock
+    const invisibleKey = getTimelineBlockKey(invisibleBlock, 0)!
+    const visibleKey = getTimelineBlockKey(visibleBlock, 1)!
+
+    // Only 3 chars displayed – not enough to reach invisible block's anchor (5),
+    // but visible block is explicitly in visibleTimelineBlockKeys.
+    const displayedBlocks = [{ content: 'ABC', tone: 'settled' as const }]
+    const totalUnits = getTimelineDisplayUnitCount('ABC')
+
+    const segments = buildAnchoredTimelineSegments({
+      blocks: [invisibleBlock, visibleBlock],
+      timelineBlockAnchors: {
+        [invisibleKey]: 5, // anchor beyond displayed text → invisible
+        [visibleKey]: 10, // anchor beyond displayed text but explicitly visible
+      },
+      timelineDisplayedBlocks: displayedBlocks,
+      visibleTimelineBlockKeys: {
+        [visibleKey]: true,
+      },
+    })
+
+    // Invisible block must not appear in segments
+    const blockSegments = segments.filter((s) => s.type === 'block')
+    expect(blockSegments).toHaveLength(1)
+    expect((blockSegments[0] as Extract<(typeof segments)[number], { type: 'block' }>).block).toBe(
+      visibleBlock,
+    )
+
+    // Text up to the display limit (ABC) should appear before the visible block
+    const textSegments = segments.filter((s) => s.type === 'text')
+    expect(textSegments.length).toBeGreaterThanOrEqual(1)
+    const combinedText = textSegments
+      .map((s) => (s as Extract<(typeof segments)[number], { type: 'text' }>).content)
+      .join('')
+    expect(combinedText).toBe('ABC'.slice(0, totalUnits))
   })
 
   it('renders custom blocks through the provider renderer', () => {
