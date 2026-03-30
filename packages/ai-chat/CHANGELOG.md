@@ -1,5 +1,13 @@
 # @xinghunm/ai-chat
 
+## 0.4.0
+
+### Minor Changes
+
+- 新增 `messageRenderOrder="timeline"` 配置，支持按时间线顺序混排文本与结构化消息块。
+- 修复审批卡等自定义消息块在流式输出中的插入位置、显隐切换和完成态回退问题。
+- 保留卡片前后 markdown 文本的段落结构、reveal 效果以及时间线锚点稳定性。
+
 ## 0.2.2
 
 ### Patch Changes
