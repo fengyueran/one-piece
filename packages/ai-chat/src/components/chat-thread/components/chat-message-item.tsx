@@ -31,7 +31,6 @@ import {
   getTimelineConsumedText,
   type MessageBodySegment,
 } from '../lib/chat-message-timeline'
-import { splitMarkdownBlocks } from '../lib/message-reveal'
 import { PDEAIExecutionConfirmationCard } from './pde-ai-execution-confirmation-card'
 import { PDEAINoticeCard } from './pde-ai-notice-card'
 import { PDEAIParameterSummaryCard } from './pde-ai-parameter-summary-card'
@@ -489,15 +488,15 @@ const ChatMessageItemView = ({
     useTimelineSegmentation?: boolean
   }) => {
     const textContent = options?.content ?? displayedContent
-    const timelineTextDisplay = options?.displayedBlocks
+    const localTimelineTextDisplay = options?.displayedBlocks
       ? undefined
       : options?.useTimelineSegmentation && options.content !== undefined
         ? buildTimelineTextDisplay(options.content, isAssistantStreaming, isFreshBlockActive)
         : undefined
     const textBlocks =
-      options?.displayedBlocks ?? timelineTextDisplay?.displayedBlocks ?? displayedBlocks
-    const settledText = timelineTextDisplay?.settledContent ?? settledContent
-    const freshText = timelineTextDisplay?.freshContent ?? freshContent
+      options?.displayedBlocks ?? localTimelineTextDisplay?.displayedBlocks ?? displayedBlocks
+    const settledText = localTimelineTextDisplay?.settledContent ?? settledContent
+    const freshText = localTimelineTextDisplay?.freshContent ?? freshContent
 
     return (
       <>

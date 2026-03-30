@@ -1,6 +1,25 @@
 import { splitMarkdownBlocks } from './message-reveal'
 import type { ChatMessageBlock } from '../../../types'
 
+const stringifyTimelineKeyPart = (value: unknown): string => {
+  if (value === null || value === undefined) {
+    return String(value)
+  }
+
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stringifyTimelineKeyPart(item)).join(',')}]`
+  }
+
+  if (typeof value === 'object') {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+      .map(([key, nestedValue]) => `${key}:${stringifyTimelineKeyPart(nestedValue)}`)
+      .join(',')}}`
+  }
+
+  return String(value)
+}
+
 export type MessageBodySegment =
   | {
       type: 'text'
@@ -32,7 +51,7 @@ export const getTimelineBlockKey = (block: ChatMessageBlock, index: number) => {
     case 'questionnaire':
       return `${index}:questionnaire:${block.questionnaire.questionnaireId}`
     case 'custom':
-      return `${index}:custom:${block.kind}`
+      return `${index}:custom:${block.kind}:${stringifyTimelineKeyPart(block.data)}`
     default:
       return null
   }
@@ -45,7 +64,7 @@ export const getTimelineConsumedText = (blocks: ChatMessageBlock[]) =>
         block.type === 'markdown',
     )
     .map((block) => block.text)
-    .join('')
+    .join('\n\n')
 
 export const getTimelineTextStream = (content: string, blocks: ChatMessageBlock[]) => {
   const consumedText = getTimelineConsumedText(blocks)
@@ -166,7 +185,9 @@ export const buildAnchoredTimelineSegments = ({
     }
   }
 
-  let hasPendingBlock = false
+  // Tracks the upper bound for trailing text. An invisible block sets a cutoff at its anchor;
+  // a subsequent visible block resets it to allow full trailing text after that block.
+  let trailingCutoff = totalTimelineUnits
 
   for (const [index, block] of blocks.entries()) {
     if (block.type === 'markdown') {
@@ -198,10 +219,12 @@ export const buildAnchoredTimelineSegments = ({
 
     if (!isBlockVisible) {
       textCursor = Math.min(anchor, totalTimelineUnits)
-      hasPendingBlock = true
-      break
+      trailingCutoff = Math.min(trailingCutoff, textCursor)
+      continue
     }
 
+    // Visible block clears any pending cutoff so trailing text flows past it.
+    trailingCutoff = totalTimelineUnits
     orderedTimelineSegments.push({
       type: 'block',
       block,
@@ -210,10 +233,7 @@ export const buildAnchoredTimelineSegments = ({
     textCursor = Math.max(textCursor, anchor)
   }
 
-  const trailingTextSegment = buildTextSegment(
-    textCursor,
-    hasPendingBlock ? textCursor : totalTimelineUnits,
-  )
+  const trailingTextSegment = buildTextSegment(textCursor, trailingCutoff)
   if (trailingTextSegment) {
     orderedTimelineSegments.push(trailingTextSegment)
   }
