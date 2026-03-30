@@ -63,7 +63,8 @@ const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
   ].join('\n')
 
 type MessageBodySegment =
-  | { type: 'text' }
+  | { type: 'text'; content?: string }
+  | { type: 'markdown'; content: string }
   | {
       type: 'block'
       block: ChatMessageBlock
@@ -532,6 +533,12 @@ const ChatMessageItemView = ({
     )
   }
 
+  const renderStaticTextSegment = (content: string) => (
+    <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
+      {renderMarkdownContent(content)}
+    </ContentBlock>
+  )
+
   const bodySegments: MessageBodySegment[] = (() => {
     if (!shouldRenderStructuredBlocks && hasTextContent) {
       return [{ type: 'text' }]
@@ -542,18 +549,27 @@ const ChatMessageItemView = ({
     }
 
     if (messageRenderOrder === 'timeline' && hasTextContent) {
-      const orderedTimelineSegments = blocks.map((block, index) => ({
-        type: 'block' as const,
-        block,
-        index,
-      }))
+      const orderedTimelineSegments = blocks.map((block, index) =>
+        block.type === 'markdown'
+          ? ({
+              type: 'markdown',
+              content: block.text,
+            } as const)
+          : ({
+              type: 'block',
+              block,
+              index,
+            } as const),
+      )
 
       if (!timelineConsumedText) {
-        return [{ type: 'text' }, ...orderedTimelineSegments]
+        return displayedContent
+          ? [{ type: 'text', content: displayedContent }, ...orderedTimelineSegments]
+          : orderedTimelineSegments
       }
 
       return timelineDisplayedContent
-        ? [...orderedTimelineSegments, { type: 'text' }]
+        ? [...orderedTimelineSegments, { type: 'text', content: timelineDisplayedContent }]
         : orderedTimelineSegments
     }
 
@@ -592,17 +608,17 @@ const ChatMessageItemView = ({
                   key={
                     segment.type === 'text'
                       ? `text-${index}`
-                      : `${segment.block.type}-${segment.index}`
+                      : segment.type === 'markdown'
+                        ? `markdown-${index}`
+                        : `${segment.block.type}-${segment.index}`
                   }
                   data-testid="chat-message-content-segment"
                 >
-                  {segment.type === 'text'
-                    ? renderTextContent(
-                        messageRenderOrder === 'timeline'
-                          ? { content: timelineDisplayedContent }
-                          : undefined,
-                      )
-                    : renderChatMessageBlock(segment.block, segment.index)}
+                  {segment.type === 'block'
+                    ? renderChatMessageBlock(segment.block, segment.index)
+                    : segment.content !== undefined
+                      ? renderStaticTextSegment(segment.content)
+                      : renderTextContent()}
                 </ContentSegment>
               ))}
             </ContentStack>
