@@ -8,6 +8,7 @@ import {
   type AiChatLabels,
   type ChatAgentMode,
   type ChatMessageBlockRenderer,
+  type ChatMessageRenderOrder,
   type ChatTransport,
   type TransformChatStreamPacket,
 } from '../../types'
@@ -19,6 +20,8 @@ interface AiChatProviderBaseProps {
   labels?: AiChatLabels
   /** Optional renderer used to extend message blocks with app-specific UI. */
   renderMessageBlock?: ChatMessageBlockRenderer
+  /** Optional render order used for mixed text and structured message blocks. */
+  messageRenderOrder?: ChatMessageRenderOrder
   /**
    * Whether to enable image attachment uploads. Defaults to `true`.
    * Set to `false` to hide the upload button, disable paste-image handling,
@@ -60,7 +63,14 @@ export type AiChatProviderProps = AiChatProviderBaseProps &
   (AiChatProviderDefaultAdapterProps | AiChatProviderCustomTransportProps)
 
 export const AiChatProvider = (props: AiChatProviderProps) => {
-  const { defaultMode, labels, renderMessageBlock, enableImageAttachments = true, children } = props
+  const {
+    defaultMode,
+    labels,
+    renderMessageBlock,
+    messageRenderOrder,
+    enableImageAttachments = true,
+    children,
+  } = props
   const [store] = useState(() =>
     createChatStore(defaultMode ? { preferredMode: defaultMode } : undefined),
   )
@@ -120,6 +130,7 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
       sendRef,
       retryRef,
       renderMessageBlock,
+      messageRenderOrder,
       transformStreamPacket: defaultTransformStreamPacket,
       enableImageAttachments,
     }),
@@ -130,6 +141,7 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
       defaultTransformStreamPacket,
       enableImageAttachments,
       labels,
+      messageRenderOrder,
       renderMessageBlock,
       sendRef,
       retryRef,

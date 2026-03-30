@@ -53,6 +53,7 @@ describe('useChatMessageReveal', () => {
 
     expect(result.current.displayedContent).toBe('第一段\n\n第二段')
     expect(result.current.freshContent).toBe('')
+    expect(result.current.isFreshBlockActive).toBe(false)
     expect(result.current.displayedBlocks).toEqual([
       { content: '第一段', tone: 'settled' },
       { content: '第二段', tone: 'settled' },

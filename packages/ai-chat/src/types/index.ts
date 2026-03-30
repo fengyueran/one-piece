@@ -197,6 +197,13 @@ export type ChatMessageBlock =
   | { type: 'custom'; kind: string; data: unknown }
 
 /**
+ * Supported message body render orders for mixed text and structured blocks.
+ */
+export const CHAT_MESSAGE_RENDER_ORDERS = ['blocks-first', 'timeline'] as const
+
+export type ChatMessageRenderOrder = (typeof CHAT_MESSAGE_RENDER_ORDERS)[number]
+
+/**
  * Chat message stored in the UI state and rendered by the chat thread.
  */
 export interface ChatMessage {

@@ -10,6 +10,7 @@ import {
 
 export interface UseChatMessageRevealResult {
   isAssistantStreaming: boolean
+  isFreshBlockActive: boolean
   displayedContent: string
   settledContent: string
   freshContent: string
@@ -289,6 +290,7 @@ export const useChatMessageReveal = (message: ChatMessage): UseChatMessageReveal
 
   return {
     isAssistantStreaming,
+    isFreshBlockActive,
     displayedContent,
     settledContent,
     freshContent,
