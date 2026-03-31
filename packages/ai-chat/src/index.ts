@@ -14,7 +14,11 @@ export type { AiChatProviderProps } from './components/ai-chat-provider'
 // Transport
 // ---------------------------------------------------------------------------
 export { createDefaultChatTransport } from './transport'
-export type { CreateDefaultChatTransportOptions, DefaultChatTransportEndpoints } from './transport'
+export type {
+  ChatToolExecutionPolicy,
+  CreateDefaultChatTransportOptions,
+  DefaultChatTransportEndpoints,
+} from './transport'
 
 // ---------------------------------------------------------------------------
 // Individual components (for custom layouts)

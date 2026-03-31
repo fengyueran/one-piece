@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
 import { getChatModels, terminateChat } from '../api'
 import { extractChatStreamUpdate, startChatStream } from '../api/chat-stream'
-import type { ChatTransport, TransformChatStreamPacket } from '../types'
+import type { ChatAgentMode, ChatTransport, TransformChatStreamPacket } from '../types'
 
 /**
  * Endpoint overrides for the built-in HTTP transport adapter.
@@ -13,6 +13,18 @@ export interface DefaultChatTransportEndpoints {
   completions?: string
   /** Relative path used to request stream termination. */
   terminate?: string
+}
+
+/**
+ * Tool execution policy applied to outgoing stream requests.
+ */
+export interface ChatToolExecutionPolicy {
+  /** Enables tool execution headers for the stream request. */
+  enabled?: boolean
+  /** Marks the request as requiring explicit approval before tool execution. */
+  approvalRequired?: boolean
+  /** Approval timeout in seconds, forwarded when approval is enabled. */
+  approvalTimeoutSec?: number
 }
 
 const DEFAULT_CHAT_TRANSPORT_ENDPOINTS: Required<DefaultChatTransportEndpoints> = {
@@ -29,6 +41,8 @@ export interface CreateDefaultChatTransportOptions {
   apiBaseUrl: string
   /** Authorization header value forwarded to the backend. */
   authToken: string
+  /** Optional tool execution policy translated into stream request headers. */
+  toolExecutionPolicy?: ChatToolExecutionPolicy
   /** Optional extra headers appended to each streaming chat completion request. */
   streamHeaders?: Record<string, string>
   /** Optional transformer used to normalize custom stream packets. */
@@ -39,12 +53,36 @@ export interface CreateDefaultChatTransportOptions {
   axiosInstance?: AxiosInstance
 }
 
+const createToolExecutionHeaders = (policy?: ChatToolExecutionPolicy): Record<string, string> => {
+  if (!policy?.enabled) {
+    return {}
+  }
+
+  return {
+    'X-Tool-Approval-Required': String(Boolean(policy.approvalRequired)),
+    ...(typeof policy.approvalTimeoutSec === 'number'
+      ? { 'X-Tool-Approval-Timeout': String(policy.approvalTimeoutSec) }
+      : {}),
+  }
+}
+
+const createModeDefaultHeaders = (mode: ChatAgentMode): Record<string, string> => {
+  if (mode === 'ask' || mode === 'plan') {
+    return {
+      'X-Tool-Approval-Required': 'false',
+    }
+  }
+
+  return {}
+}
+
 /**
  * Creates the built-in transport backed by the current HTTP chat API.
  */
 export const createDefaultChatTransport = ({
   apiBaseUrl,
   authToken,
+  toolExecutionPolicy,
   streamHeaders,
   transformStreamPacket,
   endpoints,
@@ -55,6 +93,10 @@ export const createDefaultChatTransport = ({
   const resolvedEndpoints = {
     ...DEFAULT_CHAT_TRANSPORT_ENDPOINTS,
     ...endpoints,
+  }
+  const resolvedStreamHeaders = {
+    ...createToolExecutionHeaders(toolExecutionPolicy),
+    ...streamHeaders,
   }
 
   return {
@@ -70,12 +112,17 @@ export const createDefaultChatTransport = ({
       onDone,
       onError,
     }) => {
+      const requestHeaders = {
+        ...createModeDefaultHeaders(mode),
+        ...resolvedStreamHeaders,
+      }
+
       await startChatStream({
         apiBaseUrl,
         endpointPath: resolvedEndpoints.completions,
         sessionId,
         authToken,
-        requestHeaders: streamHeaders,
+        requestHeaders,
         model,
         mode,
         content,
