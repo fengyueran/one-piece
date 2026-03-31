@@ -166,19 +166,19 @@ export interface ChatParameterSummaryItem {
  */
 export interface ExecutionProposal {
   proposalId: string
-  equationKey: string
-  equationName: string
-  solverName?: string
+  resourceKey: string
+  resourceName: string
+  executorName?: string
   parameterSummary: ChatParameterSummaryItem[]
   warnings?: string[]
   requiresConfirmation: true
 }
 
 /**
- * Structured result summary emitted after a PDE task has started or completed.
+ * Structured result summary emitted after a task has started or completed.
  */
 export interface ResultSummary {
-  taskId: string
+  summaryId: string
   status: 'completed' | 'failed' | 'running' | 'pending'
   headline: string
   details: string[]

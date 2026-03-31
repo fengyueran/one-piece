@@ -8,7 +8,7 @@ import type {
   PlanQuestionnaireSubmission,
 } from '../../../types'
 
-export interface PDEAIQuestionnaireCardProps {
+export interface QuestionnaireCardProps {
   questionnaire: PlanQuestionnaire
   interactive?: boolean
   onSubmit?: (submission: PlanQuestionnaireSubmission) => void
@@ -151,11 +151,11 @@ const normalizeQuestionAnswer = (
   }
 }
 
-const PDEAIQuestionnaireCardInner = ({
+const QuestionnaireCardInner = ({
   questionnaire,
   interactive = false,
   onSubmit,
-}: PDEAIQuestionnaireCardProps) => {
+}: QuestionnaireCardProps) => {
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(() =>
     createInitialAnswers(questionnaire),
   )
@@ -229,7 +229,7 @@ const PDEAIQuestionnaireCardInner = ({
         aria-pressed={isSelected}
         data-selected={isSelected}
         data-tone={tone}
-        data-testid={`pde-ai-question-option-${questionId}-${index}`}
+        data-testid={`question-option-${questionId}-${index}`}
         onClick={(event) => {
           if (!interactive) {
             return
@@ -319,7 +319,7 @@ const PDEAIQuestionnaireCardInner = ({
                     inlineInput:
                       singleSelectDraft.selectedValue === OTHER_OPTION_VALUE ? (
                         <InlineOtherInput
-                          data-testid={`pde-ai-question-input-${question.id}`}
+                          data-testid={`question-input-${question.id}`}
                           type="text"
                           value={singleSelectDraft.otherValue}
                           placeholder="Other"
@@ -347,7 +347,7 @@ const PDEAIQuestionnaireCardInner = ({
         return (
           <QuestionBody>
             <TextInput
-              data-testid={`pde-ai-question-input-${question.id}`}
+              data-testid={`question-input-${question.id}`}
               type="text"
               value={getTextInputValue(answers[question.id])}
               placeholder={question.placeholder}
@@ -363,7 +363,7 @@ const PDEAIQuestionnaireCardInner = ({
           <QuestionBody>
             <NumberInputRow>
               <TextInput
-                data-testid={`pde-ai-question-input-${question.id}`}
+                data-testid={`question-input-${question.id}`}
                 type="number"
                 value={getNumberInputValue(answers[question.id])}
                 placeholder={question.placeholder}
@@ -411,7 +411,7 @@ const PDEAIQuestionnaireCardInner = ({
   }
 
   return (
-    <Card data-testid="pde-ai-questionnaire-card">
+    <Card data-testid="questionnaire-card">
       {questionnaire.title ? <Title>{questionnaire.title}</Title> : null}
       {questionnaire.description ? <Description>{questionnaire.description}</Description> : null}
       <QuestionList>
@@ -426,14 +426,10 @@ const PDEAIQuestionnaireCardInner = ({
         ))}
       </QuestionList>
       {errorMessage ? (
-        <ErrorMessage data-testid="pde-ai-questionnaire-error">{errorMessage}</ErrorMessage>
+        <ErrorMessage data-testid="questionnaire-error">{errorMessage}</ErrorMessage>
       ) : null}
       {interactive ? (
-        <SubmitButton
-          type="button"
-          data-testid="pde-ai-questionnaire-submit"
-          onClick={handleSubmit}
-        >
+        <SubmitButton type="button" data-testid="questionnaire-submit" onClick={handleSubmit}>
           {questionnaire.submitLabel ?? 'Submit'}
         </SubmitButton>
       ) : null}
@@ -448,8 +444,8 @@ const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
     questionnaire.questions,
   ])
 
-export const PDEAIQuestionnaireCard = (props: PDEAIQuestionnaireCardProps) => (
-  <PDEAIQuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
+export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
+  <QuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
 )
 
 const Card = styled.section`

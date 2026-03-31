@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import type { ExecutionProposal } from '../../../types'
 
-export interface PDEAIExecutionConfirmationCardProps {
+export interface ExecutionConfirmationCardProps {
   proposal: ExecutionProposal
   interactive?: boolean
   onApply?: () => void
@@ -9,19 +9,19 @@ export interface PDEAIExecutionConfirmationCardProps {
   onRevise?: () => void
 }
 
-export const PDEAIExecutionConfirmationCard = ({
+export const ExecutionConfirmationCard = ({
   proposal,
   interactive = false,
   onApply,
   onConfirm,
   onRevise,
-}: PDEAIExecutionConfirmationCardProps) => {
+}: ExecutionConfirmationCardProps) => {
   return (
-    <Card data-testid="pde-ai-execution-confirmation-card">
+    <Card data-testid="execution-confirmation-card">
       <Header>
         <Eyebrow>Execution Proposal</Eyebrow>
-        <Title>{proposal.equationName}</Title>
-        {proposal.solverName ? <Subtitle>{proposal.solverName}</Subtitle> : null}
+        <Title>{proposal.resourceName}</Title>
+        {proposal.executorName ? <Subtitle>{proposal.executorName}</Subtitle> : null}
       </Header>
       <SummaryList>
         {proposal.parameterSummary.map((item) => (
@@ -41,23 +41,19 @@ export const PDEAIExecutionConfirmationCard = ({
       {interactive ? (
         <Actions>
           {onApply && (
-            <ActionButton type="button" data-testid="pde-ai-confirmation-apply" onClick={onApply}>
+            <ActionButton type="button" data-testid="confirmation-apply" onClick={onApply}>
               Apply to Parameters
             </ActionButton>
           )}
           {onConfirm && (
-            <ActionButton
-              type="button"
-              data-testid="pde-ai-confirmation-confirm"
-              onClick={onConfirm}
-            >
+            <ActionButton type="button" data-testid="confirmation-confirm" onClick={onConfirm}>
               Confirm Execution
             </ActionButton>
           )}
           {onRevise && (
             <SecondaryActionButton
               type="button"
-              data-testid="pde-ai-confirmation-revise"
+              data-testid="confirmation-revise"
               onClick={onRevise}
             >
               Revise Plan

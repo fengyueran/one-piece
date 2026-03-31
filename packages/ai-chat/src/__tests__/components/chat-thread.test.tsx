@@ -127,6 +127,57 @@ describe('ChatThread', () => {
     expect(screen.getByTestId('chat-thread-retry')).toHaveTextContent('重试')
   })
 
+  it('keeps the confirmation submission content compatible with the existing backend wording', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-1',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please confirm execution.',
+      blocks: [
+        {
+          type: 'confirmation_card',
+          proposal: {
+            proposalId: 'proposal-1',
+            resourceKey: 'heat-equation',
+            resourceName: 'Heat Equation',
+            executorName: 'Finite Difference',
+            parameterSummary: [{ label: 'dt', value: '0.01' }],
+            requiresConfirmation: true,
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('confirmation-confirm'))
+
+    expect(ctx.sendRef.current).toHaveBeenCalledWith(
+      [
+        'Execution confirmed',
+        '- Equation: Heat Equation',
+        '- Solver: Finite Difference',
+        '- Proposal ID: proposal-1',
+      ].join('\n'),
+    )
+  })
+
   it('wraps each conversation turn and keeps min-height on the latest turn', async () => {
     const ctx = createContextValue()
     let currentClientHeight = 480

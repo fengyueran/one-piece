@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import type { ResultSummary } from '../../../types'
 
-export interface PDEAIResultSummaryCardProps {
+export interface ResultSummaryCardProps {
   summary: ResultSummary
 }
 
-export const PDEAIResultSummaryCard = ({ summary }: PDEAIResultSummaryCardProps) => (
-  <Card data-testid="pde-ai-result-summary-card" data-status={summary.status}>
+export const ResultSummaryCard = ({ summary }: ResultSummaryCardProps) => (
+  <Card data-testid="result-summary-card" data-status={summary.status}>
     <Eyebrow>{summary.status}</Eyebrow>
     <Headline>{summary.headline}</Headline>
     <Details>
