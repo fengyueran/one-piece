@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef } from 'react'
-import { Fragment, memo, useLayoutEffect, useRef, useState } from 'react'
+import { Fragment, memo, useCallback, useLayoutEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 import ReactMarkdown from 'react-markdown'
@@ -104,24 +104,68 @@ const useUserMessageCollapse = ({
 }) => {
   const [isCollapsible, setIsCollapsible] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
-  const bodyStackRef = useRef<HTMLDivElement | null>(null)
+  const [bodyStackElement, setBodyStackElement] = useState<HTMLDivElement | null>(null)
+
+  const syncCollapseState = useCallback(
+    (element: HTMLDivElement | null) => {
+      const nextCollapsible =
+        enabled && (element?.scrollHeight ?? 0) > USER_MESSAGE_COLLAPSE_HEIGHT_PX
+
+      setIsCollapsible(nextCollapsible)
+
+      if (!nextCollapsible) {
+        setIsExpanded(false)
+      }
+    },
+    [enabled],
+  )
+
+  const bodyStackRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      setBodyStackElement(node)
+      syncCollapseState(node)
+    },
+    [syncCollapseState],
+  )
 
   useLayoutEffect(() => {
-    if (!enabled) {
-      setIsCollapsible(false)
-      setIsExpanded(false)
+    if (!bodyStackElement) {
       return
     }
 
-    const nextCollapsible =
-      (bodyStackRef.current?.scrollHeight ?? 0) > USER_MESSAGE_COLLAPSE_HEIGHT_PX
+    const frameId = requestAnimationFrame(() => {
+      syncCollapseState(bodyStackElement)
+    })
 
-    setIsCollapsible(nextCollapsible)
-
-    if (!nextCollapsible) {
-      setIsExpanded(false)
+    return () => {
+      cancelAnimationFrame(frameId)
     }
-  }, [blocks, displayedBlocks, displayedContent, enabled, freshContent, settledContent])
+  }, [
+    blocks,
+    bodyStackElement,
+    displayedBlocks,
+    displayedContent,
+    enabled,
+    freshContent,
+    settledContent,
+    syncCollapseState,
+  ])
+
+  useLayoutEffect(() => {
+    if (!bodyStackElement || !enabled || typeof ResizeObserver === 'undefined') {
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      syncCollapseState(bodyStackElement)
+    })
+
+    observer.observe(bodyStackElement)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [bodyStackElement, enabled, syncCollapseState])
 
   return {
     bodyStackRef,
