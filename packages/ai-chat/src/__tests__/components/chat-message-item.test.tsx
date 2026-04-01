@@ -18,7 +18,9 @@ import {
 
 jest.mock('react-markdown', () => ({
   __esModule: true,
-  default: ({ children }: { children: string }) => <>{children}</>,
+  default: ({ children }: { children: string }) => (
+    <div data-testid="react-markdown">{children}</div>
+  ),
 }))
 jest.mock('remark-gfm', () => ({}))
 jest.mock('remark-math', () => ({}))
@@ -200,6 +202,62 @@ describe('ChatThread custom block renderer', () => {
     expect(screen.getAllByTestId('chat-message-content-segment')).toHaveLength(2)
     expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
       'ExtensibleFollow-up text remains visible.',
+    )
+  })
+
+  it('renders user message content as plain text instead of markdown', () => {
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: '# Title\n- item 1\n- item 2\n**bold**',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.queryByTestId('react-markdown')).not.toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-settled-block')).toHaveAttribute(
+      'data-render-mode',
+      'plain-text',
+    )
+    expect(
+      window.getComputedStyle(screen.getByTestId('chat-message-settled-block')).whiteSpace,
+    ).toBe('pre-wrap')
+    expect(screen.getByTestId('chat-message-settled-block')).toHaveTextContent(
+      /# Title\s+- item 1\s+- item 2\s+\*\*bold\*\*/,
     )
   })
 

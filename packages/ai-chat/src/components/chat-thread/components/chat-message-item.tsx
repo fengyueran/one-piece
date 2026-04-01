@@ -62,6 +62,8 @@ const renderMarkdownContent = (content: string) => (
   </ReactMarkdown>
 )
 
+const renderPlainTextContent = (content: string) => content
+
 const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
   [
     'Execution confirmed',
@@ -407,8 +409,11 @@ const ChatMessageItemView = ({
             key={`markdown-${index}`}
             data-testid={`chat-message-block-${index}`}
             data-block-tone="settled"
+            data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
           >
-            {renderMarkdownContent(block.text)}
+            {message.role === 'user'
+              ? renderPlainTextContent(block.text)
+              : renderMarkdownContent(block.text)}
           </ContentBlock>
         )
       case 'notice':
@@ -518,16 +523,25 @@ const ChatMessageItemView = ({
               }
               data-block-tone={block.tone}
               data-block-index={index}
+              data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
             >
-              {renderMarkdownContent(block.content)}
+              {message.role === 'user'
+                ? renderPlainTextContent(block.content)
+                : renderMarkdownContent(block.content)}
             </ContentBlock>
           ))}
         {!textBlocks.some((block) => block.content) &&
         !settledText &&
         !freshText &&
         Boolean(textContent) ? (
-          <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-            {renderMarkdownContent(textContent)}
+          <ContentBlock
+            data-testid="chat-message-settled-block"
+            data-block-tone="settled"
+            data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+          >
+            {message.role === 'user'
+              ? renderPlainTextContent(textContent)
+              : renderMarkdownContent(textContent)}
           </ContentBlock>
         ) : null}
       </>
@@ -535,8 +549,12 @@ const ChatMessageItemView = ({
   }
 
   const renderStaticTextSegment = (content: string) => (
-    <ContentBlock data-testid="chat-message-settled-block" data-block-tone="settled">
-      {renderMarkdownContent(content)}
+    <ContentBlock
+      data-testid="chat-message-settled-block"
+      data-block-tone="settled"
+      data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+    >
+      {message.role === 'user' ? renderPlainTextContent(content) : renderMarkdownContent(content)}
     </ContentBlock>
   )
 
@@ -801,6 +819,10 @@ const ContentBlock = styled.div`
 
   & + & {
     margin-top: 16px;
+  }
+
+  &[data-render-mode='plain-text'] {
+    white-space: pre-wrap;
   }
 
   &[data-block-tone='fresh'] {
