@@ -153,6 +153,7 @@ export const ChatComposerView = ({
 }: ChatComposerViewProps) => {
   const imageInputRef = useRef<HTMLInputElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const [isComposerExpandable, setIsComposerExpandable] = useState(false)
   const [isComposerExpanded, setIsComposerExpanded] = useState(false)
   const canSend = canSendChatMessage({
     value,
@@ -174,11 +175,13 @@ export const ChatComposerView = ({
     }
 
     const scrollHeight = element.scrollHeight
+    const nextExpandable = scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX
     const expandedHeight = getExpandedComposerHeightPx()
     const nextHeight = isComposerExpanded
       ? expandedHeight
       : Math.min(scrollHeight, CHAT_COMPOSER_MAX_HEIGHT_PX)
 
+    setIsComposerExpandable(nextExpandable)
     element.style.height = `${nextHeight}px`
     element.style.overflowY =
       !isComposerExpanded && scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
@@ -239,15 +242,17 @@ export const ChatComposerView = ({
           </AttachmentNotice>
         ) : null}
         <InputArea>
-          <ComposerExpandButton
-            type="button"
-            data-testid="chat-composer-expand-toggle"
-            aria-label={isComposerExpanded ? collapseComposerAriaLabel : expandComposerAriaLabel}
-            aria-expanded={isComposerExpanded}
-            onClick={() => setIsComposerExpanded((current) => !current)}
-          >
-            <ComposerExpandIcon expanded={isComposerExpanded} />
-          </ComposerExpandButton>
+          {isComposerExpanded || isComposerExpandable ? (
+            <ComposerExpandButton
+              type="button"
+              data-testid="chat-composer-expand-toggle"
+              aria-label={isComposerExpanded ? collapseComposerAriaLabel : expandComposerAriaLabel}
+              aria-expanded={isComposerExpanded}
+              onClick={() => setIsComposerExpanded((current) => !current)}
+            >
+              <ComposerExpandIcon expanded={isComposerExpanded} />
+            </ComposerExpandButton>
+          ) : null}
           <Input
             ref={inputRef}
             data-testid="chat-composer-input"

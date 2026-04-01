@@ -56,6 +56,7 @@ describe('ChatComposerView', () => {
     const input = screen.getByTestId('chat-composer-input')
 
     expect(input).toHaveStyle({ height: '120px', overflowY: 'hidden' })
+    expect(screen.queryByTestId('chat-composer-expand-toggle')).not.toBeInTheDocument()
 
     if (originalScrollHeight) {
       Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', originalScrollHeight)
@@ -85,6 +86,7 @@ describe('ChatComposerView', () => {
     const input = screen.getByTestId('chat-composer-input')
 
     expect(input).toHaveStyle({ height: '160px', overflowY: 'auto' })
+    expect(screen.getByLabelText('展开输入框')).toHaveAttribute('aria-expanded', 'false')
 
     if (originalScrollHeight) {
       Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', originalScrollHeight)
@@ -100,7 +102,7 @@ describe('ChatComposerView', () => {
     Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', {
       configurable: true,
       get() {
-        return 120
+        return 240
       },
     })
 
@@ -109,7 +111,7 @@ describe('ChatComposerView', () => {
     const input = screen.getByTestId('chat-composer-input')
     const expandButton = screen.getByLabelText('展开输入框')
 
-    expect(input).toHaveStyle({ height: '120px', overflowY: 'hidden' })
+    expect(input).toHaveStyle({ height: '160px', overflowY: 'auto' })
 
     fireEvent.click(expandButton)
 
@@ -124,7 +126,7 @@ describe('ChatComposerView', () => {
 
     expect(screen.getByLabelText('展开输入框')).toHaveAttribute('aria-expanded', 'false')
     expect(input).toHaveAttribute('data-expanded', 'false')
-    expect(input).toHaveStyle({ height: '120px', overflowY: 'hidden' })
+    expect(input).toHaveStyle({ height: '160px', overflowY: 'auto' })
 
     if (originalScrollHeight) {
       Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', originalScrollHeight)
@@ -147,7 +149,7 @@ describe('ChatComposerView', () => {
     Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', {
       configurable: true,
       get() {
-        return 120
+        return 240
       },
     })
 
