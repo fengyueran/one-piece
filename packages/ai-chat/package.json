@@ -1,6 +1,6 @@
 {
   "name": "@xinghunm/ai-chat",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "AI chat React component library",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

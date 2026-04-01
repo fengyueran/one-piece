@@ -1,5 +1,22 @@
 # @xinghunm/ai-chat
 
+## 1.0.0
+
+### Major Changes
+
+- a260642: 本次 `@xinghunm/ai-chat` 相对 `@xinghunm/ai-chat@0.4.0` 的更新主要包括：
+  - 将结构化执行与结果摘要类型从 PDE 领域命名调整为通用命名：
+    - `ExecutionProposal.equationKey` -> `resourceKey`
+    - `ExecutionProposal.equationName` -> `resourceName`
+    - `ExecutionProposal.solverName` -> `executorName`
+    - `ResultSummary.taskId` -> `summaryId`
+  - 改进 plan 问卷交互，补充过期问卷处理与相关状态展示。
+  - 用户消息改为纯文本渲染，避免粘贴 Markdown、公式或长文本时被误解析。
+  - 长用户消息支持默认折叠、长文本自动换行，以及输入框按内容自动增高和手动展开。
+  - 输入区布局调整为更稳定的面板式布局，并限制最大宽度以改善阅读与编辑体验。
+
+  这是一次 breaking change。若宿主应用消费了结构化消息类型，需要先完成字段映射适配，再升级到这个版本。
+
 ## 0.4.0
 
 ### Minor Changes
