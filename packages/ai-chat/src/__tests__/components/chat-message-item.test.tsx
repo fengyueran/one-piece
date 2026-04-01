@@ -257,6 +257,9 @@ describe('ChatThread custom block renderer', () => {
     expect(
       window.getComputedStyle(screen.getByTestId('chat-message-settled-block')).whiteSpace,
     ).toBe('pre-wrap')
+    expect(
+      window.getComputedStyle(screen.getByTestId('chat-message-settled-block')).overflowWrap,
+    ).toBe('anywhere')
     expect(screen.getByTestId('chat-message-settled-block')).toHaveTextContent(
       /# Title\s+- item 1\s+- item 2\s+\*\*bold\*\*/,
     )

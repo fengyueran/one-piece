@@ -954,6 +954,7 @@ const ContentBlock = styled.div`
 
   &[data-render-mode='plain-text'] {
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   &[data-block-tone='fresh'] {
