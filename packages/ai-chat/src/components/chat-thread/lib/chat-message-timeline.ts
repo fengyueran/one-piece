@@ -51,7 +51,9 @@ export const getTimelineBlockKey = (block: ChatMessageBlock, index: number) => {
     case 'questionnaire':
       return `${index}:questionnaire:${block.questionnaire.questionnaireId}`
     case 'custom':
-      return `${index}:custom:${block.kind}:${stringifyTimelineKeyPart(block.data)}`
+      return block.blockKey
+        ? `custom:${block.blockKey}`
+        : `${index}:custom:${block.kind}:${stringifyTimelineKeyPart(block.data)}`
     default:
       return null
   }
