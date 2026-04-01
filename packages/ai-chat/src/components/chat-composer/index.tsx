@@ -184,6 +184,11 @@ export const ChatComposerView = ({
       !isComposerExpanded && scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
   }, [isComposerExpanded, value])
 
+  const handleSend = async () => {
+    setIsComposerExpanded(false)
+    await onSend()
+  }
+
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (shouldStopChatComposer({ key: event.key, shiftKey: event.shiftKey, isStreaming })) {
       event.preventDefault()
@@ -192,7 +197,7 @@ export const ChatComposerView = ({
     }
     if (!shouldSubmitChatComposer({ key: event.key, shiftKey: event.shiftKey, canSend })) return
     event.preventDefault()
-    void onSend()
+    void handleSend()
   }
 
   const handlePickImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,7 +291,7 @@ export const ChatComposerView = ({
               isStreaming={isStreaming}
               isStopping={isStopping}
               onStop={onStop}
-              onSend={onSend}
+              onSend={handleSend}
             />
           </Actions>
         </Footer>

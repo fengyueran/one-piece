@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ChatComposerView } from '../../components/chat-composer'
 
 const getExpectedExpandedComposerHeight = () =>
@@ -125,6 +125,46 @@ describe('ChatComposerView', () => {
     expect(screen.getByLabelText('展开输入框')).toHaveAttribute('aria-expanded', 'false')
     expect(input).toHaveAttribute('data-expanded', 'false')
     expect(input).toHaveStyle({ height: '120px', overflowY: 'hidden' })
+
+    if (originalScrollHeight) {
+      Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', originalScrollHeight)
+    }
+  })
+
+  it('collapses the expanded composer as soon as a message send starts', async () => {
+    const originalScrollHeight = Object.getOwnPropertyDescriptor(
+      HTMLTextAreaElement.prototype,
+      'scrollHeight',
+    )
+    let resolveSend: (() => void) | undefined
+    const onSend = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSend = resolve
+        }),
+    )
+
+    Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get() {
+        return 120
+      },
+    })
+
+    render(<ChatComposerView {...createProps()} onSend={onSend} />)
+
+    fireEvent.click(screen.getByLabelText('展开输入框'))
+
+    expect(screen.getByLabelText('收起输入框')).toHaveAttribute('aria-expanded', 'true')
+
+    fireEvent.click(screen.getByTestId('chat-composer-send'))
+
+    await waitFor(() => expect(onSend).toHaveBeenCalledTimes(1))
+    expect(screen.getByLabelText('展开输入框')).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByTestId('chat-composer-input')).toHaveAttribute('data-expanded', 'false')
+
+    resolveSend?.()
+    await waitFor(() => expect(onSend).toHaveBeenCalledTimes(1))
 
     if (originalScrollHeight) {
       Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', originalScrollHeight)
