@@ -93,6 +93,22 @@ describe('ChatComposerView', () => {
     }
   })
 
+  it('renders input and actions in dedicated layout regions', () => {
+    render(<ChatComposerView {...createProps()} enableImageAttachments />)
+
+    expect(screen.getByTestId('chat-composer-surface')).toHaveStyle({
+      maxWidth: '760px',
+      margin: '0 auto',
+    })
+    expect(screen.getByTestId('chat-composer-input-area')).toBeInTheDocument()
+    expect(screen.getByTestId('chat-composer-leading-actions')).toContainElement(
+      screen.getByTestId('chat-composer-attach-image'),
+    )
+    expect(screen.getByTestId('chat-composer-trailing-actions')).toContainElement(
+      screen.getByTestId('chat-composer-send'),
+    )
+  })
+
   it('expands the composer height on demand and collapses back to auto sizing', () => {
     const originalScrollHeight = Object.getOwnPropertyDescriptor(
       HTMLTextAreaElement.prototype,

@@ -241,7 +241,7 @@ export const ChatComposerView = ({
             {attachmentLimitNotice}
           </AttachmentNotice>
         ) : null}
-        <InputArea>
+        <InputArea data-testid="chat-composer-input-area">
           {isComposerExpanded || isComposerExpandable ? (
             <ComposerExpandButton
               type="button"
@@ -265,7 +265,7 @@ export const ChatComposerView = ({
           />
         </InputArea>
         <Footer>
-          <Actions data-testid="chat-composer-actions">
+          <LeadingActions data-testid="chat-composer-leading-actions">
             {enableImageAttachments ? (
               <AttachButton
                 type="button"
@@ -276,6 +276,8 @@ export const ChatComposerView = ({
                 <PlusIcon />
               </AttachButton>
             ) : null}
+          </LeadingActions>
+          <TrailingActions data-testid="chat-composer-trailing-actions">
             <ChatModeControl
               value={selectedMode}
               disabled={isStreaming}
@@ -298,7 +300,7 @@ export const ChatComposerView = ({
               onStop={onStop}
               onSend={handleSend}
             />
-          </Actions>
+          </TrailingActions>
         </Footer>
       </Surface>
     </Container>
@@ -364,6 +366,16 @@ const Container = styled.div`
 `
 
 const Surface = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'attachments'
+    'notice'
+    'input'
+    'footer';
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
   background: var(--border-color);
   border-radius: 20px;
   border: 1px solid var(--border-hover);
@@ -374,6 +386,7 @@ const Surface = styled.div`
 `
 
 const AttachmentNotice = styled.div`
+  grid-area: notice;
   margin: 10px 12px 0;
   padding: 8px 10px;
   border-radius: 10px;
@@ -385,6 +398,7 @@ const AttachmentNotice = styled.div`
 `
 
 const InputArea = styled.div`
+  grid-area: input;
   position: relative;
 `
 
@@ -459,18 +473,26 @@ const ComposerExpandButton = styled.button`
 `
 
 const Footer = styled.div`
-  display: flex;
+  grid-area: footer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: flex-end;
-  justify-content: stretch;
   gap: 16px;
   padding: 0 14px 14px;
 `
 
-const Actions = styled.div`
+const LeadingActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+`
+
+const TrailingActions = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  width: 100%;
   min-width: 0;
   justify-content: flex-end;
   gap: 8px;
