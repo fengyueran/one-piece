@@ -682,6 +682,7 @@ describe('ChatThread', () => {
 
     act(() => {
       currentClientHeight = 560
+      window.dispatchEvent(new Event('resize'))
       resizeObserverCallback?.([], {} as ResizeObserver)
     })
 
