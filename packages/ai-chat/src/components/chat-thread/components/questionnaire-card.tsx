@@ -8,13 +8,27 @@ import type {
   PlanQuestionnaireSubmission,
 } from '../../../types'
 
-export interface PDEAIQuestionnaireCardProps {
+export interface QuestionnaireCardProps {
   questionnaire: PlanQuestionnaire
   interactive?: boolean
-  onSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  onSubmit?: (submission: PlanQuestionnaireSubmission) => Promise<void> | void
+  labels?: Partial<QuestionnaireCardLabels>
+}
+
+interface QuestionnaireCardLabels {
+  submitting: string
+  submitted: string
+  validationPrefix: string
+  submitFailed: string
 }
 
 const OTHER_OPTION_VALUE = '__other__'
+const DEFAULT_QUESTIONNAIRE_CARD_LABELS: QuestionnaireCardLabels = {
+  submitting: 'Submitting...',
+  submitted: 'Selection submitted. Waiting for the plan to continue...',
+  validationPrefix: 'Please complete:',
+  submitFailed: 'Failed to submit. Please try again.',
+}
 
 const createInitialAnswers = (questionnaire: PlanQuestionnaire) => ({
   ...(questionnaire.answers ?? {}),
@@ -151,29 +165,46 @@ const normalizeQuestionAnswer = (
   }
 }
 
-const PDEAIQuestionnaireCardInner = ({
+const QuestionnaireCardInner = ({
   questionnaire,
   interactive = false,
   onSubmit,
-}: PDEAIQuestionnaireCardProps) => {
+  labels,
+}: QuestionnaireCardProps) => {
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(() =>
     createInitialAnswers(questionnaire),
   )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const resolvedLabels = {
+    ...DEFAULT_QUESTIONNAIRE_CARD_LABELS,
+    ...labels,
+  }
+  const hasExternalFailureStatus =
+    questionnaire.status === 'expired' || questionnaire.status === 'failed'
+  const visibleErrorMessage = questionnaire.statusMessage ?? errorMessage
+  const isInteractionLocked =
+    !interactive || isSubmitting || isSubmitted || hasExternalFailureStatus
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSubmitting || isSubmitted) {
+      return
+    }
+
     const missingQuestions = questionnaire.questions.filter(
       (question) => question.required && isMissingRequiredAnswer(question, answers),
     )
 
     if (missingQuestions.length > 0) {
       setErrorMessage(
-        `Please complete: ${missingQuestions.map((question) => question.label).join(', ')}`,
+        `${resolvedLabels.validationPrefix} ${missingQuestions.map((question) => question.label).join(', ')}`,
       )
       return
     }
 
     setErrorMessage(null)
+    setIsSubmitting(true)
 
     const normalizedAnswers = Object.fromEntries(
       questionnaire.questions.flatMap((question) => {
@@ -197,11 +228,18 @@ const PDEAIQuestionnaireCardInner = ({
       }),
     ]
 
-    onSubmit?.({
-      questionnaireId: questionnaire.questionnaireId,
-      answers: normalizedAnswers,
-      content: contentLines.join('\n'),
-    })
+    try {
+      await onSubmit?.({
+        questionnaireId: questionnaire.questionnaireId,
+        answers: normalizedAnswers,
+        content: contentLines.join('\n'),
+      })
+      setIsSubmitted(true)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : resolvedLabels.submitFailed)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const renderQuestion = (question: PlanQuestion) => {
@@ -225,13 +263,13 @@ const PDEAIQuestionnaireCardInner = ({
       <OptionChoiceItem
         key={`${questionId}-${optionLabel}`}
         role="button"
-        tabIndex={interactive ? 0 : -1}
+        tabIndex={isInteractionLocked ? -1 : 0}
         aria-pressed={isSelected}
         data-selected={isSelected}
         data-tone={tone}
-        data-testid={`pde-ai-question-option-${questionId}-${index}`}
+        data-testid={`question-option-${questionId}-${index}`}
         onClick={(event) => {
-          if (!interactive) {
+          if (isInteractionLocked) {
             return
           }
 
@@ -242,7 +280,7 @@ const PDEAIQuestionnaireCardInner = ({
           onClick()
         }}
         onKeyDown={(event) => {
-          if (!interactive) {
+          if (isInteractionLocked) {
             return
           }
 
@@ -319,11 +357,11 @@ const PDEAIQuestionnaireCardInner = ({
                     inlineInput:
                       singleSelectDraft.selectedValue === OTHER_OPTION_VALUE ? (
                         <InlineOtherInput
-                          data-testid={`pde-ai-question-input-${question.id}`}
+                          data-testid={`question-input-${question.id}`}
                           type="text"
                           value={singleSelectDraft.otherValue}
                           placeholder="Other"
-                          readOnly={!interactive}
+                          readOnly={isInteractionLocked}
                           onClick={(event) => {
                             event.stopPropagation()
                           }}
@@ -347,11 +385,11 @@ const PDEAIQuestionnaireCardInner = ({
         return (
           <QuestionBody>
             <TextInput
-              data-testid={`pde-ai-question-input-${question.id}`}
+              data-testid={`question-input-${question.id}`}
               type="text"
               value={getTextInputValue(answers[question.id])}
               placeholder={question.placeholder}
-              readOnly={!interactive}
+              readOnly={isInteractionLocked}
               onChange={(event) => {
                 setAnswers((current) => updateAnswerValue(current, question.id, event.target.value))
               }}
@@ -363,11 +401,11 @@ const PDEAIQuestionnaireCardInner = ({
           <QuestionBody>
             <NumberInputRow>
               <TextInput
-                data-testid={`pde-ai-question-input-${question.id}`}
+                data-testid={`question-input-${question.id}`}
                 type="number"
                 value={getNumberInputValue(answers[question.id])}
                 placeholder={question.placeholder}
-                readOnly={!interactive}
+                readOnly={isInteractionLocked}
                 onChange={(event) => {
                   setAnswers((current) =>
                     updateAnswerValue(
@@ -411,7 +449,7 @@ const PDEAIQuestionnaireCardInner = ({
   }
 
   return (
-    <Card data-testid="pde-ai-questionnaire-card">
+    <Card data-testid="questionnaire-card">
       {questionnaire.title ? <Title>{questionnaire.title}</Title> : null}
       {questionnaire.description ? <Description>{questionnaire.description}</Description> : null}
       <QuestionList>
@@ -425,16 +463,23 @@ const PDEAIQuestionnaireCardInner = ({
           </QuestionCard>
         ))}
       </QuestionList>
-      {errorMessage ? (
-        <ErrorMessage data-testid="pde-ai-questionnaire-error">{errorMessage}</ErrorMessage>
+      {visibleErrorMessage ? (
+        <ErrorMessage data-testid="questionnaire-error">{visibleErrorMessage}</ErrorMessage>
       ) : null}
-      {interactive ? (
+      {isSubmitted ? (
+        <SuccessMessage data-testid="questionnaire-success">
+          {resolvedLabels.submitted}
+        </SuccessMessage>
+      ) : interactive && !hasExternalFailureStatus ? (
         <SubmitButton
           type="button"
-          data-testid="pde-ai-questionnaire-submit"
-          onClick={handleSubmit}
+          data-testid="questionnaire-submit"
+          disabled={isInteractionLocked}
+          onClick={() => {
+            void handleSubmit()
+          }}
         >
-          {questionnaire.submitLabel ?? 'Submit'}
+          {isSubmitting ? resolvedLabels.submitting : (questionnaire.submitLabel ?? 'Submit')}
         </SubmitButton>
       ) : null}
     </Card>
@@ -444,12 +489,13 @@ const PDEAIQuestionnaireCardInner = ({
 const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
   JSON.stringify([
     questionnaire.questionnaireId,
-    questionnaire.answers ?? {},
     questionnaire.questions,
+    questionnaire.status,
+    questionnaire.statusMessage,
   ])
 
-export const PDEAIQuestionnaireCard = (props: PDEAIQuestionnaireCardProps) => (
-  <PDEAIQuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
+export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
+  <QuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
 )
 
 const Card = styled.section`
@@ -617,6 +663,11 @@ const ErrorMessage = styled.div`
   font-size: 12px;
 `
 
+const SuccessMessage = styled.div`
+  color: rgba(164, 255, 210, 0.96);
+  font-size: 12px;
+`
+
 const SubmitButton = styled.button`
   justify-self: flex-start;
   border: none;
@@ -627,4 +678,9 @@ const SubmitButton = styled.button`
   font-weight: 700;
   padding: 10px 14px;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.72;
+  }
 `

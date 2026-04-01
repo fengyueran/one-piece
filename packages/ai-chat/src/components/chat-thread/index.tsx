@@ -337,7 +337,14 @@ export const ChatThread = () => {
   const error = useChatStore((s) => s.errorBySession[s.activeSessionId ?? ''])
   const updateQA = useChatStore((s) => s.updateQuestionnaireAnswers)
   const clearSessionError = useChatStore((s) => s.clearSessionError)
-  const { sendRef, retryRef, renderMessageBlock, labels } = useChatContext()
+  const {
+    sendRef,
+    retryRef,
+    renderMessageBlock,
+    handleQuestionnaireSubmit: customQuestionnaireSubmit,
+    handleConfirmationSubmit: customConfirmationSubmit,
+    labels,
+  } = useChatContext()
 
   const handleRetry = useCallback(() => {
     if (!activeSessionId) return
@@ -346,7 +353,28 @@ export const ChatThread = () => {
   }, [activeSessionId, clearSessionError, retryRef])
 
   const handleQuestionnaireSubmit = useCallback(
-    (submission: PlanQuestionnaireSubmission) => {
+    async (submission: PlanQuestionnaireSubmission) => {
+      if (customQuestionnaireSubmit) {
+        const handled = await customQuestionnaireSubmit(submission, {
+          sessionId: activeSessionId ?? undefined,
+          mode: activeSessionMode,
+        })
+
+        if (handled !== false) {
+          if (activeSessionId && submission.sourceMessageId) {
+            updateQA(
+              activeSessionId,
+              submission.sourceMessageId,
+              submission.questionnaireId,
+              submission.answers,
+            )
+          }
+          return
+        }
+      }
+
+      await sendRef.current(submission.content)
+
       if (activeSessionId && submission.sourceMessageId) {
         updateQA(
           activeSessionId,
@@ -355,16 +383,26 @@ export const ChatThread = () => {
           submission.answers,
         )
       }
-      void sendRef.current(submission.content)
     },
-    [activeSessionId, updateQA, sendRef],
+    [activeSessionId, activeSessionMode, updateQA, sendRef, customQuestionnaireSubmit],
   )
 
-  const handleConfirmationSubmit = useCallback(
-    (submission: ExecutionConfirmationSubmission) => {
-      void sendRef.current(submission.content)
+  const handleConfirmation = useCallback(
+    async (submission: ExecutionConfirmationSubmission) => {
+      if (customConfirmationSubmit) {
+        const handled = await customConfirmationSubmit(submission, {
+          sessionId: activeSessionId ?? undefined,
+          mode: activeSessionMode,
+        })
+
+        if (handled !== false) {
+          return
+        }
+      }
+
+      await sendRef.current(submission.content)
     },
-    [sendRef],
+    [activeSessionId, activeSessionMode, sendRef, customConfirmationSubmit],
   )
 
   if (!hasSessions || (messages.length === 0 && !streamingMessage)) {
@@ -379,7 +417,7 @@ export const ChatThread = () => {
       error={error}
       retryButtonLabel={labels.retryButton}
       onRetry={handleRetry}
-      onConfirmationSubmit={handleConfirmationSubmit}
+      onConfirmationSubmit={handleConfirmation}
       onQuestionnaireSubmit={handleQuestionnaireSubmit}
       renderMessageBlock={renderMessageBlock}
     />

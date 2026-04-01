@@ -2,6 +2,7 @@ import { createStore } from 'zustand/vanilla'
 import {
   DEFAULT_CHAT_AGENT_MODE,
   type ChatAgentMode,
+  type ChatMessageBlock,
   type ChatMessage,
   type ChatStreamMessagePatch,
   type ChatSession,
@@ -73,6 +74,35 @@ const resolveSessionTitleFromMessage = (message: ChatMessage): string => {
     return IMAGE_MESSAGE_SESSION_TITLE
   }
   return DEFAULT_CHAT_SESSION_TITLE
+}
+
+const mergeStreamingBlocks = (
+  existingBlocks: ChatMessageBlock[] | undefined,
+  incomingBlocks: ChatMessageBlock[],
+) => {
+  const nextBlocks = [...(existingBlocks ?? [])]
+
+  incomingBlocks.forEach((incomingBlock) => {
+    if (incomingBlock.type !== 'questionnaire') {
+      nextBlocks.push(incomingBlock)
+      return
+    }
+
+    const existingIndex = nextBlocks.findIndex(
+      (block) =>
+        block.type === 'questionnaire' &&
+        block.questionnaire.questionnaireId === incomingBlock.questionnaire.questionnaireId,
+    )
+
+    if (existingIndex === -1) {
+      nextBlocks.push(incomingBlock)
+      return
+    }
+
+    nextBlocks[existingIndex] = incomingBlock
+  })
+
+  return nextBlocks
 }
 
 const finalizeStreamingMessage = (
@@ -318,10 +348,18 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
       const state = get()
       const target = state.streamingMessageBySession[sessionId]
       if (!target) return
+      const nextBlocks =
+        patch.blocks !== undefined
+          ? mergeStreamingBlocks(target.blocks, patch.blocks)
+          : target.blocks
       set({
         streamingMessageBySession: {
           ...state.streamingMessageBySession,
-          [sessionId]: { ...target, ...patch },
+          [sessionId]: {
+            ...target,
+            ...patch,
+            ...(patch.blocks !== undefined ? { blocks: nextBlocks } : {}),
+          },
         },
       })
     },

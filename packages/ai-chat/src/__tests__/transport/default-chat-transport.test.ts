@@ -119,4 +119,126 @@ describe('createDefaultChatTransport', () => {
       }),
     )
   })
+
+  it('adds tool approval headers from tool execution policy when enabled', async () => {
+    const donePacket = JSON.stringify({ type: 'stream_end', data: '[DONE]' })
+    mockFetch.mockResolvedValueOnce(makeStreamResponse([`data: ${donePacket}`]))
+
+    const transport = createDefaultChatTransport({
+      apiBaseUrl: 'http://api.test',
+      authToken: 'Bearer tok',
+      toolExecutionPolicy: {
+        enabled: true,
+        approvalRequired: true,
+        approvalTimeoutSec: 120,
+      },
+    })
+
+    await transport.startStream({
+      model: 'gpt-4.1',
+      mode: 'agent',
+      content: 'hello',
+      onUpdate: jest.fn(),
+      onDone: jest.fn(),
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer tok',
+          'Content-Type': 'application/json',
+          'X-Tool-Approval-Required': 'true',
+          'X-Tool-Approval-Timeout': '120',
+        }),
+      }),
+    )
+  })
+
+  it('does not add tool approval headers when tool execution is disabled', async () => {
+    const donePacket = JSON.stringify({ type: 'stream_end', data: '[DONE]' })
+    mockFetch.mockResolvedValueOnce(makeStreamResponse([`data: ${donePacket}`]))
+
+    const transport = createDefaultChatTransport({
+      apiBaseUrl: 'http://api.test',
+      authToken: 'Bearer tok',
+      toolExecutionPolicy: {
+        enabled: false,
+        approvalRequired: true,
+        approvalTimeoutSec: 120,
+      },
+    })
+
+    await transport.startStream({
+      model: 'gpt-4.1',
+      mode: 'plan',
+      content: 'hello',
+      onUpdate: jest.fn(),
+      onDone: jest.fn(),
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({
+        headers: expect.not.objectContaining({
+          'X-Tool-Approval-Required': expect.anything(),
+          'X-Tool-Approval-Timeout': expect.anything(),
+        }),
+      }),
+    )
+  })
+
+  it('sends X-Tool-Approval-Required=false for ask mode by default', async () => {
+    const donePacket = JSON.stringify({ type: 'stream_end', data: '[DONE]' })
+    mockFetch.mockResolvedValueOnce(makeStreamResponse([`data: ${donePacket}`]))
+
+    const transport = createDefaultChatTransport({
+      apiBaseUrl: 'http://api.test',
+      authToken: 'Bearer tok',
+    })
+
+    await transport.startStream({
+      model: 'gpt-4.1',
+      mode: 'ask',
+      content: 'hello',
+      onUpdate: jest.fn(),
+      onDone: jest.fn(),
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Tool-Approval-Required': 'false',
+        }),
+      }),
+    )
+  })
+
+  it('sends X-Tool-Approval-Required=false for plan mode by default', async () => {
+    const donePacket = JSON.stringify({ type: 'stream_end', data: '[DONE]' })
+    mockFetch.mockResolvedValueOnce(makeStreamResponse([`data: ${donePacket}`]))
+
+    const transport = createDefaultChatTransport({
+      apiBaseUrl: 'http://api.test',
+      authToken: 'Bearer tok',
+    })
+
+    await transport.startStream({
+      model: 'gpt-4.1',
+      mode: 'plan',
+      content: 'hello',
+      onUpdate: jest.fn(),
+      onDone: jest.fn(),
+    })
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://api.test/chat/completions',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Tool-Approval-Required': 'false',
+        }),
+      }),
+    )
+  })
 })

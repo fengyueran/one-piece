@@ -4,11 +4,13 @@ import { ChatContext, type ChatContextValue } from '../../context/chat-context'
 import { createChatStore } from '../../store/chat-store'
 import { createDefaultChatTransport } from '../../transport'
 import {
+  type ChatConfirmationSubmitHandler,
   DEFAULT_AI_CHAT_LABELS,
   type AiChatLabels,
   type ChatAgentMode,
   type ChatMessageBlockRenderer,
   type ChatMessageRenderOrder,
+  type ChatQuestionnaireSubmitHandler,
   type ChatTransport,
   type TransformChatStreamPacket,
 } from '../../types'
@@ -20,6 +22,10 @@ interface AiChatProviderBaseProps {
   labels?: AiChatLabels
   /** Optional renderer used to extend message blocks with app-specific UI. */
   renderMessageBlock?: ChatMessageBlockRenderer
+  /** Optional handler used to intercept questionnaire submissions before the default send flow. */
+  handleQuestionnaireSubmit?: ChatQuestionnaireSubmitHandler
+  /** Optional handler used to intercept confirmation submissions before the default send flow. */
+  handleConfirmationSubmit?: ChatConfirmationSubmitHandler
   /** Optional render order used for mixed text and structured message blocks. */
   messageRenderOrder?: ChatMessageRenderOrder
   /**
@@ -67,6 +73,8 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
     defaultMode,
     labels,
     renderMessageBlock,
+    handleQuestionnaireSubmit,
+    handleConfirmationSubmit,
     messageRenderOrder,
     enableImageAttachments = true,
     children,
@@ -130,6 +138,8 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
       sendRef,
       retryRef,
       renderMessageBlock,
+      handleQuestionnaireSubmit,
+      handleConfirmationSubmit,
       messageRenderOrder,
       transformStreamPacket: defaultTransformStreamPacket,
       enableImageAttachments,
@@ -140,6 +150,8 @@ export const AiChatProvider = (props: AiChatProviderProps) => {
       defaultAuthToken,
       defaultTransformStreamPacket,
       enableImageAttachments,
+      handleConfirmationSubmit,
+      handleQuestionnaireSubmit,
       labels,
       messageRenderOrder,
       renderMessageBlock,

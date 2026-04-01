@@ -31,11 +31,11 @@ import {
   getTimelineConsumedText,
   type MessageBodySegment,
 } from '../lib/chat-message-timeline'
-import { PDEAIExecutionConfirmationCard } from './pde-ai-execution-confirmation-card'
-import { PDEAINoticeCard } from './pde-ai-notice-card'
-import { PDEAIParameterSummaryCard } from './pde-ai-parameter-summary-card'
-import { PDEAIQuestionnaireCard } from './pde-ai-questionnaire-card'
-import { PDEAIResultSummaryCard } from './pde-ai-result-summary-card'
+import { ExecutionConfirmationCard } from './execution-confirmation-card'
+import { NoticeCard } from './notice-card'
+import { ParameterSummaryCard } from './parameter-summary-card'
+import { QuestionnaireCard } from './questionnaire-card'
+import { ResultSummaryCard } from './result-summary-card'
 import { ImageViewer } from './image-viewer'
 import { useChatContext } from '../../../context/use-chat-context'
 
@@ -65,8 +65,8 @@ const renderMarkdownContent = (content: string) => (
 const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
   [
     'Execution confirmed',
-    `- Equation: ${proposal.equationName}`,
-    ...(proposal.solverName ? [`- Solver: ${proposal.solverName}`] : []),
+    `- Equation: ${proposal.resourceName}`,
+    ...(proposal.executorName ? [`- Solver: ${proposal.executorName}`] : []),
     `- Proposal ID: ${proposal.proposalId}`,
   ].join('\n')
 
@@ -119,9 +119,9 @@ const areExecutionProposalsEqual = (
   nextProposal: ExecutionProposal,
 ) =>
   previousProposal.proposalId === nextProposal.proposalId &&
-  previousProposal.equationKey === nextProposal.equationKey &&
-  previousProposal.equationName === nextProposal.equationName &&
-  previousProposal.solverName === nextProposal.solverName &&
+  previousProposal.resourceKey === nextProposal.resourceKey &&
+  previousProposal.resourceName === nextProposal.resourceName &&
+  previousProposal.executorName === nextProposal.executorName &&
   previousProposal.requiresConfirmation === nextProposal.requiresConfirmation &&
   areParameterSummaryItemsEqual(previousProposal.parameterSummary, nextProposal.parameterSummary) &&
   (previousProposal.warnings ?? []).length === (nextProposal.warnings ?? []).length &&
@@ -130,7 +130,7 @@ const areExecutionProposalsEqual = (
   )
 
 const areResultSummariesEqual = (previousSummary: ResultSummary, nextSummary: ResultSummary) =>
-  previousSummary.taskId === nextSummary.taskId &&
+  previousSummary.summaryId === nextSummary.summaryId &&
   previousSummary.status === nextSummary.status &&
   previousSummary.headline === nextSummary.headline &&
   previousSummary.details.length === nextSummary.details.length &&
@@ -237,6 +237,8 @@ const areQuestionnairesEqual = (
   previousQuestionnaire.title === nextQuestionnaire.title &&
   previousQuestionnaire.description === nextQuestionnaire.description &&
   previousQuestionnaire.submitLabel === nextQuestionnaire.submitLabel &&
+  previousQuestionnaire.status === nextQuestionnaire.status &&
+  previousQuestionnaire.statusMessage === nextQuestionnaire.statusMessage &&
   previousQuestionnaire.questions.length === nextQuestionnaire.questions.length &&
   previousQuestionnaire.questions.every((question, index) =>
     arePlanQuestionsEqual(question, nextQuestionnaire.questions[index] as PlanQuestion),
@@ -412,19 +414,19 @@ const ChatMessageItemView = ({
       case 'notice':
         return (
           <Fragment key={`notice-${index}`}>
-            <PDEAINoticeCard text={block.text} tone={block.tone} />
+            <NoticeCard text={block.text} tone={block.tone} />
           </Fragment>
         )
       case 'parameter_summary':
         return (
           <Fragment key={`parameter-summary-${index}`}>
-            <PDEAIParameterSummaryCard items={block.items} />
+            <ParameterSummaryCard items={block.items} />
           </Fragment>
         )
       case 'confirmation_card':
         return (
           <Fragment key={`confirmation-card-${index}`}>
-            <PDEAIExecutionConfirmationCard
+            <ExecutionConfirmationCard
               proposal={block.proposal}
               interactive={isPlanMode}
               onConfirm={
@@ -443,15 +445,21 @@ const ChatMessageItemView = ({
       case 'result_summary':
         return (
           <Fragment key={`result-summary-${index}`}>
-            <PDEAIResultSummaryCard summary={block.summary} />
+            <ResultSummaryCard summary={block.summary} />
           </Fragment>
         )
       case 'questionnaire':
         return (
           <Fragment key={`questionnaire-${index}`}>
-            <PDEAIQuestionnaireCard
+            <QuestionnaireCard
               questionnaire={block.questionnaire}
               interactive={canSubmitQuestionnaire}
+              labels={{
+                submitting: labels.questionnaireSubmitting,
+                submitted: labels.questionnaireSubmitted,
+                validationPrefix: labels.questionnaireValidationPrefix,
+                submitFailed: labels.questionnaireSubmitFailed,
+              }}
               onSubmit={
                 canSubmitQuestionnaire
                   ? (submission) =>

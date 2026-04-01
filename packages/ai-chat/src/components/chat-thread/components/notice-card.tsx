@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 
-export interface PDEAINoticeCardProps {
+export interface NoticeCardProps {
   text: string
   tone: 'info' | 'warning' | 'success'
 }
 
-export const PDEAINoticeCard = ({ text, tone }: PDEAINoticeCardProps) => (
-  <Card data-testid="pde-ai-notice-card" data-tone={tone}>
+export const NoticeCard = ({ text, tone }: NoticeCardProps) => (
+  <Card data-testid="notice-card" data-tone={tone}>
     {text}
   </Card>
 )

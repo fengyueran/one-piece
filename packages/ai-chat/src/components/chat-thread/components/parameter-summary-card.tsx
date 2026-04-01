@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import type { ChatParameterSummaryItem } from '../../../types'
 
-export interface PDEAIParameterSummaryCardProps {
+export interface ParameterSummaryCardProps {
   items: ChatParameterSummaryItem[]
 }
 
-export const PDEAIParameterSummaryCard = ({ items }: PDEAIParameterSummaryCardProps) => (
-  <Card data-testid="pde-ai-parameter-summary-card">
+export const ParameterSummaryCard = ({ items }: ParameterSummaryCardProps) => (
+  <Card data-testid="parameter-summary-card">
     <Title>Parameter Summary</Title>
     <List>
       {items.map((item) => (

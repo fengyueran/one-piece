@@ -47,7 +47,7 @@ export const getTimelineBlockKey = (block: ChatMessageBlock, index: number) => {
     case 'confirmation_card':
       return `${index}:confirmation_card:${block.proposal.proposalId}`
     case 'result_summary':
-      return `${index}:result_summary:${block.summary.taskId}:${block.summary.status}`
+      return `${index}:result_summary:${block.summary.summaryId}:${block.summary.status}`
     case 'questionnaire':
       return `${index}:questionnaire:${block.questionnaire.questionnaireId}`
     case 'custom':

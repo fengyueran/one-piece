@@ -14,7 +14,11 @@ export type { AiChatProviderProps } from './components/ai-chat-provider'
 // Transport
 // ---------------------------------------------------------------------------
 export { createDefaultChatTransport } from './transport'
-export type { CreateDefaultChatTransportOptions, DefaultChatTransportEndpoints } from './transport'
+export type {
+  ChatToolExecutionPolicy,
+  CreateDefaultChatTransportOptions,
+  DefaultChatTransportEndpoints,
+} from './transport'
 
 // ---------------------------------------------------------------------------
 // Individual components (for custom layouts)
@@ -31,9 +35,13 @@ export { useChatContext, useChatStore } from './context/use-chat-context'
 export type {
   AiChatLabels,
   ChatAgentMode,
+  ChatConfirmationSubmitHandler,
   ChatImageAttachment,
   ChatMessage,
   ChatMessageBlock,
+  ChatParameterSummaryItem,
+  ChatQuestionnaireSubmitHandler,
+  ChatSubmissionContext,
   ChatMessageBlockRenderer,
   ChatMessageBlockRendererProps,
   ChatMessageRenderOrder,
@@ -48,6 +56,7 @@ export type {
   ChatStreamPacketUpdate,
   ExecutionConfirmationSubmission,
   ExecutionProposal,
+  PlanQuestionOption,
   PlanQuestionnaire,
   PlanQuestionnaireSubmission,
   ResultSummary,
