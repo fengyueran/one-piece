@@ -217,4 +217,154 @@ describe('createChatStore', () => {
       },
     ])
   })
+
+  it('replaces custom blocks that share the same block key when merge policy is replace', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'replace',
+          data: { requestId: 'req-1', timeoutSec: 120 },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'replace',
+          data: { requestId: 'req-1', timeoutSec: 60 },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'custom',
+        kind: 'approval-card',
+        blockKey: 'approval:req-1',
+        mergePolicy: 'replace',
+        data: { requestId: 'req-1', timeoutSec: 60 },
+      },
+    ])
+  })
+
+  it('ignores duplicate custom blocks that share the same block key when merge policy is ignore-duplicate', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'ignore-duplicate',
+          data: { requestId: 'req-1', timeoutSec: 120 },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'ignore-duplicate',
+          data: { requestId: 'req-1', timeoutSec: 60 },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'custom',
+        kind: 'approval-card',
+        blockKey: 'approval:req-1',
+        mergePolicy: 'ignore-duplicate',
+        data: { requestId: 'req-1', timeoutSec: 120 },
+      },
+    ])
+  })
+
+  it('replaces keyed custom blocks even when the renderer kind changes', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'replace',
+          data: { requestId: 'req-1', state: 'pending' },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'custom',
+          kind: 'approval-card-settled',
+          blockKey: 'approval:req-1',
+          mergePolicy: 'replace',
+          data: { requestId: 'req-1', state: 'approved' },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'custom',
+        kind: 'approval-card-settled',
+        blockKey: 'approval:req-1',
+        mergePolicy: 'replace',
+        data: { requestId: 'req-1', state: 'approved' },
+      },
+    ])
+  })
 })

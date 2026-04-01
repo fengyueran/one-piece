@@ -64,6 +64,40 @@ describe('ChatThread custom block renderer', () => {
     expect(firstKey).not.toBe(secondKey)
   })
 
+  it('prefers blockKey for custom timeline blocks so replace updates keep the same anchor', () => {
+    const firstKey = getTimelineBlockKey(
+      {
+        type: 'custom',
+        kind: 'tool_approval_request',
+        blockKey: 'approval:req-1',
+        mergePolicy: 'replace',
+        data: {
+          requestId: 'req-1',
+          toolName: 'get_equation_default_params',
+          timeoutSec: 120,
+        },
+      } as ChatMessageBlock,
+      0,
+    )
+    const secondKey = getTimelineBlockKey(
+      {
+        type: 'custom',
+        kind: 'tool_approval_request_settled',
+        blockKey: 'approval:req-1',
+        mergePolicy: 'replace',
+        data: {
+          requestId: 'req-1',
+          toolName: 'get_equation_default_params',
+          timeoutSec: 60,
+        },
+      } as ChatMessageBlock,
+      0,
+    )
+
+    expect(firstKey).toBe('custom:approval:req-1')
+    expect(secondKey).toBe(firstKey)
+  })
+
   it('preserves markdown paragraph boundaries when timeline text is split before a custom block', () => {
     const approvalBlock = {
       type: 'custom',

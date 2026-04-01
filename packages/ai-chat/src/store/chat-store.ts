@@ -83,6 +83,26 @@ const mergeStreamingBlocks = (
   const nextBlocks = [...(existingBlocks ?? [])]
 
   incomingBlocks.forEach((incomingBlock) => {
+    if (incomingBlock.type === 'custom' && incomingBlock.blockKey) {
+      const mergePolicy = incomingBlock.mergePolicy ?? 'append'
+
+      if (mergePolicy !== 'append') {
+        const existingIndex = nextBlocks.findIndex(
+          (block) => block.type === 'custom' && block.blockKey === incomingBlock.blockKey,
+        )
+
+        if (existingIndex !== -1) {
+          if (mergePolicy === 'replace') {
+            nextBlocks[existingIndex] = incomingBlock
+          }
+          return
+        }
+      }
+
+      nextBlocks.push(incomingBlock)
+      return
+    }
+
     if (incomingBlock.type !== 'questionnaire') {
       nextBlocks.push(incomingBlock)
       return

@@ -197,6 +197,33 @@ export interface ResultSummary {
 }
 
 /**
+ * Merge behavior applied when a keyed custom block is patched repeatedly.
+ */
+export type ChatCustomBlockMergePolicy = 'append' | 'replace' | 'ignore-duplicate'
+
+/**
+ * Extensible custom block rendered by a consumer-provided block renderer.
+ */
+export interface ChatCustomBlock {
+  type: 'custom'
+  kind: string
+  data: unknown
+  /**
+   * Stable key used to identify the same logical block across streaming patches.
+   * When present, keyed custom blocks are merged by `blockKey` regardless of `kind`.
+   */
+  blockKey?: string
+  /**
+   * Merge strategy used when another custom block with the same key arrives.
+   *
+   * - `append`: keep appending blocks even if the key matches.
+   * - `replace`: replace the existing keyed block with the latest one.
+   * - `ignore-duplicate`: keep the first keyed block and ignore later duplicates.
+   */
+  mergePolicy?: ChatCustomBlockMergePolicy
+}
+
+/**
  * Structured assistant block variants rendered by the chat thread.
  */
 export type ChatMessageBlock =
@@ -206,7 +233,7 @@ export type ChatMessageBlock =
   | { type: 'confirmation_card'; proposal: ExecutionProposal }
   | { type: 'result_summary'; summary: ResultSummary }
   | { type: 'questionnaire'; questionnaire: PlanQuestionnaire }
-  | { type: 'custom'; kind: string; data: unknown }
+  | ChatCustomBlock
 
 /**
  * Supported message body render orders for mixed text and structured blocks.
