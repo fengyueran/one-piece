@@ -121,6 +121,8 @@ export type PlanQuestion =
   | PlanNumberQuestion
   | PlanBooleanQuestion
 
+export type PlanQuestionnaireStatus = 'expired' | 'failed'
+
 /**
  * Structured question form emitted for plan-mode clarification flows.
  */
@@ -131,6 +133,8 @@ export interface PlanQuestionnaire {
   submitLabel?: string
   questions: PlanQuestion[]
   answers?: Partial<Record<string, PlanQuestionnaireAnswerValue>>
+  status?: PlanQuestionnaireStatus
+  statusMessage?: string
 }
 
 /**
@@ -317,7 +321,7 @@ export type ChatMessageBlockRenderer = (props: ChatMessageBlockRendererProps) =>
 export type ChatQuestionnaireSubmitHandler = (
   submission: PlanQuestionnaireSubmission,
   context: ChatSubmissionContext,
-) => Promise<void> | void
+) => Promise<boolean | void> | boolean | void
 
 /**
  * Optional application-provided handler that intercepts confirmation submissions.
@@ -325,7 +329,7 @@ export type ChatQuestionnaireSubmitHandler = (
 export type ChatConfirmationSubmitHandler = (
   submission: ExecutionConfirmationSubmission,
   context: ChatSubmissionContext,
-) => Promise<void> | void
+) => Promise<boolean | void> | boolean | void
 
 export interface SendMessageParams {
   sessionId: string

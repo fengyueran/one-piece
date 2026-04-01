@@ -124,4 +124,97 @@ describe('createChatStore', () => {
       },
     ])
   })
+
+  it('replaces questionnaires that share the same questionnaire id while streaming', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            title: '请选择方案',
+            questions: [
+              {
+                id: 'selected_index',
+                label: '请选择方案',
+                kind: 'single_select',
+                options: [
+                  {
+                    label: '方案 A',
+                    value: '0',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            title: '请选择方案',
+            status: 'expired',
+            statusMessage: '选择已超时，请重新开始。',
+            questions: [
+              {
+                id: 'selected_index',
+                label: '请选择方案',
+                kind: 'single_select',
+                options: [
+                  {
+                    label: '方案 A',
+                    value: '0',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          title: '请选择方案',
+          status: 'expired',
+          statusMessage: '选择已超时，请重新开始。',
+          questions: [
+            {
+              id: 'selected_index',
+              label: '请选择方案',
+              kind: 'single_select',
+              options: [
+                {
+                  label: '方案 A',
+                  value: '0',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ])
+  })
 })

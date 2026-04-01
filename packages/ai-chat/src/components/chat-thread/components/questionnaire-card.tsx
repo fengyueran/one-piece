@@ -181,7 +181,11 @@ const QuestionnaireCardInner = ({
     ...DEFAULT_QUESTIONNAIRE_CARD_LABELS,
     ...labels,
   }
-  const isInteractionLocked = !interactive || isSubmitting || isSubmitted
+  const hasExternalFailureStatus =
+    questionnaire.status === 'expired' || questionnaire.status === 'failed'
+  const visibleErrorMessage = questionnaire.statusMessage ?? errorMessage
+  const isInteractionLocked =
+    !interactive || isSubmitting || isSubmitted || hasExternalFailureStatus
 
   const handleSubmit = async () => {
     if (isSubmitting || isSubmitted) {
@@ -459,18 +463,18 @@ const QuestionnaireCardInner = ({
           </QuestionCard>
         ))}
       </QuestionList>
-      {errorMessage ? (
-        <ErrorMessage data-testid="questionnaire-error">{errorMessage}</ErrorMessage>
+      {visibleErrorMessage ? (
+        <ErrorMessage data-testid="questionnaire-error">{visibleErrorMessage}</ErrorMessage>
       ) : null}
       {isSubmitted ? (
         <SuccessMessage data-testid="questionnaire-success">
           {resolvedLabels.submitted}
         </SuccessMessage>
-      ) : interactive ? (
+      ) : interactive && !hasExternalFailureStatus ? (
         <SubmitButton
           type="button"
           data-testid="questionnaire-submit"
-          disabled={isSubmitting}
+          disabled={isInteractionLocked}
           onClick={() => {
             void handleSubmit()
           }}
@@ -483,7 +487,12 @@ const QuestionnaireCardInner = ({
 }
 
 const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
-  JSON.stringify([questionnaire.questionnaireId, questionnaire.questions])
+  JSON.stringify([
+    questionnaire.questionnaireId,
+    questionnaire.questions,
+    questionnaire.status,
+    questionnaire.statusMessage,
+  ])
 
 export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
   <QuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />

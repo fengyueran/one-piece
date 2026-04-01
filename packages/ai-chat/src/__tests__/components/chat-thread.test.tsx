@@ -238,6 +238,64 @@ describe('ChatThread', () => {
     expect(ctx.sendRef.current).not.toHaveBeenCalled()
   })
 
+  it('falls back to sending the questionnaire content when the custom handler declines it', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+
+    ctx.value.handleQuestionnaireSubmit = jest.fn(async () => false)
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-fallback',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose a path.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-fallback',
+            title: 'Choose a direction',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.200Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('question-option-direction-0'))
+    await user.click(screen.getByTestId('questionnaire-submit'))
+
+    await waitFor(() => expect(ctx.sendRef.current).toHaveBeenCalledTimes(1))
+    expect(ctx.sendRef.current).toHaveBeenCalledWith(
+      ['Choose a direction', '- Which route should we use?: Classic numeric simulation'].join('\n'),
+    )
+  })
+
   it('uses external questionnaire validation labels', async () => {
     const user = userEvent.setup()
     const ctx = createContextValue()
@@ -439,6 +497,95 @@ describe('ChatThread', () => {
     await waitFor(() =>
       expect(screen.getByTestId('questionnaire-error')).toHaveTextContent('提交失败，请稍后重试。'),
     )
+  })
+
+  it('locks the questionnaire and shows the external timeout message after it expires', async () => {
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'user-1',
+      sessionId: 'session-plan',
+      role: 'user',
+      content: 'hello',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+    ctx.store.getState().startStreamingMessage('session-plan', {
+      id: 'assistant-timeout',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+    ctx.store.getState().patchStreamingMessage('session-plan', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-timeout',
+            title: 'Choose a direction',
+            submitLabel: 'Continue',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+    ctx.store.getState().patchStreamingMessage('session-plan', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-timeout',
+            title: 'Choose a direction',
+            submitLabel: 'Continue',
+            status: 'expired',
+            statusMessage: '选择已超时（120 秒），请重新开始。',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByTestId('questionnaire-error')).toHaveTextContent(
+      '选择已超时（120 秒），请重新开始。',
+    )
+    expect(screen.queryByTestId('questionnaire-submit')).not.toBeInTheDocument()
   })
 
   it('wraps each conversation turn and keeps min-height on the latest turn', async () => {

@@ -355,13 +355,25 @@ export const ChatThread = () => {
   const handleQuestionnaireSubmit = useCallback(
     async (submission: PlanQuestionnaireSubmission) => {
       if (customQuestionnaireSubmit) {
-        await customQuestionnaireSubmit(submission, {
+        const handled = await customQuestionnaireSubmit(submission, {
           sessionId: activeSessionId ?? undefined,
           mode: activeSessionMode,
         })
-      } else {
-        await sendRef.current(submission.content)
+
+        if (handled !== false) {
+          if (activeSessionId && submission.sourceMessageId) {
+            updateQA(
+              activeSessionId,
+              submission.sourceMessageId,
+              submission.questionnaireId,
+              submission.answers,
+            )
+          }
+          return
+        }
       }
+
+      await sendRef.current(submission.content)
 
       if (activeSessionId && submission.sourceMessageId) {
         updateQA(
@@ -378,12 +390,16 @@ export const ChatThread = () => {
   const handleConfirmation = useCallback(
     async (submission: ExecutionConfirmationSubmission) => {
       if (customConfirmationSubmit) {
-        await customConfirmationSubmit(submission, {
+        const handled = await customConfirmationSubmit(submission, {
           sessionId: activeSessionId ?? undefined,
           mode: activeSessionMode,
         })
-        return
+
+        if (handled !== false) {
+          return
+        }
       }
+
       await sendRef.current(submission.content)
     },
     [activeSessionId, activeSessionMode, sendRef, customConfirmationSubmit],
