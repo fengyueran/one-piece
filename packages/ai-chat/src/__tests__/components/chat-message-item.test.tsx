@@ -98,6 +98,37 @@ describe('ChatThread custom block renderer', () => {
     expect(secondKey).toBe(firstKey)
   })
 
+  it('prefers questionnaire blockKey so repeated plan updates keep the same anchor', () => {
+    const firstKey = getTimelineBlockKey(
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1',
+          mergePolicy: 'replace',
+          questions: [],
+        },
+      },
+      0,
+    )
+    const secondKey = getTimelineBlockKey(
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1',
+          mergePolicy: 'replace',
+          status: 'expired',
+          questions: [],
+        },
+      },
+      0,
+    )
+
+    expect(firstKey).toBe('questionnaire:plan:req-1')
+    expect(secondKey).toBe(firstKey)
+  })
+
   it('preserves markdown paragraph boundaries when timeline text is split before a custom block', () => {
     const approvalBlock = {
       type: 'custom',

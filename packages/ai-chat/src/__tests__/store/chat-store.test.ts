@@ -218,6 +218,138 @@ describe('createChatStore', () => {
     ])
   })
 
+  it('appends questionnaires that reuse questionnaire id when block keys differ', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            blockKey: 'plan:req-1:step-1',
+            mergePolicy: 'replace',
+            title: '第一个计划',
+            questions: [],
+          },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            blockKey: 'plan:req-1:step-2',
+            mergePolicy: 'replace',
+            title: '第二个计划',
+            questions: [],
+          },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1:step-1',
+          mergePolicy: 'replace',
+          title: '第一个计划',
+          questions: [],
+        },
+      },
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1:step-2',
+          mergePolicy: 'replace',
+          title: '第二个计划',
+          questions: [],
+        },
+      },
+    ])
+  })
+
+  it('replaces questionnaires that share the same block key when merge policy is replace', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            blockKey: 'plan:req-1',
+            mergePolicy: 'replace',
+            title: '请选择方案',
+            questions: [],
+          },
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'req-1',
+            blockKey: 'plan:req-1',
+            mergePolicy: 'replace',
+            title: '请选择方案',
+            status: 'expired',
+            statusMessage: '选择已超时，请重新开始。',
+            questions: [],
+          },
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'questionnaire',
+        questionnaire: {
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1',
+          mergePolicy: 'replace',
+          title: '请选择方案',
+          status: 'expired',
+          statusMessage: '选择已超时，请重新开始。',
+          questions: [],
+        },
+      },
+    ])
+  })
+
   it('replaces custom blocks that share the same block key when merge policy is replace', () => {
     const store = makeStore()
     const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }

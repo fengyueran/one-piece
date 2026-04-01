@@ -231,6 +231,7 @@ const QuestionnaireCardInner = ({
     try {
       await onSubmit?.({
         questionnaireId: questionnaire.questionnaireId,
+        ...(questionnaire.blockKey ? { blockKey: questionnaire.blockKey } : {}),
         answers: normalizedAnswers,
         content: contentLines.join('\n'),
       })

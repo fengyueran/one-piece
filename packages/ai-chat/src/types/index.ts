@@ -124,10 +124,28 @@ export type PlanQuestion =
 export type PlanQuestionnaireStatus = 'expired' | 'failed'
 
 /**
+ * Merge behavior applied when a keyed structured block is patched repeatedly.
+ */
+export type ChatBlockMergePolicy = 'append' | 'replace' | 'ignore-duplicate'
+
+/**
  * Structured question form emitted for plan-mode clarification flows.
  */
 export interface PlanQuestionnaire {
   questionnaireId: string
+  /**
+   * Stable key used to identify the same logical questionnaire across streaming patches.
+   * When present, questionnaires are merged by `blockKey` instead of `questionnaireId`.
+   */
+  blockKey?: string
+  /**
+   * Merge strategy used when another questionnaire with the same key arrives.
+   *
+   * - `append`: keep appending questionnaires even if the key matches.
+   * - `replace`: replace the existing keyed questionnaire with the latest one.
+   * - `ignore-duplicate`: keep the first keyed questionnaire and ignore later duplicates.
+   */
+  mergePolicy?: ChatBlockMergePolicy
   title?: string
   description?: string
   submitLabel?: string
@@ -142,6 +160,10 @@ export interface PlanQuestionnaire {
  */
 export interface PlanQuestionnaireSubmission {
   questionnaireId: string
+  /**
+   * Stable questionnaire block key forwarded from the rendered card when available.
+   */
+  blockKey?: string
   answers: Record<string, PlanQuestionnaireAnswerValue>
   content: string
   sourceMessageId?: string
@@ -197,11 +219,6 @@ export interface ResultSummary {
 }
 
 /**
- * Merge behavior applied when a keyed custom block is patched repeatedly.
- */
-export type ChatCustomBlockMergePolicy = 'append' | 'replace' | 'ignore-duplicate'
-
-/**
  * Extensible custom block rendered by a consumer-provided block renderer.
  */
 export interface ChatCustomBlock {
@@ -220,7 +237,7 @@ export interface ChatCustomBlock {
    * - `replace`: replace the existing keyed block with the latest one.
    * - `ignore-duplicate`: keep the first keyed block and ignore later duplicates.
    */
-  mergePolicy?: ChatCustomBlockMergePolicy
+  mergePolicy?: ChatBlockMergePolicy
 }
 
 /**

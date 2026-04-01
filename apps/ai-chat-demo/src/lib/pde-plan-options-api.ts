@@ -99,13 +99,64 @@ const decidePendingPlanOption = async (
   return (await response.json()) as PdePlanDecisionResponse
 }
 
+const extractOptionRequestIdFromBlockKey = (
+  submission: PlanQuestionnaireSubmission,
+): string | null => {
+  if (!submission.blockKey) {
+    return null
+  }
+
+  const expectedPrefix = `plan:${submission.questionnaireId}:`
+  if (!submission.blockKey.startsWith(expectedPrefix)) {
+    return null
+  }
+
+  const optionRequestId = submission.blockKey.slice(expectedPrefix.length).trim()
+  return optionRequestId || null
+}
+
+const extractSubmissionQuestionLabel = (submission: PlanQuestionnaireSubmission): string | null => {
+  const questionLine = submission.content
+    .split('\n')
+    .map((line) => line.trim())
+    .find((line) => line.startsWith('- '))
+
+  if (!questionLine) {
+    return null
+  }
+
+  const separatorIndex = questionLine.indexOf(':')
+  if (separatorIndex === -1) {
+    return null
+  }
+
+  const label = questionLine.slice(2, separatorIndex).trim()
+  return label || null
+}
+
 const resolvePendingPlanItem = (
   response: PdePlanPendingResponse,
   submission: PlanQuestionnaireSubmission,
-) =>
-  response.items.find((item) => item.request_id === submission.questionnaireId) ??
-  response.items[0] ??
-  null
+) => {
+  const optionRequestId = extractOptionRequestIdFromBlockKey(submission)
+  const questionLabel = extractSubmissionQuestionLabel(submission)
+
+  return (
+    (optionRequestId
+      ? response.items.find((item) => item.option_request_id === optionRequestId)
+      : null) ??
+    response.items.find((item) => item.option_request_id === submission.questionnaireId) ??
+    response.items.find(
+      (item) =>
+        item.request_id === submission.questionnaireId &&
+        questionLabel !== null &&
+        item.question.trim() === questionLabel,
+    ) ??
+    response.items.find((item) => item.request_id === submission.questionnaireId) ??
+    response.items[0] ??
+    null
+  )
+}
 
 export const createPdePlanQuestionnaireSubmitHandler = (
   apiBaseUrl: string,
