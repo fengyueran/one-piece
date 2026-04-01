@@ -24,6 +24,8 @@ describe('pdeTransformStreamPacket', () => {
         type: 'questionnaire',
         questionnaire: {
           questionnaireId: 'plan-1',
+          blockKey: 'plan:plan-1:which-route-should-we-use',
+          mergePolicy: 'replace',
           title: 'Choose a direction',
           description: 'Select the planning path you want the assistant to use next.',
           submitLabel: 'Continue',
@@ -34,13 +36,86 @@ describe('pdeTransformStreamPacket', () => {
               kind: 'single_select',
               required: true,
               options: [
-                { label: 'Classic numeric simulation', value: 'classic' },
-                { label: 'Quantum simulation', value: 'quantum' },
+                { label: 'Classic numeric simulation', value: '0' },
+                { label: 'Quantum simulation', value: '1' },
               ],
             },
           ],
         },
       },
+    ])
+  })
+
+  it('creates distinct questionnaire block keys for plan options that share request_id', () => {
+    const firstUpdate = pdeTransformStreamPacket({
+      packet: {
+        type: 'plan_options' as never,
+        data: {
+          request_id: 'req-1',
+          question: '请选择求解热方程的主要数值方法：',
+          options: [{ title: '有限差分法 (FDM)' }, { title: '有限元法 (FEM)' }],
+        } as never,
+      },
+      defaultUpdate: null,
+    })
+
+    const secondUpdate = pdeTransformStreamPacket({
+      packet: {
+        type: 'plan_options' as never,
+        data: {
+          request_id: 'req-1',
+          question: '请选择边界条件类型：',
+          options: [{ title: '狄利克雷边界条件' }, { title: '诺伊曼边界条件' }],
+        } as never,
+      },
+      defaultUpdate: null,
+    })
+
+    expect(firstUpdate?.blocks).toEqual([
+      expect.objectContaining({
+        type: 'questionnaire',
+        questionnaire: expect.objectContaining({
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1:请选择求解热方程的主要数值方法',
+          mergePolicy: 'replace',
+        }),
+      }),
+    ])
+    expect(secondUpdate?.blocks).toEqual([
+      expect.objectContaining({
+        type: 'questionnaire',
+        questionnaire: expect.objectContaining({
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1:请选择边界条件类型',
+          mergePolicy: 'replace',
+        }),
+      }),
+    ])
+  })
+
+  it('prefers option_request_id when creating a plan questionnaire block key', () => {
+    const update = pdeTransformStreamPacket({
+      packet: {
+        type: 'plan_options' as never,
+        data: {
+          request_id: 'req-1',
+          option_request_id: 'opt-1',
+          question: '请选择边界条件类型：',
+          options: [{ title: '狄利克雷边界条件' }, { title: '诺伊曼边界条件' }],
+        } as never,
+      },
+      defaultUpdate: null,
+    })
+
+    expect(update?.blocks).toEqual([
+      expect.objectContaining({
+        type: 'questionnaire',
+        questionnaire: expect.objectContaining({
+          questionnaireId: 'req-1',
+          blockKey: 'plan:req-1:opt-1',
+          mergePolicy: 'replace',
+        }),
+      }),
     ])
   })
 

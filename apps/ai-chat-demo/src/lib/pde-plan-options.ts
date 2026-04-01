@@ -3,6 +3,13 @@ import type { PlanQuestionOption, PlanQuestionnaire } from '@xinghunm/ai-chat'
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
 
+const normalizeTextKeyPart = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
 const normalizeOption = (option: unknown, index: number): PlanQuestionOption | null => {
   if (typeof option === 'string') {
     const trimmed = option.trim()
@@ -81,6 +88,20 @@ export const createPdePlanOptionsQuestionnaire = (value: unknown): PlanQuestionn
       ? value.questionId
       : 'plan-direction'
 
+  const questionKeyPart =
+    typeof value.question === 'string' && value.question.trim() !== ''
+      ? normalizeTextKeyPart(value.question)
+      : normalizeTextKeyPart(questionId)
+
+  const optionRequestId =
+    typeof value.option_request_id === 'string' && value.option_request_id.trim() !== ''
+      ? value.option_request_id
+      : null
+
+  const blockKey = optionRequestId
+    ? `plan:${questionnaireId}:${optionRequestId}`
+    : `plan:${questionnaireId}:${questionKeyPart || questionId}`
+
   const questionLabel =
     typeof value.question === 'string' && value.question.trim() !== ''
       ? value.question
@@ -93,6 +114,8 @@ export const createPdePlanOptionsQuestionnaire = (value: unknown): PlanQuestionn
 
   return {
     questionnaireId,
+    blockKey,
+    mergePolicy: 'replace',
     title,
     description,
     submitLabel,
