@@ -436,6 +436,7 @@ const Container = styled.div`
   min-height: 0;
   overflow: auto;
   padding: 24px;
+  margin-bottom: 24px;
   overscroll-behavior: contain;
 
   &::-webkit-scrollbar {

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
 import type { ChatAgentMode, ChatImageAttachment, ChatModel } from '../../types'
 import { useChatContext } from '../../context/use-chat-context'
@@ -20,8 +20,28 @@ const CHAT_COMPOSER_PADDING_BOTTOM_PX = 12
 const CHAT_COMPOSER_PADDING_BLOCK_PX =
   CHAT_COMPOSER_PADDING_TOP_PX + CHAT_COMPOSER_PADDING_BOTTOM_PX
 const CHAT_COMPOSER_MIN_ROWS = 4
+const CHAT_COMPOSER_EXPANDED_MAX_ROWS = 60
+const CHAT_COMPOSER_EXPANDED_MAX_VIEWPORT_RATIO = 0.7
+const CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX = 96
 const CHAT_COMPOSER_MAX_HEIGHT_PX =
   CHAT_COMPOSER_MAX_ROWS * CHAT_COMPOSER_LINE_HEIGHT_PX + CHAT_COMPOSER_PADDING_BLOCK_PX
+const CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX =
+  CHAT_COMPOSER_EXPANDED_MAX_ROWS * CHAT_COMPOSER_LINE_HEIGHT_PX + CHAT_COMPOSER_PADDING_BLOCK_PX
+
+const getExpandedComposerHeightPx = () => {
+  if (typeof window === 'undefined') {
+    return CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX
+  }
+
+  const viewportLimitedHeight =
+    window.innerHeight * CHAT_COMPOSER_EXPANDED_MAX_VIEWPORT_RATIO -
+    CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX
+
+  return Math.max(
+    CHAT_COMPOSER_MAX_HEIGHT_PX,
+    Math.floor(Math.min(CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX, viewportLimitedHeight)),
+  )
+}
 
 /** Inline plus icon (replaces SVG file import). */
 const PlusIcon = () => (
@@ -34,6 +54,35 @@ const PlusIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+  </svg>
+)
+
+const ComposerExpandIcon = ({ expanded }: { expanded: boolean }) => (
+  <svg
+    aria-hidden="true"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {expanded ? (
+      <path
+        d="M14 6h-4V2M10 6l4-4M2 10h4v4M6 10l-4 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : (
+      <path
+        d="M10 2h4v4M14 2L9 7M6 14H2v-4M2 14l5-5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    )}
   </svg>
 )
 
@@ -59,6 +108,8 @@ export interface ChatComposerViewProps {
   /** Whether image attachment uploads are enabled. */
   enableImageAttachments: boolean
   modeLabels: { ask: string; plan: string; agent: string }
+  expandComposerAriaLabel: string
+  collapseComposerAriaLabel: string
   onValueChange: (value: string) => void
   onPickImages: (files: FileList | File[]) => void
   onPasteImages: (files: File[]) => void
@@ -88,6 +139,8 @@ export const ChatComposerView = ({
   isStopping,
   enableImageAttachments,
   modeLabels,
+  expandComposerAriaLabel,
+  collapseComposerAriaLabel,
   onValueChange,
   onPickImages,
   onPasteImages,
@@ -100,6 +153,7 @@ export const ChatComposerView = ({
 }: ChatComposerViewProps) => {
   const imageInputRef = useRef<HTMLInputElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const [isComposerExpanded, setIsComposerExpanded] = useState(false)
   const canSend = canSendChatMessage({
     value,
     attachmentCount: attachments.length,
@@ -115,13 +169,20 @@ export const ChatComposerView = ({
       return
     }
 
-    element.style.height = '0px'
+    if (!isComposerExpanded) {
+      element.style.height = '0px'
+    }
+
     const scrollHeight = element.scrollHeight
-    const nextHeight = Math.min(scrollHeight, CHAT_COMPOSER_MAX_HEIGHT_PX)
+    const expandedHeight = getExpandedComposerHeightPx()
+    const nextHeight = isComposerExpanded
+      ? expandedHeight
+      : Math.min(scrollHeight, CHAT_COMPOSER_MAX_HEIGHT_PX)
 
     element.style.height = `${nextHeight}px`
-    element.style.overflowY = scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
-  }, [value])
+    element.style.overflowY =
+      !isComposerExpanded && scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
+  }, [isComposerExpanded, value])
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (shouldStopChatComposer({ key: event.key, shiftKey: event.shiftKey, isStreaming })) {
@@ -172,15 +233,27 @@ export const ChatComposerView = ({
             {attachmentLimitNotice}
           </AttachmentNotice>
         ) : null}
-        <Input
-          ref={inputRef}
-          data-testid="chat-composer-input"
-          value={value}
-          onChange={(event) => onValueChange(event.target.value)}
-          onKeyDown={handleKeyDown}
-          onPaste={enableImageAttachments ? handlePaste : undefined}
-          placeholder={placeholder}
-        />
+        <InputArea>
+          <ComposerExpandButton
+            type="button"
+            data-testid="chat-composer-expand-toggle"
+            aria-label={isComposerExpanded ? collapseComposerAriaLabel : expandComposerAriaLabel}
+            aria-expanded={isComposerExpanded}
+            onClick={() => setIsComposerExpanded((current) => !current)}
+          >
+            <ComposerExpandIcon expanded={isComposerExpanded} />
+          </ComposerExpandButton>
+          <Input
+            ref={inputRef}
+            data-testid="chat-composer-input"
+            data-expanded={isComposerExpanded}
+            value={value}
+            onChange={(event) => onValueChange(event.target.value)}
+            onKeyDown={handleKeyDown}
+            onPaste={enableImageAttachments ? handlePaste : undefined}
+            placeholder={placeholder}
+          />
+        </InputArea>
         <Footer>
           <Actions data-testid="chat-composer-actions">
             {enableImageAttachments ? (
@@ -257,6 +330,8 @@ export const ChatComposer = () => {
       isStopping={state.isStopping}
       enableImageAttachments={enableImageAttachments}
       modeLabels={modeLabels}
+      expandComposerAriaLabel={labels.expandComposerAriaLabel}
+      collapseComposerAriaLabel={labels.collapseComposerAriaLabel}
       onValueChange={actions.setValue}
       onPickImages={actions.pickImages}
       onPasteImages={actions.pasteImages}
@@ -299,15 +374,27 @@ const AttachmentNotice = styled.div`
   line-height: 1.4;
 `
 
+const InputArea = styled.div`
+  position: relative;
+`
+
 const Input = styled.textarea`
   --textarea-line-height: ${CHAT_COMPOSER_LINE_HEIGHT_PX}px;
   --textarea-min-rows: ${CHAT_COMPOSER_MIN_ROWS};
   --textarea-max-rows: ${CHAT_COMPOSER_MAX_ROWS};
+  --textarea-expanded-max-rows: ${CHAT_COMPOSER_EXPANDED_MAX_ROWS};
   --textarea-padding-top: ${CHAT_COMPOSER_PADDING_TOP_PX}px;
   --textarea-padding-bottom: ${CHAT_COMPOSER_PADDING_BOTTOM_PX}px;
   --textarea-padding-block: calc(var(--textarea-padding-top) + var(--textarea-padding-bottom));
   --textarea-max-height: calc(
     var(--textarea-max-rows) * var(--textarea-line-height) + var(--textarea-padding-block)
+  );
+  --textarea-expanded-max-height: min(
+    calc(
+      var(--textarea-expanded-max-rows) * var(--textarea-line-height) +
+        var(--textarea-padding-block)
+    ),
+    calc(70vh - ${CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX}px)
   );
   width: 100%;
   min-height: calc(
@@ -320,7 +407,7 @@ const Input = styled.textarea`
   border: 0;
   outline: 0;
   background: transparent;
-  padding: var(--textarea-padding-top) 12px var(--textarea-padding-bottom) 12px;
+  padding: var(--textarea-padding-top) 44px var(--textarea-padding-bottom) 12px;
   font-weight: 400;
   font-size: 14px;
   color: var(--text-primary);
@@ -333,6 +420,31 @@ const Input = styled.textarea`
 
   &::-webkit-resizer {
     display: none;
+  }
+
+  &[data-expanded='true'] {
+    max-height: var(--textarea-expanded-max-height);
+  }
+`
+
+const ComposerExpandButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  z-index: 1;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
   }
 `
 
