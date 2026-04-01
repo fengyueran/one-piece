@@ -103,6 +103,28 @@ const mergeStreamingBlocks = (
       return
     }
 
+    if (incomingBlock.type === 'questionnaire' && incomingBlock.questionnaire.blockKey) {
+      const mergePolicy = incomingBlock.questionnaire.mergePolicy ?? 'append'
+
+      if (mergePolicy !== 'append') {
+        const existingIndex = nextBlocks.findIndex(
+          (block) =>
+            block.type === 'questionnaire' &&
+            block.questionnaire.blockKey === incomingBlock.questionnaire.blockKey,
+        )
+
+        if (existingIndex !== -1) {
+          if (mergePolicy === 'replace') {
+            nextBlocks[existingIndex] = incomingBlock
+          }
+          return
+        }
+      }
+
+      nextBlocks.push(incomingBlock)
+      return
+    }
+
     if (incomingBlock.type !== 'questionnaire') {
       nextBlocks.push(incomingBlock)
       return

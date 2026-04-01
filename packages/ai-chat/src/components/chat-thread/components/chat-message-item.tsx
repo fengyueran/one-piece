@@ -586,7 +586,7 @@ const ChatMessageItemView = ({
         )
       case 'questionnaire':
         return (
-          <Fragment key={`questionnaire-${index}`}>
+          <Fragment key={block.questionnaire.blockKey ?? `questionnaire-${index}`}>
             <QuestionnaireCard
               questionnaire={block.questionnaire}
               interactive={canSubmitQuestionnaire}

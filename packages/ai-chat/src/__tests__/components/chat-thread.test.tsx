@@ -235,7 +235,79 @@ describe('ChatThread', () => {
     await user.click(screen.getByTestId('questionnaire-submit'))
 
     await waitFor(() => expect(handleQuestionnaireSubmit).toHaveBeenCalledTimes(1))
+    expect(handleQuestionnaireSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        questionnaireId: 'plan-1',
+        answers: { direction: 'classic' },
+      }),
+      expect.anything(),
+    )
     expect(ctx.sendRef.current).not.toHaveBeenCalled()
+  })
+
+  it('forwards questionnaire blockKey to custom submit handlers when available', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+    const handleQuestionnaireSubmit = jest.fn(async () => {})
+
+    ctx.value.handleQuestionnaireSubmit = handleQuestionnaireSubmit
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-2b',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose a path.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-1',
+            blockKey: 'plan:plan-1:opt-1',
+            title: 'Choose a direction',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('question-option-direction-0'))
+    await user.click(screen.getByTestId('questionnaire-submit'))
+
+    await waitFor(() => expect(handleQuestionnaireSubmit).toHaveBeenCalledTimes(1))
+    expect(handleQuestionnaireSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        questionnaireId: 'plan-1',
+        blockKey: 'plan:plan-1:opt-1',
+        answers: { direction: 'classic' },
+      }),
+      expect.anything(),
+    )
   })
 
   it('falls back to sending the questionnaire content when the custom handler declines it', async () => {
