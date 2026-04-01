@@ -1,12 +1,18 @@
 import { useMemo } from 'react'
 import { AiChat, createDefaultChatTransport } from '@xinghunm/ai-chat'
 import { renderPdeMessageBlock } from './lib/pde-block-renderer'
+import { createPdePlanQuestionnaireSubmitHandler } from './lib/pde-plan-options-api'
 import { pdeTransformStreamPacket } from './lib/pde-stream-transform'
 
 const API_BASE_URL = import.meta.env.VITE_AI_CHAT_API_BASE_URL ?? '/ai-api'
 const AUTH_TOKEN = import.meta.env.VITE_AI_CHAT_AUTH_TOKEN ?? 'Bearer dev-token'
 
 export const App = () => {
+  const handleQuestionnaireSubmit = useMemo(
+    () => createPdePlanQuestionnaireSubmitHandler(API_BASE_URL, AUTH_TOKEN),
+    [],
+  )
+
   const transport = useMemo(
     () =>
       createDefaultChatTransport({
@@ -24,6 +30,7 @@ export const App = () => {
         showConversationList
         enableImageAttachments={false}
         messageRenderOrder="timeline"
+        handleQuestionnaireSubmit={handleQuestionnaireSubmit}
         renderMessageBlock={renderPdeMessageBlock}
       />
     </div>

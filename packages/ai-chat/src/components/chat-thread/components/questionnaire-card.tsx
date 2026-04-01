@@ -11,10 +11,24 @@ import type {
 export interface QuestionnaireCardProps {
   questionnaire: PlanQuestionnaire
   interactive?: boolean
-  onSubmit?: (submission: PlanQuestionnaireSubmission) => void
+  onSubmit?: (submission: PlanQuestionnaireSubmission) => Promise<void> | void
+  labels?: Partial<QuestionnaireCardLabels>
+}
+
+interface QuestionnaireCardLabels {
+  submitting: string
+  submitted: string
+  validationPrefix: string
+  submitFailed: string
 }
 
 const OTHER_OPTION_VALUE = '__other__'
+const DEFAULT_QUESTIONNAIRE_CARD_LABELS: QuestionnaireCardLabels = {
+  submitting: 'Submitting...',
+  submitted: 'Selection submitted. Waiting for the plan to continue...',
+  validationPrefix: 'Please complete:',
+  submitFailed: 'Failed to submit. Please try again.',
+}
 
 const createInitialAnswers = (questionnaire: PlanQuestionnaire) => ({
   ...(questionnaire.answers ?? {}),
@@ -155,25 +169,38 @@ const QuestionnaireCardInner = ({
   questionnaire,
   interactive = false,
   onSubmit,
+  labels,
 }: QuestionnaireCardProps) => {
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(() =>
     createInitialAnswers(questionnaire),
   )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const resolvedLabels = {
+    ...DEFAULT_QUESTIONNAIRE_CARD_LABELS,
+    ...labels,
+  }
+  const isInteractionLocked = !interactive || isSubmitting || isSubmitted
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSubmitting || isSubmitted) {
+      return
+    }
+
     const missingQuestions = questionnaire.questions.filter(
       (question) => question.required && isMissingRequiredAnswer(question, answers),
     )
 
     if (missingQuestions.length > 0) {
       setErrorMessage(
-        `Please complete: ${missingQuestions.map((question) => question.label).join(', ')}`,
+        `${resolvedLabels.validationPrefix} ${missingQuestions.map((question) => question.label).join(', ')}`,
       )
       return
     }
 
     setErrorMessage(null)
+    setIsSubmitting(true)
 
     const normalizedAnswers = Object.fromEntries(
       questionnaire.questions.flatMap((question) => {
@@ -197,11 +224,18 @@ const QuestionnaireCardInner = ({
       }),
     ]
 
-    onSubmit?.({
-      questionnaireId: questionnaire.questionnaireId,
-      answers: normalizedAnswers,
-      content: contentLines.join('\n'),
-    })
+    try {
+      await onSubmit?.({
+        questionnaireId: questionnaire.questionnaireId,
+        answers: normalizedAnswers,
+        content: contentLines.join('\n'),
+      })
+      setIsSubmitted(true)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : resolvedLabels.submitFailed)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const renderQuestion = (question: PlanQuestion) => {
@@ -225,13 +259,13 @@ const QuestionnaireCardInner = ({
       <OptionChoiceItem
         key={`${questionId}-${optionLabel}`}
         role="button"
-        tabIndex={interactive ? 0 : -1}
+        tabIndex={isInteractionLocked ? -1 : 0}
         aria-pressed={isSelected}
         data-selected={isSelected}
         data-tone={tone}
         data-testid={`question-option-${questionId}-${index}`}
         onClick={(event) => {
-          if (!interactive) {
+          if (isInteractionLocked) {
             return
           }
 
@@ -242,7 +276,7 @@ const QuestionnaireCardInner = ({
           onClick()
         }}
         onKeyDown={(event) => {
-          if (!interactive) {
+          if (isInteractionLocked) {
             return
           }
 
@@ -323,7 +357,7 @@ const QuestionnaireCardInner = ({
                           type="text"
                           value={singleSelectDraft.otherValue}
                           placeholder="Other"
-                          readOnly={!interactive}
+                          readOnly={isInteractionLocked}
                           onClick={(event) => {
                             event.stopPropagation()
                           }}
@@ -351,7 +385,7 @@ const QuestionnaireCardInner = ({
               type="text"
               value={getTextInputValue(answers[question.id])}
               placeholder={question.placeholder}
-              readOnly={!interactive}
+              readOnly={isInteractionLocked}
               onChange={(event) => {
                 setAnswers((current) => updateAnswerValue(current, question.id, event.target.value))
               }}
@@ -367,7 +401,7 @@ const QuestionnaireCardInner = ({
                 type="number"
                 value={getNumberInputValue(answers[question.id])}
                 placeholder={question.placeholder}
-                readOnly={!interactive}
+                readOnly={isInteractionLocked}
                 onChange={(event) => {
                   setAnswers((current) =>
                     updateAnswerValue(
@@ -428,9 +462,20 @@ const QuestionnaireCardInner = ({
       {errorMessage ? (
         <ErrorMessage data-testid="questionnaire-error">{errorMessage}</ErrorMessage>
       ) : null}
-      {interactive ? (
-        <SubmitButton type="button" data-testid="questionnaire-submit" onClick={handleSubmit}>
-          {questionnaire.submitLabel ?? 'Submit'}
+      {isSubmitted ? (
+        <SuccessMessage data-testid="questionnaire-success">
+          {resolvedLabels.submitted}
+        </SuccessMessage>
+      ) : interactive ? (
+        <SubmitButton
+          type="button"
+          data-testid="questionnaire-submit"
+          disabled={isSubmitting}
+          onClick={() => {
+            void handleSubmit()
+          }}
+        >
+          {isSubmitting ? resolvedLabels.submitting : (questionnaire.submitLabel ?? 'Submit')}
         </SubmitButton>
       ) : null}
     </Card>
@@ -438,11 +483,7 @@ const QuestionnaireCardInner = ({
 }
 
 const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
-  JSON.stringify([
-    questionnaire.questionnaireId,
-    questionnaire.answers ?? {},
-    questionnaire.questions,
-  ])
+  JSON.stringify([questionnaire.questionnaireId, questionnaire.questions])
 
 export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
   <QuestionnaireCardInner key={getQuestionnaireStateKey(props.questionnaire)} {...props} />
@@ -613,6 +654,11 @@ const ErrorMessage = styled.div`
   font-size: 12px;
 `
 
+const SuccessMessage = styled.div`
+  color: rgba(164, 255, 210, 0.96);
+  font-size: 12px;
+`
+
 const SubmitButton = styled.button`
   justify-self: flex-start;
   border: none;
@@ -623,4 +669,9 @@ const SubmitButton = styled.button`
   font-weight: 700;
   padding: 10px 14px;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.72;
+  }
 `

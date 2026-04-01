@@ -1,4 +1,4 @@
-import type { PlanQuestionnaire, PlanQuestionOption } from '@xinghunm/ai-chat'
+import type { PlanQuestionOption, PlanQuestionnaire } from '@xinghunm/ai-chat'
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
@@ -10,7 +10,7 @@ const normalizeOption = (option: unknown, index: number): PlanQuestionOption | n
 
     return {
       label: trimmed,
-      value: `option-${index + 1}`,
+      value: String(index),
     }
   }
 
@@ -31,7 +31,7 @@ const normalizeOption = (option: unknown, index: number): PlanQuestionOption | n
 
   return {
     label: labelCandidate,
-    value: valueCandidate,
+    value: String(index),
   }
 }
 
@@ -68,11 +68,13 @@ export const createPdePlanOptionsQuestionnaire = (value: unknown): PlanQuestionn
         : 'Select the planning path you want the assistant to use next.'
 
   const questionnaireId =
-    typeof value.questionnaireId === 'string' && value.questionnaireId.trim() !== ''
-      ? value.questionnaireId
-      : typeof value.id === 'string' && value.id.trim() !== ''
-        ? value.id
-        : `plan-options-${options.map((option) => option.value).join('-')}`
+    typeof value.request_id === 'string' && value.request_id.trim() !== ''
+      ? value.request_id
+      : typeof value.questionnaireId === 'string' && value.questionnaireId.trim() !== ''
+        ? value.questionnaireId
+        : typeof value.id === 'string' && value.id.trim() !== ''
+          ? value.id
+          : `plan-options-${options.map((option) => option.value).join('-')}`
 
   const questionId =
     typeof value.questionId === 'string' && value.questionId.trim() !== ''

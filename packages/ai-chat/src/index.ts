@@ -35,10 +35,13 @@ export { useChatContext, useChatStore } from './context/use-chat-context'
 export type {
   AiChatLabels,
   ChatAgentMode,
+  ChatConfirmationSubmitHandler,
   ChatImageAttachment,
   ChatMessage,
   ChatMessageBlock,
   ChatParameterSummaryItem,
+  ChatQuestionnaireSubmitHandler,
+  ChatSubmissionContext,
   ChatMessageBlockRenderer,
   ChatMessageBlockRendererProps,
   ChatMessageRenderOrder,

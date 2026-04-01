@@ -452,6 +452,12 @@ const ChatMessageItemView = ({
             <QuestionnaireCard
               questionnaire={block.questionnaire}
               interactive={canSubmitQuestionnaire}
+              labels={{
+                submitting: labels.questionnaireSubmitting,
+                submitted: labels.questionnaireSubmitted,
+                validationPrefix: labels.questionnaireValidationPrefix,
+                submitFailed: labels.questionnaireSubmitFailed,
+              }}
               onSubmit={
                 canSubmitQuestionnaire
                   ? (submission) =>

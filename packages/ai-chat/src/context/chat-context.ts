@@ -3,8 +3,10 @@ import type { AxiosInstance } from 'axios'
 import type { ChatStoreInstance } from '../store/chat-store'
 import type {
   AiChatLabels,
+  ChatConfirmationSubmitHandler,
   ChatMessageBlockRenderer,
   ChatMessageRenderOrder,
+  ChatQuestionnaireSubmitHandler,
   ChatTransport,
   TransformChatStreamPacket,
 } from '../types'
@@ -25,6 +27,10 @@ export interface ChatContextValue {
   retryRef: MutableRefObject<() => Promise<void>>
   /** Optional block renderer used to extend message rendering with custom block types. */
   renderMessageBlock?: ChatMessageBlockRenderer
+  /** Optional handler used to intercept questionnaire submissions before the default send flow. */
+  handleQuestionnaireSubmit?: ChatQuestionnaireSubmitHandler
+  /** Optional handler used to intercept confirmation submissions before the default send flow. */
+  handleConfirmationSubmit?: ChatConfirmationSubmitHandler
   /** Optional render order used for mixed text and structured message blocks. */
   messageRenderOrder?: ChatMessageRenderOrder
   /** Optional packet transformer used by the legacy default adapter. */

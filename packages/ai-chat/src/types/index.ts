@@ -153,6 +153,14 @@ export interface ExecutionConfirmationSubmission {
 }
 
 /**
+ * Context metadata provided to custom structured submission handlers.
+ */
+export interface ChatSubmissionContext {
+  sessionId?: string
+  mode: ChatAgentMode
+}
+
+/**
  * Summary item used by structured assistant cards to describe parameter changes.
  */
 export interface ChatParameterSummaryItem {
@@ -303,6 +311,22 @@ export interface ChatMessageBlockRendererProps {
  */
 export type ChatMessageBlockRenderer = (props: ChatMessageBlockRendererProps) => ReactNode
 
+/**
+ * Optional application-provided handler that intercepts questionnaire submissions.
+ */
+export type ChatQuestionnaireSubmitHandler = (
+  submission: PlanQuestionnaireSubmission,
+  context: ChatSubmissionContext,
+) => Promise<void> | void
+
+/**
+ * Optional application-provided handler that intercepts confirmation submissions.
+ */
+export type ChatConfirmationSubmitHandler = (
+  submission: ExecutionConfirmationSubmission,
+  context: ChatSubmissionContext,
+) => Promise<void> | void
+
 export interface SendMessageParams {
   sessionId: string
   model: string
@@ -413,6 +437,10 @@ export interface AiChatLabels {
   assistantStreamingAriaLabel?: string
   networkError?: string
   genericError?: string
+  questionnaireSubmitting?: string
+  questionnaireSubmitted?: string
+  questionnaireValidationPrefix?: string
+  questionnaireSubmitFailed?: string
 }
 
 /**
@@ -436,4 +464,8 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   assistantStreamingAriaLabel: 'assistant streaming',
   networkError: 'Network request failed. Please try again.',
   genericError: 'Something went wrong. Please try again.',
+  questionnaireSubmitting: 'Submitting...',
+  questionnaireSubmitted: 'Selection submitted. Waiting for the plan to continue...',
+  questionnaireValidationPrefix: 'Please complete:',
+  questionnaireSubmitFailed: 'Failed to submit. Please try again.',
 }

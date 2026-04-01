@@ -318,10 +318,16 @@ export const createChatStore = (initialState?: Partial<Pick<ChatState, 'preferre
       const state = get()
       const target = state.streamingMessageBySession[sessionId]
       if (!target) return
+      const nextBlocks =
+        patch.blocks !== undefined ? [...(target.blocks ?? []), ...patch.blocks] : target.blocks
       set({
         streamingMessageBySession: {
           ...state.streamingMessageBySession,
-          [sessionId]: { ...target, ...patch },
+          [sessionId]: {
+            ...target,
+            ...patch,
+            ...(patch.blocks !== undefined ? { blocks: nextBlocks } : {}),
+          },
         },
       })
     },

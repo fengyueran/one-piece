@@ -75,4 +75,53 @@ describe('createChatStore', () => {
     expect(store.getState().messagesBySession['s1']).toHaveLength(1)
     expect(store.getState().messagesBySession['s1'][0].status).toBe('done')
   })
+
+  it('appends streaming blocks instead of replacing earlier blocks', () => {
+    const store = makeStore()
+    const session = { sessionId: 's1', title: 'Chat', createdAt: '', updatedAt: '', model: 'gpt-4' }
+    store.getState().createSession(session)
+
+    store.getState().startStreamingMessage('s1', {
+      id: 'a1',
+      sessionId: 's1',
+      role: 'assistant',
+      content: '',
+      status: 'streaming',
+      createdAt: '',
+      blocks: [],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'notice',
+          tone: 'info',
+          text: 'first block',
+        },
+      ],
+    })
+
+    store.getState().patchStreamingMessage('s1', {
+      blocks: [
+        {
+          type: 'notice',
+          tone: 'warning',
+          text: 'second block',
+        },
+      ],
+    })
+
+    expect(store.getState().streamingMessageBySession['s1']?.blocks).toEqual([
+      {
+        type: 'notice',
+        tone: 'info',
+        text: 'first block',
+      },
+      {
+        type: 'notice',
+        tone: 'warning',
+        text: 'second block',
+      },
+    ])
+  })
 })
