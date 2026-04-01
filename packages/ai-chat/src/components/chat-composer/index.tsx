@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import styled from '@emotion/styled'
 import type { ChatAgentMode, ChatImageAttachment, ChatModel } from '../../types'
 import { useChatContext } from '../../context/use-chat-context'
@@ -12,6 +12,16 @@ import { ChatComposerAttachmentList } from './components/chat-composer-attachmen
 import { ChatModelControl } from './components/chat-model-control'
 import { ChatModeControl } from './components/chat-mode-control'
 import { ChatSendActions } from './components/chat-send-actions'
+
+const CHAT_COMPOSER_LINE_HEIGHT_PX = 20
+const CHAT_COMPOSER_MAX_ROWS = 7
+const CHAT_COMPOSER_PADDING_TOP_PX = 8
+const CHAT_COMPOSER_PADDING_BOTTOM_PX = 12
+const CHAT_COMPOSER_PADDING_BLOCK_PX =
+  CHAT_COMPOSER_PADDING_TOP_PX + CHAT_COMPOSER_PADDING_BOTTOM_PX
+const CHAT_COMPOSER_MIN_ROWS = 4
+const CHAT_COMPOSER_MAX_HEIGHT_PX =
+  CHAT_COMPOSER_MAX_ROWS * CHAT_COMPOSER_LINE_HEIGHT_PX + CHAT_COMPOSER_PADDING_BLOCK_PX
 
 /** Inline plus icon (replaces SVG file import). */
 const PlusIcon = () => (
@@ -89,6 +99,7 @@ export const ChatComposerView = ({
   onSend,
 }: ChatComposerViewProps) => {
   const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const canSend = canSendChatMessage({
     value,
     attachmentCount: attachments.length,
@@ -96,6 +107,21 @@ export const ChatComposerView = ({
     isModelsError,
     hasModels,
   })
+
+  useLayoutEffect(() => {
+    const element = inputRef.current
+
+    if (!element) {
+      return
+    }
+
+    element.style.height = '0px'
+    const scrollHeight = element.scrollHeight
+    const nextHeight = Math.min(scrollHeight, CHAT_COMPOSER_MAX_HEIGHT_PX)
+
+    element.style.height = `${nextHeight}px`
+    element.style.overflowY = scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
+  }, [value])
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (shouldStopChatComposer({ key: event.key, shiftKey: event.shiftKey, isStreaming })) {
@@ -147,6 +173,7 @@ export const ChatComposerView = ({
           </AttachmentNotice>
         ) : null}
         <Input
+          ref={inputRef}
           data-testid="chat-composer-input"
           value={value}
           onChange={(event) => onValueChange(event.target.value)}
@@ -273,18 +300,32 @@ const AttachmentNotice = styled.div`
 `
 
 const Input = styled.textarea`
+  --textarea-line-height: ${CHAT_COMPOSER_LINE_HEIGHT_PX}px;
+  --textarea-min-rows: ${CHAT_COMPOSER_MIN_ROWS};
+  --textarea-max-rows: ${CHAT_COMPOSER_MAX_ROWS};
+  --textarea-padding-top: ${CHAT_COMPOSER_PADDING_TOP_PX}px;
+  --textarea-padding-bottom: ${CHAT_COMPOSER_PADDING_BOTTOM_PX}px;
+  --textarea-padding-block: calc(var(--textarea-padding-top) + var(--textarea-padding-bottom));
+  --textarea-max-height: calc(
+    var(--textarea-max-rows) * var(--textarea-line-height) + var(--textarea-padding-block)
+  );
   width: 100%;
-  min-height: 96px;
+  min-height: calc(
+    var(--textarea-min-rows) * var(--textarea-line-height) + var(--textarea-padding-block)
+  );
+  max-height: var(--textarea-max-height);
+  box-sizing: border-box;
   resize: none;
   appearance: none;
   border: 0;
   outline: 0;
   background: transparent;
-  padding: 8px 12px 12px 12px;
+  padding: var(--textarea-padding-top) 12px var(--textarea-padding-bottom) 12px;
   font-weight: 400;
   font-size: 14px;
   color: var(--text-primary);
-  line-height: 20px;
+  line-height: var(--textarea-line-height);
+  overflow-y: hidden;
 
   &::placeholder {
     color: var(--text-secondary);
