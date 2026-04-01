@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef } from 'react'
-import { Fragment, memo, useState } from 'react'
+import { Fragment, memo, useLayoutEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 import ReactMarkdown from 'react-markdown'
@@ -41,6 +41,7 @@ import { useChatContext } from '../../../context/use-chat-context'
 
 const MARKDOWN_REMARK_PLUGINS = [remarkGfm, remarkMath]
 const MARKDOWN_REHYPE_PLUGINS = [rehypeKatex]
+const USER_MESSAGE_COLLAPSE_HEIGHT_PX = 120
 type MarkdownTableProps = ComponentPropsWithoutRef<'table'> & {
   node?: unknown
 }
@@ -63,6 +64,73 @@ const renderMarkdownContent = (content: string) => (
 )
 
 const renderPlainTextContent = (content: string) => content
+
+type MessageRenderMode = 'plain-text' | 'markdown'
+
+const CollapseIcon = ({ expanded }: { expanded: boolean }) => (
+  <svg
+    aria-hidden="true"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4 6l4 4 4-4"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      transform={expanded ? 'rotate(180 8 8)' : undefined}
+    />
+  </svg>
+)
+
+const useUserMessageCollapse = ({
+  blocks,
+  displayedBlocks,
+  displayedContent,
+  enabled,
+  freshContent,
+  settledContent,
+}: {
+  blocks: ChatMessageBlock[]
+  displayedBlocks: Array<{ content: string; tone: 'fresh' | 'settled' }>
+  displayedContent: string
+  enabled: boolean
+  freshContent: string
+  settledContent: string
+}) => {
+  const [isCollapsible, setIsCollapsible] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const bodyStackRef = useRef<HTMLDivElement | null>(null)
+
+  useLayoutEffect(() => {
+    if (!enabled) {
+      setIsCollapsible(false)
+      setIsExpanded(false)
+      return
+    }
+
+    const nextCollapsible =
+      (bodyStackRef.current?.scrollHeight ?? 0) > USER_MESSAGE_COLLAPSE_HEIGHT_PX
+
+    setIsCollapsible(nextCollapsible)
+
+    if (!nextCollapsible) {
+      setIsExpanded(false)
+    }
+  }, [blocks, displayedBlocks, displayedContent, enabled, freshContent, settledContent])
+
+  return {
+    bodyStackRef,
+    isCollapsed: isCollapsible && !isExpanded,
+    isCollapsible,
+    isExpanded,
+    toggleExpanded: () => setIsExpanded((current) => !current),
+  }
+}
 
 const createExecutionConfirmationContent = (proposal: ExecutionProposal) =>
   [
@@ -380,6 +448,8 @@ const ChatMessageItemView = ({
   const canSubmitQuestionnaire = isPlanMode && typeof onQuestionnaireSubmit === 'function'
   const shouldShowStreamingCaret =
     isAssistantStreaming && (!shouldRenderStructuredBlocks || hasTextContent)
+  const isUserMessage = message.role === 'user'
+  const messageRenderMode: MessageRenderMode = isUserMessage ? 'plain-text' : 'markdown'
   const timelineConsumedText =
     messageRenderOrder === 'timeline' ? getTimelineConsumedText(blocks) : ''
   const hasConsumedTimelineText =
@@ -400,6 +470,25 @@ const ChatMessageItemView = ({
     message,
     messageRenderOrder,
   })
+  const {
+    bodyStackRef,
+    isCollapsed: isUserMessageCollapsed,
+    isCollapsible: isUserMessageCollapsible,
+    isExpanded: isUserMessageExpanded,
+    toggleExpanded: toggleUserMessageExpanded,
+  } = useUserMessageCollapse({
+    blocks,
+    displayedBlocks,
+    displayedContent,
+    enabled: isUserMessage,
+    freshContent,
+    settledContent,
+  })
+
+  const renderMessageContent = (content: string) =>
+    messageRenderMode === 'plain-text'
+      ? renderPlainTextContent(content)
+      : renderMarkdownContent(content)
 
   const renderChatMessageBlock = (block: ChatMessageBlock, index: number) => {
     switch (block.type) {
@@ -409,11 +498,9 @@ const ChatMessageItemView = ({
             key={`markdown-${index}`}
             data-testid={`chat-message-block-${index}`}
             data-block-tone="settled"
-            data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+            data-render-mode={messageRenderMode}
           >
-            {message.role === 'user'
-              ? renderPlainTextContent(block.text)
-              : renderMarkdownContent(block.text)}
+            {renderMessageContent(block.text)}
           </ContentBlock>
         )
       case 'notice':
@@ -523,11 +610,9 @@ const ChatMessageItemView = ({
               }
               data-block-tone={block.tone}
               data-block-index={index}
-              data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+              data-render-mode={messageRenderMode}
             >
-              {message.role === 'user'
-                ? renderPlainTextContent(block.content)
-                : renderMarkdownContent(block.content)}
+              {renderMessageContent(block.content)}
             </ContentBlock>
           ))}
         {!textBlocks.some((block) => block.content) &&
@@ -537,11 +622,9 @@ const ChatMessageItemView = ({
           <ContentBlock
             data-testid="chat-message-settled-block"
             data-block-tone="settled"
-            data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+            data-render-mode={messageRenderMode}
           >
-            {message.role === 'user'
-              ? renderPlainTextContent(textContent)
-              : renderMarkdownContent(textContent)}
+            {renderMessageContent(textContent)}
           </ContentBlock>
         ) : null}
       </>
@@ -552,9 +635,9 @@ const ChatMessageItemView = ({
     <ContentBlock
       data-testid="chat-message-settled-block"
       data-block-tone="settled"
-      data-render-mode={message.role === 'user' ? 'plain-text' : 'markdown'}
+      data-render-mode={messageRenderMode}
     >
-      {message.role === 'user' ? renderPlainTextContent(content) : renderMarkdownContent(content)}
+      {renderMessageContent(content)}
     </ContentBlock>
   )
 
@@ -629,13 +712,32 @@ const ChatMessageItemView = ({
             </StreamingIndicator>
           ) : null}
           <Role>{message.role === 'user' ? labels.userRoleLabel : labels.assistantRoleLabel}</Role>
+          {isUserMessageCollapsible ? (
+            <CollapseToggle
+              type="button"
+              data-testid="chat-message-collapse-toggle"
+              aria-label={
+                isUserMessageExpanded
+                  ? labels.collapseMessageAriaLabel
+                  : labels.expandMessageAriaLabel
+              }
+              aria-expanded={isUserMessageExpanded}
+              onClick={toggleUserMessageExpanded}
+            >
+              <CollapseIcon expanded={isUserMessageExpanded} />
+            </CollapseToggle>
+          ) : null}
           {isStoppedAssistant ? (
             <StatusTag data-testid="chat-message-stopped-tag">{labels.stoppedResponse}</StatusTag>
           ) : null}
         </Header>
         <Content data-testid="chat-message-content">
           {shouldRenderStructuredBlocks || hasTextContent ? (
-            <ContentStack data-testid="chat-message-body-stack">
+            <ContentStack
+              ref={bodyStackRef}
+              data-testid="chat-message-body-stack"
+              data-collapsed={isUserMessageCollapsed}
+            >
               {bodySegments.map((segment, index) => (
                 <ContentSegment
                   key={
@@ -761,6 +863,30 @@ const StatusTag = styled.span`
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 `
 
+const CollapseToggle = styled.button`
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  transition:
+    background 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.92);
+  }
+`
+
 const Content = styled.div`
   color: rgba(255, 255, 255, 0.92);
   line-height: 1.6;
@@ -806,6 +932,11 @@ const ContentStack = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  &[data-collapsed='true'] {
+    max-height: ${USER_MESSAGE_COLLAPSE_HEIGHT_PX}px;
+    overflow: hidden;
+  }
 `
 
 const ContentSegment = styled.div`
