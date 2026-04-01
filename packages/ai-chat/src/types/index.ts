@@ -437,6 +437,10 @@ export interface AiChatLabels {
   attachmentLimitNotice?: string
   userRoleLabel?: string
   assistantRoleLabel?: string
+  expandMessageAriaLabel?: string
+  collapseMessageAriaLabel?: string
+  expandComposerAriaLabel?: string
+  collapseComposerAriaLabel?: string
   stoppedResponse?: string
   assistantStreamingAriaLabel?: string
   networkError?: string
@@ -464,6 +468,10 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   attachmentLimitNotice: 'Images exceeded the limit. Only the first 10 images were kept.',
   userRoleLabel: 'User',
   assistantRoleLabel: 'Assistant',
+  expandMessageAriaLabel: 'Expand message',
+  collapseMessageAriaLabel: 'Collapse message',
+  expandComposerAriaLabel: 'Expand composer',
+  collapseComposerAriaLabel: 'Collapse composer',
   stoppedResponse: 'Response stopped',
   assistantStreamingAriaLabel: 'assistant streaming',
   networkError: 'Network request failed. Please try again.',

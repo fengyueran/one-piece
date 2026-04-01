@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
 import type { ChatAgentMode, ChatImageAttachment, ChatModel } from '../../types'
 import { useChatContext } from '../../context/use-chat-context'
@@ -13,6 +13,36 @@ import { ChatModelControl } from './components/chat-model-control'
 import { ChatModeControl } from './components/chat-mode-control'
 import { ChatSendActions } from './components/chat-send-actions'
 
+const CHAT_COMPOSER_LINE_HEIGHT_PX = 20
+const CHAT_COMPOSER_MAX_ROWS = 7
+const CHAT_COMPOSER_PADDING_TOP_PX = 8
+const CHAT_COMPOSER_PADDING_BOTTOM_PX = 12
+const CHAT_COMPOSER_PADDING_BLOCK_PX =
+  CHAT_COMPOSER_PADDING_TOP_PX + CHAT_COMPOSER_PADDING_BOTTOM_PX
+const CHAT_COMPOSER_MIN_ROWS = 4
+const CHAT_COMPOSER_EXPANDED_MAX_ROWS = 60
+const CHAT_COMPOSER_EXPANDED_MAX_VIEWPORT_RATIO = 0.7
+const CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX = 96
+const CHAT_COMPOSER_MAX_HEIGHT_PX =
+  CHAT_COMPOSER_MAX_ROWS * CHAT_COMPOSER_LINE_HEIGHT_PX + CHAT_COMPOSER_PADDING_BLOCK_PX
+const CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX =
+  CHAT_COMPOSER_EXPANDED_MAX_ROWS * CHAT_COMPOSER_LINE_HEIGHT_PX + CHAT_COMPOSER_PADDING_BLOCK_PX
+
+const getExpandedComposerHeightPx = () => {
+  if (typeof window === 'undefined') {
+    return CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX
+  }
+
+  const viewportLimitedHeight =
+    window.innerHeight * CHAT_COMPOSER_EXPANDED_MAX_VIEWPORT_RATIO -
+    CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX
+
+  return Math.max(
+    CHAT_COMPOSER_MAX_HEIGHT_PX,
+    Math.floor(Math.min(CHAT_COMPOSER_EXPANDED_ROWS_HEIGHT_PX, viewportLimitedHeight)),
+  )
+}
+
 /** Inline plus icon (replaces SVG file import). */
 const PlusIcon = () => (
   <svg
@@ -24,6 +54,35 @@ const PlusIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+  </svg>
+)
+
+const ComposerExpandIcon = ({ expanded }: { expanded: boolean }) => (
+  <svg
+    aria-hidden="true"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {expanded ? (
+      <path
+        d="M14 6h-4V2M10 6l4-4M2 10h4v4M6 10l-4 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : (
+      <path
+        d="M10 2h4v4M14 2L9 7M6 14H2v-4M2 14l5-5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    )}
   </svg>
 )
 
@@ -49,6 +108,8 @@ export interface ChatComposerViewProps {
   /** Whether image attachment uploads are enabled. */
   enableImageAttachments: boolean
   modeLabels: { ask: string; plan: string; agent: string }
+  expandComposerAriaLabel: string
+  collapseComposerAriaLabel: string
   onValueChange: (value: string) => void
   onPickImages: (files: FileList | File[]) => void
   onPasteImages: (files: File[]) => void
@@ -78,6 +139,8 @@ export const ChatComposerView = ({
   isStopping,
   enableImageAttachments,
   modeLabels,
+  expandComposerAriaLabel,
+  collapseComposerAriaLabel,
   onValueChange,
   onPickImages,
   onPasteImages,
@@ -89,6 +152,9 @@ export const ChatComposerView = ({
   onSend,
 }: ChatComposerViewProps) => {
   const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const [isComposerExpandable, setIsComposerExpandable] = useState(false)
+  const [isComposerExpanded, setIsComposerExpanded] = useState(false)
   const canSend = canSendChatMessage({
     value,
     attachmentCount: attachments.length,
@@ -96,6 +162,35 @@ export const ChatComposerView = ({
     isModelsError,
     hasModels,
   })
+
+  useLayoutEffect(() => {
+    const element = inputRef.current
+
+    if (!element) {
+      return
+    }
+
+    if (!isComposerExpanded) {
+      element.style.height = '0px'
+    }
+
+    const scrollHeight = element.scrollHeight
+    const nextExpandable = scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX
+    const expandedHeight = getExpandedComposerHeightPx()
+    const nextHeight = isComposerExpanded
+      ? expandedHeight
+      : Math.min(scrollHeight, CHAT_COMPOSER_MAX_HEIGHT_PX)
+
+    setIsComposerExpandable(nextExpandable)
+    element.style.height = `${nextHeight}px`
+    element.style.overflowY =
+      !isComposerExpanded && scrollHeight > CHAT_COMPOSER_MAX_HEIGHT_PX ? 'auto' : 'hidden'
+  }, [isComposerExpanded, value])
+
+  const handleSend = async () => {
+    setIsComposerExpanded(false)
+    await onSend()
+  }
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (shouldStopChatComposer({ key: event.key, shiftKey: event.shiftKey, isStreaming })) {
@@ -105,7 +200,7 @@ export const ChatComposerView = ({
     }
     if (!shouldSubmitChatComposer({ key: event.key, shiftKey: event.shiftKey, canSend })) return
     event.preventDefault()
-    void onSend()
+    void handleSend()
   }
 
   const handlePickImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,16 +241,31 @@ export const ChatComposerView = ({
             {attachmentLimitNotice}
           </AttachmentNotice>
         ) : null}
-        <Input
-          data-testid="chat-composer-input"
-          value={value}
-          onChange={(event) => onValueChange(event.target.value)}
-          onKeyDown={handleKeyDown}
-          onPaste={enableImageAttachments ? handlePaste : undefined}
-          placeholder={placeholder}
-        />
+        <InputArea data-testid="chat-composer-input-area">
+          {isComposerExpanded || isComposerExpandable ? (
+            <ComposerExpandButton
+              type="button"
+              data-testid="chat-composer-expand-toggle"
+              aria-label={isComposerExpanded ? collapseComposerAriaLabel : expandComposerAriaLabel}
+              aria-expanded={isComposerExpanded}
+              onClick={() => setIsComposerExpanded((current) => !current)}
+            >
+              <ComposerExpandIcon expanded={isComposerExpanded} />
+            </ComposerExpandButton>
+          ) : null}
+          <Input
+            ref={inputRef}
+            data-testid="chat-composer-input"
+            data-expanded={isComposerExpanded}
+            value={value}
+            onChange={(event) => onValueChange(event.target.value)}
+            onKeyDown={handleKeyDown}
+            onPaste={enableImageAttachments ? handlePaste : undefined}
+            placeholder={placeholder}
+          />
+        </InputArea>
         <Footer>
-          <Actions data-testid="chat-composer-actions">
+          <LeadingActions data-testid="chat-composer-leading-actions">
             {enableImageAttachments ? (
               <AttachButton
                 type="button"
@@ -166,6 +276,8 @@ export const ChatComposerView = ({
                 <PlusIcon />
               </AttachButton>
             ) : null}
+          </LeadingActions>
+          <TrailingActions data-testid="chat-composer-trailing-actions">
             <ChatModeControl
               value={selectedMode}
               disabled={isStreaming}
@@ -186,9 +298,9 @@ export const ChatComposerView = ({
               isStreaming={isStreaming}
               isStopping={isStopping}
               onStop={onStop}
-              onSend={onSend}
+              onSend={handleSend}
             />
-          </Actions>
+          </TrailingActions>
         </Footer>
       </Surface>
     </Container>
@@ -230,6 +342,8 @@ export const ChatComposer = () => {
       isStopping={state.isStopping}
       enableImageAttachments={enableImageAttachments}
       modeLabels={modeLabels}
+      expandComposerAriaLabel={labels.expandComposerAriaLabel}
+      collapseComposerAriaLabel={labels.collapseComposerAriaLabel}
       onValueChange={actions.setValue}
       onPickImages={actions.pickImages}
       onPasteImages={actions.pasteImages}
@@ -252,6 +366,16 @@ const Container = styled.div`
 `
 
 const Surface = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'attachments'
+    'notice'
+    'input'
+    'footer';
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
   background: var(--border-color);
   border-radius: 20px;
   border: 1px solid var(--border-hover);
@@ -262,6 +386,7 @@ const Surface = styled.div`
 `
 
 const AttachmentNotice = styled.div`
+  grid-area: notice;
   margin: 10px 12px 0;
   padding: 8px 10px;
   border-radius: 10px;
@@ -272,19 +397,46 @@ const AttachmentNotice = styled.div`
   line-height: 1.4;
 `
 
+const InputArea = styled.div`
+  grid-area: input;
+  position: relative;
+`
+
 const Input = styled.textarea`
+  --textarea-line-height: ${CHAT_COMPOSER_LINE_HEIGHT_PX}px;
+  --textarea-min-rows: ${CHAT_COMPOSER_MIN_ROWS};
+  --textarea-max-rows: ${CHAT_COMPOSER_MAX_ROWS};
+  --textarea-expanded-max-rows: ${CHAT_COMPOSER_EXPANDED_MAX_ROWS};
+  --textarea-padding-top: ${CHAT_COMPOSER_PADDING_TOP_PX}px;
+  --textarea-padding-bottom: ${CHAT_COMPOSER_PADDING_BOTTOM_PX}px;
+  --textarea-padding-block: calc(var(--textarea-padding-top) + var(--textarea-padding-bottom));
+  --textarea-max-height: calc(
+    var(--textarea-max-rows) * var(--textarea-line-height) + var(--textarea-padding-block)
+  );
+  --textarea-expanded-max-height: min(
+    calc(
+      var(--textarea-expanded-max-rows) * var(--textarea-line-height) +
+        var(--textarea-padding-block)
+    ),
+    calc(70vh - ${CHAT_COMPOSER_EXPANDED_RESERVED_SPACE_PX}px)
+  );
   width: 100%;
-  min-height: 96px;
+  min-height: calc(
+    var(--textarea-min-rows) * var(--textarea-line-height) + var(--textarea-padding-block)
+  );
+  max-height: var(--textarea-max-height);
+  box-sizing: border-box;
   resize: none;
   appearance: none;
   border: 0;
   outline: 0;
   background: transparent;
-  padding: 8px 12px 12px 12px;
+  padding: var(--textarea-padding-top) 44px var(--textarea-padding-bottom) 12px;
   font-weight: 400;
   font-size: 14px;
   color: var(--text-primary);
-  line-height: 20px;
+  line-height: var(--textarea-line-height);
+  overflow-y: hidden;
 
   &::placeholder {
     color: var(--text-secondary);
@@ -293,21 +445,54 @@ const Input = styled.textarea`
   &::-webkit-resizer {
     display: none;
   }
+
+  &[data-expanded='true'] {
+    max-height: var(--textarea-expanded-max-height);
+  }
+`
+
+const ComposerExpandButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  z-index: 1;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+  }
 `
 
 const Footer = styled.div`
-  display: flex;
+  grid-area: footer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: flex-end;
-  justify-content: stretch;
   gap: 16px;
   padding: 0 14px 14px;
 `
 
-const Actions = styled.div`
+const LeadingActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+`
+
+const TrailingActions = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  width: 100%;
   min-width: 0;
   justify-content: flex-end;
   gap: 8px;

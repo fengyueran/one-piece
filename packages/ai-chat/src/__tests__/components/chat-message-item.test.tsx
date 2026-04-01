@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { act, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ChatThread } from '../../components/chat-thread'
 import {
   buildAnchoredTimelineSegments,
@@ -18,7 +19,9 @@ import {
 
 jest.mock('react-markdown', () => ({
   __esModule: true,
-  default: ({ children }: { children: string }) => <>{children}</>,
+  default: ({ children }: { children: string }) => (
+    <div data-testid="react-markdown">{children}</div>
+  ),
 }))
 jest.mock('remark-gfm', () => ({}))
 jest.mock('remark-math', () => ({}))
@@ -201,6 +204,216 @@ describe('ChatThread custom block renderer', () => {
     expect(screen.getByTestId('chat-message-body-stack')).toHaveTextContent(
       'ExtensibleFollow-up text remains visible.',
     )
+  })
+
+  it('renders user message content as plain text instead of markdown', () => {
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: '# Title\n- item 1\n- item 2\n**bold**',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.queryByTestId('react-markdown')).not.toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-settled-block')).toHaveAttribute(
+      'data-render-mode',
+      'plain-text',
+    )
+    expect(
+      window.getComputedStyle(screen.getByTestId('chat-message-settled-block')).whiteSpace,
+    ).toBe('pre-wrap')
+    expect(
+      window.getComputedStyle(screen.getByTestId('chat-message-settled-block')).overflowWrap,
+    ).toBe('anywhere')
+    expect(screen.getByTestId('chat-message-settled-block')).toHaveTextContent(
+      /# Title\s+- item 1\s+- item 2\s+\*\*bold\*\*/,
+    )
+  })
+
+  it('collapses tall user messages by default and expands on demand', async () => {
+    const user = userEvent.setup()
+    const originalScrollHeight = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'scrollHeight',
+    )
+
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get() {
+        return this.getAttribute('data-testid') === 'chat-message-body-stack' ? 240 : 0
+      },
+    })
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content:
+        '第一行内容\n第二行内容\n第三行内容\n第四行内容\n第五行内容\n第六行内容\n第七行内容\n第八行内容',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: {
+            ...DEFAULT_AI_CHAT_LABELS,
+            expandMessageAriaLabel: '展开消息',
+            collapseMessageAriaLabel: '收起消息',
+          },
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByLabelText('展开消息')).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveAttribute('data-collapsed', 'true')
+
+    await user.click(screen.getByLabelText('展开消息'))
+
+    expect(screen.getByLabelText('收起消息')).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveAttribute('data-collapsed', 'false')
+
+    if (originalScrollHeight) {
+      Object.defineProperty(HTMLElement.prototype, 'scrollHeight', originalScrollHeight)
+    } else {
+      Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+        configurable: true,
+        get() {
+          return 0
+        },
+      })
+    }
+  })
+
+  it('keeps short user messages expanded without a collapse toggle', () => {
+    const originalScrollHeight = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'scrollHeight',
+    )
+
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get() {
+        return this.getAttribute('data-testid') === 'chat-message-body-stack' ? 48 : 0
+      },
+    })
+
+    const store = createChatStore()
+    const transport: ChatTransport = {
+      getModels: async () => ({ data: [] }),
+      startStream: async ({ onDone }) => {
+        onDone?.()
+      },
+      terminateStream: async () => ({ terminated: true }),
+    }
+
+    store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: '简短内容',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider
+        value={{
+          store,
+          transport,
+          axios: axios.create(),
+          apiBaseUrl: 'http://test',
+          authToken: 'Bearer token',
+          labels: DEFAULT_AI_CHAT_LABELS,
+          enableImageAttachments: true,
+          sendRef: { current: async (_content: string) => {} },
+          retryRef: { current: async () => {} },
+        }}
+      >
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.queryByTestId('chat-message-collapse-toggle')).not.toBeInTheDocument()
+    expect(screen.getByTestId('chat-message-body-stack')).toHaveAttribute('data-collapsed', 'false')
+
+    if (originalScrollHeight) {
+      Object.defineProperty(HTMLElement.prototype, 'scrollHeight', originalScrollHeight)
+    } else {
+      Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+        configurable: true,
+        get() {
+          return 0
+        },
+      })
+    }
   })
 
   it('keeps plain text ahead of structured blocks when timeline render order is enabled', () => {
