@@ -268,6 +268,42 @@ export default () => {
 }
 ```
 
+### 受控下拉展开
+
+通过 `open` 和 `onOpenChange` 控制下拉菜单的展开与收起，适合和外部筛选面板、引导流程或自定义按钮联动。
+
+```tsx
+import React, { useState } from 'react'
+import { Select } from '@xinghunm/compass-ui'
+
+export default () => {
+  const [open, setOpen] = useState(false)
+
+  const options = [
+    { label: 'Jack', value: 'jack' },
+    { label: 'Lucy', value: 'lucy' },
+    { label: 'Yiminghe', value: 'yiminghe' },
+  ]
+
+  return (
+    <div>
+      <div style={{ marginBottom: 8 }}>Dropdown Status: {open ? 'Open' : 'Closed'}</div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        <button onClick={() => setOpen(true)}>Open</button>
+        <button onClick={() => setOpen(false)}>Close</button>
+      </div>
+      <Select
+        open={open}
+        onOpenChange={setOpen}
+        options={options}
+        placeholder="Controlled dropdown"
+        style={{ width: 240 }}
+      />
+    </div>
+  )
+}
+```
+
 ### 自定义主题
 
 自定义颜色和圆角。
@@ -569,6 +605,8 @@ export default () => {
 | value                | 指定当前选中的条目     | `SelectValue`                                                                     | -          |
 | defaultValue         | 指定默认选中的条目     | `SelectValue`                                                                     | -          |
 | onChange             | 选中 option 时调用     | `(value: SelectValue, option?: SelectOption \| SelectOption[]) => void`           | -          |
+| open                 | 受控的下拉展开状态     | `boolean`                                                                         | -          |
+| onOpenChange         | 下拉展开状态变化时触发 | `(open: boolean) => void`                                                         | -          |
 | children             | JSX 方式配置选项       | `ReactNode`                                                                       | -          |
 | disabled             | 是否禁用               | `boolean`                                                                         | `false`    |
 | loading              | 加载中状态             | `boolean`                                                                         | `false`    |

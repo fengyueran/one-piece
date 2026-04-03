@@ -133,6 +133,47 @@ describe('Select', () => {
       rerender(<Select options={options} value="2" onChange={() => {}} />)
       expect(container.textContent).toContain('Option 2')
     })
+
+    it('supports controlled dropdown open state', async () => {
+      const user = userEvent.setup()
+      const handleOpenChange = jest.fn()
+      const { container, rerender } = render(
+        <Select
+          options={options}
+          open={false}
+          onOpenChange={handleOpenChange}
+          placeholder="Select"
+        />,
+      )
+
+      const trigger = container.querySelector('.compass-select')!
+      await user.click(trigger)
+
+      expect(handleOpenChange).toHaveBeenCalledWith(true)
+      expect(screen.queryByText('Option 1')).not.toBeInTheDocument()
+
+      rerender(
+        <Select options={options} open onOpenChange={handleOpenChange} placeholder="Select" />,
+      )
+
+      expect(screen.getByText('Option 1')).toBeInTheDocument()
+
+      await user.click(trigger)
+
+      expect(handleOpenChange).toHaveBeenCalledWith(false)
+      expect(screen.getByText('Option 1')).toBeInTheDocument()
+
+      rerender(
+        <Select
+          options={options}
+          open={false}
+          onOpenChange={handleOpenChange}
+          placeholder="Select"
+        />,
+      )
+
+      expect(screen.queryByText('Option 1')).not.toBeInTheDocument()
+    })
   })
 
   describe('Multiple Selection', () => {
