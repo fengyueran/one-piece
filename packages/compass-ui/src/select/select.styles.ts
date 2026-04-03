@@ -162,6 +162,12 @@ export const StyledOption = styled.div<{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+
+  .compass-select-option-content {
+    flex: 1;
+    min-width: 0;
+  }
 
   &:hover {
     background-color: ${({ disabled, selected }) => {
