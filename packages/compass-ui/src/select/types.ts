@@ -25,6 +25,16 @@ export interface SelectProps {
   onChange?: (value: SelectValue, option?: SelectOption | SelectOption[]) => void
 
   /**
+   * Controlled dropdown open state
+   */
+  open?: boolean
+
+  /**
+   * Callback when dropdown open state changes
+   */
+  onOpenChange?: (open: boolean) => void
+
+  /**
    * Options for data-driven rendering
    */
   options?: SelectOption[]

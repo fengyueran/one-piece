@@ -41,6 +41,8 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     value,
     defaultValue,
     onChange,
+    open: controlledOpen,
+    onOpenChange,
     disabled,
     loading,
     allowClear,
@@ -72,7 +74,9 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
   const isControlled = value !== undefined
   const currentValue = isControlled ? value : internalValue
 
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpenControlled = controlledOpen !== undefined
+  const open = isOpenControlled ? controlledOpen : internalOpen
   const [searchValue, setSearchValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -107,7 +111,10 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (disabled) return
-    setOpen(nextOpen)
+    if (!isOpenControlled) {
+      setInternalOpen(nextOpen)
+    }
+    onOpenChange?.(nextOpen)
     if (!nextOpen) {
       setSearchValue('') // Clear search on close
     } else {
@@ -188,8 +195,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
       }
     } else {
       triggerSelect(val, option)
-      setOpen(false)
-      setSearchValue('')
+      handleOpenChange(false)
     }
   }
 
@@ -211,7 +217,9 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
-    if (!open) setOpen(true)
+    if (!open) {
+      handleOpenChange(true)
+    }
   }
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
