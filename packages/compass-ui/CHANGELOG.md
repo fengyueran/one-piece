@@ -1,5 +1,13 @@
 # @xinghunm/compass-ui
 
+## 0.8.3
+
+### Patch Changes
+
+- 改进 Select 组件的下拉交互与选项展示：
+  - 支持通过 `open` 和 `onOpenChange` 受控控制下拉菜单的展开与收起。
+  - 调整已选中选项中文字与勾选图标之间的间距，避免内容与图标贴得过近。
+
 ## 0.8.2
 
 ### Patch Changes
