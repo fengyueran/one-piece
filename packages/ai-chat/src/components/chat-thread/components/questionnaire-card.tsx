@@ -547,7 +547,7 @@ const OptionChoiceItem = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
-  padding: 9px 12px;
+  padding: 2px 12px;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition:
@@ -600,8 +600,11 @@ const OptionChoiceMarker = styled.span<{ 'data-selected'?: boolean }>`
 `
 
 const OptionChoiceContent = styled.span`
-  display: grid;
-  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 40px;
   min-width: 0;
   flex: 1;
 `
@@ -632,7 +635,7 @@ const InlineOtherInput = styled(InputField)`
   margin-top: 0;
 
   .compass-input-field-wrapper {
-    min-height: 32px;
+    min-height: 30px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     background: rgba(13, 15, 21, 0.55);
