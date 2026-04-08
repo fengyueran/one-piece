@@ -336,12 +336,15 @@ describe('ChatThread', () => {
     )
   })
 
-  it('shows a multi-select hint for checkbox-style questionnaires', () => {
+  it('shows localized labels for multi-select other input', async () => {
+    const user = userEvent.setup()
     const ctx = createContextValue()
 
     ctx.value.labels = {
       ...DEFAULT_AI_CHAT_LABELS,
       questionnaireMultiSelectHint: '可多选',
+      questionnaireOtherOptionLabel: '其他',
+      questionnaireOtherPlaceholder: '请输入补充内容',
     }
 
     ctx.store.getState().createSession({
@@ -369,6 +372,7 @@ describe('ChatThread', () => {
                 label: 'Which dimensions matter?',
                 kind: 'multi_select',
                 required: true,
+                allowOther: true,
                 options: [
                   { label: 'Stability', value: 'stability' },
                   { label: 'Error analysis', value: 'error-analysis' },
@@ -388,6 +392,10 @@ describe('ChatThread', () => {
     )
 
     expect(screen.getByText('可多选')).toBeInTheDocument()
+    expect(screen.getByText('其他')).toBeInTheDocument()
+
+    await user.click(screen.getByText('其他'))
+    expect(screen.getByPlaceholderText('请输入补充内容')).toBeInTheDocument()
   })
 
   it('forwards questionnaire blockKey to custom submit handlers when available', async () => {

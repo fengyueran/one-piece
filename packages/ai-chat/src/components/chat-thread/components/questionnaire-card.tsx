@@ -40,6 +40,8 @@ interface QuestionnaireCardLabels {
   validationPrefix: string
   submitFailed: string
   multiSelectHint: string
+  otherOptionLabel: string
+  otherPlaceholder: string
 }
 
 const DEFAULT_QUESTIONNAIRE_CARD_LABELS: QuestionnaireCardLabels = {
@@ -48,6 +50,8 @@ const DEFAULT_QUESTIONNAIRE_CARD_LABELS: QuestionnaireCardLabels = {
   validationPrefix: 'Please complete:',
   submitFailed: 'Failed to submit. Please try again.',
   multiSelectHint: 'Multiple choice',
+  otherOptionLabel: 'Other',
+  otherPlaceholder: 'Other',
 }
 
 const stopInputClickPropagation = (event: MouseEvent<HTMLInputElement>) => {
@@ -227,7 +231,7 @@ const QuestionnaireCardInner = ({
                 <OptionChoice
                   key={`${question.id}-other`}
                   questionId={question.id}
-                  optionLabel="Other"
+                  optionLabel={resolvedLabels.otherOptionLabel}
                   index={question.options.length}
                   isSelected={multiSelectDraft.hasOtherSelected}
                   isInteractionLocked={isInteractionLocked}
@@ -241,7 +245,7 @@ const QuestionnaireCardInner = ({
                         data-testid={`question-input-${question.id}`}
                         type="text"
                         value={multiSelectDraft.otherValue}
-                        placeholder="Other"
+                        placeholder={resolvedLabels.otherPlaceholder}
                         readOnly={isInteractionLocked}
                         onClick={stopInputClickPropagation}
                         onKeyDown={stopInputKeyPropagation}
@@ -291,7 +295,7 @@ const QuestionnaireCardInner = ({
                 <OptionChoice
                   key={`${question.id}-other`}
                   questionId={question.id}
-                  optionLabel="Other"
+                  optionLabel={resolvedLabels.otherOptionLabel}
                   index={question.options.length}
                   isSelected={singleSelectDraft.selectedValue === OTHER_OPTION_VALUE}
                   isInteractionLocked={isInteractionLocked}
@@ -307,7 +311,7 @@ const QuestionnaireCardInner = ({
                         data-testid={`question-input-${question.id}`}
                         type="text"
                         value={singleSelectDraft.otherValue}
-                        placeholder="Other"
+                        placeholder={resolvedLabels.otherPlaceholder}
                         readOnly={isInteractionLocked}
                         onClick={stopInputClickPropagation}
                         onKeyDown={stopInputKeyPropagation}

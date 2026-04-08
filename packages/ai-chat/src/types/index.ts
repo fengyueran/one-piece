@@ -504,6 +504,8 @@ export interface AiChatLabels {
   questionnaireValidationPrefix?: string
   questionnaireSubmitFailed?: string
   questionnaireMultiSelectHint?: string
+  questionnaireOtherOptionLabel?: string
+  questionnaireOtherPlaceholder?: string
 }
 
 /**
@@ -536,4 +538,6 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   questionnaireValidationPrefix: 'Please complete:',
   questionnaireSubmitFailed: 'Failed to submit. Please try again.',
   questionnaireMultiSelectHint: 'Multiple choice',
+  questionnaireOtherOptionLabel: 'Other',
+  questionnaireOtherPlaceholder: 'Other',
 }
