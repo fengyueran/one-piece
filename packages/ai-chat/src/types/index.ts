@@ -82,6 +82,7 @@ export interface PlanSingleSelectQuestion extends PlanQuestionBase {
  */
 export interface PlanMultiSelectQuestion extends PlanQuestionBase {
   kind: 'multi_select'
+  allowOther?: boolean
   options: PlanQuestionOption[]
 }
 
@@ -155,6 +156,14 @@ export interface PlanQuestionnaire {
   statusMessage?: string
 }
 
+export interface PlanQuestionSubmissionDetail {
+  questionId: string
+  kind: PlanQuestion['kind']
+  value?: PlanQuestionnaireAnswerValue
+  selectedOptionValues?: string[]
+  otherValue?: string
+}
+
 /**
  * Submission payload emitted by a questionnaire card.
  */
@@ -165,6 +174,7 @@ export interface PlanQuestionnaireSubmission {
    */
   blockKey?: string
   answers: Record<string, PlanQuestionnaireAnswerValue>
+  details?: Record<string, PlanQuestionSubmissionDetail>
   content: string
   sourceMessageId?: string
 }
@@ -493,6 +503,7 @@ export interface AiChatLabels {
   questionnaireSubmitted?: string
   questionnaireValidationPrefix?: string
   questionnaireSubmitFailed?: string
+  questionnaireMultiSelectHint?: string
 }
 
 /**
@@ -524,4 +535,5 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   questionnaireSubmitted: 'Selection submitted. Waiting for the plan to continue...',
   questionnaireValidationPrefix: 'Please complete:',
   questionnaireSubmitFailed: 'Failed to submit. Please try again.',
+  questionnaireMultiSelectHint: 'Multiple choice',
 }

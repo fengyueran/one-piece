@@ -239,10 +239,155 @@ describe('ChatThread', () => {
       expect.objectContaining({
         questionnaireId: 'plan-1',
         answers: { direction: 'classic' },
+        details: {
+          direction: {
+            questionId: 'direction',
+            kind: 'single_select',
+            value: 'classic',
+            selectedOptionValues: ['classic'],
+            otherValue: undefined,
+          },
+        },
       }),
       expect.anything(),
     )
     expect(ctx.sendRef.current).not.toHaveBeenCalled()
+  })
+
+  it('submits multi-select answers together with custom other input', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+    const handleQuestionnaireSubmit = jest.fn(async () => {})
+
+    ctx.value.handleQuestionnaireSubmit = handleQuestionnaireSubmit
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-multi-other',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose the dimensions.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-multi-other',
+            title: 'Choose dimensions',
+            questions: [
+              {
+                id: 'dimensions',
+                label: 'Which dimensions matter?',
+                kind: 'multi_select',
+                required: true,
+                allowOther: true,
+                options: [
+                  { label: 'Stability', value: 'stability' },
+                  { label: 'Error analysis', value: 'error-analysis' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('question-option-dimensions-0'))
+    await user.click(screen.getByTestId('question-option-dimensions-2'))
+    await user.type(
+      screen.getByTestId('question-input-dimensions'),
+      'Need stronger convergence guarantees',
+    )
+    expect(screen.getByTestId('question-input-dimensions')).toHaveFocus()
+    await user.click(screen.getByTestId('questionnaire-submit'))
+
+    await waitFor(() => expect(handleQuestionnaireSubmit).toHaveBeenCalledTimes(1))
+    expect(handleQuestionnaireSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        questionnaireId: 'plan-multi-other',
+        answers: {
+          dimensions: ['stability', 'Need stronger convergence guarantees'],
+        },
+        details: {
+          dimensions: {
+            questionId: 'dimensions',
+            kind: 'multi_select',
+            value: ['stability', 'Need stronger convergence guarantees'],
+            selectedOptionValues: ['stability'],
+            otherValue: 'Need stronger convergence guarantees',
+          },
+        },
+        content: expect.stringContaining('Stability, Need stronger convergence guarantees'),
+      }),
+      expect.anything(),
+    )
+  })
+
+  it('shows a multi-select hint for checkbox-style questionnaires', () => {
+    const ctx = createContextValue()
+
+    ctx.value.labels = {
+      ...DEFAULT_AI_CHAT_LABELS,
+      questionnaireMultiSelectHint: '可多选',
+    }
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-multi-hint',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose the dimensions.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-multi-hint',
+            title: 'Choose dimensions',
+            questions: [
+              {
+                id: 'dimensions',
+                label: 'Which dimensions matter?',
+                kind: 'multi_select',
+                required: true,
+                options: [
+                  { label: 'Stability', value: 'stability' },
+                  { label: 'Error analysis', value: 'error-analysis' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByText('可多选')).toBeInTheDocument()
   })
 
   it('forwards questionnaire blockKey to custom submit handlers when available', async () => {
@@ -658,6 +803,267 @@ describe('ChatThread', () => {
       '选择已超时（120 秒），请重新开始。',
     )
     expect(screen.queryByTestId('questionnaire-submit')).not.toBeInTheDocument()
+  })
+
+  it('preserves local questionnaire edits when only the streamed description changes', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().startStreamingMessage('session-plan', {
+      id: 'assistant-streaming-description',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose a path.',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+    ctx.store.getState().patchStreamingMessage('session-plan', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-streaming-description',
+            blockKey: 'plan:streaming-description',
+            mergePolicy: 'replace',
+            title: 'Choose a direction',
+            description: 'Initial hint',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('question-option-direction-0'))
+
+    await act(async () => {
+      ctx.store.getState().patchStreamingMessage('session-plan', {
+        blocks: [
+          {
+            type: 'questionnaire',
+            questionnaire: {
+              questionnaireId: 'plan-streaming-description',
+              blockKey: 'plan:streaming-description',
+              mergePolicy: 'replace',
+              title: 'Choose a direction',
+              description: 'Updated hint from the stream',
+              questions: [
+                {
+                  id: 'direction',
+                  label: 'Which route should we use?',
+                  kind: 'single_select',
+                  required: true,
+                  options: [
+                    { label: 'Classic numeric simulation', value: 'classic' },
+                    { label: 'Quantum simulation', value: 'quantum' },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      })
+    })
+
+    expect(screen.getByText('Updated hint from the stream')).toBeInTheDocument()
+    expect(screen.getByTestId('question-option-direction-0')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('resets questionnaire selection when the streamed questionnaire answers change', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().startStreamingMessage('session-plan', {
+      id: 'assistant-streaming-answers',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose a path.',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+    ctx.store.getState().patchStreamingMessage('session-plan', {
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-streaming-answers',
+            blockKey: 'plan:streaming-answers',
+            mergePolicy: 'replace',
+            title: 'Choose a direction',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    await user.click(screen.getByTestId('question-option-direction-0'))
+    expect(screen.getByTestId('question-option-direction-0')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+
+    await act(async () => {
+      ctx.store.getState().patchStreamingMessage('session-plan', {
+        blocks: [
+          {
+            type: 'questionnaire',
+            questionnaire: {
+              questionnaireId: 'plan-streaming-answers',
+              blockKey: 'plan:streaming-answers',
+              mergePolicy: 'replace',
+              title: 'Choose a direction',
+              answers: {
+                direction: 'quantum',
+              },
+              questions: [
+                {
+                  id: 'direction',
+                  label: 'Which route should we use?',
+                  kind: 'single_select',
+                  required: true,
+                  options: [
+                    { label: 'Classic numeric simulation', value: 'classic' },
+                    { label: 'Quantum simulation', value: 'quantum' },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      })
+    })
+
+    expect(screen.getByTestId('question-option-direction-0')).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    expect(screen.getByTestId('question-option-direction-1')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('treats invalid single-select prefills as unanswered when other is not allowed', async () => {
+    const user = userEvent.setup()
+    const ctx = createContextValue()
+    const handleQuestionnaireSubmit = jest.fn(async () => {})
+
+    ctx.value.handleQuestionnaireSubmit = handleQuestionnaireSubmit
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-invalid-prefill',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose a path.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-invalid-prefill',
+            title: 'Choose a direction',
+            questions: [
+              {
+                id: 'direction',
+                label: 'Which route should we use?',
+                kind: 'single_select',
+                required: true,
+                options: [
+                  { label: 'Classic numeric simulation', value: 'classic' },
+                  { label: 'Quantum simulation', value: 'quantum' },
+                ],
+              },
+            ],
+            answers: {
+              direction: 'legacy-option',
+            },
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByTestId('question-option-direction-0')).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    expect(screen.getByTestId('question-option-direction-1')).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+
+    await user.click(screen.getByTestId('questionnaire-submit'))
+
+    expect(screen.getByTestId('questionnaire-error')).toHaveTextContent(
+      'Please complete: Which route should we use?',
+    )
+    expect(handleQuestionnaireSubmit).not.toHaveBeenCalled()
+    expect(ctx.sendRef.current).not.toHaveBeenCalled()
   })
 
   it('wraps each conversation turn and keeps min-height on the latest turn', async () => {

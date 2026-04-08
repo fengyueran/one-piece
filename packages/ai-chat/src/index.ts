@@ -57,6 +57,7 @@ export type {
   ExecutionConfirmationSubmission,
   ExecutionProposal,
   PlanQuestionOption,
+  PlanQuestionSubmissionDetail,
   PlanQuestionnaire,
   PlanQuestionnaireSubmission,
   ResultSummary,

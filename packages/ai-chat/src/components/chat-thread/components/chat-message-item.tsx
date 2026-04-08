@@ -595,6 +595,7 @@ const ChatMessageItemView = ({
                 submitted: labels.questionnaireSubmitted,
                 validationPrefix: labels.questionnaireValidationPrefix,
                 submitFailed: labels.questionnaireSubmitFailed,
+                multiSelectHint: labels.questionnaireMultiSelectHint,
               }}
               onSubmit={
                 canSubmitQuestionnaire
