@@ -2,11 +2,12 @@ import {
   useEffect,
   useRef,
   useState,
+  type ReactNode,
   type KeyboardEvent,
   type MouseEvent,
-  type ReactNode,
 } from 'react'
 import styled from '@emotion/styled'
+import { InputField } from '@xinghunm/compass-ui'
 import type { PlanQuestion, PlanQuestionnaire, PlanQuestionnaireSubmission } from '../../../types'
 import {
   createInitialAnswers,
@@ -131,6 +132,7 @@ const QuestionnaireCardInner = ({
   labels,
 }: QuestionnaireCardProps) => {
   const questionnaireRef = useRef(questionnaire)
+  const otherInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(() =>
     createInitialAnswers(questionnaire),
   )
@@ -140,6 +142,7 @@ const QuestionnaireCardInner = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [pendingFocusQuestionId, setPendingFocusQuestionId] = useState<string | null>(null)
   const resolvedLabels = {
     ...DEFAULT_QUESTIONNAIRE_CARD_LABELS,
     ...labels,
@@ -156,6 +159,20 @@ const QuestionnaireCardInner = ({
     setAnswers(createInitialAnswers(questionnaireRef.current))
     setOtherDrafts(createInitialOtherDrafts(questionnaireRef.current))
   }, [questionnaire.answers])
+
+  useEffect(() => {
+    if (!pendingFocusQuestionId || isInteractionLocked) {
+      return
+    }
+
+    const inputElement = otherInputRefs.current[pendingFocusQuestionId]
+    if (!inputElement) {
+      return
+    }
+
+    inputElement.focus()
+    setPendingFocusQuestionId(null)
+  }, [isInteractionLocked, pendingFocusQuestionId])
 
   const handleSubmit = async () => {
     if (isSubmitting || isSubmitted) {
@@ -236,12 +253,19 @@ const QuestionnaireCardInner = ({
                   isSelected={multiSelectDraft.hasOtherSelected}
                   isInteractionLocked={isInteractionLocked}
                   tone="other"
-                  onClick={() =>
+                  onClick={() => {
+                    if (!multiSelectDraft.hasOtherSelected) {
+                      setPendingFocusQuestionId(question.id)
+                    }
+
                     setAnswers((current) => toggleMultiSelectOtherAnswer(current, question))
-                  }
+                  }}
                   inlineInput={
                     multiSelectDraft.hasOtherSelected ? (
                       <InlineOtherInput
+                        ref={(node) => {
+                          otherInputRefs.current[question.id] = node
+                        }}
                         data-testid={`question-input-${question.id}`}
                         type="text"
                         value={multiSelectDraft.otherValue}
@@ -300,14 +324,21 @@ const QuestionnaireCardInner = ({
                   isSelected={singleSelectDraft.selectedValue === OTHER_OPTION_VALUE}
                   isInteractionLocked={isInteractionLocked}
                   tone="other"
-                  onClick={() =>
+                  onClick={() => {
+                    if (singleSelectDraft.selectedValue !== OTHER_OPTION_VALUE) {
+                      setPendingFocusQuestionId(question.id)
+                    }
+
                     setAnswers((current) =>
                       updateAnswerValue(current, question.id, OTHER_OPTION_VALUE),
                     )
-                  }
+                  }}
                   inlineInput={
                     singleSelectDraft.selectedValue === OTHER_OPTION_VALUE ? (
                       <InlineOtherInput
+                        ref={(node) => {
+                          otherInputRefs.current[question.id] = node
+                        }}
                         data-testid={`question-input-${question.id}`}
                         type="text"
                         value={singleSelectDraft.otherValue}
@@ -516,7 +547,7 @@ const OptionChoiceItem = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
-  padding: 12px 14px;
+  padding: 9px 12px;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition:
@@ -596,8 +627,37 @@ const TextInput = styled.input`
   }
 `
 
-const InlineOtherInput = styled(TextInput)`
+const InlineOtherInput = styled(InputField)`
+  width: 100%;
   margin-top: 0;
+
+  .compass-input-field-wrapper {
+    min-height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: rgba(13, 15, 21, 0.55);
+    box-shadow: none;
+    padding: 2px 9px;
+  }
+
+  .compass-input-field-wrapper:hover {
+    border-color: rgba(126, 160, 255, 0.28);
+  }
+
+  .compass-input-field-wrapper:focus-within {
+    border-color: rgba(126, 160, 255, 0.42);
+    box-shadow: 0 0 0 1px rgba(126, 160, 255, 0.14);
+  }
+
+  .compass-input-field-input {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .compass-input-field-input::placeholder {
+    color: rgba(255, 255, 255, 0.34);
+  }
 `
 
 const NumberInputRow = styled.div`

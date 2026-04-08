@@ -396,6 +396,66 @@ describe('ChatThread', () => {
 
     await user.click(screen.getByText('其他'))
     expect(screen.getByPlaceholderText('请输入补充内容')).toBeInTheDocument()
+    expect(screen.getByTestId('question-input-dimensions')).toHaveFocus()
+  })
+
+  it('does not auto-focus other input when questionnaire is prefilled from history', () => {
+    const ctx = createContextValue()
+
+    ctx.value.labels = {
+      ...DEFAULT_AI_CHAT_LABELS,
+      questionnaireOtherOptionLabel: '其他',
+      questionnaireOtherPlaceholder: '请输入补充内容',
+    }
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-prefilled-other',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: 'Please choose the dimensions.',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-prefilled-other',
+            title: 'Choose dimensions',
+            questions: [
+              {
+                id: 'dimensions',
+                label: 'Which dimensions matter?',
+                kind: 'multi_select',
+                allowOther: true,
+                options: [
+                  { label: 'Stability', value: 'stability' },
+                  { label: 'Error analysis', value: 'error-analysis' },
+                ],
+              },
+            ],
+            answers: {
+              dimensions: ['Need stronger convergence guarantees'],
+            },
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByTestId('question-input-dimensions')).toBeInTheDocument()
+    expect(screen.getByTestId('question-input-dimensions')).not.toHaveFocus()
   })
 
   it('forwards questionnaire blockKey to custom submit handlers when available', async () => {
