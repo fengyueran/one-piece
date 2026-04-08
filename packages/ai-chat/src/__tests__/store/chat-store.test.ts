@@ -1,6 +1,11 @@
 import { createChatStore } from '../../store/chat-store'
 
 const makeStore = () => createChatStore()
+const placeholderQuestion = {
+  id: 'placeholder-question',
+  label: '占位问题',
+  kind: 'text' as const,
+}
 
 describe('createChatStore', () => {
   it('starts with empty state', () => {
@@ -147,19 +152,17 @@ describe('createChatStore', () => {
           questionnaire: {
             questionnaireId: 'req-1',
             title: '请选择方案',
-            questions: [
-              {
-                id: 'selected_index',
-                label: '请选择方案',
-                kind: 'single_select',
-                options: [
-                  {
-                    label: '方案 A',
-                    value: '0',
-                  },
-                ],
-              },
-            ],
+            question: {
+              id: 'selected_index',
+              label: '请选择方案',
+              kind: 'single_select',
+              options: [
+                {
+                  label: '方案 A',
+                  value: '0',
+                },
+              ],
+            },
           },
         },
       ],
@@ -174,19 +177,17 @@ describe('createChatStore', () => {
             title: '请选择方案',
             status: 'expired',
             statusMessage: '选择已超时，请重新开始。',
-            questions: [
-              {
-                id: 'selected_index',
-                label: '请选择方案',
-                kind: 'single_select',
-                options: [
-                  {
-                    label: '方案 A',
-                    value: '0',
-                  },
-                ],
-              },
-            ],
+            question: {
+              id: 'selected_index',
+              label: '请选择方案',
+              kind: 'single_select',
+              options: [
+                {
+                  label: '方案 A',
+                  value: '0',
+                },
+              ],
+            },
           },
         },
       ],
@@ -200,19 +201,17 @@ describe('createChatStore', () => {
           title: '请选择方案',
           status: 'expired',
           statusMessage: '选择已超时，请重新开始。',
-          questions: [
-            {
-              id: 'selected_index',
-              label: '请选择方案',
-              kind: 'single_select',
-              options: [
-                {
-                  label: '方案 A',
-                  value: '0',
-                },
-              ],
-            },
-          ],
+          question: {
+            id: 'selected_index',
+            label: '请选择方案',
+            kind: 'single_select',
+            options: [
+              {
+                label: '方案 A',
+                value: '0',
+              },
+            ],
+          },
         },
       },
     ])
@@ -242,7 +241,7 @@ describe('createChatStore', () => {
             blockKey: 'plan:req-1:step-1',
             mergePolicy: 'replace',
             title: '第一个计划',
-            questions: [],
+            question: placeholderQuestion,
           },
         },
       ],
@@ -257,7 +256,7 @@ describe('createChatStore', () => {
             blockKey: 'plan:req-1:step-2',
             mergePolicy: 'replace',
             title: '第二个计划',
-            questions: [],
+            question: placeholderQuestion,
           },
         },
       ],
@@ -271,7 +270,7 @@ describe('createChatStore', () => {
           blockKey: 'plan:req-1:step-1',
           mergePolicy: 'replace',
           title: '第一个计划',
-          questions: [],
+          question: placeholderQuestion,
         },
       },
       {
@@ -281,7 +280,7 @@ describe('createChatStore', () => {
           blockKey: 'plan:req-1:step-2',
           mergePolicy: 'replace',
           title: '第二个计划',
-          questions: [],
+          question: placeholderQuestion,
         },
       },
     ])
@@ -311,7 +310,7 @@ describe('createChatStore', () => {
             blockKey: 'plan:req-1',
             mergePolicy: 'replace',
             title: '请选择方案',
-            questions: [],
+            question: placeholderQuestion,
           },
         },
       ],
@@ -328,7 +327,7 @@ describe('createChatStore', () => {
             title: '请选择方案',
             status: 'expired',
             statusMessage: '选择已超时，请重新开始。',
-            questions: [],
+            question: placeholderQuestion,
           },
         },
       ],
@@ -344,7 +343,7 @@ describe('createChatStore', () => {
           title: '请选择方案',
           status: 'expired',
           statusMessage: '选择已超时，请重新开始。',
-          questions: [],
+          question: placeholderQuestion,
         },
       },
     ])

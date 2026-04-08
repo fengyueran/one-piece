@@ -27,6 +27,12 @@ jest.mock('remark-gfm', () => ({}))
 jest.mock('remark-math', () => ({}))
 jest.mock('rehype-katex', () => ({}))
 
+const placeholderQuestion = {
+  id: 'placeholder-question',
+  label: '占位问题',
+  kind: 'text' as const,
+}
+
 describe('ChatThread custom block renderer', () => {
   it('preserves paragraph separators when collecting consumed markdown timeline text', () => {
     const consumedText = getTimelineConsumedText([
@@ -106,7 +112,7 @@ describe('ChatThread custom block renderer', () => {
           questionnaireId: 'req-1',
           blockKey: 'plan:req-1',
           mergePolicy: 'replace',
-          questions: [],
+          question: placeholderQuestion,
         },
       },
       0,
@@ -119,7 +125,7 @@ describe('ChatThread custom block renderer', () => {
           blockKey: 'plan:req-1',
           mergePolicy: 'replace',
           status: 'expired',
-          questions: [],
+          question: placeholderQuestion,
         },
       },
       0,

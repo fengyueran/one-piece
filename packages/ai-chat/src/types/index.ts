@@ -82,6 +82,7 @@ export interface PlanSingleSelectQuestion extends PlanQuestionBase {
  */
 export interface PlanMultiSelectQuestion extends PlanQuestionBase {
   kind: 'multi_select'
+  allowOther?: boolean
   options: PlanQuestionOption[]
 }
 
@@ -149,10 +150,21 @@ export interface PlanQuestionnaire {
   title?: string
   description?: string
   submitLabel?: string
-  questions: PlanQuestion[]
+  /**
+   * Single question rendered by the questionnaire card.
+   */
+  question: PlanQuestion
   answers?: Partial<Record<string, PlanQuestionnaireAnswerValue>>
   status?: PlanQuestionnaireStatus
   statusMessage?: string
+}
+
+export interface PlanQuestionSubmissionDetail {
+  questionId: string
+  kind: PlanQuestion['kind']
+  value?: PlanQuestionnaireAnswerValue
+  selectedOptionValues?: string[]
+  otherValue?: string
 }
 
 /**
@@ -165,6 +177,7 @@ export interface PlanQuestionnaireSubmission {
    */
   blockKey?: string
   answers: Record<string, PlanQuestionnaireAnswerValue>
+  details?: Record<string, PlanQuestionSubmissionDetail>
   content: string
   sourceMessageId?: string
 }
@@ -493,6 +506,9 @@ export interface AiChatLabels {
   questionnaireSubmitted?: string
   questionnaireValidationPrefix?: string
   questionnaireSubmitFailed?: string
+  questionnaireMultiSelectHint?: string
+  questionnaireOtherOptionLabel?: string
+  questionnaireOtherPlaceholder?: string
 }
 
 /**
@@ -524,4 +540,7 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   questionnaireSubmitted: 'Selection submitted. Waiting for the plan to continue...',
   questionnaireValidationPrefix: 'Please complete:',
   questionnaireSubmitFailed: 'Failed to submit. Please try again.',
+  questionnaireMultiSelectHint: 'Multiple choice',
+  questionnaireOtherOptionLabel: 'Other',
+  questionnaireOtherPlaceholder: 'Other',
 }
