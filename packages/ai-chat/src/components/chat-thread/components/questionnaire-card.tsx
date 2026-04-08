@@ -487,6 +487,10 @@ export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
 const Card = styled.section`
   display: grid;
   gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
 `
 
 const Description = styled.p`
@@ -503,6 +507,9 @@ const QuestionList = styled.div`
 const QuestionCard = styled.div`
   display: grid;
   gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
 `
 
 const QuestionLabel = styled.div`
