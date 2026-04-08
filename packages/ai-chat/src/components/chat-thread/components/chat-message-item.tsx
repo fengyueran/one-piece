@@ -933,7 +933,33 @@ const CollapseToggle = styled.button`
 
 const Content = styled.div`
   color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
   line-height: 1.6;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    line-height: 2.5;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 14px;
+  }
 
   p {
     margin: 0;
@@ -946,7 +972,7 @@ const Content = styled.div`
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0;
+    margin: 8px 0 0;
     overflow: hidden;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -969,6 +995,10 @@ const Content = styled.div`
 
   tbody tr:last-of-type td {
     border-bottom: none;
+  }
+  ul,
+  ol {
+    margin: 0 0 8px;
   }
 `
 
