@@ -14,6 +14,40 @@ jest.mock('remark-gfm', () => ({}))
 jest.mock('remark-math', () => ({}))
 jest.mock('rehype-katex', () => ({}))
 
+const directionQuestion = {
+  id: 'direction',
+  label: 'Which route should we use?',
+  kind: 'single_select' as const,
+  required: true,
+  options: [
+    { label: 'Classic numeric simulation', value: 'classic' },
+    { label: 'Quantum simulation', value: 'quantum' },
+  ],
+}
+
+const dimensionsQuestion = {
+  id: 'dimensions',
+  label: 'Which dimensions matter?',
+  kind: 'multi_select' as const,
+  required: true,
+  allowOther: true,
+  options: [
+    { label: 'Stability', value: 'stability' },
+    { label: 'Error analysis', value: 'error-analysis' },
+  ],
+}
+
+const heatDimensionQuestion = {
+  id: 'dimension',
+  label: '热方程的空间维度是?',
+  kind: 'single_select' as const,
+  required: true,
+  options: [
+    { label: '一维 (1D)', value: '1d' },
+    { label: '二维 (2D)', value: '2d' },
+  ],
+}
+
 const createContextValue = () => {
   const store = createChatStore()
   const sendRef = { current: jest.fn(async (_content: string) => {}) }
@@ -207,18 +241,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-1',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -254,6 +277,91 @@ describe('ChatThread', () => {
     expect(ctx.sendRef.current).not.toHaveBeenCalled()
   })
 
+  it('does not render questionnaire title when the card is shown', () => {
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-title-hidden',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: '',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-title-hidden',
+            title: '热方程的空间维度是?',
+            question: heatDimensionQuestion,
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getAllByText('热方程的空间维度是?')).toHaveLength(1)
+  })
+
+  it('renders a questionnaire that uses the single-question model', () => {
+    const ctx = createContextValue()
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-plan',
+      title: 'Plan Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+      mode: 'plan',
+    })
+    ctx.store.getState().appendMessage('session-plan', {
+      id: 'assistant-single-question-model',
+      sessionId: 'session-plan',
+      role: 'assistant',
+      content: '',
+      blocks: [
+        {
+          type: 'questionnaire',
+          questionnaire: {
+            questionnaireId: 'plan-single-question-model',
+            question: {
+              id: 'dimension',
+              label: '热方程的空间维度是?',
+              kind: 'single_select',
+              required: true,
+              options: [
+                { label: '一维 (1D)', value: '1d' },
+                { label: '二维 (2D)', value: '2d' },
+              ],
+            },
+          },
+        },
+      ],
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    expect(screen.getByText('热方程的空间维度是?')).toBeInTheDocument()
+    expect(screen.getByTestId('question-option-dimension-0')).toHaveTextContent('一维 (1D)')
+  })
+
   it('submits multi-select answers together with custom other input', async () => {
     const user = userEvent.setup()
     const ctx = createContextValue()
@@ -280,19 +388,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-multi-other',
             title: 'Choose dimensions',
-            questions: [
-              {
-                id: 'dimensions',
-                label: 'Which dimensions matter?',
-                kind: 'multi_select',
-                required: true,
-                allowOther: true,
-                options: [
-                  { label: 'Stability', value: 'stability' },
-                  { label: 'Error analysis', value: 'error-analysis' },
-                ],
-              },
-            ],
+            question: dimensionsQuestion,
           },
         },
       ],
@@ -366,19 +462,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-multi-hint',
             title: 'Choose dimensions',
-            questions: [
-              {
-                id: 'dimensions',
-                label: 'Which dimensions matter?',
-                kind: 'multi_select',
-                required: true,
-                allowOther: true,
-                options: [
-                  { label: 'Stability', value: 'stability' },
-                  { label: 'Error analysis', value: 'error-analysis' },
-                ],
-              },
-            ],
+            question: dimensionsQuestion,
           },
         },
       ],
@@ -427,18 +511,10 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-prefilled-other',
             title: 'Choose dimensions',
-            questions: [
-              {
-                id: 'dimensions',
-                label: 'Which dimensions matter?',
-                kind: 'multi_select',
-                allowOther: true,
-                options: [
-                  { label: 'Stability', value: 'stability' },
-                  { label: 'Error analysis', value: 'error-analysis' },
-                ],
-              },
-            ],
+            question: {
+              ...dimensionsQuestion,
+              required: undefined,
+            },
             answers: {
               dimensions: ['Need stronger convergence guarantees'],
             },
@@ -485,18 +561,7 @@ describe('ChatThread', () => {
             questionnaireId: 'plan-1',
             blockKey: 'plan:plan-1:opt-1',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -548,18 +613,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-fallback',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -609,18 +663,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-validation',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
             submitLabel: 'Continue',
           },
         },
@@ -678,18 +721,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-2',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
             submitLabel: 'Continue',
           },
         },
@@ -751,18 +783,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-submit-failed',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
             submitLabel: 'Continue',
           },
         },
@@ -818,18 +839,7 @@ describe('ChatThread', () => {
             questionnaireId: 'plan-timeout',
             title: 'Choose a direction',
             submitLabel: 'Continue',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -844,18 +854,7 @@ describe('ChatThread', () => {
             submitLabel: 'Continue',
             status: 'expired',
             statusMessage: '选择已超时（120 秒），请重新开始。',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -903,18 +902,7 @@ describe('ChatThread', () => {
             mergePolicy: 'replace',
             title: 'Choose a direction',
             description: 'Initial hint',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -939,18 +927,7 @@ describe('ChatThread', () => {
               mergePolicy: 'replace',
               title: 'Choose a direction',
               description: 'Updated hint from the stream',
-              questions: [
-                {
-                  id: 'direction',
-                  label: 'Which route should we use?',
-                  kind: 'single_select',
-                  required: true,
-                  options: [
-                    { label: 'Classic numeric simulation', value: 'classic' },
-                    { label: 'Quantum simulation', value: 'quantum' },
-                  ],
-                },
-              ],
+              question: directionQuestion,
             },
           },
         ],
@@ -993,18 +970,7 @@ describe('ChatThread', () => {
             blockKey: 'plan:streaming-answers',
             mergePolicy: 'replace',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
           },
         },
       ],
@@ -1035,18 +1001,7 @@ describe('ChatThread', () => {
               answers: {
                 direction: 'quantum',
               },
-              questions: [
-                {
-                  id: 'direction',
-                  label: 'Which route should we use?',
-                  kind: 'single_select',
-                  required: true,
-                  options: [
-                    { label: 'Classic numeric simulation', value: 'classic' },
-                    { label: 'Quantum simulation', value: 'quantum' },
-                  ],
-                },
-              ],
+              question: directionQuestion,
             },
           },
         ],
@@ -1089,18 +1044,7 @@ describe('ChatThread', () => {
           questionnaire: {
             questionnaireId: 'plan-invalid-prefill',
             title: 'Choose a direction',
-            questions: [
-              {
-                id: 'direction',
-                label: 'Which route should we use?',
-                kind: 'single_select',
-                required: true,
-                options: [
-                  { label: 'Classic numeric simulation', value: 'classic' },
-                  { label: 'Quantum simulation', value: 'quantum' },
-                ],
-              },
-            ],
+            question: directionQuestion,
             answers: {
               direction: 'legacy-option',
             },

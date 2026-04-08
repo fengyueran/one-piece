@@ -353,10 +353,7 @@ const areQuestionnairesEqual = (
   previousQuestionnaire.submitLabel === nextQuestionnaire.submitLabel &&
   previousQuestionnaire.status === nextQuestionnaire.status &&
   previousQuestionnaire.statusMessage === nextQuestionnaire.statusMessage &&
-  previousQuestionnaire.questions.length === nextQuestionnaire.questions.length &&
-  previousQuestionnaire.questions.every((question, index) =>
-    arePlanQuestionsEqual(question, nextQuestionnaire.questions[index] as PlanQuestion),
-  ) &&
+  arePlanQuestionsEqual(previousQuestionnaire.question, nextQuestionnaire.question) &&
   areQuestionAnswerMapsEqual(previousQuestionnaire.answers, nextQuestionnaire.answers)
 
 const areMessageBlocksEqual = (

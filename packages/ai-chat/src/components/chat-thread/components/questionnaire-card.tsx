@@ -16,6 +16,7 @@ import {
   getNumberInputValue,
   getOptionChoiceLabel,
   getQuestionnaireStateKey,
+  getQuestionnaireQuestion,
   getSingleSelectDraftState,
   getTextInputValue,
   getMissingRequiredQuestions,
@@ -149,6 +150,7 @@ const QuestionnaireCardInner = ({
   }
   const hasExternalFailureStatus =
     questionnaire.status === 'expired' || questionnaire.status === 'failed'
+  const question = getQuestionnaireQuestion(questionnaire)
   const visibleErrorMessage = questionnaire.statusMessage ?? errorMessage
   const isInteractionLocked =
     !interactive || isSubmitting || isSubmitted || hasExternalFailureStatus
@@ -213,60 +215,64 @@ const QuestionnaireCardInner = ({
     }
   }
 
-  const renderQuestion = (question: PlanQuestion) => {
-    switch (question.kind) {
+  if (!question) {
+    return null
+  }
+
+  const renderQuestion = (questionToRender: PlanQuestion) => {
+    switch (questionToRender.kind) {
       case 'multi_select': {
         const multiSelectDraft = getMultiSelectDraftState(
-          question,
-          answers[question.id],
-          otherDrafts[question.id] ?? '',
+          questionToRender,
+          answers[questionToRender.id],
+          otherDrafts[questionToRender.id] ?? '',
         )
 
         return (
           <QuestionBody>
             <OptionList>
-              {question.options.map((option, index) => {
+              {questionToRender.options.map((option, index) => {
                 const isSelected = multiSelectDraft.selectedValues.includes(option.value)
 
                 return (
                   <OptionChoice
                     key={option.value}
-                    questionId={question.id}
+                    questionId={questionToRender.id}
                     optionLabel={option.label}
                     index={index}
                     isSelected={isSelected}
                     isInteractionLocked={isInteractionLocked}
                     onClick={() =>
                       setAnswers((current) =>
-                        toggleMultiSelectAnswer(current, question.id, option.value),
+                        toggleMultiSelectAnswer(current, questionToRender.id, option.value),
                       )
                     }
                   />
                 )
               })}
-              {question.allowOther ? (
+              {questionToRender.allowOther ? (
                 <OptionChoice
-                  key={`${question.id}-other`}
-                  questionId={question.id}
+                  key={`${questionToRender.id}-other`}
+                  questionId={questionToRender.id}
                   optionLabel={resolvedLabels.otherOptionLabel}
-                  index={question.options.length}
+                  index={questionToRender.options.length}
                   isSelected={multiSelectDraft.hasOtherSelected}
                   isInteractionLocked={isInteractionLocked}
                   tone="other"
                   onClick={() => {
                     if (!multiSelectDraft.hasOtherSelected) {
-                      setPendingFocusQuestionId(question.id)
+                      setPendingFocusQuestionId(questionToRender.id)
                     }
 
-                    setAnswers((current) => toggleMultiSelectOtherAnswer(current, question))
+                    setAnswers((current) => toggleMultiSelectOtherAnswer(current, questionToRender))
                   }}
                   inlineInput={
                     multiSelectDraft.hasOtherSelected ? (
                       <InlineOtherInput
                         ref={(node) => {
-                          otherInputRefs.current[question.id] = node
+                          otherInputRefs.current[questionToRender.id] = node
                         }}
-                        data-testid={`question-input-${question.id}`}
+                        data-testid={`question-input-${questionToRender.id}`}
                         type="text"
                         value={multiSelectDraft.otherValue}
                         placeholder={resolvedLabels.otherPlaceholder}
@@ -276,7 +282,7 @@ const QuestionnaireCardInner = ({
                         onChange={(event) => {
                           setOtherDrafts((current) => ({
                             ...current,
-                            [question.id]: event.target.value,
+                            [questionToRender.id]: event.target.value,
                           }))
                         }}
                       />
@@ -290,56 +296,58 @@ const QuestionnaireCardInner = ({
       }
       case 'single_select': {
         const singleSelectDraft = getSingleSelectDraftState(
-          question,
-          answers[question.id],
-          otherDrafts[question.id] ?? '',
+          questionToRender,
+          answers[questionToRender.id],
+          otherDrafts[questionToRender.id] ?? '',
         )
 
         return (
           <QuestionBody>
             <OptionList>
-              {question.options.map((option, index) => {
+              {questionToRender.options.map((option, index) => {
                 const isSelected = singleSelectDraft.selectedValue === option.value
 
                 return (
                   <OptionChoice
                     key={option.value}
-                    questionId={question.id}
+                    questionId={questionToRender.id}
                     optionLabel={option.label}
                     index={index}
                     isSelected={isSelected}
                     isInteractionLocked={isInteractionLocked}
                     onClick={() =>
-                      setAnswers((current) => updateAnswerValue(current, question.id, option.value))
+                      setAnswers((current) =>
+                        updateAnswerValue(current, questionToRender.id, option.value),
+                      )
                     }
                   />
                 )
               })}
-              {question.allowOther ? (
+              {questionToRender.allowOther ? (
                 <OptionChoice
-                  key={`${question.id}-other`}
-                  questionId={question.id}
+                  key={`${questionToRender.id}-other`}
+                  questionId={questionToRender.id}
                   optionLabel={resolvedLabels.otherOptionLabel}
-                  index={question.options.length}
+                  index={questionToRender.options.length}
                   isSelected={singleSelectDraft.selectedValue === OTHER_OPTION_VALUE}
                   isInteractionLocked={isInteractionLocked}
                   tone="other"
                   onClick={() => {
                     if (singleSelectDraft.selectedValue !== OTHER_OPTION_VALUE) {
-                      setPendingFocusQuestionId(question.id)
+                      setPendingFocusQuestionId(questionToRender.id)
                     }
 
                     setAnswers((current) =>
-                      updateAnswerValue(current, question.id, OTHER_OPTION_VALUE),
+                      updateAnswerValue(current, questionToRender.id, OTHER_OPTION_VALUE),
                     )
                   }}
                   inlineInput={
                     singleSelectDraft.selectedValue === OTHER_OPTION_VALUE ? (
                       <InlineOtherInput
                         ref={(node) => {
-                          otherInputRefs.current[question.id] = node
+                          otherInputRefs.current[questionToRender.id] = node
                         }}
-                        data-testid={`question-input-${question.id}`}
+                        data-testid={`question-input-${questionToRender.id}`}
                         type="text"
                         value={singleSelectDraft.otherValue}
                         placeholder={resolvedLabels.otherPlaceholder}
@@ -349,7 +357,7 @@ const QuestionnaireCardInner = ({
                         onChange={(event) => {
                           setOtherDrafts((current) => ({
                             ...current,
-                            [question.id]: event.target.value,
+                            [questionToRender.id]: event.target.value,
                           }))
                         }}
                       />
@@ -365,13 +373,15 @@ const QuestionnaireCardInner = ({
         return (
           <QuestionBody>
             <TextInput
-              data-testid={`question-input-${question.id}`}
+              data-testid={`question-input-${questionToRender.id}`}
               type="text"
-              value={getTextInputValue(answers[question.id])}
-              placeholder={question.placeholder}
+              value={getTextInputValue(answers[questionToRender.id])}
+              placeholder={questionToRender.placeholder}
               readOnly={isInteractionLocked}
               onChange={(event) => {
-                setAnswers((current) => updateAnswerValue(current, question.id, event.target.value))
+                setAnswers((current) =>
+                  updateAnswerValue(current, questionToRender.id, event.target.value),
+                )
               }}
             />
           </QuestionBody>
@@ -381,22 +391,22 @@ const QuestionnaireCardInner = ({
           <QuestionBody>
             <NumberInputRow>
               <TextInput
-                data-testid={`question-input-${question.id}`}
+                data-testid={`question-input-${questionToRender.id}`}
                 type="number"
-                value={getNumberInputValue(answers[question.id])}
-                placeholder={question.placeholder}
+                value={getNumberInputValue(answers[questionToRender.id])}
+                placeholder={questionToRender.placeholder}
                 readOnly={isInteractionLocked}
                 onChange={(event) => {
                   setAnswers((current) =>
                     updateAnswerValue(
                       current,
-                      question.id,
+                      questionToRender.id,
                       event.target.value === '' ? undefined : Number(event.target.value),
                     ),
                   )
                 }}
               />
-              {question.unit ? <Unit>{question.unit}</Unit> : null}
+              {questionToRender.unit ? <Unit>{questionToRender.unit}</Unit> : null}
             </NumberInputRow>
           </QuestionBody>
         )
@@ -405,23 +415,23 @@ const QuestionnaireCardInner = ({
           <QuestionBody>
             <OptionList>
               <OptionChoice
-                questionId={question.id}
-                optionLabel={question.trueLabel ?? 'Yes'}
+                questionId={questionToRender.id}
+                optionLabel={questionToRender.trueLabel ?? 'Yes'}
                 index={0}
-                isSelected={answers[question.id] === true}
+                isSelected={answers[questionToRender.id] === true}
                 isInteractionLocked={isInteractionLocked}
                 onClick={() =>
-                  setAnswers((current) => updateAnswerValue(current, question.id, true))
+                  setAnswers((current) => updateAnswerValue(current, questionToRender.id, true))
                 }
               />
               <OptionChoice
-                questionId={question.id}
-                optionLabel={question.falseLabel ?? 'No'}
+                questionId={questionToRender.id}
+                optionLabel={questionToRender.falseLabel ?? 'No'}
                 index={1}
-                isSelected={answers[question.id] === false}
+                isSelected={answers[questionToRender.id] === false}
                 isInteractionLocked={isInteractionLocked}
                 onClick={() =>
-                  setAnswers((current) => updateAnswerValue(current, question.id, false))
+                  setAnswers((current) => updateAnswerValue(current, questionToRender.id, false))
                 }
               />
             </OptionList>
@@ -434,21 +444,18 @@ const QuestionnaireCardInner = ({
 
   return (
     <Card data-testid="questionnaire-card">
-      {questionnaire.title ? <Title>{questionnaire.title}</Title> : null}
       {questionnaire.description ? <Description>{questionnaire.description}</Description> : null}
       <QuestionList>
-        {questionnaire.questions.map((question) => (
-          <QuestionCard key={question.id}>
-            <QuestionLabel>
-              {question.label}
-              {question.required ? <Required>*</Required> : null}
-            </QuestionLabel>
-            {question.kind === 'multi_select' ? (
-              <QuestionHint>{resolvedLabels.multiSelectHint}</QuestionHint>
-            ) : null}
-            {renderQuestion(question)}
-          </QuestionCard>
-        ))}
+        <QuestionCard key={question.id}>
+          <QuestionLabel>
+            {question.label}
+            {question.required ? <Required>*</Required> : null}
+          </QuestionLabel>
+          {question.kind === 'multi_select' ? (
+            <QuestionHint>{resolvedLabels.multiSelectHint}</QuestionHint>
+          ) : null}
+          {renderQuestion(question)}
+        </QuestionCard>
       </QuestionList>
       {visibleErrorMessage ? (
         <ErrorMessage data-testid="questionnaire-error">{visibleErrorMessage}</ErrorMessage>
@@ -480,16 +487,6 @@ export const QuestionnaireCard = (props: QuestionnaireCardProps) => (
 const Card = styled.section`
   display: grid;
   gap: 14px;
-  padding: 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-`
-
-const Title = styled.strong`
-  color: rgba(255, 255, 255, 0.94);
-  font-size: 16px;
-  line-height: 1.4;
 `
 
 const Description = styled.p`
@@ -506,14 +503,11 @@ const QuestionList = styled.div`
 const QuestionCard = styled.div`
   display: grid;
   gap: 10px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
 `
 
 const QuestionLabel = styled.div`
   color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 `
 

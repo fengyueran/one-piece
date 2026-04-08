@@ -150,7 +150,10 @@ export interface PlanQuestionnaire {
   title?: string
   description?: string
   submitLabel?: string
-  questions: PlanQuestion[]
+  /**
+   * Single question rendered by the questionnaire card.
+   */
+  question: PlanQuestion
   answers?: Partial<Record<string, PlanQuestionnaireAnswerValue>>
   status?: PlanQuestionnaireStatus
   statusMessage?: string

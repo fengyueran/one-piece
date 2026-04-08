@@ -18,6 +18,8 @@ interface PreparedQuestionnaireSubmission {
   content: string
 }
 
+export const getQuestionnaireQuestion = (questionnaire: PlanQuestionnaire) => questionnaire.question
+
 const getMultiSelectAnswerValues = (answer: PlanQuestionnaireAnswerValue | undefined) =>
   Array.isArray(answer) ? answer : []
 
@@ -54,57 +56,60 @@ const extractMultiSelectOtherDraft = (
 
 export const createInitialAnswers = (questionnaire: PlanQuestionnaire): QuestionnaireAnswers => {
   const initialAnswers: QuestionnaireAnswers = {}
+  const question = getQuestionnaireQuestion(questionnaire)
 
-  for (const question of questionnaire.questions) {
-    const answer = questionnaire.answers?.[question.id]
+  if (!question) {
+    return initialAnswers
+  }
 
-    switch (question.kind) {
-      case 'single_select': {
-        if (typeof answer !== 'string') {
-          break
-        }
+  const answer = questionnaire.answers?.[question.id]
 
-        if (getQuestionOptionValues(question).has(answer)) {
-          initialAnswers[question.id] = answer
-          break
-        }
-
-        if (question.allowOther) {
-          initialAnswers[question.id] = OTHER_OPTION_VALUE
-        }
+  switch (question.kind) {
+    case 'single_select': {
+      if (typeof answer !== 'string') {
         break
       }
-      case 'multi_select': {
-        if (!Array.isArray(answer)) {
-          break
-        }
 
-        const optionValues = getQuestionOptionValues(question)
-        const selectedValues: string[] = []
-        let hasOtherValue = false
-
-        for (const value of answer) {
-          if (typeof value !== 'string') {
-            continue
-          }
-
-          if (optionValues.has(value)) {
-            selectedValues.push(value)
-            continue
-          }
-
-          if (question.allowOther && !hasOtherValue) {
-            selectedValues.push(OTHER_OPTION_VALUE)
-            hasOtherValue = true
-          }
-        }
-
-        initialAnswers[question.id] = selectedValues
-        break
-      }
-      default:
+      if (getQuestionOptionValues(question).has(answer)) {
         initialAnswers[question.id] = answer
+        break
+      }
+
+      if (question.allowOther) {
+        initialAnswers[question.id] = OTHER_OPTION_VALUE
+      }
+      break
     }
+    case 'multi_select': {
+      if (!Array.isArray(answer)) {
+        break
+      }
+
+      const optionValues = getQuestionOptionValues(question)
+      const selectedValues: string[] = []
+      let hasOtherValue = false
+
+      for (const value of answer) {
+        if (typeof value !== 'string') {
+          continue
+        }
+
+        if (optionValues.has(value)) {
+          selectedValues.push(value)
+          continue
+        }
+
+        if (question.allowOther && !hasOtherValue) {
+          selectedValues.push(OTHER_OPTION_VALUE)
+          hasOtherValue = true
+        }
+      }
+
+      initialAnswers[question.id] = selectedValues
+      break
+    }
+    default:
+      initialAnswers[question.id] = answer
   }
 
   return initialAnswers
@@ -114,24 +119,27 @@ export const createInitialOtherDrafts = (
   questionnaire: PlanQuestionnaire,
 ): QuestionnaireOtherDrafts => {
   const drafts: QuestionnaireOtherDrafts = {}
+  const question = getQuestionnaireQuestion(questionnaire)
 
-  for (const question of questionnaire.questions) {
-    const answer = questionnaire.answers?.[question.id]
+  if (!question) {
+    return drafts
+  }
 
-    switch (question.kind) {
-      case 'single_select':
-        if (question.allowOther) {
-          drafts[question.id] = extractSingleSelectOtherDraft(question, answer)
-        }
-        break
-      case 'multi_select':
-        if (question.allowOther) {
-          drafts[question.id] = extractMultiSelectOtherDraft(question, answer)
-        }
-        break
-      default:
-        break
-    }
+  const answer = questionnaire.answers?.[question.id]
+
+  switch (question.kind) {
+    case 'single_select':
+      if (question.allowOther) {
+        drafts[question.id] = extractSingleSelectOtherDraft(question, answer)
+      }
+      break
+    case 'multi_select':
+      if (question.allowOther) {
+        drafts[question.id] = extractMultiSelectOtherDraft(question, answer)
+      }
+      break
+    default:
+      break
   }
 
   return drafts
@@ -372,53 +380,53 @@ export const getMissingRequiredQuestions = (
   questionnaire: PlanQuestionnaire,
   answers: QuestionnaireAnswers,
   otherDrafts: QuestionnaireOtherDrafts,
-) =>
-  questionnaire.questions.filter(
-    (question) =>
-      question.required &&
-      normalizeQuestionAnswer(question, answers[question.id], otherDrafts[question.id]) ===
-        undefined,
-  )
+) => {
+  const question = getQuestionnaireQuestion(questionnaire)
+
+  if (!question || !question.required) {
+    return []
+  }
+
+  return normalizeQuestionAnswer(question, answers[question.id], otherDrafts[question.id]) ===
+    undefined
+    ? [question]
+    : []
+}
 
 export const prepareQuestionnaireSubmission = (
   questionnaire: PlanQuestionnaire,
   answers: QuestionnaireAnswers,
   otherDrafts: QuestionnaireOtherDrafts,
 ): PreparedQuestionnaireSubmission => {
-  const normalizedAnswers = Object.fromEntries(
-    questionnaire.questions.flatMap((question) => {
-      const value = normalizeQuestionAnswer(
-        question,
-        answers[question.id],
-        otherDrafts[question.id],
-      )
+  const question = getQuestionnaireQuestion(questionnaire)
 
-      return value === undefined
-        ? []
-        : [[question.id, value] satisfies [string, PlanQuestionnaireAnswerValue]]
-    }),
-  )
-  const detailEntries = questionnaire.questions.flatMap((question) => {
-    const value = normalizedAnswers[question.id]
-    const detail = buildQuestionSubmissionDetail(question, value)
+  if (!question) {
+    return {
+      normalizedAnswers: {},
+      submissionDetails: undefined,
+      content: questionnaire.title ?? 'Questionnaire responses',
+    }
+  }
 
-    return detail === undefined
-      ? []
-      : [[question.id, detail] satisfies [string, PlanQuestionSubmissionDetail]]
-  })
+  const value = normalizeQuestionAnswer(question, answers[question.id], otherDrafts[question.id])
+  const normalizedAnswers =
+    value === undefined ? {} : { [question.id]: value satisfies PlanQuestionnaireAnswerValue }
+  const detail = buildQuestionSubmissionDetail(question, normalizedAnswers[question.id])
+  const submissionDetails =
+    detail === undefined
+      ? undefined
+      : { [question.id]: detail satisfies PlanQuestionSubmissionDetail }
 
   return {
     normalizedAnswers,
-    submissionDetails: detailEntries.length > 0 ? Object.fromEntries(detailEntries) : undefined,
+    submissionDetails,
     content: [
       questionnaire.title ?? 'Questionnaire responses',
-      ...questionnaire.questions.flatMap((question) => {
-        const value = normalizedAnswers[question.id]
-
-        return value === undefined
-          ? []
-          : [`- ${question.label}: ${formatQuestionAnswer(question, value)}`]
-      }),
+      ...(normalizedAnswers[question.id] === undefined
+        ? []
+        : [
+            `- ${question.label}: ${formatQuestionAnswer(question, normalizedAnswers[question.id])}`,
+          ]),
     ].join('\n'),
   }
 }
@@ -427,7 +435,7 @@ export const getQuestionnaireStateKey = (questionnaire: PlanQuestionnaire) =>
   JSON.stringify([
     questionnaire.questionnaireId,
     questionnaire.blockKey,
-    questionnaire.questions,
+    questionnaire.question,
     questionnaire.status,
     questionnaire.statusMessage,
   ])
