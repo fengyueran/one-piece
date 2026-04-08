@@ -1,5 +1,14 @@
 # @xinghunm/ai-chat
 
+## 1.1.0
+
+### Minor Changes
+
+- 调整问卷卡片的数据模型与交互表现：
+  - 将 `PlanQuestionnaire` 的公开结构从 `questions` 数组收敛为单个 `question` 字段，简化单题问卷的渲染和状态处理。
+  - 修复问卷卡片中 `Other` 选项的输入框聚焦、对齐和容器样式，避免选项布局在选择后出现错位或裸露内容块。
+  - 调整聊天消息里的 Markdown 字号层级，统一一级、二级、三级标题与正文的默认字号。
+
 ## 1.0.2
 
 ### Patch Changes
