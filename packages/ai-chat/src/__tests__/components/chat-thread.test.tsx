@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ChatThread } from '../../components/chat-thread'
 import { ChatContext, type ChatContextValue } from '../../context/chat-context'
@@ -1078,11 +1078,14 @@ describe('ChatThread', () => {
     expect(ctx.sendRef.current).not.toHaveBeenCalled()
   })
 
-  it('wraps each conversation turn and keeps min-height on the latest turn', async () => {
+  it('wraps each conversation turn, keeps min-height on the latest turn, and auto-scrolls to bottom', async () => {
     const ctx = createContextValue()
     let currentClientHeight = 480
-    let resizeObserverCallback: ResizeObserverCallback | undefined
+    let currentScrollHeight = 1080
+    const resizeObserverCallbacks: ResizeObserverCallback[] = []
+    const mutationObserverCallbacks: MutationCallback[] = []
     const originalResizeObserver = global.ResizeObserver
+    const originalMutationObserver = global.MutationObserver
     const scrollToMock = jest.fn()
     const getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle').mockReturnValue({
       paddingTop: '24px',
@@ -1096,6 +1099,9 @@ describe('ChatThread', () => {
     const clientHeightSpy = jest
       .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
       .mockImplementation(() => currentClientHeight)
+    const scrollHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => currentScrollHeight)
     Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
       configurable: true,
       writable: true,
@@ -1103,12 +1109,22 @@ describe('ChatThread', () => {
     })
     global.ResizeObserver = class ResizeObserver {
       constructor(callback: ResizeObserverCallback) {
-        resizeObserverCallback = callback
+        resizeObserverCallbacks.push(callback)
       }
       observe() {}
       disconnect() {}
       unobserve() {}
     } as typeof ResizeObserver
+    global.MutationObserver = class MutationObserver {
+      constructor(callback: MutationCallback) {
+        mutationObserverCallbacks.push(callback)
+      }
+      observe() {}
+      disconnect() {}
+      takeRecords() {
+        return []
+      }
+    } as typeof MutationObserver
     const requestAnimationFrameSpy = jest
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((callback: FrameRequestCallback) => {
@@ -1168,12 +1184,39 @@ describe('ChatThread', () => {
     expect(screen.getByTestId('chat-thread-latest-turn')).toContainElement(
       screen.getByTestId('chat-latest-user-anchor'),
     )
-    expect(scrollToMock).toHaveBeenCalled()
+    expect(scrollToMock).toHaveBeenLastCalledWith({
+      top: 600,
+      behavior: 'auto',
+    })
+
+    act(() => {
+      currentScrollHeight = 1260
+      ctx.store.getState().updateStreamingMessage('session-1', 'processing update')
+    })
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 780,
+        behavior: 'auto',
+      }),
+    )
+
+    act(() => {
+      currentScrollHeight = 1460
+      resizeObserverCallbacks.forEach((callback) => callback([], {} as ResizeObserver))
+    })
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 980,
+        behavior: 'auto',
+      }),
+    )
 
     act(() => {
       currentClientHeight = 560
       window.dispatchEvent(new Event('resize'))
-      resizeObserverCallback?.([], {} as ResizeObserver)
+      resizeObserverCallbacks.forEach((callback) => callback([], {} as ResizeObserver))
     })
 
     await waitFor(() =>
@@ -1181,8 +1224,13 @@ describe('ChatThread', () => {
         (screen.getByTestId('chat-thread-latest-turn') as HTMLDivElement).style.minHeight,
       ).toBe('512px'),
     )
+    expect(scrollToMock).toHaveBeenLastCalledWith({
+      top: 900,
+      behavior: 'auto',
+    })
 
     act(() => {
+      currentScrollHeight = 1340
       ctx.store.getState().completeStreamingMessage('session-1')
     })
 
@@ -1191,10 +1239,406 @@ describe('ChatThread', () => {
         (screen.getByTestId('chat-thread-latest-turn') as HTMLDivElement).style.minHeight,
       ).toBe('512px'),
     )
+    expect(scrollToMock).toHaveBeenLastCalledWith({
+      top: 780,
+      behavior: 'auto',
+    })
+
+    act(() => {
+      currentScrollHeight = 1500
+      mutationObserverCallbacks.forEach((callback) => callback([], {} as MutationObserver))
+    })
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 940,
+        behavior: 'auto',
+      }),
+    )
 
     global.ResizeObserver = originalResizeObserver
+    global.MutationObserver = originalMutationObserver
     getComputedStyleSpy.mockRestore()
     clientHeightSpy.mockRestore()
+    scrollHeightSpy.mockRestore()
+    requestAnimationFrameSpy.mockRestore()
+    cancelAnimationFrameSpy.mockRestore()
+    delete (HTMLElement.prototype as Partial<typeof HTMLElement.prototype>).scrollTo
+  })
+
+  it('shows a jump-to-latest control when detached and resumes auto-scroll after clicking it', async () => {
+    const ctx = createContextValue()
+    let currentClientHeight = 480
+    let currentScrollHeight = 1080
+    const resizeObserverCallbacks: ResizeObserverCallback[] = []
+    const mutationObserverCallbacks: MutationCallback[] = []
+    const originalResizeObserver = global.ResizeObserver
+    const originalMutationObserver = global.MutationObserver
+    const scrollToMock = jest.fn()
+    const getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      paddingTop: '24px',
+      paddingBottom: '24px',
+      getPropertyValue: (property: string) => {
+        if (property === 'padding-top') return '24px'
+        if (property === 'padding-bottom') return '24px'
+        return ''
+      },
+    } as CSSStyleDeclaration)
+    const clientHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => currentClientHeight)
+    const scrollHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => currentScrollHeight)
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      writable: true,
+      value: scrollToMock,
+    })
+    global.ResizeObserver = class ResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        resizeObserverCallbacks.push(callback)
+      }
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    } as typeof ResizeObserver
+    global.MutationObserver = class MutationObserver {
+      constructor(callback: MutationCallback) {
+        mutationObserverCallbacks.push(callback)
+      }
+      observe() {}
+      disconnect() {}
+      takeRecords() {
+        return []
+      }
+    } as typeof MutationObserver
+    const requestAnimationFrameSpy = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: FrameRequestCallback) => {
+        callback(0)
+        return 1
+      })
+    const cancelAnimationFrameSpy = jest
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {})
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'assistant-0',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '欢迎',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: 'hello',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+    ctx.store.getState().startStreamingMessage('session-1', {
+      id: 'assistant-1',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: 'processing',
+      status: 'streaming',
+      createdAt: '2026-03-25T00:00:03.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    const container = screen.getByTestId('chat-thread') as HTMLDivElement
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 600,
+        behavior: 'auto',
+      }),
+    )
+
+    scrollToMock.mockClear()
+    container.scrollTop = 120
+    fireEvent.scroll(container)
+    container.scrollTop = 40
+    fireEvent.scroll(container)
+
+    act(() => {
+      currentScrollHeight = 1260
+      ctx.store.getState().updateStreamingMessage('session-1', 'processing update')
+      resizeObserverCallbacks.forEach((callback) => callback([], {} as ResizeObserver))
+      mutationObserverCallbacks.forEach((callback) => callback([], {} as MutationObserver))
+    })
+
+    expect(scrollToMock).not.toHaveBeenCalled()
+    expect(screen.getByTestId('chat-thread-scroll-to-latest')).toHaveTextContent('Jump to latest')
+    expect(screen.queryByTestId('chat-thread-scroll-to-latest-count')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('chat-thread-scroll-to-latest'))
+
+    expect(scrollToMock).toHaveBeenLastCalledWith({
+      top: 780,
+      behavior: 'auto',
+    })
+    expect(screen.queryByTestId('chat-thread-scroll-to-latest')).not.toBeInTheDocument()
+
+    scrollToMock.mockClear()
+
+    act(() => {
+      currentScrollHeight = 1420
+      mutationObserverCallbacks.forEach((callback) => callback([], {} as MutationObserver))
+    })
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 940,
+        behavior: 'auto',
+      }),
+    )
+
+    global.ResizeObserver = originalResizeObserver
+    global.MutationObserver = originalMutationObserver
+    getComputedStyleSpy.mockRestore()
+    clientHeightSpy.mockRestore()
+    scrollHeightSpy.mockRestore()
+    requestAnimationFrameSpy.mockRestore()
+    cancelAnimationFrameSpy.mockRestore()
+    delete (HTMLElement.prototype as Partial<typeof HTMLElement.prototype>).scrollTo
+  })
+
+  it('forces scroll to bottom when the local user sends a new message while detached', async () => {
+    const ctx = createContextValue()
+    let currentClientHeight = 480
+    let currentScrollHeight = 1080
+    const originalResizeObserver = global.ResizeObserver
+    const originalMutationObserver = global.MutationObserver
+    const scrollToMock = jest.fn()
+    const getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      paddingTop: '24px',
+      paddingBottom: '24px',
+      getPropertyValue: (property: string) => {
+        if (property === 'padding-top') return '24px'
+        if (property === 'padding-bottom') return '24px'
+        return ''
+      },
+    } as CSSStyleDeclaration)
+    const clientHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => currentClientHeight)
+    const scrollHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => currentScrollHeight)
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      writable: true,
+      value: scrollToMock,
+    })
+    global.ResizeObserver = class ResizeObserver {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    } as typeof ResizeObserver
+    global.MutationObserver = class MutationObserver {
+      observe() {}
+      disconnect() {}
+      takeRecords() {
+        return []
+      }
+    } as typeof MutationObserver
+    const requestAnimationFrameSpy = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: FrameRequestCallback) => {
+        callback(0)
+        return 1
+      })
+    const cancelAnimationFrameSpy = jest
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {})
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'assistant-0',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '欢迎',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'user-1',
+      sessionId: 'session-1',
+      role: 'user',
+      content: 'hello',
+      createdAt: '2026-03-25T00:00:02.000Z',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'assistant-1',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: 'processing',
+      createdAt: '2026-03-25T00:00:03.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    const container = screen.getByTestId('chat-thread') as HTMLDivElement
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 600,
+        behavior: 'auto',
+      }),
+    )
+
+    scrollToMock.mockClear()
+    container.scrollTop = 120
+    fireEvent.scroll(container)
+
+    act(() => {
+      currentScrollHeight = 1320
+      ctx.store.getState().appendMessage('session-1', {
+        id: 'user-2',
+        sessionId: 'session-1',
+        role: 'user',
+        content: 'new local message',
+        createdAt: '2026-03-25T00:00:04.000Z',
+      })
+    })
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 840,
+        behavior: 'auto',
+      }),
+    )
+    expect(screen.queryByTestId('chat-thread-scroll-to-latest')).not.toBeInTheDocument()
+
+    global.ResizeObserver = originalResizeObserver
+    global.MutationObserver = originalMutationObserver
+    getComputedStyleSpy.mockRestore()
+    clientHeightSpy.mockRestore()
+    scrollHeightSpy.mockRestore()
+    requestAnimationFrameSpy.mockRestore()
+    cancelAnimationFrameSpy.mockRestore()
+    delete (HTMLElement.prototype as Partial<typeof HTMLElement.prototype>).scrollTo
+  })
+
+  it('keeps detached readers in place when an assistant-only latest turn updates', async () => {
+    const ctx = createContextValue()
+    let currentClientHeight = 480
+    let currentScrollHeight = 1080
+    const originalResizeObserver = global.ResizeObserver
+    const originalMutationObserver = global.MutationObserver
+    const scrollToMock = jest.fn()
+    const getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      paddingTop: '24px',
+      paddingBottom: '24px',
+      getPropertyValue: (property: string) => {
+        if (property === 'padding-top') return '24px'
+        if (property === 'padding-bottom') return '24px'
+        return ''
+      },
+    } as CSSStyleDeclaration)
+    const clientHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => currentClientHeight)
+    const scrollHeightSpy = jest
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockImplementation(() => currentScrollHeight)
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      writable: true,
+      value: scrollToMock,
+    })
+    global.ResizeObserver = class ResizeObserver {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    } as typeof ResizeObserver
+    global.MutationObserver = class MutationObserver {
+      observe() {}
+      disconnect() {}
+      takeRecords() {
+        return []
+      }
+    } as typeof MutationObserver
+    const requestAnimationFrameSpy = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: FrameRequestCallback) => {
+        callback(0)
+        return 1
+      })
+    const cancelAnimationFrameSpy = jest
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {})
+
+    ctx.store.getState().createSession({
+      sessionId: 'session-1',
+      title: 'Chat',
+      createdAt: '2026-03-25T00:00:00.000Z',
+      updatedAt: '2026-03-25T00:00:00.000Z',
+      model: 'gpt-4.1',
+    })
+    ctx.store.getState().appendMessage('session-1', {
+      id: 'assistant-0',
+      sessionId: 'session-1',
+      role: 'assistant',
+      content: '欢迎',
+      createdAt: '2026-03-25T00:00:01.000Z',
+    })
+
+    render(
+      <ChatContext.Provider value={ctx.value}>
+        <ChatThread />
+      </ChatContext.Provider>,
+    )
+
+    const container = screen.getByTestId('chat-thread') as HTMLDivElement
+
+    await waitFor(() =>
+      expect(scrollToMock).toHaveBeenLastCalledWith({
+        top: 600,
+        behavior: 'auto',
+      }),
+    )
+
+    scrollToMock.mockClear()
+    container.scrollTop = 120
+    fireEvent.scroll(container)
+
+    act(() => {
+      currentScrollHeight = 1260
+      ctx.store.getState().setSessionError('session-1', 'boom')
+    })
+
+    expect(scrollToMock).not.toHaveBeenCalled()
+    expect(screen.getByTestId('chat-thread-scroll-to-latest')).toBeInTheDocument()
+
+    global.ResizeObserver = originalResizeObserver
+    global.MutationObserver = originalMutationObserver
+    getComputedStyleSpy.mockRestore()
+    clientHeightSpy.mockRestore()
+    scrollHeightSpy.mockRestore()
     requestAnimationFrameSpy.mockRestore()
     cancelAnimationFrameSpy.mockRestore()
     delete (HTMLElement.prototype as Partial<typeof HTMLElement.prototype>).scrollTo
