@@ -18,7 +18,6 @@ import { ChatThreadEmptyState } from './components/chat-thread-empty-state'
 // ---------------------------------------------------------------------------
 
 interface ChatThreadViewProps {
-  activeSessionId?: string | null
   activeSessionMode?: ChatAgentMode
   historyMessages: ChatMessage[]
   streamingMessage?: ChatMessage
@@ -140,7 +139,6 @@ const groupConversationTurns = (
 }
 
 const ChatThreadView = ({
-  activeSessionId,
   activeSessionMode = DEFAULT_CHAT_AGENT_MODE,
   historyMessages,
   streamingMessage,
@@ -164,8 +162,8 @@ const ChatThreadView = ({
   const latestTurnRef = useRef<HTMLDivElement | null>(null)
   const reservedSpaceFrameRef = useRef<number | null>(null)
   const isPinnedRef = useRef(true)
-  const lastHistoryMessageIdRef = useRef<string | undefined>(undefined)
-  const lastStreamingMessageIdRef = useRef<string | undefined>(undefined)
+  const lastHistoryMessageIdRef = useRef<string | undefined>(latestHistoryMessage?.id)
+  const lastStreamingMessageIdRef = useRef<string | undefined>(streamingMessage?.id)
   const [latestTurnMinHeight, setLatestTurnMinHeight] = useState(0)
   const [isDetached, setIsDetached] = useState(false)
   const [pendingNewMessageCount, setPendingNewMessageCount] = useState(0)
@@ -184,14 +182,11 @@ const ChatThreadView = ({
 
   const scrollToBottom = useCallback((force = false) => {
     const container = containerRef.current
-    if (!container) return
-    if (!force && !isPinnedRef.current) return
+    if (!container) return false
+    if (!force && !isPinnedRef.current) return false
 
     const nextScrollTop = Math.max(0, container.scrollHeight - container.clientHeight)
     container.scrollTop = nextScrollTop
-    isPinnedRef.current = true
-    setIsDetached(false)
-    setPendingNewMessageCount(0)
 
     if (typeof container.scrollTo === 'function') {
       container.scrollTo({
@@ -199,7 +194,25 @@ const ChatThreadView = ({
         behavior: 'auto',
       })
     }
+
+    return true
   }, [])
+
+  const markThreadPinned = useCallback(() => {
+    isPinnedRef.current = true
+    setIsDetached(false)
+    setPendingNewMessageCount(0)
+  }, [])
+
+  const scrollToBottomAndPin = useCallback(
+    (force = false) => {
+      const didScroll = scrollToBottom(force)
+      if (!didScroll) return
+
+      markThreadPinned()
+    },
+    [markThreadPinned, scrollToBottom],
+  )
 
   const handleContainerScroll = useCallback(() => {
     const container = containerRef.current
@@ -215,14 +228,6 @@ const ChatThreadView = ({
   }, [])
 
   useLayoutEffect(() => {
-    isPinnedRef.current = true
-    lastHistoryMessageIdRef.current = historyMessages[historyMessages.length - 1]?.id
-    lastStreamingMessageIdRef.current = streamingMessage?.id
-    setIsDetached(false)
-    setPendingNewMessageCount(0)
-  }, [activeSessionId])
-
-  useLayoutEffect(() => {
     const nextHistoryMessageId = latestHistoryMessage?.id
     if (lastHistoryMessageIdRef.current === nextHistoryMessageId) {
       return
@@ -235,7 +240,13 @@ const ChatThreadView = ({
     }
 
     if (latestHistoryMessage.role === 'user') {
-      scrollToBottom(true)
+      window.requestAnimationFrame(() => {
+        if (!scrollToBottom(true)) {
+          return
+        }
+
+        markThreadPinned()
+      })
       return
     }
 
@@ -244,9 +255,11 @@ const ChatThreadView = ({
       latestHistoryMessage.role === 'assistant' &&
       latestHistoryMessage.id !== lastStreamingMessageIdRef.current
     ) {
-      setPendingNewMessageCount((current) => current + 1)
+      window.requestAnimationFrame(() => {
+        setPendingNewMessageCount((current) => current + 1)
+      })
     }
-  }, [latestHistoryMessage, scrollToBottom])
+  }, [latestHistoryMessage, markThreadPinned, scrollToBottom])
 
   useLayoutEffect(() => {
     const nextStreamingMessageId = streamingMessage?.id
@@ -261,7 +274,9 @@ const ChatThreadView = ({
     }
 
     if (!isPinnedRef.current) {
-      setPendingNewMessageCount((current) => current + 1)
+      window.requestAnimationFrame(() => {
+        setPendingNewMessageCount((current) => current + 1)
+      })
     }
   }, [streamingMessage])
 
@@ -441,7 +456,7 @@ const ChatThreadView = ({
           <ScrollToLatestButton
             type="button"
             data-testid="chat-thread-scroll-to-latest"
-            onClick={() => scrollToBottom(true)}
+            onClick={() => scrollToBottomAndPin(true)}
           >
             {scrollToLatestLabel}
             {pendingNewMessageCount > 0 ? (
@@ -552,7 +567,7 @@ export const ChatThread = () => {
 
   return (
     <ChatThreadView
-      activeSessionId={activeSessionId}
+      key={activeSessionId ?? 'chat-thread-empty'}
       activeSessionMode={activeSessionMode}
       historyMessages={messages}
       streamingMessage={streamingMessage}

@@ -1268,7 +1268,7 @@ describe('ChatThread', () => {
 
   it('shows a jump-to-latest control when detached and resumes auto-scroll after clicking it', async () => {
     const ctx = createContextValue()
-    let currentClientHeight = 480
+    const currentClientHeight = 480
     let currentScrollHeight = 1080
     const resizeObserverCallbacks: ResizeObserverCallback[] = []
     const mutationObserverCallbacks: MutationCallback[] = []
@@ -1419,7 +1419,7 @@ describe('ChatThread', () => {
 
   it('forces scroll to bottom when the local user sends a new message while detached', async () => {
     const ctx = createContextValue()
-    let currentClientHeight = 480
+    const currentClientHeight = 480
     let currentScrollHeight = 1080
     const originalResizeObserver = global.ResizeObserver
     const originalMutationObserver = global.MutationObserver
@@ -1545,7 +1545,7 @@ describe('ChatThread', () => {
 
   it('keeps detached readers in place when an assistant-only latest turn updates', async () => {
     const ctx = createContextValue()
-    let currentClientHeight = 480
+    const currentClientHeight = 480
     let currentScrollHeight = 1080
     const originalResizeObserver = global.ResizeObserver
     const originalMutationObserver = global.MutationObserver
