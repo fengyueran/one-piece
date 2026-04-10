@@ -484,6 +484,7 @@ export interface AiChatLabels {
   sendButton?: string
   stopButton?: string
   retryButton?: string
+  scrollToLatest?: string
   placeholder?: string
   modeLabelAsk?: string
   modeLabelPlan?: string
@@ -518,6 +519,7 @@ export const DEFAULT_AI_CHAT_LABELS: Required<AiChatLabels> = {
   sendButton: 'Send',
   stopButton: 'Stop',
   retryButton: 'Retry',
+  scrollToLatest: 'Jump to latest',
   placeholder: 'Ask something...',
   modeLabelAsk: 'Ask',
   modeLabelPlan: 'Plan',
