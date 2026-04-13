@@ -67,38 +67,39 @@
 
 ## Traceability
 
-| Requirement | Phase  | Status  |
-| ----------- | ------ | ------- |
-| PUBL-01     | 待映射 | Pending |
-| PUBL-02     | 待映射 | Pending |
-| PUBL-03     | 待映射 | Pending |
-| PUBL-04     | 待映射 | Pending |
-| PUBL-05     | 待映射 | Pending |
-| DOCS-01     | 待映射 | Pending |
-| DOCS-02     | 待映射 | Pending |
-| DOCS-03     | 待映射 | Pending |
-| DOCS-04     | 待映射 | Pending |
-| DOCS-05     | 待映射 | Pending |
-| COMP-01     | 待映射 | Pending |
-| COMP-02     | 待映射 | Pending |
-| COMP-03     | 待映射 | Pending |
-| COMP-04     | 待映射 | Pending |
-| COMP-05     | 待映射 | Pending |
-| COMP-06     | 待映射 | Pending |
-| COMP-07     | 待映射 | Pending |
-| INTR-01     | 待映射 | Pending |
-| INTR-02     | 待映射 | Pending |
-| INTR-03     | 待映射 | Pending |
-| INTR-04     | 待映射 | Pending |
-| INTR-05     | 待映射 | Pending |
+| Requirement | Phase   | Status  |
+| ----------- | ------- | ------- |
+| PUBL-01     | Phase 1 | Pending |
+| PUBL-02     | Phase 1 | Pending |
+| PUBL-03     | Phase 1 | Pending |
+| PUBL-04     | Phase 1 | Pending |
+| PUBL-05     | Phase 1 | Pending |
+| DOCS-01     | Phase 2 | Pending |
+| DOCS-02     | Phase 2 | Pending |
+| DOCS-03     | Phase 2 | Pending |
+| DOCS-04     | Phase 2 | Pending |
+| DOCS-05     | Phase 2 | Pending |
+| COMP-01     | Phase 3 | Pending |
+| COMP-02     | Phase 3 | Pending |
+| COMP-03     | Phase 3 | Pending |
+| COMP-04     | Phase 3 | Pending |
+| COMP-05     | Phase 3 | Pending |
+| COMP-06     | Phase 3 | Pending |
+| COMP-07     | Phase 3 | Pending |
+| INTR-01     | Phase 4 | Pending |
+| INTR-02     | Phase 4 | Pending |
+| INTR-03     | Phase 4 | Pending |
+| INTR-04     | Phase 4 | Pending |
+| INTR-05     | Phase 4 | Pending |
 
 **Coverage:**
 
 - v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 ⚠️
+- Mapped to phases: 22
+- Unmapped: 0 ✓
+- Coverage status: 所有 v1 requirement 已完成 phase 映射，且每项仅映射一次
 
 ---
 
 _Requirements defined: 2026-04-13_
-_Last updated: 2026-04-13 after initial definition_
+_Last updated: 2026-04-13 after roadmap initialization_
