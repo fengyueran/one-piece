@@ -23,13 +23,13 @@
 
 ### 基础组件
 
-- [ ] **COMP-01**: 用户可以使用 `checkbox` 组件完成单项布尔选择，并获得一致的禁用、错误和尺寸表现
-- [ ] **COMP-02**: 用户可以使用 `radio` 组件完成互斥单选，并获得一致的组选中状态和表单集成体验
-- [ ] **COMP-03**: 用户可以使用 `switch` 组件完成即时状态切换，并获得一致的受控/非受控行为
-- [ ] **COMP-04**: 用户可以使用标准化的 `input` 组件完成常见文本输入，而不是依赖语义不清的临时输入封装
-- [ ] **COMP-05**: 用户可以使用标准化的 `textarea` 组件完成多行文本输入，并获得一致的状态与尺寸 API
-- [ ] **COMP-06**: 用户可以使用 `alert` 组件在页面内展示持续性状态反馈
-- [ ] **COMP-07**: 用户可以使用 `empty`、`skeleton` 和 `spin-loading` 处理空态、骨架态和加载态，形成基础页面状态闭环
+- [x] **COMP-01**: 用户可以使用 `checkbox` 组件完成单项布尔选择，并获得一致的禁用、错误和尺寸表现
+- [x] **COMP-02**: 用户可以使用 `radio` 组件完成互斥单选，并获得一致的组选中状态和表单集成体验
+- [x] **COMP-03**: 用户可以使用 `switch` 组件完成即时状态切换，并获得一致的受控/非受控行为
+- [x] **COMP-04**: 用户可以使用标准化的 `input` 组件完成常见文本输入，而不是依赖语义不清的临时输入封装
+- [x] **COMP-05**: 用户可以使用标准化的 `textarea` 组件完成多行文本输入，并获得一致的状态与尺寸 API
+- [x] **COMP-06**: 用户可以使用 `alert` 组件在页面内展示持续性状态反馈
+- [x] **COMP-07**: 用户可以使用 `empty`、`skeleton` 和 `spin-loading` 处理空态、骨架态和加载态，形成基础页面状态闭环
 
 ### 复杂交互
 
@@ -79,13 +79,13 @@
 | DOCS-03     | Phase 2 | Complete |
 | DOCS-04     | Phase 2 | Complete |
 | DOCS-05     | Phase 2 | Complete |
-| COMP-01     | Phase 3 | Pending  |
-| COMP-02     | Phase 3 | Pending  |
-| COMP-03     | Phase 3 | Pending  |
-| COMP-04     | Phase 3 | Pending  |
-| COMP-05     | Phase 3 | Pending  |
-| COMP-06     | Phase 3 | Pending  |
-| COMP-07     | Phase 3 | Pending  |
+| COMP-01     | Phase 3 | Complete |
+| COMP-02     | Phase 3 | Complete |
+| COMP-03     | Phase 3 | Complete |
+| COMP-04     | Phase 3 | Complete |
+| COMP-05     | Phase 3 | Complete |
+| COMP-06     | Phase 3 | Complete |
+| COMP-07     | Phase 3 | Complete |
 | INTR-01     | Phase 4 | Pending  |
 | INTR-02     | Phase 4 | Pending  |
 | INTR-03     | Phase 4 | Pending  |
@@ -102,4 +102,4 @@
 ---
 
 _Requirements defined: 2026-04-13_
-_Last updated: 2026-04-14 after phase 2 execution_
+_Last updated: 2026-04-14 after phase 3 execution_
