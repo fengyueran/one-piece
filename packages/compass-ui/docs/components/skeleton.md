@@ -51,6 +51,33 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { ConfigProvider, Skeleton } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          skeleton: {
+            borderRadius: '10px',
+            shimmerBaseColor: 'rgba(15, 23, 42, 0.08)',
+            shimmerHighlightColor: 'rgba(15, 118, 110, 0.18)',
+          },
+        },
+      },
+    }}
+  >
+    <Skeleton avatar rows={4} />
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 与 `SpinLoading` 的区别
 
 - `Skeleton` 适合“结构已知、内容未到”的占位加载

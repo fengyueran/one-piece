@@ -65,6 +65,40 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { Button, ConfigProvider, Popconfirm } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          popconfirm: {
+            minWidth: '280px',
+            titleColor: '#0f172a',
+            descriptionColor: '#475569',
+            actionsGap: '12px',
+          },
+        },
+      },
+    }}
+  >
+    <Popconfirm
+      title="确认发布当前版本？"
+      description="确认区的最小宽度、文案颜色和操作间距都可以单独调整。"
+      onConfirm={() => Promise.resolve()}
+    >
+      <Button variant="primary">Publish</Button>
+    </Popconfirm>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 交互边界与可访问性
 
 - `Popconfirm` 建立在 `Popover` 的打开/关闭契约之上，触发器同样通过 `aria-expanded`、`aria-controls` 关联浮层。

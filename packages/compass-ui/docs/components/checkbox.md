@@ -87,6 +87,33 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { Checkbox, ConfigProvider } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          checkbox: {
+            checkedBg: '#0f766e',
+            checkedBorderColor: '#0f766e',
+            focusRingColor: '#0f766e',
+          },
+        },
+      },
+    }}
+  >
+    <Checkbox defaultChecked>品牌绿色主题</Checkbox>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 键盘与可访问性
 
 - 原生 `input[type="checkbox"]` 语义保留，可直接被屏幕阅读器识别

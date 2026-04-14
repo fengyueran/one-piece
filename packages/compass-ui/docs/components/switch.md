@@ -70,6 +70,35 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { ConfigProvider, Switch } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          switch: {
+            checkedBg: '#0f766e',
+            thumbBg: '#f8fafc',
+            focusRingColor: '#0f766e',
+          },
+        },
+      },
+    }}
+  >
+    <Switch defaultChecked aria-label="自动发布">
+      自动发布
+    </Switch>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 键盘与可访问性
 
 - 根交互元素使用 `role="switch"`，读屏器会按开关语义朗读

@@ -69,6 +69,40 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { Alert, ConfigProvider } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          alert: {
+            borderRadius: '12px',
+            warning: {
+              backgroundColor: '#fff7ed',
+              borderColor: '#fdba74',
+              accentColor: '#ea580c',
+            },
+          },
+        },
+      },
+    }}
+  >
+    <Alert
+      type="warning"
+      title="主题已覆盖"
+      description="你可以针对不同反馈类型单独配置背景、边框和强调色。"
+    />
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 键盘与可访问性
 
 - `Alert` 使用语义化角色输出反馈内容

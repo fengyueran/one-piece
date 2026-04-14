@@ -55,6 +55,34 @@ import { Empty } from '@xinghunm/compass-ui'
 export default () => <Empty size="small" description="当前筛选条件下没有数据。" />
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { ConfigProvider, Empty } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          empty: {
+            titleColor: '#0f172a',
+            descriptionColor: '#475569',
+            imageBackground:
+              'linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(14, 165, 233, 0.12)), #f8fafc',
+          },
+        },
+      },
+    }}
+  >
+    <Empty title="还没有内容" description="空状态插图和文案颜色都可以单独调整。" />
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 与其他反馈组件的区别
 
 - `Empty` 表达“没有内容”，不是“请求失败”

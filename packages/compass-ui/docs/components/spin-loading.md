@@ -57,6 +57,35 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { ConfigProvider, SpinLoading } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          spinLoading: {
+            indicatorColor: '#0f766e',
+            tipColor: '#334155',
+            overlayBackground: 'rgba(255, 255, 255, 0.82)',
+          },
+        },
+      },
+    }}
+  >
+    <SpinLoading tip="同步中">
+      <div style={{ minHeight: 140, padding: 16, border: '1px solid #e2e8f0' }}>容器内容</div>
+    </SpinLoading>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 与 `Message.loading` 的区别
 
 - `SpinLoading` 是页面内或容器内构件

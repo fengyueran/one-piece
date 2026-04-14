@@ -67,6 +67,36 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { Button, ConfigProvider, Popover } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          popover: {
+            minWidth: '280px',
+            titleColor: '#0f172a',
+            bodyColor: '#334155',
+            boxShadow: '0 16px 40px rgba(15, 23, 42, 0.16)',
+          },
+        },
+      },
+    }}
+  >
+    <Popover title="主题化浮层" content="浮层宽度、标题颜色和阴影都可以覆盖。">
+      <Button>Open Popover</Button>
+    </Popover>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 交互边界与可访问性
 
 - `Popover` 默认使用 `click` 触发，并通过 `aria-expanded`、`aria-controls` 把触发器和浮层关联起来。

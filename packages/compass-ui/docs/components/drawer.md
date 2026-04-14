@@ -91,6 +91,40 @@ export default () => {
 }
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { Button, ConfigProvider, Drawer } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          drawer: {
+            titleColor: '#0f172a',
+            maskColor: 'rgba(15, 23, 42, 0.42)',
+            bodyPadding: '32px',
+          },
+        },
+      },
+    }}
+  >
+    <Drawer
+      isOpen
+      title="主题化抽屉"
+      onCancel={() => undefined}
+      footer={<Button variant="primary">保存</Button>}
+    >
+      <p>抽屉遮罩、标题和内容区间距都可以通过组件 token 覆盖。</p>
+    </Drawer>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 交互边界与可访问性
 
 - `Drawer` 与 `Modal` 同属页面级 overlay，都通过 portal 渲染到 `document.body`，并使用 `mask`、关闭按钮和 `Escape` 形成统一关闭契约。

@@ -95,6 +95,36 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+```tsx
+import React from 'react'
+import { ConfigProvider, Radio } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          radio: {
+            checkedBorderColor: '#7c3aed',
+            dotColor: '#7c3aed',
+            focusRingColor: '#7c3aed',
+          },
+        },
+      },
+    }}
+  >
+    <Radio.Group defaultValue="pro">
+      <Radio value="basic">基础版</Radio>
+      <Radio value="pro">专业版</Radio>
+    </Radio.Group>
+  </ConfigProvider>
+)
+```
+
+更多可配置字段见 [主题 Token](/guide/theme-tokens)。
+
 ## 键盘与可访问性
 
 - `Radio.Group` 会输出 `radiogroup` 语义
