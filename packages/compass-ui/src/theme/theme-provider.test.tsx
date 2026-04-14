@@ -45,6 +45,10 @@ describe('ThemeProvider', () => {
       expect(CompassUI.ThemeProvider).toBe(ThemeProvider)
       expect(typeof CompassUI.useTheme).toBe('function')
     })
+
+    it('should expose defaultTheme from the root entry', () => {
+      expect(CompassUI.defaultTheme).toBe(defaultTheme)
+    })
   })
 
   describe('Custom Theme', () => {

@@ -1,8 +1,7 @@
-import { Button, ConfigProvider } from '@xinghunm/compass-ui'
+import { Button, ConfigProvider, defaultTheme } from '@xinghunm/compass-ui'
 import type { ConfigProviderProps } from '@xinghunm/compass-ui'
 import { SearchIcon } from '@xinghunm/compass-ui/icons'
 import { zhCN } from '@xinghunm/compass-ui/locale'
-import { defaultTheme } from '@xinghunm/compass-ui/theme'
 
 const configProviderProps: ConfigProviderProps = {
   locale: zhCN,

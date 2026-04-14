@@ -44,8 +44,7 @@ Compass UI 目前公开的子路径主要用于主题、语言包和图标等共
 
 ```tsx
 import React from 'react'
-import { Button, ConfigProvider } from '@xinghunm/compass-ui'
-import { defaultTheme } from '@xinghunm/compass-ui/theme'
+import { Button, ConfigProvider, defaultTheme } from '@xinghunm/compass-ui'
 import { zhCN } from '@xinghunm/compass-ui/locale'
 
 export default () => (
