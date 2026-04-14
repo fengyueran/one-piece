@@ -11,6 +11,7 @@
 - [测试指南](#测试指南)
 - [样式开发](#样式开发)
 - [文档编写](#文档编写)
+- [复杂交互基础层策略](#复杂交互基础层策略)
 - [构建与发布](#构建与发布)
 - [开发规范](#开发规范)
 
@@ -213,6 +214,61 @@ pnpm test -- -u
 - [ ] `## API` 下第一行是通用属性引用
 - [ ] 示例代码与当前公开 API 一致
 - [ ] 没有提到 Storybook 或内部实现
+
+## 复杂交互基础层策略
+
+`compass-ui` 当前把复杂交互分成两层，不混用职责：
+
+### 1. 锚点型 overlay：继续基于 `Floating UI`
+
+适用组件：
+
+- `Tooltip`
+- `Dropdown`
+- `Popover`
+- `Popconfirm`
+- `Select`
+- `TreeSelect`
+- `DatePicker`
+
+原因：
+
+- 这类组件都需要跟随触发器定位、翻转、避让视口和处理 outside press。
+- `Floating UI` 已经很好地覆盖定位、中间件和大部分边界处理，我们只在组件层补充业务语义和无障碍契约。
+
+当前共享约束：
+
+- 打开态优先用 `aria-expanded`、`aria-controls` 或 `aria-describedby` 表达。
+- 外部点击与 `Escape` 的关闭能力应保持一致，但是否“点击内部后立即关闭”由组件职责决定。
+- `Tooltip` 只负责轻提示；需要交互内容时进入 `Popover` / `Popconfirm`。
+
+### 2. 页面级 overlay：继续自研 portal + mask 基础层
+
+适用组件：
+
+- `Modal`
+- `Drawer`
+
+原因：
+
+- 这类组件不是锚点定位，而是页面级阻断层。
+- 它们更关心 portal、mask、关闭按钮、`Escape`、焦点回收和布局结构，而不是锚点定位算法。
+
+当前共享约束：
+
+- 统一 portal 到 `document.body`
+- 支持 `maskVisible`
+- 支持关闭按钮与 `Escape`
+- 打开时把焦点移入内容容器，关闭后还给触发元素
+
+### 3. 当前明确不做的事情
+
+- 不在本阶段引入统一的 focus trap 管理器
+- 不在本阶段处理 body scroll lock 与多层 overlay 栈管理
+- 不提供命令式 `useDrawer`
+- 不把 `Popover` 或 `Popconfirm` 扩成 mini-`Modal`
+
+如果新增 overlay 组件，先判断它是“锚点型”还是“页面级”，再决定复用 `Floating UI` 还是复用 `Modal` / `Drawer` 这一套基础层。
 
 ## 样式开发
 

@@ -18,6 +18,7 @@ import {
   Button,
   Checkbox,
   ConfigProvider,
+  Drawer,
   Empty,
   Input,
   Popconfirm,
@@ -34,7 +35,7 @@ import {
 
 根入口当前主要包含：
 
-- 已公开组件：如 `Button`、`Input`、`Textarea`、`Select`、`DatePicker`、`Table`、`Modal`
+- 已公开组件：如 `Button`、`Input`、`Textarea`、`Select`、`DatePicker`、`Table`、`Modal`、`Drawer`
 - 新增锚点交互浮层：`Popover`、`Popconfirm`
 - 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
 - 新增页面状态组件：`Alert`、`Empty`、`Skeleton`、`SpinLoading`
@@ -104,6 +105,7 @@ import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 import type {
   ButtonProps,
   CheckboxProps,
+  DrawerProps,
   EmptyProps,
   InputProps,
   PopconfirmProps,
@@ -136,6 +138,7 @@ import type {
 - 浮层内部点击默认不会被当成外部关闭处理；是否在交互后立即关闭，仍由各组件自己的场景规则决定，例如 `Dropdown.closeOnSelect`。
 - `Tooltip` 保持轻量提示角色，不承诺 `aria-expanded` 契约；当前只在打开时通过 `aria-describedby` 把触发器和提示层关联起来。
 - `Popover` 与 `Popconfirm` 现在也加入这套契约：它们使用 `aria-expanded`、`aria-controls` 和外部点击 / `Escape` 关闭模型，但职责是承载交互内容与轻量确认，而不是纯提示。
+- `Drawer` 与 `Modal` 属于页面级 overlay，不依赖 `Floating UI`。它们共享 portal、mask、关闭按钮、`Escape` 和关闭后焦点回收的契约，但 `Drawer` 用于侧边编辑/详情，`Modal` 用于居中阻断确认。
 
 ## 页面状态组件边界
 

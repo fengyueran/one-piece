@@ -54,6 +54,7 @@ group:
 ## 反馈与全局配置
 
 - [Alert 警告提示](/components/alert)
+- [Drawer 抽屉](/components/drawer)
 - [Empty 空状态](/components/empty)
 - [Modal 对话框](/components/modal)
 - [Message 全局提示](/components/message)
