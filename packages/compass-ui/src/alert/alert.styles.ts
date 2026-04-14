@@ -3,24 +3,30 @@ import { token } from '../theme/token-utils'
 
 const alertTypeMap = {
   info: {
-    background: token('colors.infoBg', '#e6f4ff'),
-    border: token('colors.infoBorder', '#91caff'),
-    accent: token('colors.info', '#1677ff'),
+    background: token('components.alert.info.backgroundColor', token('colors.infoBg', '#e6f4ff')),
+    border: token('components.alert.info.borderColor', token('colors.infoBorder', '#91caff')),
+    accent: token('components.alert.info.accentColor', token('colors.info', '#1677ff')),
   },
   success: {
-    background: token('colors.successBg', '#f6ffed'),
-    border: token('colors.successBorder', '#b7eb8f'),
-    accent: token('colors.success', '#52c41a'),
+    background: token(
+      'components.alert.success.backgroundColor',
+      token('colors.successBg', '#f6ffed'),
+    ),
+    border: token('components.alert.success.borderColor', token('colors.successBorder', '#b7eb8f')),
+    accent: token('components.alert.success.accentColor', token('colors.success', '#52c41a')),
   },
   warning: {
-    background: token('colors.warningBg', '#fffbe6'),
-    border: token('colors.warningBorder', '#ffe58f'),
-    accent: token('colors.warning', '#faad14'),
+    background: token(
+      'components.alert.warning.backgroundColor',
+      token('colors.warningBg', '#fffbe6'),
+    ),
+    border: token('components.alert.warning.borderColor', token('colors.warningBorder', '#ffe58f')),
+    accent: token('components.alert.warning.accentColor', token('colors.warning', '#faad14')),
   },
   error: {
-    background: token('colors.errorBg', '#fff2f0'),
-    border: token('colors.errorBorder', '#ffccc7'),
-    accent: token('colors.error', '#ff4d4f'),
+    background: token('components.alert.error.backgroundColor', token('colors.errorBg', '#fff2f0')),
+    border: token('components.alert.error.borderColor', token('colors.errorBorder', '#ffccc7')),
+    accent: token('components.alert.error.accentColor', token('colors.error', '#ff4d4f')),
   },
 }
 
@@ -32,8 +38,8 @@ export const AlertRoot = styled.div<{
   align-items: flex-start;
   width: 100%;
   box-sizing: border-box;
-  padding: ${token('spacing.md', '12px')} ${token('spacing.lg', '16px')};
-  border-radius: ${token('borderRadius.md', '8px')};
+  padding: ${token('components.alert.padding', '12px 16px')};
+  border-radius: ${token('components.alert.borderRadius', token('borderRadius.md', '8px'))};
   border: 1px solid ${({ $type }) => alertTypeMap[$type].border};
   background: ${({ $type }) => alertTypeMap[$type].background};
   color: ${token('colors.text', '#1f1f1f')};
@@ -48,8 +54,8 @@ export const AlertIcon = styled.span<{
   color: ${({ $type }) => alertTypeMap[$type].accent};
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: ${token('components.alert.iconSize', '18px')};
+    height: ${token('components.alert.iconSize', '18px')};
   }
 `
 
@@ -65,12 +71,13 @@ export const AlertTitle = styled.div`
   font-size: ${token('fontSize.md', '16px')};
   font-weight: 600;
   line-height: ${token('lineHeight.normal', '1.5')};
+  color: ${token('components.alert.titleColor', token('colors.text', '#1f1f1f'))};
 `
 
 export const AlertDescription = styled.div`
   font-size: ${token('fontSize.sm', '14px')};
   line-height: ${token('lineHeight.normal', '1.5')};
-  color: ${token('colors.textSecondary', '#595959')};
+  color: ${token('components.alert.descriptionColor', token('colors.textSecondary', '#595959'))};
 `
 
 export const AlertAction = styled.div`
@@ -84,7 +91,7 @@ export const AlertAction = styled.div`
 export const AlertCloseButton = styled.button`
   border: none;
   background: transparent;
-  color: ${token('colors.textSecondary', '#8c8c8c')};
+  color: ${token('components.alert.closeColor', token('colors.textSecondary', '#8c8c8c'))};
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -95,12 +102,17 @@ export const AlertCloseButton = styled.button`
   border-radius: ${token('borderRadius.sm', '4px')};
 
   &:hover {
-    color: ${token('colors.text', '#1f1f1f')};
-    background: color-mix(in srgb, ${token('colors.text', '#1f1f1f')} 10%, transparent);
+    color: ${token('components.alert.closeHoverColor', token('colors.text', '#1f1f1f'))};
+    background: color-mix(
+      in srgb,
+      ${token('components.alert.closeHoverColor', token('colors.text', '#1f1f1f'))} 10%,
+      transparent
+    );
   }
 
   &:focus-visible {
-    outline: 2px solid ${token('colors.primary', '#1677ff')};
+    outline: 2px solid
+      ${token('components.alert.focusRingColor', token('colors.primary', '#1677ff'))};
     outline-offset: 2px;
   }
 `

@@ -88,3 +88,25 @@ export default () => (
 - 按 `Tab` 可聚焦输入框
 - 开启 `allowClear` 时，清除按钮不进入 Tab 序列，点击后会把焦点还给文本域
 - `status` 仅表达视觉校验状态，不会覆盖浏览器原生文本域语义
+
+## API
+
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性           | 说明                | 类型                                                  | 默认值     |
+| -------------- | ------------------- | ----------------------------------------------------- | ---------- |
+| `value`        | 受控输入值          | `string`                                              | -          |
+| `defaultValue` | 非受控初始值        | `string`                                              | -          |
+| `rows`         | 默认显示行数        | `number`                                              | `4`        |
+| `placeholder`  | 占位文案            | `string`                                              | -          |
+| `disabled`     | 是否禁用            | `boolean`                                             | `false`    |
+| `fullWidth`    | 是否撑满父容器宽度  | `boolean`                                             | `false`    |
+| `size`         | 组件尺寸            | `'small' \| 'medium' \| 'large'`                      | `'medium'` |
+| `status`       | 校验状态            | `'error' \| 'warning'`                                | -          |
+| `prefix`       | 前缀内容            | `ReactNode`                                           | -          |
+| `suffix`       | 后缀内容            | `ReactNode`                                           | -          |
+| `allowClear`   | 是否显示清除按钮    | `boolean`                                             | `false`    |
+| `onChange`     | 输入值变化回调      | `(event: ChangeEvent<HTMLTextAreaElement>) => void`   | -          |
+| `onPressEnter` | 按下 Enter 时的回调 | `(event: KeyboardEvent<HTMLTextAreaElement>) => void` | -          |
+| `classNames`   | 语义化类名覆写      | `TextareaProps['classNames']`                         | -          |
+| `styles`       | 语义化样式覆写      | `TextareaProps['styles']`                             | -          |

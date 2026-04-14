@@ -1,5 +1,8 @@
 import React from 'react'
 
+/**
+ * Shortcut option config used by {@link RadioGroupProps.options}.
+ */
 export interface RadioOption {
   /**
    * Label rendered for the option.
@@ -15,6 +18,9 @@ export interface RadioOption {
   disabled?: boolean
 }
 
+/**
+ * Props for a single radio option component.
+ */
 export interface RadioProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'onChange'> {
   /**
@@ -68,6 +74,9 @@ export interface RadioProps
   }
 }
 
+/**
+ * Props for the grouped radio selection component.
+ */
 export interface RadioGroupProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> {
   /**
@@ -112,10 +121,7 @@ export interface RadioGroupProps
   /**
    * Callback fired with next value.
    */
-  onChange?: (
-    value: string | number,
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void
+  onChange?: (value: string | number, event: React.ChangeEvent<HTMLInputElement>) => void
   /**
    * Semantic class names for internal elements.
    */

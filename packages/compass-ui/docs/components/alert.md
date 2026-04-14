@@ -80,3 +80,21 @@ export default () => (
 - `Alert` 是页面内构件，不负责全局消息队列
 - `Alert` 不会像 `Message` 一样自动消失
 - 如果你需要列表、表格或页面在“没有内容”时的占位，请改用 `Empty`
+
+## API
+
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性          | 说明                                    | 类型                                          | 默认值   |
+| ------------- | --------------------------------------- | --------------------------------------------- | -------- |
+| `type`        | 反馈类型                                | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` |
+| `title`       | 标题内容                                | `ReactNode`                                   | -        |
+| `description` | 描述内容                                | `ReactNode`                                   | -        |
+| `children`    | 备用主体内容，未传 `description` 时使用 | `ReactNode`                                   | -        |
+| `action`      | 右侧操作区                              | `ReactNode`                                   | -        |
+| `icon`        | 自定义图标                              | `ReactNode`                                   | -        |
+| `showIcon`    | 是否显示图标                            | `boolean`                                     | `true`   |
+| `closable`    | 是否显示关闭按钮                        | `boolean`                                     | `false`  |
+| `onClose`     | 关闭后的回调                            | `() => void`                                  | -        |
+| `classNames`  | 语义化类名覆写                          | `AlertProps['classNames']`                    | -        |
+| `styles`      | 语义化样式覆写                          | `AlertProps['styles']`                        | -        |

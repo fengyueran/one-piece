@@ -56,3 +56,25 @@ export default () => (
 - `Skeleton` 适合“结构已知、内容未到”的占位加载
 - `SpinLoading` 更适合通用等待态、覆盖式加载或局部容器忙碌态
 - 如果是彻底没有内容，而不是还在等内容，请使用 `Empty`
+
+## 键盘与可访问性
+
+- `Skeleton` 默认只输出装饰性占位块，不会进入 Tab 序列
+- 当 `loading={false}` 时，组件会直接还原真实内容，焦点管理仍由真实内容负责
+- 建议只在结构稳定的区域使用，避免与真实交互控件语义混用
+
+## API
+
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性         | 说明                               | 类型                          | 默认值  |
+| ------------ | ---------------------------------- | ----------------------------- | ------- |
+| `loading`    | 是否显示骨架占位                   | `boolean`                     | `true`  |
+| `active`     | 是否启用动画效果                   | `boolean`                     | `true`  |
+| `avatar`     | 是否显示头像占位                   | `boolean`                     | `false` |
+| `title`      | 是否显示标题占位                   | `boolean`                     | `true`  |
+| `rows`       | 段落占位行数                       | `number`                      | `3`     |
+| `round`      | 是否使用圆角块样式                 | `boolean`                     | `false` |
+| `children`   | `loading={false}` 时渲染的真实内容 | `ReactNode`                   | -       |
+| `classNames` | 语义化类名覆写                     | `SkeletonProps['classNames']` | -       |
+| `styles`     | 语义化样式覆写                     | `SkeletonProps['styles']`     | -       |

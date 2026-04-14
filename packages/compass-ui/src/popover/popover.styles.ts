@@ -6,8 +6,8 @@ export const PopoverOverlay = styled.div`
 `
 
 export const PopoverCard = styled.div`
-  min-width: 220px;
-  max-width: 320px;
+  min-width: ${token('components.popover.minWidth', '220px')};
+  max-width: ${token('components.popover.maxWidth', '320px')};
   border-radius: ${token('components.popover.borderRadius', token('borderRadius.md', '8px'))};
   background: ${token('components.popover.backgroundColor', token('colors.background', '#fff'))};
   box-shadow: ${token(
@@ -19,19 +19,22 @@ export const PopoverCard = styled.div`
 `
 
 export const PopoverHeader = styled.div`
-  padding: 12px 14px 0;
+  padding: ${token('components.popover.headerPadding', '12px 14px 0')};
 `
 
 export const PopoverTitle = styled.div`
-  color: ${token('colors.text', 'rgba(0, 0, 0, 0.88)')};
-  font-size: ${token('fontSize.md', '14px')};
+  color: ${token('components.popover.titleColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))};
+  font-size: ${token('components.popover.titleFontSize', token('fontSize.md', '14px'))};
   font-weight: ${token('fontWeight.semibold', '600')};
   line-height: 1.5;
 `
 
 export const PopoverBody = styled.div`
-  padding: 12px 14px 14px;
-  color: ${token('colors.textSecondary', 'rgba(0, 0, 0, 0.65)')};
-  font-size: ${token('fontSize.sm', '13px')};
+  padding: ${token('components.popover.bodyPadding', '12px 14px 14px')};
+  color: ${token(
+    'components.popover.bodyColor',
+    token('colors.textSecondary', 'rgba(0, 0, 0, 0.65)'),
+  )};
+  font-size: ${token('components.popover.bodyFontSize', token('fontSize.sm', '13px'))};
   line-height: 1.6;
 `

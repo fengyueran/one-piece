@@ -15,12 +15,12 @@ const getSize = (size?: 'small' | 'medium' | 'large' | number) => {
 
   switch (size) {
     case 'small':
-      return '16px'
+      return token('components.spinLoading.size.sm', '16px')
     case 'large':
-      return '36px'
+      return token('components.spinLoading.size.lg', '36px')
     case 'medium':
     default:
-      return '24px'
+      return token('components.spinLoading.size.md', '24px')
   }
 }
 
@@ -30,7 +30,7 @@ export const SpinRoot = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${token('spacing.sm', '8px')};
-  color: ${token('colors.primary', '#1677ff')};
+  color: ${token('components.spinLoading.indicatorColor', token('colors.primary', '#1677ff'))};
 `
 
 export const SpinIndicator = styled.span<{
@@ -41,9 +41,16 @@ export const SpinIndicator = styled.span<{
   height: ${({ $size }) => getSize($size)};
   border-radius: 50%;
   background:
-    radial-gradient(farthest-side, ${token('colors.primary', '#1677ff')} 94%, #0000) top/4px 4px
-      no-repeat,
-    conic-gradient(#0000 30%, ${token('colors.primary', '#1677ff')});
+    radial-gradient(
+        farthest-side,
+        ${token('components.spinLoading.indicatorColor', token('colors.primary', '#1677ff'))} 94%,
+        #0000
+      )
+      top/4px 4px no-repeat,
+    conic-gradient(
+      #0000 30%,
+      ${token('components.spinLoading.indicatorColor', token('colors.primary', '#1677ff'))}
+    );
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
   animation: ${rotate} 0.9s linear infinite;
 `
@@ -51,7 +58,7 @@ export const SpinIndicator = styled.span<{
 export const SpinTip = styled.span`
   font-size: ${token('fontSize.sm', '14px')};
   line-height: ${token('lineHeight.normal', '1.5')};
-  color: ${token('colors.textSecondary', '#8c8c8c')};
+  color: ${token('components.spinLoading.tipColor', token('colors.textSecondary', '#8c8c8c'))};
 `
 
 export const SpinContainer = styled.div`
@@ -79,7 +86,7 @@ export const SpinOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(0.5px);
+  background: ${token('components.spinLoading.overlayBackground', 'rgba(255, 255, 255, 0.72)')};
+  backdrop-filter: ${token('components.spinLoading.overlayBackdropBlur', 'blur(0.5px)')};
   z-index: 1;
 `

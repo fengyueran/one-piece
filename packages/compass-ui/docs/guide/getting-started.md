@@ -8,7 +8,7 @@ nav:
 
 # 快速开始
 
-本页负责回答 3 个问题：怎么安装、怎么开始用、公开导入应该怎么写。组件列表看 [组件总览](/components)，导入边界看 [API 参考](/api)。
+本页负责回答 3 个问题：怎么安装、怎么开始用、公开导入应该怎么写。组件列表看 [组件总览](/components)，导入边界看 [API 参考](/api)，主题覆盖方式看 [主题 Token](/guide/theme-tokens)。
 
 ## 安装
 
@@ -102,6 +102,8 @@ export default () => (
 )
 ```
 
+如果你要查看各个新增组件支持哪些 `components.*` token，直接看 [主题 Token](/guide/theme-tokens)。
+
 ## TypeScript
 
 `compass-ui` 提供根入口的类型导出：
@@ -120,3 +122,4 @@ export default MyButton
 
 - 想看当前有哪些组件：前往 [组件总览](/components)
 - 想确认每个公开路径的职责：前往 [API 参考](/api)
+- 想做组件级主题覆盖：前往 [主题 Token](/guide/theme-tokens)

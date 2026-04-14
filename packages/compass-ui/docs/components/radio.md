@@ -104,27 +104,31 @@ export default () => (
 
 ## API
 
+通用属性参考：[通用属性](/guide/common-props)
+
 ### Radio
 
-| 属性 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `checked` | 受控选中状态 | `boolean` | - |
-| `defaultChecked` | 非受控初始选中状态 | `boolean` | `false` |
-| `value` | 当前选项值 | `string \| number` | - |
-| `disabled` | 是否禁用 | `boolean` | `false` |
-| `size` | 组件尺寸 | `'small' \| 'medium' \| 'large'` | `'medium'` |
-| `status` | 校验状态 | `'error' \| 'warning'` | - |
-| `onChange` | 选中变化回调 | `(event: ChangeEvent<HTMLInputElement>) => void` | - |
+| 属性             | 说明               | 类型                                             | 默认值     |
+| ---------------- | ------------------ | ------------------------------------------------ | ---------- |
+| `checked`        | 受控选中状态       | `boolean`                                        | -          |
+| `defaultChecked` | 非受控初始选中状态 | `boolean`                                        | `false`    |
+| `value`          | 当前选项值         | `string \| number`                               | -          |
+| `disabled`       | 是否禁用           | `boolean`                                        | `false`    |
+| `size`           | 组件尺寸           | `'small' \| 'medium' \| 'large'`                 | `'medium'` |
+| `status`         | 校验状态           | `'error' \| 'warning'`                           | -          |
+| `onChange`       | 选中变化回调       | `(event: ChangeEvent<HTMLInputElement>) => void` | -          |
 
 ### Radio.Group
 
-| 属性 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `value` | 受控选中值 | `string \| number` | - |
-| `defaultValue` | 非受控初始选中值 | `string \| number` | - |
-| `options` | 快捷配置选项 | `RadioOption[]` | - |
-| `direction` | 排列方向 | `'horizontal' \| 'vertical'` | `'vertical'` |
-| `disabled` | 是否整体禁用 | `boolean` | `false` |
-| `size` | 统一尺寸 | `'small' \| 'medium' \| 'large'` | `'medium'` |
-| `status` | 统一校验状态 | `'error' \| 'warning'` | - |
-| `onChange` | 选中值变化回调 | `(value, event) => void` | - |
+| 属性           | 说明             | 类型                             | 默认值       |
+| -------------- | ---------------- | -------------------------------- | ------------ |
+| `value`        | 受控选中值       | `string \| number`               | -            |
+| `defaultValue` | 非受控初始选中值 | `string \| number`               | -            |
+| `options`      | 快捷配置选项     | `RadioOption[]`                  | -            |
+| `direction`    | 排列方向         | `'horizontal' \| 'vertical'`     | `'vertical'` |
+| `disabled`     | 是否整体禁用     | `boolean`                        | `false`      |
+| `size`         | 统一尺寸         | `'small' \| 'medium' \| 'large'` | `'medium'`   |
+| `status`       | 统一校验状态     | `'error' \| 'warning'`           | -            |
+| `onChange`     | 选中值变化回调   | `(value, event) => void`         | -            |
+| `classNames`   | 语义化类名覆写   | `RadioGroupProps['classNames']`  | -            |
+| `styles`       | 语义化样式覆写   | `RadioGroupProps['styles']`      | -            |

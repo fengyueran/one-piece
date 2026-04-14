@@ -1,5 +1,8 @@
 import React from 'react'
 
+/**
+ * Props for the immediate boolean toggle switch component.
+ */
 export interface SwitchProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'onChange'> {
   /**
@@ -34,10 +37,7 @@ export interface SwitchProps
   /**
    * Callback fired with the next checked state.
    */
-  onCheckedChange?: (
-    checked: boolean,
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void
+  onCheckedChange?: (checked: boolean, event: React.ChangeEvent<HTMLInputElement>) => void
   /**
    * Native change callback.
    */

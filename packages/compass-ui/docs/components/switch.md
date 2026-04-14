@@ -78,16 +78,18 @@ export default () => (
 
 ## API
 
-| 属性 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `checked` | 受控开关状态 | `boolean` | - |
-| `defaultChecked` | 非受控初始开关状态 | `boolean` | `false` |
-| `disabled` | 是否禁用 | `boolean` | `false` |
-| `checkedChildren` | 选中时轨道内部内容 | `ReactNode` | - |
-| `uncheckedChildren` | 未选中时轨道内部内容 | `ReactNode` | - |
-| `size` | 组件尺寸 | `'small' \| 'medium' \| 'large'` | `'medium'` |
-| `status` | 校验状态 | `'error' \| 'warning'` | - |
-| `onCheckedChange` | 开关状态变化回调 | `(checked, event) => void` | - |
-| `onChange` | 原生变化回调 | `(event: ChangeEvent<HTMLInputElement>) => void` | - |
-| `classNames` | 语义化类名覆写 | `SwitchProps['classNames']` | - |
-| `styles` | 语义化样式覆写 | `SwitchProps['styles']` | - |
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性                | 说明                 | 类型                                             | 默认值     |
+| ------------------- | -------------------- | ------------------------------------------------ | ---------- |
+| `checked`           | 受控开关状态         | `boolean`                                        | -          |
+| `defaultChecked`    | 非受控初始开关状态   | `boolean`                                        | `false`    |
+| `disabled`          | 是否禁用             | `boolean`                                        | `false`    |
+| `checkedChildren`   | 选中时轨道内部内容   | `ReactNode`                                      | -          |
+| `uncheckedChildren` | 未选中时轨道内部内容 | `ReactNode`                                      | -          |
+| `size`              | 组件尺寸             | `'small' \| 'medium' \| 'large'`                 | `'medium'` |
+| `status`            | 校验状态             | `'error' \| 'warning'`                           | -          |
+| `onCheckedChange`   | 开关状态变化回调     | `(checked, event) => void`                       | -          |
+| `onChange`          | 原生变化回调         | `(event: ChangeEvent<HTMLInputElement>) => void` | -          |
+| `classNames`        | 语义化类名覆写       | `SwitchProps['classNames']`                      | -          |
+| `styles`            | 语义化样式覆写       | `SwitchProps['styles']`                          | -          |

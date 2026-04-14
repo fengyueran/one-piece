@@ -1,5 +1,8 @@
 import React from 'react'
 
+/**
+ * Supported placement values for {@link Popover}.
+ */
 export type PopoverPlacement =
   | 'top'
   | 'top-start'
@@ -14,22 +17,41 @@ export type PopoverPlacement =
   | 'right-start'
   | 'right-end'
 
+/**
+ * Semantic class name slots exposed by {@link Popover}.
+ */
 export interface PopoverClassNames {
+  /** Class name for the trigger wrapper. */
   root?: string
+  /** Class name for the floating overlay card. */
   overlay?: string
+  /** Class name for the overlay header wrapper. */
   header?: string
+  /** Class name for the overlay title node. */
   title?: string
+  /** Class name for the overlay body node. */
   body?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Popover}.
+ */
 export interface PopoverStyles {
+  /** Style for the trigger wrapper. */
   root?: React.CSSProperties
+  /** Style for the floating overlay card. */
   overlay?: React.CSSProperties
+  /** Style for the overlay header wrapper. */
   header?: React.CSSProperties
+  /** Style for the overlay title node. */
   title?: React.CSSProperties
+  /** Style for the overlay body node. */
   body?: React.CSSProperties
 }
 
+/**
+ * Props for the lightweight anchored overlay card component.
+ */
 export interface PopoverProps {
   /**
    * 弹层标题。

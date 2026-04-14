@@ -66,3 +66,23 @@ export default () => (
 ## 当前接入
 
 - `Table` 已经开始复用 `SpinLoading` 处理空数据加载态和已有数据的覆盖式加载态
+
+## 键盘与可访问性
+
+- `SpinLoading` 会通过 `role="status"` 和 `aria-live="polite"` 暴露加载状态
+- 当作为覆盖层使用时，原有内容不会被卸载，但会标记 `aria-busy="true"`
+- 如果只是装饰性等待，不需要焦点管理；具体交互节奏仍由容器内业务组件负责
+
+## API
+
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性         | 说明                             | 类型                                       | 默认值     |
+| ------------ | -------------------------------- | ------------------------------------------ | ---------- |
+| `spinning`   | 是否处于加载中                   | `boolean`                                  | `true`     |
+| `indicator`  | 自定义加载指示器                 | `ReactNode`                                | -          |
+| `tip`        | 辅助说明文案                     | `ReactNode`                                | -          |
+| `size`       | 指示器尺寸                       | `'small' \| 'medium' \| 'large' \| number` | `'medium'` |
+| `children`   | 被包裹的内容；传入后会渲染覆盖层 | `ReactNode`                                | -          |
+| `classNames` | 语义化类名覆写                   | `SpinLoadingProps['classNames']`           | -          |
+| `styles`     | 语义化样式覆写                   | `SpinLoadingProps['styles']`               | -          |

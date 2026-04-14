@@ -131,3 +131,25 @@ export default () => (
 - 新代码推荐使用 `Input`
 - `InputField` 仍然可用，但当前阶段只作为兼容入口保留
 - `Input` 与 `InputField` 共享同一套底层实现与类型契约
+
+## API
+
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性           | 说明                | 类型                                               | 默认值     |
+| -------------- | ------------------- | -------------------------------------------------- | ---------- |
+| `type`         | 输入框类型          | `'text' \| 'password' \| 'search'`                 | `'text'`   |
+| `value`        | 受控输入值          | `string \| number`                                 | -          |
+| `defaultValue` | 非受控初始值        | `string \| number`                                 | -          |
+| `placeholder`  | 占位文案            | `string`                                           | -          |
+| `disabled`     | 是否禁用            | `boolean`                                          | `false`    |
+| `fullWidth`    | 是否撑满父容器宽度  | `boolean`                                          | `false`    |
+| `size`         | 组件尺寸            | `'small' \| 'medium' \| 'large'`                   | `'medium'` |
+| `status`       | 校验状态            | `'error' \| 'warning'`                             | -          |
+| `prefix`       | 前缀内容            | `ReactNode`                                        | -          |
+| `suffix`       | 后缀内容            | `ReactNode`                                        | -          |
+| `allowClear`   | 是否显示清除按钮    | `boolean`                                          | `false`    |
+| `onChange`     | 输入值变化回调      | `(event: ChangeEvent<HTMLInputElement>) => void`   | -          |
+| `onPressEnter` | 按下 Enter 时的回调 | `(event: KeyboardEvent<HTMLInputElement>) => void` | -          |
+| `classNames`   | 语义化类名覆写      | `InputProps['classNames']`                         | -          |
+| `styles`       | 语义化样式覆写      | `InputProps['styles']`                             | -          |

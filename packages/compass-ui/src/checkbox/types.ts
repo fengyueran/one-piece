@@ -1,5 +1,8 @@
 import React from 'react'
 
+/**
+ * Props for the boolean checkbox input component.
+ */
 export interface CheckboxProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
   /**

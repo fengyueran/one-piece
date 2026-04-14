@@ -95,14 +95,16 @@ export default () => (
 
 ## API
 
-| 属性 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `checked` | 受控选中状态 | `boolean` | - |
-| `defaultChecked` | 非受控初始选中状态 | `boolean` | `false` |
-| `disabled` | 是否禁用 | `boolean` | `false` |
-| `indeterminate` | 是否半选 | `boolean` | `false` |
-| `size` | 组件尺寸 | `'small' \| 'medium' \| 'large'` | `'medium'` |
-| `status` | 校验状态 | `'error' \| 'warning'` | - |
-| `onChange` | 选中状态变化回调 | `(event: ChangeEvent<HTMLInputElement>) => void` | - |
-| `classNames` | 语义化类名覆写 | `CheckboxProps['classNames']` | - |
-| `styles` | 语义化样式覆写 | `CheckboxProps['styles']` | - |
+通用属性参考：[通用属性](/guide/common-props)
+
+| 属性             | 说明               | 类型                                             | 默认值     |
+| ---------------- | ------------------ | ------------------------------------------------ | ---------- |
+| `checked`        | 受控选中状态       | `boolean`                                        | -          |
+| `defaultChecked` | 非受控初始选中状态 | `boolean`                                        | `false`    |
+| `disabled`       | 是否禁用           | `boolean`                                        | `false`    |
+| `indeterminate`  | 是否半选           | `boolean`                                        | `false`    |
+| `size`           | 组件尺寸           | `'small' \| 'medium' \| 'large'`                 | `'medium'` |
+| `status`         | 校验状态           | `'error' \| 'warning'`                           | -          |
+| `onChange`       | 选中状态变化回调   | `(event: ChangeEvent<HTMLInputElement>) => void` | -          |
+| `classNames`     | 语义化类名覆写     | `CheckboxProps['classNames']`                    | -          |
+| `styles`         | 语义化样式覆写     | `CheckboxProps['styles']`                        | -          |

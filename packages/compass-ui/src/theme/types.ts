@@ -89,11 +89,21 @@ export interface Theme {
 
   components: {
     button: ButtonTheme
+    checkbox: CheckboxTheme
+    radio: RadioTheme
+    switch: SwitchTheme
     message: MessageTheme
     modal: ModalTheme
     progress: ProgressTheme
     steps: StepsTheme
     input: InputTheme
+    alert: AlertTheme
+    empty: EmptyTheme
+    skeleton: SkeletonTheme
+    spinLoading: SpinLoadingTheme
+    popover: PopoverTheme
+    popconfirm: PopconfirmTheme
+    drawer: DrawerTheme
     tooltip: TooltipTheme
     dropdown: DropdownTheme
     menu: MenuTheme
@@ -271,6 +281,69 @@ export interface ButtonTheme {
   rippleOpacity: number
 }
 
+export interface CheckboxTheme {
+  size: {
+    sm: string
+    md: string
+    lg: string
+  }
+  borderRadius: string
+  borderColor: string
+  checkedBorderColor: string
+  checkedBg: string
+  disabledBg: string
+  labelColor: string
+  iconColor: string
+  focusRingColor: string
+}
+
+export interface RadioTheme {
+  size: {
+    sm: string
+    md: string
+    lg: string
+  }
+  dotSize: {
+    sm: string
+    md: string
+    lg: string
+  }
+  borderColor: string
+  checkedBorderColor: string
+  dotColor: string
+  labelColor: string
+  focusRingColor: string
+}
+
+export interface SwitchTheme {
+  trackWidth: {
+    sm: string
+    md: string
+    lg: string
+  }
+  trackHeight: {
+    sm: string
+    md: string
+    lg: string
+  }
+  thumbSize: {
+    sm: string
+    md: string
+    lg: string
+  }
+  thumbOffset: {
+    sm: string
+    md: string
+    lg: string
+  }
+  checkedBg: string
+  uncheckedBg: string
+  disabledBg: string
+  thumbBg: string
+  labelColor: string
+  focusRingColor: string
+}
+
 export interface MessageTheme {
   contentPadding: string
   contentBg: string
@@ -337,6 +410,120 @@ export interface InputTheme {
   borderRadius: string
   activeBorderColor: string
   hoverBorderColor: string
+}
+
+export interface AlertToneTheme {
+  backgroundColor: string
+  borderColor: string
+  accentColor: string
+}
+
+export interface AlertTheme {
+  padding: string
+  borderRadius: string
+  titleColor: string
+  descriptionColor: string
+  iconSize: string
+  closeColor: string
+  closeHoverColor: string
+  focusRingColor: string
+  info: AlertToneTheme
+  success: AlertToneTheme
+  warning: AlertToneTheme
+  error: AlertToneTheme
+}
+
+export interface EmptyTheme {
+  gap: {
+    sm: string
+    md: string
+    lg: string
+  }
+  padding: {
+    sm: string
+    md: string
+    lg: string
+  }
+  imageWidth: {
+    sm: string
+    md: string
+    lg: string
+  }
+  imageHeight: {
+    sm: string
+    md: string
+    lg: string
+  }
+  imageRadius: string
+  imageBackground: string
+  imageBorderColor: string
+  imagePlaceholderColor: string
+  titleColor: string
+  descriptionColor: string
+  actionGap: string
+}
+
+export interface SkeletonTheme {
+  gap: string
+  rowGap: string
+  avatarSize: string
+  blockHeight: string
+  borderRadius: string
+  shimmerBaseColor: string
+  shimmerHighlightColor: string
+}
+
+export interface SpinLoadingTheme {
+  indicatorColor: string
+  tipColor: string
+  overlayBackground: string
+  overlayBackdropBlur: string
+  size: {
+    sm: string
+    md: string
+    lg: string
+  }
+}
+
+export interface PopoverTheme {
+  zIndex: number
+  minWidth: string
+  maxWidth: string
+  borderRadius: string
+  backgroundColor: string
+  boxShadow: string
+  borderColor: string
+  headerPadding: string
+  bodyPadding: string
+  titleColor: string
+  titleFontSize: string
+  bodyColor: string
+  bodyFontSize: string
+}
+
+export interface PopconfirmTheme {
+  minWidth: string
+  titleColor: string
+  titleFontSize: string
+  descriptionColor: string
+  descriptionFontSize: string
+  descriptionMarginTop: string
+  actionsGap: string
+  actionsMarginTop: string
+}
+
+export interface DrawerTheme {
+  zIndex: number
+  maskColor: string
+  backdropBlur: string
+  contentBg: string
+  boxShadow: string
+  headerPadding: string
+  bodyPadding: string
+  footerPadding: string
+  borderColor: string
+  titleColor: string
+  titleFontSize: string
 }
 
 export interface TooltipTheme {

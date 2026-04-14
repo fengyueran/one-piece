@@ -1,5 +1,8 @@
 import type React from 'react'
 
+/**
+ * Semantic class name slots exposed by {@link Textarea}.
+ */
 export interface TextareaClassNames {
   /** Class name for the root element */
   root?: string
@@ -13,6 +16,9 @@ export interface TextareaClassNames {
   clear?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Textarea}.
+ */
 export interface TextareaStyles {
   /** Style for the root element */
   root?: React.CSSProperties

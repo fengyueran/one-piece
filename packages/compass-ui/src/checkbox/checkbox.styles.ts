@@ -4,12 +4,12 @@ import { token } from '../theme/token-utils'
 const getControlSize = (size?: 'small' | 'medium' | 'large') => {
   switch (size) {
     case 'small':
-      return '14px'
+      return token('components.checkbox.size.sm', '14px')
     case 'large':
-      return '20px'
+      return token('components.checkbox.size.lg', '20px')
     case 'medium':
     default:
-      return '16px'
+      return token('components.checkbox.size.md', '16px')
   }
 }
 
@@ -55,21 +55,27 @@ export const CheckboxControl = styled.span<{
 }>`
   width: ${({ $size }) => getControlSize($size)};
   height: ${({ $size }) => getControlSize($size)};
-  border-radius: ${token('borderRadius.sm', '4px')};
+  border-radius: ${token('components.checkbox.borderRadius', token('borderRadius.sm', '4px'))};
   border: 1px solid
     ${({ $checked, $status, $disabled }) => {
       if ($disabled) return token('colors.border', '#d9d9d9')
       if ($status === 'error') return token('colors.error', '#ff4d4f')
       if ($status === 'warning') return token('colors.warning', '#faad14')
-      if ($checked) return token('colors.primary', '#1890ff')
-      return token('colors.border', '#d9d9d9')
+      if ($checked) {
+        return token('components.checkbox.checkedBorderColor', token('colors.primary', '#1890ff'))
+      }
+      return token('components.checkbox.borderColor', token('colors.border', '#d9d9d9'))
     }};
   background: ${({ $checked, $indeterminate, $disabled }) => {
-    if ($disabled) return token('colors.backgroundSecondary', '#fafafa')
-    if ($checked || $indeterminate) return token('colors.primary', '#1890ff')
+    if ($disabled) {
+      return token('components.checkbox.disabledBg', token('colors.backgroundSecondary', '#fafafa'))
+    }
+    if ($checked || $indeterminate) {
+      return token('components.checkbox.checkedBg', token('colors.primary', '#1890ff'))
+    }
     return token('colors.background', '#fff')
   }};
-  color: ${token('colors.white', '#fff')};
+  color: ${token('components.checkbox.iconColor', token('colors.white', '#fff'))};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -77,8 +83,13 @@ export const CheckboxControl = styled.span<{
   transition: ${token('transitions.normal', 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)')};
   flex-shrink: 0;
 
-  ${HiddenInput}:focus-visible + & {
-    box-shadow: 0 0 0 2px color-mix(in srgb, ${token('colors.primary', '#1890ff')}, white 70%);
+  input:focus-visible + & {
+    box-shadow: 0 0 0 2px
+      color-mix(
+        in srgb,
+        ${token('components.checkbox.focusRingColor', token('colors.primary', '#1890ff'))},
+        white 70%
+      );
   }
 `
 
@@ -118,5 +129,6 @@ export const CheckboxIndicator = styled.span<{
 `
 
 export const CheckboxLabel = styled.span`
+  color: ${token('components.checkbox.labelColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))};
   line-height: ${token('lineHeight.normal', '1.5')};
 `

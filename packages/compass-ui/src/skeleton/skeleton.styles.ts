@@ -14,24 +14,24 @@ const shimmer = keyframes`
 const skeletonBackground = `
   linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.06) 25%,
-    rgba(0, 0, 0, 0.12) 37%,
-    rgba(0, 0, 0, 0.06) 63%
+    ${token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.06)')} 25%,
+    ${token('components.skeleton.shimmerHighlightColor', 'rgba(0, 0, 0, 0.12)')} 37%,
+    ${token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.06)')} 63%
   )
 `
 
 export const SkeletonRoot = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: ${token('spacing.md', '12px')};
+  gap: ${token('components.skeleton.gap', token('spacing.md', '12px'))};
   width: 100%;
 `
 
 export const SkeletonAvatar = styled.div<{
   $active?: boolean
 }>`
-  width: 40px;
-  height: 40px;
+  width: ${token('components.skeleton.avatarSize', '40px')};
+  height: ${token('components.skeleton.avatarSize', '40px')};
   border-radius: 50%;
   background-image: ${skeletonBackground};
   background-size: 400% 100%;
@@ -43,7 +43,7 @@ export const SkeletonContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${token('spacing.sm', '8px')};
+  gap: ${token('components.skeleton.rowGap', token('spacing.sm', '8px'))};
 `
 
 export const SkeletonBlock = styled.span<{
@@ -53,9 +53,9 @@ export const SkeletonBlock = styled.span<{
 }>`
   display: block;
   width: ${({ $width }) => $width || '100%'};
-  height: 14px;
+  height: ${token('components.skeleton.blockHeight', '14px')};
   border-radius: ${({ $round }) =>
-    $round ? '999px' : token('borderRadius.sm', '4px')};
+    $round ? '999px' : token('components.skeleton.borderRadius', token('borderRadius.sm', '4px'))};
   background-image: ${skeletonBackground};
   background-size: 400% 100%;
   animation: ${({ $active }) => ($active ? `${shimmer} 1.4s ease infinite` : 'none')};

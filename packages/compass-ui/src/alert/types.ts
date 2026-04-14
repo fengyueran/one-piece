@@ -1,5 +1,8 @@
 import type React from 'react'
 
+/**
+ * Semantic class name slots exposed by {@link Alert}.
+ */
 export interface AlertClassNames {
   /** Class name for the root element. */
   root?: string
@@ -17,6 +20,9 @@ export interface AlertClassNames {
   close?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Alert}.
+ */
 export interface AlertStyles {
   /** Style for the root element. */
   root?: React.CSSProperties

@@ -99,6 +99,122 @@ describe('ThemeProvider', () => {
       expect(getByTestId('menu-hover-bg')).toHaveTextContent('blue')
     })
 
+    it('should merge component themes for newly added controls and feedback components', () => {
+      const customTheme = {
+        components: {
+          checkbox: {
+            checkedBg: '#0055ff',
+          },
+          switch: {
+            checkedBg: '#11aa55',
+          },
+          alert: {
+            padding: '20px 24px',
+            warning: {
+              accentColor: '#ff8800',
+            },
+          },
+          empty: {
+            titleColor: '#223344',
+          },
+          skeleton: {
+            shimmerHighlightColor: 'rgba(255, 255, 255, 0.45)',
+          },
+          spinLoading: {
+            overlayBackground: 'rgba(0, 0, 0, 0.3)',
+          },
+        },
+      }
+
+      const ComponentThemeConsumer: React.FC = () => {
+        const theme = useTheme() as Theme
+        return (
+          <div>
+            <span data-testid="checkbox-checked-bg">{theme.components.checkbox.checkedBg}</span>
+            <span data-testid="switch-checked-bg">{theme.components.switch.checkedBg}</span>
+            <span data-testid="alert-padding">{theme.components.alert.padding}</span>
+            <span data-testid="alert-warning-accent">
+              {theme.components.alert.warning.accentColor}
+            </span>
+            <span data-testid="empty-title-color">{theme.components.empty.titleColor}</span>
+            <span data-testid="skeleton-highlight">
+              {theme.components.skeleton.shimmerHighlightColor}
+            </span>
+            <span data-testid="spin-overlay-bg">
+              {theme.components.spinLoading.overlayBackground}
+            </span>
+            <span data-testid="input-border-radius">{theme.components.input.borderRadius}</span>
+          </div>
+        )
+      }
+
+      const { getByTestId } = render(
+        <ThemeProvider theme={customTheme}>
+          <ComponentThemeConsumer />
+        </ThemeProvider>,
+      )
+
+      expect(getByTestId('checkbox-checked-bg')).toHaveTextContent('#0055ff')
+      expect(getByTestId('switch-checked-bg')).toHaveTextContent('#11aa55')
+      expect(getByTestId('alert-padding')).toHaveTextContent('20px 24px')
+      expect(getByTestId('alert-warning-accent')).toHaveTextContent('#ff8800')
+      expect(getByTestId('empty-title-color')).toHaveTextContent('#223344')
+      expect(getByTestId('skeleton-highlight')).toHaveTextContent('rgba(255, 255, 255, 0.45)')
+      expect(getByTestId('spin-overlay-bg')).toHaveTextContent('rgba(0, 0, 0, 0.3)')
+      expect(getByTestId('input-border-radius')).toHaveTextContent(
+        defaultTheme.components.input.borderRadius,
+      )
+    })
+
+    it('should merge overlay component themes', () => {
+      const customTheme = {
+        components: {
+          popover: {
+            minWidth: '280px',
+            titleColor: '#334455',
+          },
+          popconfirm: {
+            actionsGap: '12px',
+          },
+          drawer: {
+            titleColor: '#556677',
+            maskColor: 'rgba(10, 10, 10, 0.55)',
+          },
+        },
+      }
+
+      const OverlayThemeConsumer: React.FC = () => {
+        const theme = useTheme() as Theme
+        return (
+          <div>
+            <span data-testid="popover-min-width">{theme.components.popover.minWidth}</span>
+            <span data-testid="popover-title-color">{theme.components.popover.titleColor}</span>
+            <span data-testid="popconfirm-actions-gap">
+              {theme.components.popconfirm.actionsGap}
+            </span>
+            <span data-testid="drawer-title-color">{theme.components.drawer.titleColor}</span>
+            <span data-testid="drawer-mask-color">{theme.components.drawer.maskColor}</span>
+            <span data-testid="drawer-body-padding">{theme.components.drawer.bodyPadding}</span>
+          </div>
+        )
+      }
+
+      const { getByTestId } = render(
+        <ThemeProvider theme={customTheme}>
+          <OverlayThemeConsumer />
+        </ThemeProvider>,
+      )
+
+      expect(getByTestId('popover-min-width')).toHaveTextContent('280px')
+      expect(getByTestId('popover-title-color')).toHaveTextContent('#334455')
+      expect(getByTestId('popconfirm-actions-gap')).toHaveTextContent('12px')
+      expect(getByTestId('drawer-title-color')).toHaveTextContent('#556677')
+      expect(getByTestId('drawer-mask-color')).toHaveTextContent('rgba(10, 10, 10, 0.55)')
+      expect(getByTestId('drawer-body-padding')).toHaveTextContent(
+        defaultTheme.components.drawer.bodyPadding,
+      )
+    })
+
     it('should apply lightTheme in light mode', () => {
       const lightTheme = {
         colors: {

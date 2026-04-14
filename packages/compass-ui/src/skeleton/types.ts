@@ -1,5 +1,8 @@
 import type React from 'react'
 
+/**
+ * Semantic class name slots exposed by {@link Skeleton}.
+ */
 export interface SkeletonClassNames {
   /** Class name for the root element. */
   root?: string
@@ -11,6 +14,9 @@ export interface SkeletonClassNames {
   row?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Skeleton}.
+ */
 export interface SkeletonStyles {
   /** Style for the root element. */
   root?: React.CSSProperties

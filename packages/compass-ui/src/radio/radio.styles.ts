@@ -4,28 +4,31 @@ import { token } from '../theme/token-utils'
 const getControlSize = (size?: 'small' | 'medium' | 'large') => {
   switch (size) {
     case 'small':
-      return '14px'
+      return token('components.radio.size.sm', '14px')
     case 'large':
-      return '20px'
+      return token('components.radio.size.lg', '20px')
     case 'medium':
     default:
-      return '16px'
+      return token('components.radio.size.md', '16px')
   }
 }
 
 const getDotSize = (size?: 'small' | 'medium' | 'large') => {
   switch (size) {
     case 'small':
-      return '6px'
+      return token('components.radio.dotSize.sm', '6px')
     case 'large':
-      return '10px'
+      return token('components.radio.dotSize.lg', '10px')
     case 'medium':
     default:
-      return '8px'
+      return token('components.radio.dotSize.md', '8px')
   }
 }
 
-export const RadioGroupRoot = styled.div<{ $direction?: 'horizontal' | 'vertical'; $size?: 'small' | 'medium' | 'large' }>`
+export const RadioGroupRoot = styled.div<{
+  $direction?: 'horizontal' | 'vertical'
+  $size?: 'small' | 'medium' | 'large'
+}>`
   display: inline-flex;
   flex-direction: ${({ $direction }) => ($direction === 'horizontal' ? 'row' : 'column')};
   gap: ${token('spacing.sm', '8px')};
@@ -43,7 +46,10 @@ export const RadioGroupRoot = styled.div<{ $direction?: 'horizontal' | 'vertical
   }};
 `
 
-export const RadioRoot = styled.label<{ $size?: 'small' | 'medium' | 'large'; $disabled?: boolean }>`
+export const RadioRoot = styled.label<{
+  $size?: 'small' | 'medium' | 'large'
+  $disabled?: boolean
+}>`
   display: inline-flex;
   align-items: center;
   gap: ${token('spacing.sm', '8px')};
@@ -76,8 +82,10 @@ export const RadioControl = styled.span<{
       if ($disabled) return token('colors.border', '#d9d9d9')
       if ($status === 'error') return token('colors.error', '#ff4d4f')
       if ($status === 'warning') return token('colors.warning', '#faad14')
-      if ($checked) return token('colors.primary', '#1890ff')
-      return token('colors.border', '#d9d9d9')
+      if ($checked) {
+        return token('components.radio.checkedBorderColor', token('colors.primary', '#1890ff'))
+      }
+      return token('components.radio.borderColor', token('colors.border', '#d9d9d9'))
     }};
   background: ${token('colors.background', '#fff')};
   display: inline-flex;
@@ -86,8 +94,13 @@ export const RadioControl = styled.span<{
   box-sizing: border-box;
   transition: ${token('transitions.normal', 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)')};
 
-  ${HiddenInput}:focus-visible + & {
-    box-shadow: 0 0 0 2px color-mix(in srgb, ${token('colors.primary', '#1890ff')}, white 70%);
+  input:focus-visible + & {
+    box-shadow: 0 0 0 2px
+      color-mix(
+        in srgb,
+        ${token('components.radio.focusRingColor', token('colors.primary', '#1890ff'))},
+        white 70%
+      );
   }
 `
 
@@ -98,12 +111,13 @@ export const RadioDot = styled.span<{
   width: ${({ $size }) => getDotSize($size)};
   height: ${({ $size }) => getDotSize($size)};
   border-radius: 50%;
-  background: ${token('colors.primary', '#1890ff')};
+  background: ${token('components.radio.dotColor', token('colors.primary', '#1890ff'))};
   transform: scale(${({ $visible }) => ($visible ? 1 : 0)});
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: ${token('transitions.fast', 'all 0.1s ease-in-out')};
 `
 
 export const RadioLabel = styled.span`
+  color: ${token('components.radio.labelColor', token('colors.text', 'rgba(0, 0, 0, 0.88)'))};
   line-height: ${token('lineHeight.normal', '1.5')};
 `

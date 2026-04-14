@@ -2,22 +2,41 @@ import React from 'react'
 
 import type { PopoverPlacement } from '../popover/types'
 
+/**
+ * Semantic class name slots exposed by {@link Popconfirm}.
+ */
 export interface PopconfirmClassNames {
+  /** Class name for the trigger wrapper. */
   root?: string
+  /** Class name for the floating overlay card. */
   overlay?: string
+  /** Class name for the title node. */
   title?: string
+  /** Class name for the description node. */
   description?: string
+  /** Class name for the action button row. */
   actions?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Popconfirm}.
+ */
 export interface PopconfirmStyles {
+  /** Style for the trigger wrapper. */
   root?: React.CSSProperties
+  /** Style for the floating overlay card. */
   overlay?: React.CSSProperties
+  /** Style for the title node. */
   title?: React.CSSProperties
+  /** Style for the description node. */
   description?: React.CSSProperties
+  /** Style for the action button row. */
   actions?: React.CSSProperties
 }
 
+/**
+ * Props for the lightweight anchored confirmation overlay component.
+ */
 export interface PopconfirmProps {
   /**
    * 确认标题。

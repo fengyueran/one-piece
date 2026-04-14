@@ -1,5 +1,8 @@
 import type React from 'react'
 
+/**
+ * Semantic class name slots exposed by {@link SpinLoading}.
+ */
 export interface SpinLoadingClassNames {
   /** Class name for the root element. */
   root?: string
@@ -13,6 +16,9 @@ export interface SpinLoadingClassNames {
   content?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link SpinLoading}.
+ */
 export interface SpinLoadingStyles {
   /** Style for the root element. */
   root?: React.CSSProperties

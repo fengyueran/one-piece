@@ -1,5 +1,8 @@
 import type React from 'react'
 
+/**
+ * Semantic class name slots exposed by {@link Empty}.
+ */
 export interface EmptyClassNames {
   /** Class name for the root element. */
   root?: string
@@ -13,6 +16,9 @@ export interface EmptyClassNames {
   action?: string
 }
 
+/**
+ * Semantic style slots exposed by {@link Empty}.
+ */
 export interface EmptyStyles {
   /** Style for the root element. */
   root?: React.CSSProperties

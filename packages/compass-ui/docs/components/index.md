@@ -16,6 +16,7 @@ group:
 
 - 想先安装并跑通第一个示例：看 [快速开始](/guide/getting-started)
 - 想确认哪些导入路径是正式公开 API：看 [API 参考](/api)
+- 想查看组件支持哪些主题 token：看 [主题 Token](/guide/theme-tokens)
 - 想查看单个组件的用法、示例和参数表：直接进入下方组件页面
 
 ## 基础组件
