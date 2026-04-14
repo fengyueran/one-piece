@@ -1,15 +1,16 @@
 ---
 phase: 2
 slug: docs-entry-verification-unification
-status: draft
+status: complete
 nyquist_compliant: true
 wave_0_complete: true
 created: 2026-04-14
+updated: 2026-04-14
 ---
 
 # Phase 2 — Validation Strategy
 
-> Per-phase validation contract for feedback sampling during execution.
+> Per-phase validation contract and final execution evidence.
 
 ---
 
@@ -36,13 +37,13 @@ created: 2026-04-14
 
 ## Per-Task Verification Map
 
-| Task ID  | Plan | Wave | Requirement | Test Type    | Automated Command                                                                                                                                                                                                       | File Exists | Status     |
-| -------- | ---- | ---- | ----------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------- | ------------------------------------------------------------------------------- | --- | ---------- |
-| 02-01-01 | 01   | 1    | DOCS-01     | build        | `pnpm --filter @xinghunm/compass-ui docs:build`                                                                                                                                                                         | ✅          | ⬜ pending |
-| 02-01-02 | 01   | 1    | DOCS-02     | static-check | `rg -n 'guide                                                                                                                                                                                                           | get-started | API        | 组件' packages/compass-ui/docs/{index.md,README.md,API.md,components/index.md}` | ✅  | ⬜ pending |
-| 02-02-01 | 02   | 1    | DOCS-03     | smoke        | `node packages/compass-ui/scripts/verify-docs-public-imports.mjs`                                                                                                                                                       | ❌ W0       | ⬜ pending |
-| 02-02-02 | 02   | 1    | DOCS-04     | integration  | `pnpm run docs:verify:compass-ui`                                                                                                                                                                                       | ❌ W0       | ⬜ pending |
-| 02-03-01 | 03   | 2    | DOCS-05     | unit         | `pnpm --filter @xinghunm/compass-ui test -- --runInBand src/button/button.test.tsx src/input-field/input-field.test.tsx src/select/select.test.tsx src/date-picker/date-picker.test.tsx src/dropdown/dropdown.test.tsx` | ✅          | ⬜ pending |
+| Task ID  | Plan | Wave | Requirement | Test Type    | Automated Command                                                                                                                                                                                                       | File Exists | Status   |
+| -------- | ---- | ---- | ----------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | -------- |
+| 02-01-01 | 01   | 1    | DOCS-01     | build        | `pnpm --filter @xinghunm/compass-ui docs:build`                                                                                                                                                                         | ✅          | ✅ green |
+| 02-01-02 | 01   | 1    | DOCS-02     | static-check | `rg -n 'guide\|getting-started\|API\|组件' packages/compass-ui/docs/{index.md,README.md,API.md,components/index.md}`                                                                                                    | ✅          | ✅ green |
+| 02-02-01 | 02   | 1    | DOCS-03     | smoke        | `node packages/compass-ui/scripts/verify-docs-public-imports.mjs`                                                                                                                                                       | ✅          | ✅ green |
+| 02-02-02 | 02   | 1    | DOCS-04     | integration  | `pnpm run docs:verify:compass-ui`                                                                                                                                                                                       | ✅          | ✅ green |
+| 02-03-01 | 03   | 2    | DOCS-05     | unit         | `pnpm --filter @xinghunm/compass-ui test -- --runInBand src/button/button.test.tsx src/input-field/input-field.test.tsx src/select/select.test.tsx src/date-picker/date-picker.test.tsx src/dropdown/dropdown.test.tsx` | ✅          | ✅ green |
 
 _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
@@ -63,6 +64,18 @@ _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
 ---
 
+## Final Execution Evidence
+
+- `pnpm run docs:verify:compass-ui`：通过
+- 已检查 `42` 个 Markdown 文件，公开导入校验通过
+- `pnpm --filter @xinghunm/compass-ui test -- --runInBand src/button/button.test.tsx src/input-field/input-field.test.tsx src/select/select.test.tsx src/date-picker/date-picker.test.tsx src/dropdown/dropdown.test.tsx`：通过
+- 结果：`5` 个 test suite、`139` 个测试全部通过
+- 非阻断 warning：
+  - `.dumirc.ts` 仍需加入 `tsconfig.json#include`
+  - `Browserslist` 数据过旧
+
+---
+
 ## Validation Sign-Off
 
 - [x] All tasks have `<automated>` verify or Wave 0 dependencies
@@ -72,4 +85,4 @@ _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 - [x] Feedback latency < 45s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** complete

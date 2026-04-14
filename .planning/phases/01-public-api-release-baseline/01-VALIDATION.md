@@ -1,10 +1,11 @@
 ---
 phase: 1
 slug: public-api-release-baseline
-status: draft
+status: complete
 nyquist_compliant: true
 wave_0_complete: false
 created: 2026-04-13
+updated: 2026-04-14
 ---
 
 # Phase 1 — Validation Strategy
@@ -36,14 +37,14 @@ created: 2026-04-13
 
 ## Per-Task Verification Map
 
-| Task ID  | Plan | Wave | Requirement | Test Type   | Automated Command                                                                                                                                                                         | File Exists | Status     |
-| -------- | ---- | ---- | ----------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------- |
-| 01-01-01 | 01   | 1    | PUBL-01     | static      | `pnpm --filter @xinghunm/compass-ui build`                                                                                                                                                | ✅          | ⬜ pending |
-| 01-01-02 | 01   | 1    | PUBL-04     | integration | `pnpm pack --pack-destination /tmp/one-piece-pack-test --filter @xinghunm/compass-ui`                                                                                                     | ❌ W0       | ⬜ pending |
-| 01-02-01 | 02   | 1    | PUBL-03     | static      | `pnpm exec publint packages/compass-ui`                                                                                                                                                   | ❌ W0       | ⬜ pending |
-| 01-02-02 | 02   | 2    | PUBL-04     | integration | `pnpm --dir packages/compass-ui/test-consumer tsc --noEmit`                                                                                                                               | ❌ W0       | ⬜ pending |
-| 01-03-01 | 03   | 1    | PUBL-02     | static      | `node -e \"const root=require('./package.json'); const pkg=require('./packages/compass-ui/package.json'); console.log(root.engines.node, root.engines.pnpm, pkg.publishConfig?.access)\"` | ✅          | ⬜ pending |
-| 01-03-02 | 03   | 2    | PUBL-05     | process     | `test -f .github/workflows/release.yml`                                                                                                                                                   | ❌ W0       | ⬜ pending |
+| Task ID  | Plan | Wave | Requirement | Test Type   | Automated Command                                                                                                                                                                       | File Exists | Status   |
+| -------- | ---- | ---- | ----------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | -------- |
+| 01-01-01 | 01   | 1    | PUBL-01     | static      | `pnpm --filter @xinghunm/compass-ui build`                                                                                                                                              | ✅          | ✅ green |
+| 01-01-02 | 01   | 1    | PUBL-04     | integration | `pnpm run release:verify:compass-ui`                                                                                                                                                    | ✅          | ✅ green |
+| 01-02-01 | 02   | 1    | PUBL-03     | static      | `pnpm run release:verify:compass-ui`                                                                                                                                                    | ✅          | ✅ green |
+| 01-02-02 | 02   | 2    | PUBL-04     | integration | `pnpm run release:verify:compass-ui`                                                                                                                                                    | ✅          | ✅ green |
+| 01-03-01 | 03   | 1    | PUBL-02     | static      | `node -e "const root=require('./package.json'); const pkg=require('./packages/compass-ui/package.json'); console.log(root.engines.node, root.engines.pnpm, pkg.publishConfig?.access)"` | ✅          | ✅ green |
+| 01-03-02 | 03   | 2    | PUBL-05     | process     | `test -f .github/workflows/release.yml`                                                                                                                                                 | ✅          | ✅ green |
 
 _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
@@ -69,6 +70,18 @@ _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 
 ---
 
+## Final Execution Evidence
+
+- `pnpm run release:verify:compass-ui`：通过
+- 结果：`44` 个 test suite、`563` 个测试全部通过
+- `tsup` build 与 DTS 分发通过
+- `publint`、`pnpm pack`、临时消费者安装和类型检查通过
+- 非阻断 warning：
+  - `publint` 仍提示 `exports["."].types` 歧义
+  - 包缺少 `"type"` 字段的建议提示仍存在
+
+---
+
 ## Validation Sign-Off
 
 - [x] All tasks have `<automated>` verify or Wave 0 dependencies
@@ -78,4 +91,4 @@ _Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky_
 - [x] Feedback latency < 120s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** complete
