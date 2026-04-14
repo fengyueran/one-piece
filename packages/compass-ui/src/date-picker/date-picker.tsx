@@ -19,7 +19,7 @@ import {
 } from 'date-fns'
 import styled from '@emotion/styled'
 
-import InputField from '../input-field'
+import Input from '../input'
 import { DatePickerProps } from './types'
 import { useCalendar } from './hooks/use-calendar'
 import { MonthPanel, YearPanel, QuarterPanel, TimePanel } from './panels'
@@ -344,7 +344,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
         onMouseEnter={() => setInputHover(true)}
         onMouseLeave={() => setInputHover(false)}
       >
-        <InputField
+        <Input
           {...rest}
           className={classNames?.input}
           style={styles?.input}

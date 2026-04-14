@@ -22,6 +22,12 @@ export type { TooltipProps, TooltipPlacement } from './tooltip'
 export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 
+export { default as Input } from './input'
+export type { InputProps } from './input'
+
+export { default as Textarea } from './textarea'
+export type { TextareaProps } from './textarea'
+
 export { default as Checkbox } from './checkbox'
 export type { CheckboxProps } from './checkbox'
 

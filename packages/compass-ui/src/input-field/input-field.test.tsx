@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import InputField from './input-field'
+import Input from '../input'
 import ThemeProvider from '../theme/theme-provider'
 
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -15,6 +16,15 @@ describe('InputField', () => {
       const input = screen.getByRole('textbox')
       expect(input).toBeInTheDocument()
       expect(input).toHaveAttribute('type', 'text')
+    })
+
+    it('should preserve compatibility with the new Input facade', () => {
+      const { container } = renderWithTheme(<InputField placeholder="legacy" />)
+
+      expect(screen.getByPlaceholderText('legacy')).toBeInTheDocument()
+      expect(container.querySelector('.compass-input')).toBeInTheDocument()
+      expect(container.querySelector('.compass-input-field')).toBeInTheDocument()
+      expect(Input).toBeDefined()
     })
   })
 

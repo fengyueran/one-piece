@@ -1,5 +1,5 @@
 import React from 'react'
-import { InputFieldProps } from '../input-field/types'
+import type { InputProps } from '../input'
 
 export interface AutoCompleteOption {
   /** The value of the option */
@@ -12,7 +12,7 @@ export interface AutoCompleteOption {
   [key: string]: unknown
 }
 
-export interface AutoCompleteProps extends Omit<InputFieldProps, 'onChange' | 'onSelect'> {
+export interface AutoCompleteProps extends Omit<InputProps, 'onChange' | 'onSelect'> {
   /**
    * Current value of the input
    */
