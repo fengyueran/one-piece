@@ -381,8 +381,10 @@ export default () => (
 
 ## 键盘与可访问性
 
-- 触发元素会暴露 `aria-haspopup` 和 `aria-expanded`，用于表达菜单展开状态。
+- 触发元素会暴露 `aria-haspopup`、`aria-expanded` 和 `aria-controls`，用于表达菜单展开状态并关联当前浮层。
 - 当 `trigger="click"` 且触发元素本身可聚焦时，可以通过键盘激活触发元素来打开下拉菜单。
+- `trigger="click"` 的下拉菜单在展开后支持通过 `Escape` 关闭。
+- 菜单外部点击会关闭下拉层；浮层内部点击会保留当前展开状态，是否在选中后关闭仍由 `closeOnSelect` 决定。
 - `disabled` 状态下不会响应悬停或点击触发。
 
 ## API

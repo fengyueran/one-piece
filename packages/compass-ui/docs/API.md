@@ -124,6 +124,13 @@ import type {
 - `Escape` 会关闭当前展开的菜单；`disabled` 状态不会打开菜单，也不会响应键盘选择。
 - `allowClear` 只负责清空当前值，不额外承诺保留或返回被清空项的 option 对象。
 
+## 现有 Overlay 契约
+
+- `Dropdown`、`TreeSelect`、`DatePicker` / `RangePicker` 当前都使用统一的展开状态表达：触发器同步 `aria-expanded`，并用 `aria-controls` 指向实际浮层节点。
+- 这批现有 overlay 都支持通过外部点击关闭；`Dropdown`、`TreeSelect` 和日期类面板在当前实现里也支持 `Escape` 关闭。
+- 浮层内部点击默认不会被当成外部关闭处理；是否在交互后立即关闭，仍由各组件自己的场景规则决定，例如 `Dropdown.closeOnSelect`。
+- `Tooltip` 保持轻量提示角色，不承诺 `aria-expanded` 契约；当前只在打开时通过 `aria-describedby` 把触发器和提示层关联起来。
+
 ## 页面状态组件边界
 
 - `Alert`：页面内持续反馈，不替代 `Message`

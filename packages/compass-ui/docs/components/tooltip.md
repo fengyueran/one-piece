@@ -156,6 +156,13 @@ export default () => (
 
 ## API
 
+## 交互边界与可访问性
+
+- `Tooltip` 仍然是轻量提示，不承载表单或确认操作；需要可点击内容时应使用后续的 `Popover` / `Popconfirm`。
+- 触发元素在浮层打开时会通过 `aria-describedby` 指向当前提示层。
+- `trigger="click"` 时，按 `Escape` 可以关闭提示层；提示层内部点击不会立即把自己关闭。
+- `disabled` 或空内容时不会渲染提示层。
+
 通用属性参考：[通用属性](/guide/common-props)
 
 | 参数            | 说明                   | 类型                                                                                                                                                                 | 默认值    |
