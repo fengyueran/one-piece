@@ -1,0 +1,82 @@
+---
+title: Alert 警告提示
+nav:
+  title: 组件
+  order: 2
+group:
+  title: 反馈
+  order: 4
+---
+
+# Alert 警告提示
+
+`Alert` 用于页面或容器内部的持续反馈。它会稳定留在当前布局中，适合解释风险、成功状态、注意事项或可恢复错误。
+
+## 何时使用
+
+- 需要在页面内持续展示一段反馈，而不是几秒后自动消失时
+- 需要把反馈和上下文内容放在一起，例如表单顶部、详情页头部、卡片正文中
+- 需要提示后续动作，例如“去处理”“查看详情”“重新尝试”
+
+## 不适合的场景
+
+- 临时性、全局浮出的提示：请使用 `Message`
+- 需要打断用户决策的确认流程：请使用 `Modal`
+- 单纯展示进度百分比：请使用 `Progress`
+
+## 代码演示
+
+### 基础用法
+
+```tsx
+import React from 'react'
+import { Alert } from '@xinghunm/compass-ui'
+
+export default () => (
+  <Alert type="info" title="环境提示" description="当前正在使用测试环境，请勿录入真实生产数据。" />
+)
+```
+
+### 不同类型
+
+```tsx
+import React from 'react'
+import { Alert } from '@xinghunm/compass-ui'
+
+export default () => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <Alert type="success" title="保存成功" description="配置已写入并将在下次发布时生效。" />
+    <Alert type="warning" title="即将过期" description="当前令牌将在 2 小时后失效，请及时刷新。" />
+    <Alert type="error" title="同步失败" description="远端服务暂时不可用，请稍后重试。" />
+  </div>
+)
+```
+
+### 带操作区和关闭按钮
+
+```tsx
+import React from 'react'
+import { Alert, Button } from '@xinghunm/compass-ui'
+
+export default () => (
+  <Alert
+    type="warning"
+    title="仍有待处理项"
+    description="你可以先保存草稿，或立即去补齐缺失字段。"
+    action={<Button size="small">查看详情</Button>}
+    closable
+  />
+)
+```
+
+## 键盘与可访问性
+
+- `Alert` 使用语义化角色输出反馈内容
+- `warning` 和 `error` 默认使用 `role="alert"`，更适合需要立即被辅助技术感知的内容
+- 可关闭时会提供可聚焦的关闭按钮
+
+## 边界说明
+
+- `Alert` 是页面内构件，不负责全局消息队列
+- `Alert` 不会像 `Message` 一样自动消失
+- 如果你需要列表、表格或页面在“没有内容”时的占位，请改用 `Empty`

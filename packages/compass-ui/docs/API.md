@@ -14,11 +14,15 @@
 
 ```ts
 import {
+  Alert,
   Button,
   Checkbox,
   ConfigProvider,
+  Empty,
   Input,
   Radio,
+  Skeleton,
+  SpinLoading,
   Switch,
   Textarea,
   ThemeProvider,
@@ -30,6 +34,7 @@ import {
 
 - 已公开组件：如 `Button`、`Input`、`Textarea`、`Select`、`DatePicker`、`Table`、`Modal`
 - 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
+- 新增页面状态组件：`Alert`、`Empty`、`Skeleton`、`SpinLoading`
 - 兼容入口：`InputField` 仍然保留，但新代码推荐直接使用 `Input`
 - 全局配置与主题门面：`ConfigProvider`、`ThemeProvider`、`useTheme`
 - 常用主题默认值与主要类型：`defaultTheme`、`Theme`、组件 Props 类型
@@ -96,8 +101,11 @@ import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 import type {
   ButtonProps,
   CheckboxProps,
+  EmptyProps,
   InputProps,
   RadioGroupProps,
+  SkeletonProps,
+  SpinLoadingProps,
   SwitchProps,
   TextareaProps,
   Theme,
@@ -107,3 +115,10 @@ import type {
 ## 关于可访问性说明
 
 组件文档会逐步补充键盘与可访问性章节，但这里只承诺已经由自动化测试覆盖的基础行为。更复杂的 overlay、焦点管理与高级交互会在后续阶段继续补齐。
+
+## 页面状态组件边界
+
+- `Alert`：页面内持续反馈，不替代 `Message`
+- `Empty`：无结果或无内容时的占位，不表达“正在加载”
+- `Skeleton`：结构已知时的占位加载
+- `SpinLoading`：通用等待态，支持独立使用或包裹内容形成覆盖式加载

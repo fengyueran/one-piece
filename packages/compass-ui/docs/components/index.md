@@ -51,8 +51,12 @@ group:
 
 ## 反馈与全局配置
 
+- [Alert 警告提示](/components/alert)
+- [Empty 空状态](/components/empty)
 - [Modal 对话框](/components/modal)
 - [Message 全局提示](/components/message)
+- [Skeleton 骨架屏](/components/skeleton)
+- [SpinLoading 加载中](/components/spin-loading)
 - [ConfigProvider 全局配置](/components/config-provider)
 - [ThemeProvider 主题上下文](/components/theme-provider)
 
@@ -62,6 +66,7 @@ group:
 
 - 优先补齐高频常用组件，而不是追求一次性覆盖完整设计系统。
 - 文本输入场景默认优先使用 `Input` 与 `Textarea`，`InputField` 只作为兼容入口保留。
+- 页面反馈与状态闭环优先使用 `Alert`、`Empty`、`Skeleton`、`SpinLoading` 这些页面内构件，再考虑全局提示。
 - 文档页会逐步补充键盘和可访问性说明，但只记录已经被自动化验证覆盖的行为。
 - 更复杂的 overlay、选择器稳态化和更广的组件覆盖面会在后续阶段继续推进。
 
