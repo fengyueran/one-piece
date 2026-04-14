@@ -426,12 +426,14 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-| 变量名称                         | 描述         | 默认值                |
-| -------------------------------- | ------------ | --------------------- |
-| `components.modal.maskColor`     | 遮罩层背景色 | `rgba(0, 0, 0, 0.45)` |
-| `components.modal.contentBg`     | 模态框背景色 | `#ffffff`             |
-| `components.modal.borderRadius`  | 模态框圆角   | `8px`                 |
-| `components.modal.headerPadding` | 头部内边距   | `16px 24px`           |
-| `components.modal.bodyPadding`   | 内容内边距   | `24px`                |
-| `components.modal.footerPadding` | 底部内边距   | `10px 16px`           |
-| `components.modal.zIndex`        | 模态框层级   | `1000`                |
+| Token Name                       | Description  | Default                                                                                                    |
+| -------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `components.modal.maskColor`     | 遮罩层背景色 | `rgba(0, 0, 0, 0.45)`                                                                                      |
+| `components.modal.contentBg`     | 模态框背景色 | `#ffffff`                                                                                                  |
+| `components.modal.borderRadius`  | 模态框圆角   | `8px`                                                                                                      |
+| `components.modal.boxShadow`     | 模态框阴影   | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.modal.headerPadding` | 头部内边距   | `16px 24px`                                                                                                |
+| `components.modal.bodyPadding`   | 内容内边距   | `24px`                                                                                                     |
+| `components.modal.footerPadding` | 底部内边距   | `10px 16px`                                                                                                |
+| `components.modal.padding`       | 内部通用间距 | `24px`                                                                                                     |
+| `components.modal.zIndex`        | 模态框层级   | `1000`                                                                                                     |

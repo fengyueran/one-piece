@@ -154,6 +154,36 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+通过 `ConfigProvider` 覆盖提示框的主题变量。
+
+```tsx
+import React from 'react'
+import { Button, ConfigProvider, Tooltip } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            contentColor: '#f8fafc',
+            borderRadius: '10px',
+            padding: '8px 12px',
+          },
+        },
+      },
+    }}
+  >
+    <Tooltip content="主题化提示">
+      <Button>Custom Theme</Button>
+    </Tooltip>
+  </ConfigProvider>
+)
+```
+
 ## 交互边界与可访问性
 
 - `Tooltip` 仍然是轻量提示，不承载表单或确认操作；需要可点击内容时应使用后续的 `Popover` / `Popconfirm`。
@@ -182,18 +212,13 @@ export default () => (
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.tooltip)</summary>
-
-| 变量名                               | 说明           |
-| ------------------------------------ | -------------- |
-| `components.tooltip.zIndex`          | 提示框层级     |
-| `components.tooltip.backgroundColor` | 提示框背景色   |
-| `components.tooltip.contentColor`    | 提示框文字色   |
-| `components.tooltip.boxShadow`       | 提示框阴影     |
-| `components.tooltip.borderRadius`    | 提示框圆角     |
-| `components.tooltip.padding`         | 提示框内边距   |
-| `components.tooltip.maxWidth`        | 提示框最大宽度 |
-| `components.tooltip.fontSize`        | 提示框字体大小 |
-
-</details>
+| Token Name                           | Description    | Default                          |
+| ------------------------------------ | -------------- | -------------------------------- |
+| `components.tooltip.zIndex`          | 提示框层级     | `1070`                           |
+| `components.tooltip.backgroundColor` | 提示框背景色   | `rgba(0, 0, 0, 0.85)`            |
+| `components.tooltip.contentColor`    | 提示框文字色   | `#ffffff`                        |
+| `components.tooltip.boxShadow`       | 提示框阴影     | `0 4px 12px rgba(0, 0, 0, 0.15)` |
+| `components.tooltip.borderRadius`    | 提示框圆角     | `8px`                            |
+| `components.tooltip.padding`         | 提示框内边距   | `6px 10px`                       |
+| `components.tooltip.maxWidth`        | 提示框最大宽度 | `240px`                          |
+| `components.tooltip.fontSize`        | 提示框字体大小 | `12px`                           |
