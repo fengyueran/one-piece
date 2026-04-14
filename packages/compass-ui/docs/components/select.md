@@ -595,9 +595,12 @@ export default () => {
 
 ## 键盘与可访问性
 
-- `showSearch` 打开后，搜索输入框会自动获得焦点，便于直接输入过滤关键词。
-- `tags` 模式支持在输入后按 `Enter` 创建新标签，或选择现有匹配项。
-- `disabled` 状态下不会打开下拉层，也不会响应选择动作。
+- 非搜索模式下，触发器暴露为 `combobox`，下拉层暴露为 `listbox`，并通过 `aria-expanded`、`aria-controls`、`aria-activedescendant` 反映当前状态。
+- 关闭状态下按 `Enter` 或 `ArrowDown` 会展开下拉层；已展开后可用 `ArrowDown` / `ArrowUp` 在可选项之间移动激活项。
+- 单选模式下，已展开后按 `Enter` 或 `Space` 会确认当前激活项；按 `Escape` 会关闭下拉层。
+- `showSearch` 打开后，搜索输入框会自动获得焦点。输入过滤条件后，使用 `ArrowDown` / `ArrowUp` 导航，再用 `Enter` 选择当前激活项。
+- `tags` 模式支持在输入后按 `Enter` 创建新标签；如果输入值已匹配已有选项，则会优先选择已有选项。
+- `disabled` 状态下不会打开下拉层，也不会响应键盘选择动作。
 
 ## API
 

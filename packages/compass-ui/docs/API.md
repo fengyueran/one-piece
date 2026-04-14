@@ -116,6 +116,14 @@ import type {
 
 组件文档会逐步补充键盘与可访问性章节，但这里只承诺已经由自动化测试覆盖的基础行为。更复杂的 overlay、焦点管理与高级交互会在后续阶段继续补齐。
 
+## Select 当前交互契约
+
+- `Select` 当前对外暴露的是基础 `combobox` / `listbox` 语义，触发器或搜索输入会同步 `aria-expanded`、`aria-controls`、`aria-activedescendant`。
+- 非搜索模式下，关闭状态按 `Enter` 或 `ArrowDown` 会展开菜单；展开后按 `ArrowDown` / `ArrowUp` 移动激活项，按 `Enter` 或 `Space` 确认当前激活项。
+- 搜索模式下，输入框会在展开后自动获得焦点。输入过滤条件后，使用 `ArrowDown` / `ArrowUp` 导航，按 `Enter` 选择当前激活项。
+- `Escape` 会关闭当前展开的菜单；`disabled` 状态不会打开菜单，也不会响应键盘选择。
+- `allowClear` 只负责清空当前值，不额外承诺保留或返回被清空项的 option 对象。
+
 ## 页面状态组件边界
 
 - `Alert`：页面内持续反馈，不替代 `Message`
