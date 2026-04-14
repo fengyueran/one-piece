@@ -29,14 +29,24 @@ pnpm add @xinghunm/compass-ui
 
 ```tsx
 import React from 'react'
-import { Button, ConfigProvider, defaultTheme } from '@xinghunm/compass-ui'
+import { Button, ConfigProvider, Input, Textarea, defaultTheme } from '@xinghunm/compass-ui'
 
 export default () => (
   <ConfigProvider theme={{ token: defaultTheme }}>
-    <Button variant="primary">Hello Compass UI</Button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 360 }}>
+      <Input placeholder="项目名称" />
+      <Textarea placeholder="项目描述" rows={4} />
+      <Button variant="primary">Hello Compass UI</Button>
+    </div>
   </ConfigProvider>
 )
 ```
+
+如果你刚接入文本输入能力，默认推荐：
+
+- 单行输入使用 `Input`
+- 多行输入使用 `Textarea`
+- `InputField` 仍然可用，但主要用于兼容既有代码
 
 ## 使用公开子路径
 

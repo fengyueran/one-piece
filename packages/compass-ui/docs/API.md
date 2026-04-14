@@ -17,8 +17,10 @@ import {
   Button,
   Checkbox,
   ConfigProvider,
+  Input,
   Radio,
   Switch,
+  Textarea,
   ThemeProvider,
   defaultTheme,
 } from '@xinghunm/compass-ui'
@@ -26,8 +28,9 @@ import {
 
 根入口当前主要包含：
 
-- 已公开组件：如 `Button`、`InputField`、`Select`、`DatePicker`、`Table`、`Modal`
+- 已公开组件：如 `Button`、`Input`、`Textarea`、`Select`、`DatePicker`、`Table`、`Modal`
 - 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
+- 兼容入口：`InputField` 仍然保留，但新代码推荐直接使用 `Input`
 - 全局配置与主题门面：`ConfigProvider`、`ThemeProvider`、`useTheme`
 - 常用主题默认值与主要类型：`defaultTheme`、`Theme`、组件 Props 类型
 
@@ -90,7 +93,15 @@ import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 ## 类型导入示例
 
 ```ts
-import type { ButtonProps, CheckboxProps, RadioGroupProps, SwitchProps, Theme } from '@xinghunm/compass-ui'
+import type {
+  ButtonProps,
+  CheckboxProps,
+  InputProps,
+  RadioGroupProps,
+  SwitchProps,
+  TextareaProps,
+  Theme,
+} from '@xinghunm/compass-ui'
 ```
 
 ## 关于可访问性说明
