@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 1 已完成，等待规划 Phase 2
-stopped_at: Phase 2 context gathered
-last_updated: '2026-04-14T01:56:38.911Z'
-last_activity: 2026-04-14 — 完成公开子路径、发布前校验脚本、根级发布入口与 trusted publishing workflow
+status: Phase 2 已完成，等待规划 Phase 3
+stopped_at: Phase 2 completed
+last_updated: '2026-04-14T04:10:00.000Z'
+last_activity: 2026-04-14 — 完成文档单入口、文档公开导入 smoke 和首批键盘/a11y 文档基线
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 25
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 6
+  percent: 50
 ---
 
 # 项目状态
@@ -21,38 +21,38 @@ progress:
 参考：`.planning/PROJECT.md`（更新于 2026-04-13）
 
 **Core value:** 用尽可能低的重复建设成本，持续沉淀一套能在真实项目里稳定复用、可独立发布、带完整文档和 demo 的前端资产。
-**Current focus:** Phase 2 - 文档入口与验证统一
+**Current focus:** Phase 03 — 基础组件补齐
 
 ## 当前定位
 
-Phase: 2 / 4（文档入口与验证统一）
-Plan: 当前阶段 0 / 3
-Status: Phase 2 已完成规划，等待执行
-Last activity: 2026-04-14 — 已完成 Phase 2 context、research、validation 与 3 份执行计划
+Phase: 3 / 4（基础组件补齐）
+Plan: 当前阶段 0 / TBD
+Status: Phase 2 已完成，等待规划 Phase 3
+Last activity: 2026-04-14 — 已完成单一文档入口、文档验证命令和 5 个代表性组件的键盘/a11y 基线
 
-Progress: [██░░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## 执行指标
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 6
 - Average duration: 35 min
-- Total execution time: 1.8 hours
+- Total execution time: 3.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total   | Avg/Plan |
 | ----- | ----- | ------- | -------- |
 | 1     | 3     | 105 min | 35 min   |
-| 2     | 0     | 0 min   | 0 min    |
+| 2     | 3     | 105 min | 35 min   |
 | 3     | 0     | 0 min   | 0 min    |
 | 4     | 0     | 0 min   | 0 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01, 01-02, 01-03
-- Trend: Improving
+- Last 5 plans: 01-02, 01-03, 02-01, 02-02, 02-03
+- Trend: Stable
 
 ## 累积上下文
 
@@ -69,11 +69,10 @@ Progress: [██░░░░░░░░] 25%
 
 ### Blockers/Concerns
 
-- Phase 2 需要确认 `apps/docs` 与 Storybook 的最终对外形态。
 - Phase 4 需要确认复杂交互基础层的长期策略边界。
 
 ## 会话连续性
 
 Last session: 2026-04-14T01:56:38.909Z
-Stopped at: Phase 2 planned
-Resume file: .planning/phases/02-docs-entry-verification-unification/02-01-PLAN.md
+Stopped at: Phase 2 completed
+Resume file: .planning/ROADMAP.md

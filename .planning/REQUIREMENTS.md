@@ -15,11 +15,11 @@
 
 ### 文档与验证
 
-- [ ] **DOCS-01**: 外部用户可以从单一对外文档入口理解 `compass-ui` 的安装方式、公开 API 和组件使用方式
-- [ ] **DOCS-02**: 每个纳入 v1 范围的核心组件都提供只使用公开导出路径的可运行示例
-- [ ] **DOCS-03**: 组件文档、交互 demo 和测试使用同一套真实消费方式，不再分别依赖不同入口或内部路径
-- [ ] **DOCS-04**: 仓库可以对组件文档和 demo 做基础 smoke 检查，提前发现公开示例失效
-- [ ] **DOCS-05**: 核心组件至少具备基础键盘交互和可访问性验证，而不是只验证静态渲染
+- [x] **DOCS-01**: 外部用户可以从单一对外文档入口理解 `compass-ui` 的安装方式、公开 API 和组件使用方式
+- [x] **DOCS-02**: 每个纳入 v1 范围的核心组件都提供只使用公开导出路径的可运行示例
+- [x] **DOCS-03**: 组件文档、交互 demo 和测试使用同一套真实消费方式，不再分别依赖不同入口或内部路径
+- [x] **DOCS-04**: 仓库可以对组件文档和 demo 做基础 smoke 检查，提前发现公开示例失效
+- [x] **DOCS-05**: 核心组件至少具备基础键盘交互和可访问性验证，而不是只验证静态渲染
 
 ### 基础组件
 
@@ -74,11 +74,11 @@
 | PUBL-03     | Phase 1 | Complete |
 | PUBL-04     | Phase 1 | Complete |
 | PUBL-05     | Phase 1 | Complete |
-| DOCS-01     | Phase 2 | Pending  |
-| DOCS-02     | Phase 2 | Pending  |
-| DOCS-03     | Phase 2 | Pending  |
-| DOCS-04     | Phase 2 | Pending  |
-| DOCS-05     | Phase 2 | Pending  |
+| DOCS-01     | Phase 2 | Complete |
+| DOCS-02     | Phase 2 | Complete |
+| DOCS-03     | Phase 2 | Complete |
+| DOCS-04     | Phase 2 | Complete |
+| DOCS-05     | Phase 2 | Complete |
 | COMP-01     | Phase 3 | Pending  |
 | COMP-02     | Phase 3 | Pending  |
 | COMP-03     | Phase 3 | Pending  |
@@ -102,4 +102,4 @@
 ---
 
 _Requirements defined: 2026-04-13_
-_Last updated: 2026-04-14 after phase 1 execution_
+_Last updated: 2026-04-14 after phase 2 execution_
