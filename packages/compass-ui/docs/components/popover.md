@@ -122,6 +122,24 @@ export default () => (
 | classNames   | 语义化类名           | `{ root, overlay, header, title, body }` | -         |
 | styles       | 语义化样式           | `{ root, overlay, header, title, body }` | -         |
 
+## 主题变量 (Design Token)
+
+| Token Name                           | Description  | Default                                                          |
+| ------------------------------------ | ------------ | ---------------------------------------------------------------- |
+| `components.popover.zIndex`          | 浮层层级     | `1060`                                                           |
+| `components.popover.minWidth`        | 最小宽度     | `220px`                                                          |
+| `components.popover.maxWidth`        | 最大宽度     | `320px`                                                          |
+| `components.popover.borderRadius`    | 容器圆角     | `8px`                                                            |
+| `components.popover.backgroundColor` | 背景色       | `#ffffff`                                                        |
+| `components.popover.boxShadow`       | 阴影         | `0 8px 24px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.08)` |
+| `components.popover.borderColor`     | 边框颜色     | `rgba(5, 5, 5, 0.08)`                                            |
+| `components.popover.headerPadding`   | 头部内边距   | `12px 14px 0`                                                    |
+| `components.popover.bodyPadding`     | 内容区内边距 | `12px 14px 14px`                                                 |
+| `components.popover.titleColor`      | 标题颜色     | `rgba(0, 0, 0, 0.88)`                                            |
+| `components.popover.titleFontSize`   | 标题字体大小 | `14px`                                                           |
+| `components.popover.bodyColor`       | 内容文字颜色 | `rgba(0, 0, 0, 0.65)`                                            |
+| `components.popover.bodyFontSize`    | 内容字体大小 | `13px`                                                           |
+
 ## 当前约束
 
 - 当前实现优先保证触发、关闭和基础语义稳定，不提供箭头、嵌套层级管理或复杂焦点陷阱。

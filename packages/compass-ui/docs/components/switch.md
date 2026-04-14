@@ -122,3 +122,26 @@ export default () => (
 | `onChange`          | 原生变化回调         | `(event: ChangeEvent<HTMLInputElement>) => void` | -          |
 | `classNames`        | 语义化类名覆写       | `SwitchProps['classNames']`                      | -          |
 | `styles`            | 语义化样式覆写       | `SwitchProps['styles']`                          | -          |
+
+## 主题变量 (Design Token)
+
+| Token Name                         | Description      | Default               |
+| ---------------------------------- | ---------------- | --------------------- |
+| `components.switch.trackWidth.sm`  | 小尺寸轨道宽度   | `28px`                |
+| `components.switch.trackWidth.md`  | 中尺寸轨道宽度   | `36px`                |
+| `components.switch.trackWidth.lg`  | 大尺寸轨道宽度   | `44px`                |
+| `components.switch.trackHeight.sm` | 小尺寸轨道高度   | `16px`                |
+| `components.switch.trackHeight.md` | 中尺寸轨道高度   | `20px`                |
+| `components.switch.trackHeight.lg` | 大尺寸轨道高度   | `24px`                |
+| `components.switch.thumbSize.sm`   | 小尺寸滑块直径   | `12px`                |
+| `components.switch.thumbSize.md`   | 中尺寸滑块直径   | `16px`                |
+| `components.switch.thumbSize.lg`   | 大尺寸滑块直径   | `20px`                |
+| `components.switch.thumbOffset.sm` | 小尺寸滑块位移   | `12px`                |
+| `components.switch.thumbOffset.md` | 中尺寸滑块位移   | `16px`                |
+| `components.switch.thumbOffset.lg` | 大尺寸滑块位移   | `20px`                |
+| `components.switch.checkedBg`      | 选中轨道背景色   | `#1890ff`             |
+| `components.switch.uncheckedBg`    | 未选中轨道背景色 | `rgba(0, 0, 0, 0.25)` |
+| `components.switch.disabledBg`     | 禁用轨道背景色   | `rgba(0, 0, 0, 0.25)` |
+| `components.switch.thumbBg`        | 滑块背景色       | `#ffffff`             |
+| `components.switch.labelColor`     | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.switch.focusRingColor` | 焦点高亮颜色     | `#1890ff`             |

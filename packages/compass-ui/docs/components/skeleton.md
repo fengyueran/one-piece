@@ -105,3 +105,15 @@ export default () => (
 | `children`   | `loading={false}` 时渲染的真实内容 | `ReactNode`                   | -       |
 | `classNames` | 语义化类名覆写                     | `SkeletonProps['classNames']` | -       |
 | `styles`     | 语义化样式覆写                     | `SkeletonProps['styles']`     | -       |
+
+## 主题变量 (Design Token)
+
+| Token Name                                  | Description  | Default               |
+| ------------------------------------------- | ------------ | --------------------- |
+| `components.skeleton.gap`                   | 主体块间距   | `12px`                |
+| `components.skeleton.rowGap`                | 行间距       | `8px`                 |
+| `components.skeleton.avatarSize`            | 头像占位尺寸 | `40px`                |
+| `components.skeleton.blockHeight`           | 文本块高度   | `14px`                |
+| `components.skeleton.borderRadius`          | 骨架块圆角   | `4px`                 |
+| `components.skeleton.shimmerBaseColor`      | 动画基础色   | `rgba(0, 0, 0, 0.06)` |
+| `components.skeleton.shimmerHighlightColor` | 动画高亮色   | `rgba(0, 0, 0, 0.12)` |

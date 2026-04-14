@@ -162,3 +162,19 @@ export default () => (
 | `onChange`     | 选中值变化回调   | `(value, event) => void`         | -            |
 | `classNames`   | 语义化类名覆写   | `RadioGroupProps['classNames']`  | -            |
 | `styles`       | 语义化样式覆写   | `RadioGroupProps['styles']`      | -            |
+
+## 主题变量 (Design Token)
+
+| Token Name                            | Description      | Default               |
+| ------------------------------------- | ---------------- | --------------------- |
+| `components.radio.size.sm`            | 小尺寸单选框边长 | `14px`                |
+| `components.radio.size.md`            | 中尺寸单选框边长 | `16px`                |
+| `components.radio.size.lg`            | 大尺寸单选框边长 | `20px`                |
+| `components.radio.dotSize.sm`         | 小尺寸圆点直径   | `6px`                 |
+| `components.radio.dotSize.md`         | 中尺寸圆点直径   | `8px`                 |
+| `components.radio.dotSize.lg`         | 大尺寸圆点直径   | `10px`                |
+| `components.radio.borderColor`        | 默认边框颜色     | `#d9d9d9`             |
+| `components.radio.checkedBorderColor` | 选中边框颜色     | `#1890ff`             |
+| `components.radio.dotColor`           | 选中圆点颜色     | `#1890ff`             |
+| `components.radio.labelColor`         | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.radio.focusRingColor`     | 焦点高亮颜色     | `#1890ff`             |

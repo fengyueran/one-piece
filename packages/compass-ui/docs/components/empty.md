@@ -112,3 +112,27 @@ export default () => (
 | `size`        | 空态密度           | `'small' \| 'medium' \| 'large'` | `'medium'` |
 | `classNames`  | 语义化类名覆写     | `EmptyProps['classNames']`       | -          |
 | `styles`      | 语义化样式覆写     | `EmptyProps['styles']`           | -          |
+
+## 主题变量 (Design Token)
+
+| Token Name                               | Description      | Default                                                                               |
+| ---------------------------------------- | ---------------- | ------------------------------------------------------------------------------------- |
+| `components.empty.gap.sm`                | 小尺寸内容间距   | `8px`                                                                                 |
+| `components.empty.gap.md`                | 中尺寸内容间距   | `12px`                                                                                |
+| `components.empty.gap.lg`                | 大尺寸内容间距   | `16px`                                                                                |
+| `components.empty.padding.sm`            | 小尺寸容器内边距 | `20px 16px`                                                                           |
+| `components.empty.padding.md`            | 中尺寸容器内边距 | `32px 20px`                                                                           |
+| `components.empty.padding.lg`            | 大尺寸容器内边距 | `40px 24px`                                                                           |
+| `components.empty.imageWidth.sm`         | 小尺寸插图宽度   | `64px`                                                                                |
+| `components.empty.imageWidth.md`         | 中尺寸插图宽度   | `88px`                                                                                |
+| `components.empty.imageWidth.lg`         | 大尺寸插图宽度   | `112px`                                                                               |
+| `components.empty.imageHeight.sm`        | 小尺寸插图高度   | `48px`                                                                                |
+| `components.empty.imageHeight.md`        | 中尺寸插图高度   | `60px`                                                                                |
+| `components.empty.imageHeight.lg`        | 大尺寸插图高度   | `72px`                                                                                |
+| `components.empty.imageRadius`           | 插图圆角         | `16px`                                                                                |
+| `components.empty.imageBackground`       | 插图背景         | `linear-gradient(135deg, rgba(22, 119, 255, 0.12), rgba(82, 196, 26, 0.08)), #fafafa` |
+| `components.empty.imageBorderColor`      | 插图边框颜色     | `#d9d9d9`                                                                             |
+| `components.empty.imagePlaceholderColor` | 插图占位图形颜色 | `#d9d9d9`                                                                             |
+| `components.empty.titleColor`            | 标题文字颜色     | `#1f1f1f`                                                                             |
+| `components.empty.descriptionColor`      | 描述文字颜色     | `#8c8c8c`                                                                             |
+| `components.empty.actionGap`             | 操作区间距       | `8px`                                                                                 |

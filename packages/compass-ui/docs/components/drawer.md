@@ -125,6 +125,22 @@ export default () => (
 
 更多可配置字段见 [主题 Token](/guide/theme-tokens)。
 
+## 主题变量 (Design Token)
+
+| Token Name                        | Description    | Default                                                                                                    |
+| --------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.drawer.zIndex`        | 抽屉层级       | `1000`                                                                                                     |
+| `components.drawer.maskColor`     | 遮罩层背景色   | `rgba(0, 0, 0, 0.45)`                                                                                      |
+| `components.drawer.backdropBlur`  | 遮罩层模糊效果 | `blur(1px)`                                                                                                |
+| `components.drawer.contentBg`     | 内容区背景色   | `#ffffff`                                                                                                  |
+| `components.drawer.boxShadow`     | 阴影           | `0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.drawer.headerPadding` | 头部内边距     | `24px`                                                                                                     |
+| `components.drawer.bodyPadding`   | 内容区内边距   | `24px`                                                                                                     |
+| `components.drawer.footerPadding` | 底部内边距     | `24px`                                                                                                     |
+| `components.drawer.borderColor`   | 分隔边框颜色   | `#f0f0f0`                                                                                                  |
+| `components.drawer.titleColor`    | 标题文字颜色   | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.drawer.titleFontSize` | 标题字体大小   | `18px`                                                                                                     |
+
 ## 交互边界与可访问性
 
 - `Drawer` 与 `Modal` 同属页面级 overlay，都通过 portal 渲染到 `document.body`，并使用 `mask`、关闭按钮和 `Escape` 形成统一关闭契约。

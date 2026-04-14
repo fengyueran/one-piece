@@ -132,3 +132,28 @@ export default () => (
 | `onClose`     | 关闭后的回调                            | `() => void`                                  | -        |
 | `classNames`  | 语义化类名覆写                          | `AlertProps['classNames']`                    | -        |
 | `styles`      | 语义化样式覆写                          | `AlertProps['styles']`                        | -        |
+
+## 主题变量 (Design Token)
+
+| Token Name                                 | Description      | Default               |
+| ------------------------------------------ | ---------------- | --------------------- |
+| `components.alert.padding`                 | 容器内边距       | `12px 16px`           |
+| `components.alert.borderRadius`            | 容器圆角         | `8px`                 |
+| `components.alert.titleColor`              | 标题文字颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.alert.descriptionColor`        | 描述文字颜色     | `#595959`             |
+| `components.alert.iconSize`                | 图标尺寸         | `18px`                |
+| `components.alert.closeColor`              | 关闭按钮颜色     | `#8c8c8c`             |
+| `components.alert.closeHoverColor`         | 关闭按钮悬停颜色 | `#1f1f1f`             |
+| `components.alert.focusRingColor`          | 焦点高亮颜色     | `#1677ff`             |
+| `components.alert.info.backgroundColor`    | 信息态背景色     | `#e6f4ff`             |
+| `components.alert.info.borderColor`        | 信息态边框色     | `#91caff`             |
+| `components.alert.info.accentColor`        | 信息态强调色     | `#1677ff`             |
+| `components.alert.success.backgroundColor` | 成功态背景色     | `#f6ffed`             |
+| `components.alert.success.borderColor`     | 成功态边框色     | `#b7eb8f`             |
+| `components.alert.success.accentColor`     | 成功态强调色     | `#52c41a`             |
+| `components.alert.warning.backgroundColor` | 警告态背景色     | `#fffbe6`             |
+| `components.alert.warning.borderColor`     | 警告态边框色     | `#ffe58f`             |
+| `components.alert.warning.accentColor`     | 警告态强调色     | `#faad14`             |
+| `components.alert.error.backgroundColor`   | 错误态背景色     | `#fff2f0`             |
+| `components.alert.error.borderColor`       | 错误态边框色     | `#ffccc7`             |
+| `components.alert.error.accentColor`       | 错误态强调色     | `#ff4d4f`             |

@@ -135,3 +135,19 @@ export default () => (
 | `onChange`       | 选中状态变化回调   | `(event: ChangeEvent<HTMLInputElement>) => void` | -          |
 | `classNames`     | 语义化类名覆写     | `CheckboxProps['classNames']`                    | -          |
 | `styles`         | 语义化样式覆写     | `CheckboxProps['styles']`                        | -          |
+
+## 主题变量 (Design Token)
+
+| Token Name                               | Description      | Default               |
+| ---------------------------------------- | ---------------- | --------------------- |
+| `components.checkbox.size.sm`            | 小尺寸勾选框边长 | `14px`                |
+| `components.checkbox.size.md`            | 中尺寸勾选框边长 | `16px`                |
+| `components.checkbox.size.lg`            | 大尺寸勾选框边长 | `20px`                |
+| `components.checkbox.borderRadius`       | 勾选框圆角       | `4px`                 |
+| `components.checkbox.borderColor`        | 默认边框颜色     | `#d9d9d9`             |
+| `components.checkbox.checkedBorderColor` | 选中边框颜色     | `#1890ff`             |
+| `components.checkbox.checkedBg`          | 选中背景色       | `#1890ff`             |
+| `components.checkbox.disabledBg`         | 禁用背景色       | `#fafafa`             |
+| `components.checkbox.labelColor`         | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.checkbox.iconColor`          | 勾选图标颜色     | `#ffffff`             |
+| `components.checkbox.focusRingColor`     | 焦点高亮颜色     | `#1890ff`             |

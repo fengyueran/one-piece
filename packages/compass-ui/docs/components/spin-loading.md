@@ -115,3 +115,15 @@ export default () => (
 | `children`   | 被包裹的内容；传入后会渲染覆盖层 | `ReactNode`                                | -          |
 | `classNames` | 语义化类名覆写                   | `SpinLoadingProps['classNames']`           | -          |
 | `styles`     | 语义化样式覆写                   | `SpinLoadingProps['styles']`               | -          |
+
+## 主题变量 (Design Token)
+
+| Token Name                                   | Description      | Default                     |
+| -------------------------------------------- | ---------------- | --------------------------- |
+| `components.spinLoading.indicatorColor`      | 指示器颜色       | `#1677ff`                   |
+| `components.spinLoading.tipColor`            | 提示文字颜色     | `#8c8c8c`                   |
+| `components.spinLoading.overlayBackground`   | 覆盖层背景色     | `rgba(255, 255, 255, 0.72)` |
+| `components.spinLoading.overlayBackdropBlur` | 覆盖层模糊效果   | `blur(0.5px)`               |
+| `components.spinLoading.size.sm`             | 小尺寸指示器大小 | `16px`                      |
+| `components.spinLoading.size.md`             | 中尺寸指示器大小 | `24px`                      |
+| `components.spinLoading.size.lg`             | 大尺寸指示器大小 | `36px`                      |
