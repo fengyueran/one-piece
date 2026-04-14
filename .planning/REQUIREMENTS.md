@@ -33,11 +33,11 @@
 
 ### 复杂交互
 
-- [ ] **INTR-01**: 用户可以通过键盘完整操作 `select`，包括打开、导航、选择和关闭
-- [ ] **INTR-02**: 用户可以在 `tree-select`、`date-picker`、`dropdown` 和 `tooltip` 中获得一致的焦点管理和关闭行为
-- [ ] **INTR-03**: 用户可以使用 `popover` 和 `popconfirm` 承载锚点交互，并获得一致的 overlay 行为
-- [ ] **INTR-04**: 用户可以使用 `drawer` 承载侧边编辑或详情场景，并与现有 overlay 体系一致协作
-- [ ] **INTR-05**: 仓库对复杂交互组件形成明确的基础层策略，能够说明哪些行为继续自研、哪些行为应交给成熟 primitives 或 hooks
+- [x] **INTR-01**: 用户可以通过键盘完整操作 `select`，包括打开、导航、选择和关闭
+- [x] **INTR-02**: 用户可以在 `tree-select`、`date-picker`、`dropdown` 和 `tooltip` 中获得一致的焦点管理和关闭行为
+- [x] **INTR-03**: 用户可以使用 `popover` 和 `popconfirm` 承载锚点交互，并获得一致的 overlay 行为
+- [x] **INTR-04**: 用户可以使用 `drawer` 承载侧边编辑或详情场景，并与现有 overlay 体系一致协作
+- [x] **INTR-05**: 仓库对复杂交互组件形成明确的基础层策略，能够说明哪些行为继续自研、哪些行为应交给成熟 primitives 或 hooks
 
 ## v2 Requirements
 
@@ -86,11 +86,11 @@
 | COMP-05     | Phase 3 | Complete |
 | COMP-06     | Phase 3 | Complete |
 | COMP-07     | Phase 3 | Complete |
-| INTR-01     | Phase 4 | Pending  |
-| INTR-02     | Phase 4 | Pending  |
-| INTR-03     | Phase 4 | Pending  |
-| INTR-04     | Phase 4 | Pending  |
-| INTR-05     | Phase 4 | Pending  |
+| INTR-01     | Phase 4 | Complete |
+| INTR-02     | Phase 4 | Complete |
+| INTR-03     | Phase 4 | Complete |
+| INTR-04     | Phase 4 | Complete |
+| INTR-05     | Phase 4 | Complete |
 
 **Coverage:**
 
@@ -102,4 +102,4 @@
 ---
 
 _Requirements defined: 2026-04-13_
-_Last updated: 2026-04-14 after phase 3 execution_
+_Last updated: 2026-04-14 after phase 4 execution_

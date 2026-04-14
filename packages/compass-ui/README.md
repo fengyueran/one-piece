@@ -102,6 +102,8 @@ Clear visual hierarchy and interaction patterns that feel natural and predictabl
 - [ ] Badge
 - [ ] Tag
 - [x] Tooltip
+- [x] Popover
+- [x] Popconfirm
 
 ### Feedback
 
@@ -110,7 +112,7 @@ Clear visual hierarchy and interaction patterns that feel natural and predictabl
 - [x] Progress
 - [x] Alert
 - [x] Empty
-- [ ] Drawer
+- [x] Drawer
 - [x] Skeleton
 - [x] SpinLoading
 

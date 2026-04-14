@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 4 已完成规划，等待执行
-stopped_at: Phase 4 planned
-last_updated: '2026-04-14T04:20:00.000Z'
-last_activity: 2026-04-14 — 完成 Phase 4 规划，拆分为选择器、overlay 一致性、锚点浮层和 Drawer/策略四条计划线
+status: Phase 4 已完成，等待里程碑收尾
+stopped_at: Phase 4 completed
+last_updated: '2026-04-14T05:43:26Z'
+last_activity: 2026-04-14 — Phase 4 已完成，复杂交互体系已收口
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 75
+  completed_phases: 4
+  total_plans: 13
+  completed_plans: 13
+  percent: 100
 ---
 
 # 项目状态
@@ -21,24 +21,24 @@ progress:
 参考：`.planning/PROJECT.md`（更新于 2026-04-13）
 
 **Core value:** 用尽可能低的重复建设成本，持续沉淀一套能在真实项目里稳定复用、可独立发布、带完整文档和 demo 的前端资产。
-**Current focus:** Phase 04 — 复杂交互稳态化
+**Current focus:** Milestone wrap-up
 
 ## 当前定位
 
 Phase: 4 / 4（复杂交互稳态化）
-Plan: 当前阶段 0 / 4
-Status: Phase 4 已完成规划，等待执行
-Last activity: 2026-04-14 — 已完成复杂交互阶段规划，确认 4 条计划线与验证策略
+Plan: 当前阶段 4 / 4
+Status: Phase 4 已完成，等待里程碑收尾
+Last activity: 2026-04-14 — Phase 4 已完成，复杂交互体系已收口
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## 执行指标
 
 **Velocity:**
 
-- Total plans completed: 9
-- Average duration: 29 min
-- Total execution time: 4.4 hours
+- Total plans completed: 13
+- Average duration: 24 min
+- Total execution time: 6.0 hours
 
 **By Phase:**
 
@@ -47,11 +47,11 @@ Progress: [████████░░] 75%
 | 1     | 3     | 105 min | 35 min   |
 | 2     | 3     | 105 min | 35 min   |
 | 3     | 3     | 71 min  | 24 min   |
-| 4     | 0     | 0 min   | 0 min    |
+| 4     | 4     | 94 min  | 24 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 03-planning, 03-01, 03-02, 03-03, 04-planning
+- Last 5 plans: 04-01, 04-02, 04-03, 04-04, 04-verification
 - Trend: Stable
 
 ## 累积上下文
@@ -68,18 +68,18 @@ Progress: [████████░░] 75%
 - `FormItem` 已支持通过组件静态绑定元数据适配 `checked` / `value` 型字段，后续基础组件可复用这一协议。
 - Phase 4 将按四条计划线推进：Select 键盘、现有 overlay 一致性、Popover/Popconfirm、Drawer + 基础层策略。
 - 复杂交互阶段优先继续建立在 `@floating-ui/react` 之上收口，不在本阶段整体迁移基础库。
+- 锚点型 overlay 继续基于 `Floating UI`，页面级 overlay 继续走 `Modal` / `Drawer` 的 portal + mask 基础层。
 
 ### Pending Todos
 
-暂无。
+- 里程碑已进入收尾状态，可以继续做 audit、cleanup 或发布准备。
 
 ### Blockers/Concerns
 
-- `Select` 的完整键盘导航仍是最优先风险点。
-- `Popover` / `Popconfirm` / `Drawer` 目前尚未实现，是本阶段新增能力。
+- 非阻断 warning 仍存在：`.dumirc.ts` 未纳入 `tsconfig.json#include`，以及 `Browserslist` 数据过旧。
 
 ## 会话连续性
 
-Last session: 2026-04-14T01:56:38.909Z
-Stopped at: Phase 4 planned
-Resume file: .planning/ROADMAP.md
+Last session: 2026-04-14T05:43:26Z
+Stopped at: Phase 4 completed
+Resume file: .planning/phases/04-complex-interaction-stabilization/04-VERIFICATION.md
