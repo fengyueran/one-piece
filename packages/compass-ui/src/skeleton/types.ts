@@ -25,7 +25,7 @@ export interface SkeletonStyles {
 /**
  * Loading placeholder component for content blocks.
  */
-export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface SkeletonProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /**
    * Whether the skeleton placeholder is shown.
    * @default true

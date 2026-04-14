@@ -40,7 +40,7 @@ export interface AlertStyles {
  * `Alert` is intended for persistent local feedback. It is not a replacement
  * for the transient global `Message` API.
  */
-export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /**
    * Visual intent of the alert.
    * @default 'info'

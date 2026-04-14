@@ -29,7 +29,7 @@ export interface EmptyStyles {
 /**
  * Empty state placeholder for lists, tables, panels and page sections.
  */
-export interface EmptyProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface EmptyProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /**
    * Optional graphic shown above the text.
    */
