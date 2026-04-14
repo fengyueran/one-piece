@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Phase 1 已完成，等待规划 Phase 2
+stopped_at: Phase 2 context gathered
+last_updated: '2026-04-14T01:56:38.911Z'
+last_activity: 2026-04-14 — 完成公开子路径、发布前校验脚本、根级发布入口与 trusted publishing workflow
+progress:
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+  percent: 25
+---
+
 # 项目状态
 
 ## 项目参考
@@ -58,6 +74,6 @@ Progress: [██░░░░░░░░] 25%
 
 ## 会话连续性
 
-Last session: 2026-04-14 00:20
-Stopped at: Phase 1 已执行完成，下一步应进入 `$gsd-plan-phase 2`
-Resume file: None
+Last session: 2026-04-14T01:56:38.909Z
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-docs-entry-verification-unification/02-CONTEXT.md
