@@ -19,6 +19,12 @@ export type { DropdownProps } from './dropdown'
 export { default as Tooltip } from './tooltip'
 export type { TooltipProps, TooltipPlacement } from './tooltip'
 
+export { default as Popover } from './popover'
+export type { PopoverProps, PopoverPlacement, PopoverClassNames, PopoverStyles } from './popover'
+
+export { default as Popconfirm } from './popconfirm'
+export type { PopconfirmProps, PopconfirmClassNames, PopconfirmStyles } from './popconfirm'
+
 export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 

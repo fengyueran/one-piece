@@ -44,6 +44,8 @@ group:
 
 - [Menu 菜单](/components/menu)
 - [Dropdown 下拉菜单](/components/dropdown)
+- [Popover 浮层卡片](/components/popover)
+- [Popconfirm 气泡确认框](/components/popconfirm)
 - [Table 表格](/components/table)
 - [Tree 树形控件](/components/tree)
 - [Pagination 分页](/components/pagination)
