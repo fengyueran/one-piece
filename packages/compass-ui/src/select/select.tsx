@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
   useFloating,
   autoUpdate,
@@ -15,24 +15,24 @@ import {
   safePolygon,
 } from '@floating-ui/react'
 
-import { SelectProps, SelectOption, SelectValue, OptionProps } from './types'
+import { OptionProps, SelectOption, SelectProps, SelectValue } from './types'
 import { SelectContext } from './context'
 import Option from './option'
 import {
-  SelectContainer,
-  SelectTrigger,
-  SelectDropdown,
-  SelectMenu,
-  SelectedContent,
-  Placeholder,
-  Tag,
-  TagCloseIcon,
-  SuffixIcon,
-  SearchInput,
   InputWrapper,
   LoadingWrapper,
+  Placeholder,
+  SearchInput,
+  SelectContainer,
+  SelectDropdown,
+  SelectMenu,
+  SelectTrigger,
+  SelectedContent,
+  SuffixIcon,
+  Tag,
+  TagCloseIcon,
 } from './select.styles'
-import { DownIcon, CloseIcon, CloseCircleIcon, LoadingIcon } from '../icons'
+import { CloseCircleIcon, CloseIcon, DownIcon, LoadingIcon } from '../icons'
 
 const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
   const {
@@ -67,6 +67,7 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const isMultiple = multiple || mode === 'multiple' || mode === 'tags'
   const isTags = mode === 'tags'
+  const searchable = showSearch || isTags
 
   const [internalValue, setInternalValue] = useState<SelectValue>(
     defaultValue || (isMultiple ? [] : ''),
@@ -78,52 +79,109 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
   const isOpenControlled = controlledOpen !== undefined
   const open = isOpenControlled ? controlledOpen : internalOpen
   const [searchValue, setSearchValue] = useState('')
+  const [activeValue, setActiveValue] = useState<string | number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const selectId = useId().replace(/:/g, '')
+  const listboxId = `compass-select-listbox-${selectId}`
 
-  // Parse options from children or use props
   const parsedOptions = useMemo(() => {
-    let opts: SelectOption[] = []
+    const nextOptions: SelectOption[] = []
+
     if (options) {
-      opts = options
-    } else {
-      React.Children.forEach(children, (child) => {
-        if (
-          React.isValidElement<OptionProps>(child) &&
-          (child.type === Option ||
-            (typeof child.type === 'function' && child.type.name === 'Option'))
-        ) {
-          const { value, children: label, disabled, ...rest } = child.props
-          opts.push({ value, label, disabled, ...rest })
-        }
-      })
+      return options
     }
-    return opts
+
+    React.Children.forEach(children, (child) => {
+      if (
+        React.isValidElement<OptionProps>(child) &&
+        (child.type === Option ||
+          (typeof child.type === 'function' && child.type.name === 'Option'))
+      ) {
+        const { value, children: label, disabled, ...rest } = child.props
+        nextOptions.push({ value, label, disabled, ...rest })
+      }
+    })
+
+    return nextOptions
   }, [children, options])
 
-  // Filter options based on search value
   const filteredOptions = useMemo(() => {
-    if (!searchValue) return parsedOptions
-    return parsedOptions.filter((opt) => {
-      const labelStr = String(opt.label)
-      return labelStr.toLowerCase().includes(searchValue.toLowerCase())
+    if (!searchValue) {
+      return parsedOptions
+    }
+
+    return parsedOptions.filter((option) => {
+      const labelText = String(option.label)
+      return labelText.toLowerCase().includes(searchValue.toLowerCase())
     })
   }, [parsedOptions, searchValue])
 
+  const enabledOptions = useMemo(
+    () => filteredOptions.filter((option) => !option.disabled),
+    [filteredOptions],
+  )
+
+  const getOptionId = (optionValue: string | number) =>
+    `compass-select-option-${selectId}-${String(optionValue).replace(/[^a-zA-Z0-9-_]/g, '-')}`
+
+  const focusSearchInput = () => {
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 0)
+  }
+
+  const getInitialActiveValue = (direction: 'start' | 'end' = 'start') => {
+    if (enabledOptions.length === 0) {
+      return null
+    }
+
+    if (!isMultiple && currentValue !== '' && currentValue !== undefined && currentValue !== null) {
+      const selectedOption = enabledOptions.find((option) => option.value === currentValue)
+      if (selectedOption) {
+        return selectedOption.value
+      }
+    }
+
+    return direction === 'end'
+      ? (enabledOptions[enabledOptions.length - 1]?.value ?? null)
+      : (enabledOptions[0]?.value ?? null)
+  }
+
+  const getNextActiveValue = (direction: 1 | -1) => {
+    if (enabledOptions.length === 0) {
+      return null
+    }
+
+    const currentIndex = enabledOptions.findIndex((option) => option.value === activeValue)
+    if (currentIndex === -1) {
+      return direction === -1
+        ? (enabledOptions[enabledOptions.length - 1]?.value ?? null)
+        : (enabledOptions[0]?.value ?? null)
+    }
+
+    const nextIndex = Math.max(0, Math.min(enabledOptions.length - 1, currentIndex + direction))
+    return enabledOptions[nextIndex]?.value ?? null
+  }
+
   const handleOpenChange = (nextOpen: boolean) => {
-    if (disabled) return
+    if (disabled) {
+      return
+    }
+
     if (!isOpenControlled) {
       setInternalOpen(nextOpen)
     }
+
     onOpenChange?.(nextOpen)
+
     if (!nextOpen) {
-      setSearchValue('') // Clear search on close
-    } else {
-      // Focus input when opening if showSearch is true
-      setTimeout(() => {
-        if (showSearch) {
-          inputRef.current?.focus()
-        }
-      }, 0)
+      setSearchValue('')
+      setActiveValue(null)
+      return
+    }
+
+    if (searchable) {
+      focusSearchInput()
     }
   }
 
@@ -146,7 +204,6 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     whileElementsMounted: autoUpdate,
   })
 
-  // Only enable click trigger if NOT searching or if searching but clicking non-input areas
   const click = useClick(context, { enabled: trigger === 'click' })
   const hover = useHover(context, {
     enabled: trigger === 'hover',
@@ -157,105 +214,198 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
 
   const { getReferenceProps, getFloatingProps } = useInteractions([click, hover, dismiss, role])
 
-  const getOptionLabel = (val: string | number) => {
-    const opt = parsedOptions.find((o) => o.value === val)
-    if (!opt) return val
-    return labelRender ? labelRender(opt) : opt.label
+  const getOptionLabel = (optionValue: string | number) => {
+    const option = parsedOptions.find((item) => item.value === optionValue)
+    if (!option) {
+      return optionValue
+    }
+
+    return labelRender ? labelRender(option) : option.label
   }
 
-  const triggerSelect = (newValue: SelectValue, newOption: SelectOption | SelectOption[]) => {
+  const triggerSelect = (newValue: SelectValue, option?: SelectOption | SelectOption[]) => {
     if (!isControlled) {
       setInternalValue(newValue)
     }
-    onChange?.(newValue, newOption)
+
+    onChange?.(newValue, option)
   }
 
-  const handleSelect = (val: string | number, option: SelectOption) => {
+  const handleSelect = (optionValue: string | number, option: SelectOption) => {
     if (isMultiple) {
       const currentArray = (Array.isArray(currentValue) ? currentValue : []) as (string | number)[]
-      const index = currentArray.indexOf(val)
-      let newArray: (string | number)[]
-      let newOptions: SelectOption[] = []
+      const existingIndex = currentArray.indexOf(optionValue)
+      const nextValue =
+        existingIndex === -1
+          ? [...currentArray, optionValue]
+          : currentArray.filter((item) => item !== optionValue)
+      const nextOptions = nextValue.map(
+        (item) => parsedOptions.find((parsedOption) => parsedOption.value === item) || item,
+      ) as SelectOption[]
 
-      if (index === -1) {
-        newArray = [...currentArray, val]
-      } else {
-        newArray = currentArray.filter((v) => v !== val)
+      triggerSelect(nextValue, nextOptions)
+      setSearchValue('')
+      setActiveValue(optionValue)
+      if (searchable) {
+        focusSearchInput()
+      }
+      return
+    }
+
+    triggerSelect(optionValue, option)
+    handleOpenChange(false)
+  }
+
+  const handleClear = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    const emptyValue = isMultiple ? [] : ''
+    triggerSelect(emptyValue, isMultiple ? [] : undefined)
+  }
+
+  const handleTagRemove = (optionValue: string | number, event: React.MouseEvent) => {
+    event.stopPropagation()
+    const currentArray = (Array.isArray(currentValue) ? currentValue : []) as (string | number)[]
+    const nextValue = currentArray.filter((item) => item !== optionValue)
+    const nextOptions = nextValue.map(
+      (item) => parsedOptions.find((parsedOption) => parsedOption.value === item) || item,
+    ) as SelectOption[]
+
+    triggerSelect(nextValue, nextOptions)
+  }
+
+  const selectActiveOption = () => {
+    const nextValue = activeValue ?? getInitialActiveValue()
+    if (nextValue === null) {
+      return
+    }
+
+    const option = filteredOptions.find((item) => item.value === nextValue && !item.disabled)
+    if (!option) {
+      return
+    }
+
+    handleSelect(option.value, option)
+    setActiveValue(option.value)
+  }
+
+  const handleKeyboardAction = (
+    event: React.KeyboardEvent<HTMLElement | HTMLInputElement>,
+    source: 'trigger' | 'input',
+  ) => {
+    if (disabled) {
+      return
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      if (!open) {
+        handleOpenChange(true)
+        setActiveValue(getInitialActiveValue('start'))
+        return
       }
 
-      // Reconstruct options array for callback
-      newOptions = newArray.map(
-        (v) => parsedOptions.find((o) => o.value === v) || { value: v, label: v },
-      )
+      setActiveValue(getNextActiveValue(1))
+      return
+    }
 
-      triggerSelect(newArray, newOptions)
-      setSearchValue('') // Clear search after selection
-      if (showSearch) {
-        inputRef.current?.focus()
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (!open) {
+        handleOpenChange(true)
+        setActiveValue(getInitialActiveValue('end'))
+        return
       }
-    } else {
-      triggerSelect(val, option)
-      handleOpenChange(false)
+
+      setActiveValue(getNextActiveValue(-1))
+      return
+    }
+
+    if (event.key === 'Escape') {
+      if (open) {
+        event.preventDefault()
+        handleOpenChange(false)
+      }
+      return
+    }
+
+    const allowSpaceSelection = source === 'trigger' || searchValue.length === 0
+    if (event.key === 'Enter' || (event.key === ' ' && allowSpaceSelection)) {
+      event.preventDefault()
+      if (!open) {
+        handleOpenChange(true)
+        setActiveValue(getInitialActiveValue('start'))
+        return
+      }
+
+      selectActiveOption()
     }
   }
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const emptyValue = isMultiple ? [] : ''
-    triggerSelect(emptyValue, isMultiple ? [] : ({} as SelectOption))
-  }
-
-  const handleTagRemove = (val: string | number, e: React.MouseEvent) => {
-    e.stopPropagation()
-    const currentArray = (Array.isArray(currentValue) ? currentValue : []) as (string | number)[]
-    const newArray = currentArray.filter((v) => v !== val)
-    const newOptions = newArray.map(
-      (v) => parsedOptions.find((o) => o.value === v) || { value: v, label: v },
-    )
-    triggerSelect(newArray, newOptions)
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value)
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value)
+    setActiveValue(null)
     if (!open) {
       handleOpenChange(true)
     }
   }
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && isTags && searchValue) {
-      // Tags mode: add new value
-      const existing = parsedOptions.find((o) => o.value === searchValue)
-      if (existing) {
-        handleSelect(existing.value, existing)
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && isTags && searchValue) {
+      const existingOption = parsedOptions.find((option) => option.value === searchValue)
+      if (existingOption) {
+        handleSelect(existingOption.value, existingOption)
       } else {
-        // Create new tag
-        const newTagValue = searchValue
-        const newOption = { value: newTagValue, label: newTagValue }
-        handleSelect(newTagValue, newOption)
+        const nextTag = { value: searchValue, label: searchValue }
+        handleSelect(nextTag.value, nextTag)
       }
-      e.preventDefault()
+      event.preventDefault()
+      return
     }
-    // TODO: Add keyboard navigation (ArrowUp, ArrowDown) here later
+
+    handleKeyboardAction(event, 'input')
   }
 
-  // Display content logic
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    if (enabledOptions.length === 0) {
+      if (activeValue !== null) {
+        setActiveValue(null)
+      }
+      return
+    }
+
+    if (searchable && searchValue) {
+      if (activeValue !== null && !enabledOptions.some((option) => option.value === activeValue)) {
+        setActiveValue(null)
+      }
+      return
+    }
+
+    if (activeValue !== null && enabledOptions.some((option) => option.value === activeValue)) {
+      return
+    }
+
+    setActiveValue(getInitialActiveValue())
+  }, [activeValue, currentValue, enabledOptions, open])
+
   const renderContent = () => {
-    // Multiple/Tags Mode
     if (isMultiple) {
       const currentArray = (Array.isArray(currentValue) ? currentValue : []) as (string | number)[]
+
       return (
         <>
-          {currentArray.map((val) => (
-            <Tag key={val} style={styles?.tag} className={classNames?.tag}>
-              <span>{getOptionLabel(val)}</span>
-              <TagCloseIcon onClick={(e) => handleTagRemove(val, e)}>
+          {currentArray.map((optionValue) => (
+            <Tag key={optionValue} style={styles?.tag} className={classNames?.tag}>
+              <span>{getOptionLabel(optionValue)}</span>
+              <TagCloseIcon onClick={(event) => handleTagRemove(optionValue, event)}>
                 <CloseIcon />
               </TagCloseIcon>
             </Tag>
           ))}
-          {/* Input for search/tags in multiple mode */}
-          {(showSearch || isTags) && (
+          {searchable && (
             <InputWrapper
               style={{ width: searchValue ? 'auto' : '4px', minWidth: '50px', flex: 1 }}
             >
@@ -265,14 +415,22 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
                 disabled={disabled}
+                role="combobox"
+                aria-expanded={open}
+                aria-haspopup="listbox"
+                aria-controls={listboxId}
+                aria-activedescendant={
+                  open && activeValue !== null ? getOptionId(activeValue) : undefined
+                }
+                aria-disabled={disabled || undefined}
                 style={{ width: '100%' }}
               />
             </InputWrapper>
           )}
-          {!searchValue && currentArray.length === 0 && !showSearch && !isTags && (
+          {!searchValue && currentArray.length === 0 && !searchable && (
             <Placeholder>{placeholder}</Placeholder>
           )}
-          {currentArray.length === 0 && !searchValue && (showSearch || isTags) && (
+          {currentArray.length === 0 && !searchValue && searchable && (
             <Placeholder style={{ position: 'absolute', left: 0, pointerEvents: 'none' }}>
               {placeholder}
             </Placeholder>
@@ -281,7 +439,6 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
       )
     }
 
-    // Single Mode
     if (showSearch) {
       return (
         <>
@@ -323,16 +480,24 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
             disabled={disabled}
-            style={{ opacity: open || searchValue ? 1 : 0 }} // Hide input when closed in single mode usually? Or simpler: always show if searching
+            role="combobox"
+            aria-expanded={open}
+            aria-haspopup="listbox"
+            aria-controls={listboxId}
+            aria-activedescendant={
+              open && activeValue !== null ? getOptionId(activeValue) : undefined
+            }
+            aria-disabled={disabled || undefined}
+            style={{ opacity: open || searchValue ? 1 : 0 }}
           />
         </>
       )
     }
 
-    // Standard Single Mode
     if (!currentValue && currentValue !== 0) {
       return <Placeholder>{placeholder}</Placeholder>
     }
+
     return getOptionLabel(currentValue as string | number)
   }
 
@@ -348,32 +513,33 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
     onSelect: handleSelect,
     multiple: isMultiple,
     searchValue,
-    activeValue: null,
-    setActiveValue: () => {},
+    activeValue,
+    setActiveValue,
     menuItemSelectedIcon,
   }
 
   const triggerRef = refs.setReference as (node: HTMLElement | null) => void
 
   const menuNode = (
-    <SelectMenu className="compass-select-menu">
+    <SelectMenu className="compass-select-menu" id={listboxId} role="listbox">
       {filteredOptions.length > 0 ? (
-        filteredOptions.map((opt, index) => {
+        filteredOptions.map((option, index) => {
           const isSelected = isMultiple
-            ? Array.isArray(currentValue) && currentValue.includes(opt.value)
-            : currentValue === opt.value
+            ? Array.isArray(currentValue) && currentValue.includes(option.value)
+            : currentValue === option.value
 
           return (
             <Option
-              key={opt.value}
-              value={opt.value}
-              disabled={opt.disabled}
-              label={opt.label}
+              key={option.value}
+              id={getOptionId(option.value)}
+              value={option.value}
+              disabled={option.disabled}
+              label={option.label}
               style={styles?.option}
-              className={`${classNames?.option || ''}`}
+              className={classNames?.option || ''}
               menuItemSelectedIcon={optionRender ? <></> : undefined}
             >
-              {optionRender ? optionRender(opt, { index, selected: isSelected }) : opt.label}
+              {optionRender ? optionRender(option, { index, selected: isSelected }) : option.label}
             </Option>
           )
         })
@@ -396,9 +562,22 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
         disabled={disabled}
         fullWidth
         {...getReferenceProps({
-          // Ensure clicking anywhere focuses input if searchable
+          ...(searchable
+            ? {}
+            : {
+                role: 'combobox' as const,
+                tabIndex: disabled ? -1 : 0,
+                'aria-expanded': open,
+                'aria-haspopup': 'listbox' as const,
+                'aria-controls': listboxId,
+                'aria-activedescendant':
+                  open && activeValue !== null ? getOptionId(activeValue) : undefined,
+                'aria-disabled': disabled || undefined,
+                onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) =>
+                  handleKeyboardAction(event, 'trigger'),
+              }),
           onClick: () => {
-            if (showSearch || isTags) {
+            if (searchable) {
               inputRef.current?.focus()
             }
           },
@@ -441,11 +620,9 @@ const Select: React.FC<SelectProps> & { Option: typeof Option } = (props) => {
               }}
               className={`compass-select-dropdown ${dropdownClassName || ''} ${classNames?.dropdown || ''}`}
               {...getFloatingProps({
-                // Clicks inside popupRender content bubble through React tree to reference.
-                // Prevent bubbling to avoid useClick toggling dropdown closed.
-                onClick: (e) => e.stopPropagation(),
-                onMouseDown: (e) => e.stopPropagation(),
-                onPointerDown: (e) => e.stopPropagation(),
+                onClick: (event) => event.stopPropagation(),
+                onMouseDown: (event) => event.stopPropagation(),
+                onPointerDown: (event) => event.stopPropagation(),
               })}
             >
               {popupContent}

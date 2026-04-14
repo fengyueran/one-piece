@@ -174,6 +174,47 @@ describe('Select', () => {
 
       expect(screen.queryByText('Option 1')).not.toBeInTheDocument()
     })
+
+    it('supports opening, navigating and selecting via keyboard in single mode', async () => {
+      const user = userEvent.setup()
+      const handleChange = jest.fn()
+      render(<Select options={options} onChange={handleChange} placeholder="Keyboard Select" />)
+
+      const combobox = screen.getByRole('combobox')
+      combobox.focus()
+
+      await user.keyboard('{Enter}')
+
+      expect(combobox).toHaveAttribute('aria-expanded', 'true')
+      expect(screen.getByRole('listbox')).toBeInTheDocument()
+
+      await user.keyboard('{ArrowDown}')
+      await user.keyboard(' ')
+
+      expect(handleChange).toHaveBeenCalledWith(
+        '2',
+        expect.objectContaining({ value: '2', label: 'Option 2' }),
+      )
+      expect(combobox).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('updates active descendant and closes on escape', async () => {
+      const user = userEvent.setup()
+      render(<Select options={options} placeholder="Keyboard Select" />)
+
+      const combobox = screen.getByRole('combobox')
+      combobox.focus()
+
+      await user.keyboard('{ArrowDown}')
+
+      const activeOption = screen.getByRole('option', { name: 'Option 1' })
+      expect(combobox).toHaveAttribute('aria-activedescendant', activeOption.getAttribute('id'))
+
+      await user.keyboard('{Escape}')
+
+      expect(combobox).toHaveAttribute('aria-expanded', 'false')
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
   })
 
   describe('Multiple Selection', () => {
@@ -284,9 +325,39 @@ describe('Select', () => {
       await user.type(input, '1{enter}')
       expect(handleChange).toHaveBeenCalledWith(['1'], expect.any(Array))
     })
+
+    it('supports keyboard navigation and selection in search mode', async () => {
+      const user = userEvent.setup()
+      const handleChange = jest.fn()
+      render(<Select showSearch options={options} onChange={handleChange} />)
+
+      const combobox = screen.getByRole('combobox')
+      await user.click(combobox)
+      await user.type(combobox, 'Option')
+      await user.keyboard('{ArrowDown}{ArrowDown}{Enter}')
+
+      expect(handleChange).toHaveBeenCalledWith(
+        '2',
+        expect.objectContaining({ value: '2', label: 'Option 2' }),
+      )
+      expect(combobox).toHaveAttribute('aria-expanded', 'false')
+    })
   })
 
   describe('Props Coverage', () => {
+    it('disabled state blocks keyboard interaction and exposes aria-disabled', async () => {
+      const user = userEvent.setup()
+      render(<Select disabled options={options} placeholder="Disabled Select" />)
+
+      const combobox = screen.getByRole('combobox')
+      expect(combobox).toHaveAttribute('aria-disabled', 'true')
+
+      combobox.focus()
+      await user.keyboard('{Enter}{ArrowDown}')
+
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
+
     it('disabled state prevents interaction', async () => {
       const user = userEvent.setup()
       const { container } = render(<Select disabled options={options} />)
@@ -314,7 +385,7 @@ describe('Select', () => {
       const clearBtn = clearIcon!.parentElement!
       await user.click(clearBtn)
 
-      expect(handleChange).toHaveBeenCalledWith('', expect.anything())
+      expect(handleChange).toHaveBeenCalledWith('', undefined)
     })
 
     it('dropdownStyle and dropdownClassName are applied', async () => {

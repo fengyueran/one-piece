@@ -155,6 +155,7 @@ export interface SelectProps {
 }
 
 export interface OptionProps {
+  id?: string
   value: string | number
   children?: React.ReactNode
   disabled?: boolean
