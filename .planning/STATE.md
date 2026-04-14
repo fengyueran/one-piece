@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 3 已完成，等待规划 Phase 4
-stopped_at: Phase 3 completed
-last_updated: '2026-04-14T03:51:46.622Z'
-last_activity: 2026-04-14 — 完成 Phase 3 验证与阶段收口
+status: Phase 4 已完成规划，等待执行
+stopped_at: Phase 4 planned
+last_updated: '2026-04-14T04:20:00.000Z'
+last_activity: 2026-04-14 — 完成 Phase 4 规划，拆分为选择器、overlay 一致性、锚点浮层和 Drawer/策略四条计划线
 progress:
   total_phases: 4
   completed_phases: 3
@@ -26,9 +26,9 @@ progress:
 ## 当前定位
 
 Phase: 4 / 4（复杂交互稳态化）
-Plan: 等待 Phase 4 规划
-Status: Phase 3 已完成，等待规划 Phase 4
-Last activity: 2026-04-14 — 已完成 Phase 3 验证与阶段收口
+Plan: 当前阶段 0 / 4
+Status: Phase 4 已完成规划，等待执行
+Last activity: 2026-04-14 — 已完成复杂交互阶段规划，确认 4 条计划线与验证策略
 
 Progress: [████████░░] 75%
 
@@ -51,7 +51,7 @@ Progress: [████████░░] 75%
 
 **Recent Trend:**
 
-- Last 5 plans: 02-03, 03-planning, 03-01, 03-02, 03-03
+- Last 5 plans: 03-planning, 03-01, 03-02, 03-03, 04-planning
 - Trend: Stable
 
 ## 累积上下文
@@ -66,6 +66,8 @@ Progress: [████████░░] 75%
 - `InputField` 不会在 Phase 3 直接硬删除，而是向 `Input` 公开门面平滑收口。
 - `Input` 与 `Textarea` 已成为公开文档与根入口的默认文本输入门面。
 - `FormItem` 已支持通过组件静态绑定元数据适配 `checked` / `value` 型字段，后续基础组件可复用这一协议。
+- Phase 4 将按四条计划线推进：Select 键盘、现有 overlay 一致性、Popover/Popconfirm、Drawer + 基础层策略。
+- 复杂交互阶段优先继续建立在 `@floating-ui/react` 之上收口，不在本阶段整体迁移基础库。
 
 ### Pending Todos
 
@@ -73,11 +75,11 @@ Progress: [████████░░] 75%
 
 ### Blockers/Concerns
 
-- Phase 4 仍需确认复杂交互基础层的长期策略边界。
-- 页面状态组件已经补齐，但更复杂的 overlay 关闭策略和焦点管理仍待后续阶段统一。
+- `Select` 的完整键盘导航仍是最优先风险点。
+- `Popover` / `Popconfirm` / `Drawer` 目前尚未实现，是本阶段新增能力。
 
 ## 会话连续性
 
 Last session: 2026-04-14T01:56:38.909Z
-Stopped at: Phase 3 completed
+Stopped at: Phase 4 planned
 Resume file: .planning/ROADMAP.md
