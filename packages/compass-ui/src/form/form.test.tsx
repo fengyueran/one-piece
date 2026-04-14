@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event'
 import Form, { FormInstance } from './index'
 import { FormItem } from './form-item'
 import { useForm } from './form-context'
+import ThemeProvider from '../theme/theme-provider'
+import Checkbox from '../checkbox'
 
 // Helper component for testing
 interface MockInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -27,6 +29,36 @@ describe('Form', () => {
       )
       expect(screen.getByText('Username')).toBeInTheDocument()
       expect(screen.getByRole('textbox')).toBeInTheDocument()
+    })
+  })
+
+  describe('Boolean Controls', () => {
+    it('should bind checkbox checked state to form store', async () => {
+      const onFinish = jest.fn()
+
+      render(
+        <ThemeProvider>
+          <Form onFinish={onFinish}>
+            <FormItem name="agree" rules={[{ required: true, type: 'boolean', message: '请先勾选协议' }]}>
+              <Checkbox>同意协议</Checkbox>
+            </FormItem>
+            <button type="submit">Submit</button>
+          </Form>
+        </ThemeProvider>,
+      )
+
+      fireEvent.click(screen.getByText('Submit'))
+
+      await waitFor(() => {
+        expect(screen.getByText('请先勾选协议')).toBeInTheDocument()
+      })
+
+      await userEvent.click(screen.getByRole('checkbox', { name: '同意协议' }))
+      fireEvent.click(screen.getByText('Submit'))
+
+      await waitFor(() => {
+        expect(onFinish).toHaveBeenCalledWith({ agree: true })
+      })
     })
   })
 

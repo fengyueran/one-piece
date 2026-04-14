@@ -22,6 +22,15 @@ export type { TooltipProps, TooltipPlacement } from './tooltip'
 export { default as InputField } from './input-field'
 export type { InputFieldProps } from './input-field'
 
+export { default as Checkbox } from './checkbox'
+export type { CheckboxProps } from './checkbox'
+
+export { default as Radio } from './radio'
+export type { RadioProps, RadioGroupProps, RadioOption } from './radio'
+
+export { default as Switch } from './switch'
+export type { SwitchProps } from './switch'
+
 export { default as AutoComplete } from './auto-complete'
 export type { AutoCompleteProps, AutoCompleteOption } from './auto-complete'
 
