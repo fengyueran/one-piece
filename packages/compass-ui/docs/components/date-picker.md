@@ -343,6 +343,12 @@ export default () => {
 }
 ```
 
+## 键盘与可访问性
+
+- 输入框支持通过 `Tab` 聚焦，可直接透传 `aria-label` 给底层文本框。
+- `disabled` 状态下输入框保持不可交互。
+- `clearable` 启用且存在值时，可通过清除控件快速回到空值状态。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)

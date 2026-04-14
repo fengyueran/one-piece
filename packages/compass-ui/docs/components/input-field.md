@@ -257,6 +257,13 @@ export default () => (
 )
 ```
 
+## 键盘与可访问性
+
+- 输入框本体支持通过 `Tab` 聚焦，`aria-label` 会透传到底层输入元素。
+- 按下 `Enter` 会触发 `onPressEnter`，适合搜索框和提交型表单场景。
+- `allowClear` 的清除按钮不会进入常规 Tab 顺序，点击清除后焦点会回到输入框。
+- `disabled` 状态下底层输入元素会保持不可编辑。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)

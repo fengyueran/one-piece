@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { ThemeProvider } from '../theme'
 import Button from './button'
@@ -396,6 +397,23 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       button.focus()
       expect(button).toHaveFocus()
+    })
+
+    it('should trigger click when activated with Enter key', async () => {
+      const user = userEvent.setup()
+      const handleClick = jest.fn()
+      render(
+        <ThemeProvider>
+          <Button onClick={handleClick}>Click me</Button>
+        </ThemeProvider>,
+      )
+
+      await user.tab()
+      const button = screen.getByRole('button')
+      expect(button).toHaveFocus()
+
+      await user.keyboard('{Enter}')
+      expect(handleClick).toHaveBeenCalledTimes(1)
     })
 
     it('should hide loading spinner from screen readers', () => {

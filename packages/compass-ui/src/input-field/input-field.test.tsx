@@ -139,6 +139,19 @@ describe('InputField', () => {
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label', 'Username')
     })
 
+    it('should keep clear control out of tab order and restore focus after clearing', async () => {
+      renderWithTheme(<InputField allowClear defaultValue="clear me" />)
+
+      const input = screen.getByRole('textbox')
+      const clearButton = screen.getByRole('button')
+
+      fireEvent.focus(input)
+      expect(clearButton).toHaveAttribute('tabindex', '-1')
+
+      fireEvent.click(clearButton)
+      expect(input).toHaveFocus()
+    })
+
     it('should support keyboard navigation', async () => {
       renderWithTheme(<InputField />)
       const input = screen.getByRole('textbox')

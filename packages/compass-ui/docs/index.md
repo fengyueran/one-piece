@@ -1,66 +1,62 @@
 ---
 hero:
   title: Compass UI
-  description: 一个 React 组件库,为你的用户体验指引方向
+  description: 面向真实项目复用的 React 组件库，先提供稳定公开 API，再补齐常用组件能力。
   actions:
-    - text: 快速开始
+    - text: 安装指南
       link: /guide/getting-started
-    - text: 组件总览
+    - text: 组件目录
       link: /components
+    - text: API 参考
+      link: /api
 
 features:
-  - title: 🎨 精美设计
-    description: 基于现代设计理念,提供开箱即用的高质量 React 组件
-  - title: 📦 开箱即用
-    description: 完善的 TypeScript 类型定义,提供完整的类型提示
-  - title: 🛡 类型安全
-    description: 使用 TypeScript 开发,提供完整的类型定义文件
-  - title: 🎯 主题定制
-    description: 强大的主题定制能力,轻松适配你的设计需求
-  - title: 🌓 暗色模式
-    description: 内置暗色模式支持,自动适配系统主题
-  - title: ⚡️ 现代化
-    description: 基于 React Hooks 开发,拥抱最新的 React 特性
+  - title: 单一公开入口
+    description: 当前阶段以 dumi 文档站作为唯一对外入口，安装、组件总览与 API 说明都在同一站点内完成。
+  - title: 真实公开导入
+    description: 所有示例都只使用 `@xinghunm/compass-ui` 与已声明的公开子路径，避免文档和 npm 消费行为脱节。
+  - title: 渐进式组件建设
+    description: 先沉淀高频基础组件与主题能力，再逐步补齐复杂交互与更高阶的场景支持。
 ---
+
+# Compass UI
+
+Compass UI 是一个持续沉淀中的 React 组件库仓库，目标是把真实项目里反复复用的 UI 能力收敛成可发布、可验证、可维护的公共资产。
+
+## 你可以从这里开始
+
+- [安装指南](/guide/getting-started)：了解安装方式、根入口导入和公开子路径用法。
+- [组件目录](/components)：浏览当前已公开组件、组件分组和后续补齐方向。
+- [API 参考](/api)：查看根入口、`/theme`、`/locale`、`/icons` 四类公开导出边界。
 
 ## 安装
 
-使用 npm 或 pnpm 安装:
-
 ```bash
-# npm
-npm install @xinghunm/compass-ui
-
-# pnpm
 pnpm add @xinghunm/compass-ui
 ```
 
-## 快速开始
+## 最小示例
 
 ```tsx
 import React from 'react'
-import { Button, ConfigProvider } from '@xinghunm/compass-ui'
+import { Button, ConfigProvider, defaultTheme } from '@xinghunm/compass-ui'
 
 export default () => (
-  <ConfigProvider>
+  <ConfigProvider theme={{ token: defaultTheme }}>
     <Button variant="primary">Hello Compass UI</Button>
   </ConfigProvider>
 )
 ```
 
-## 特性
+## 当前公开能力
 
-- 🎨 **精美设计** - 基于现代设计理念,提供开箱即用的高质量 React 组件
-- 📦 **开箱即用** - 完善的 TypeScript 类型定义,提供完整的类型提示
-- 🛡 **类型安全** - 使用 TypeScript 开发,提供完整的类型定义文件
-- 🎯 **主题定制** - 强大的主题定制能力,轻松适配你的设计需求
-- 🌓 **暗色模式** - 内置暗色模式支持,自动适配系统主题
-- ⚡️ **现代化** - 基于 React Hooks 开发,拥抱最新的 React 特性
+- 根入口：高频组件、`ConfigProvider`、`ThemeProvider`、`defaultTheme` 与主要类型。
+- `@xinghunm/compass-ui/theme`：主题上下文与主题扩展能力。
+- `@xinghunm/compass-ui/locale`：语言包资源。
+- `@xinghunm/compass-ui/icons`：图标资源。
 
-## 浏览器支持
+## 文档约定
 
-现代浏览器和 IE11 (需要 polyfills)。
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Safari |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Edge                                                                                                                                                                                                 | last 2 versions                                                                                                                                                                                                  | last 2 versions                                                                                                                                                                                              | last 2 versions                                                                                                                                                                                              |
+- 文档站就是当前唯一公开入口，不额外引入 `apps/docs` 或 Storybook 作为第二站点。
+- 示例代码必须与 npm 消费路径一致，只能使用根入口或已声明的公开子路径。
+- 组件文档优先记录已经实现并可验证的行为，不提前承诺尚未稳定的交互细节。

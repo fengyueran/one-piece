@@ -11,6 +11,7 @@ export default defineConfig({
     nav: [
       { title: '指南', link: '/guide' },
       { title: '组件', link: '/components' },
+      { title: 'API', link: '/api' },
       { title: 'GitHub', link: 'https://github.com/fengyueran/one-piece' },
     ],
     footer: 'Copyright © 2024 | Powered by Compass UI',

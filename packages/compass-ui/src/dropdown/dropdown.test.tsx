@@ -300,6 +300,22 @@ describe('Dropdown', () => {
         expect(trigger).toHaveAttribute('aria-expanded', 'true')
       })
     })
+
+    it('should open click trigger dropdown when activated with keyboard', async () => {
+      const user = userEvent.setup()
+      render(
+        <Dropdown overlay={overlay} trigger="click">
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      await user.tab()
+      const trigger = screen.getByRole('button', { name: 'Trigger' })
+      expect(trigger).toHaveFocus()
+
+      await user.keyboard('{Enter}')
+      expect(await screen.findByTestId('overlay')).toBeInTheDocument()
+    })
   })
 
   describe('Style Merging & Customization', () => {

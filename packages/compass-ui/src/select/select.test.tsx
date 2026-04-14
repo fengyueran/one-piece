@@ -237,6 +237,16 @@ describe('Select', () => {
       expect(input).toBeInTheDocument()
     })
 
+    it('focuses the search input after opening', async () => {
+      const user = userEvent.setup()
+      const { container } = render(<Select showSearch options={options} />)
+
+      await user.click(container.querySelector('.compass-select')!)
+
+      const input = container.querySelector('input')
+      expect(input).toHaveFocus()
+    })
+
     it('filters options based on search input', async () => {
       const user = userEvent.setup()
       const { container } = render(<Select showSearch options={options} />)

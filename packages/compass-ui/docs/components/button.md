@@ -332,6 +332,13 @@ export default () => (
 )
 ```
 
+## 键盘与可访问性
+
+- `Button` 基于原生 `button` 元素渲染，支持通过 `Tab` 获得焦点。
+- 聚焦后按 `Enter` 可以触发和鼠标点击一致的操作回调。
+- `disabled` 或 `loading` 状态下不会再响应点击。
+- 加载中的装饰性 spinner 会通过 `aria-hidden` 对屏幕阅读器隐藏。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)

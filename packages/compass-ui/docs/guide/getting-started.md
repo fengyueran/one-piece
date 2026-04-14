@@ -8,9 +8,9 @@ nav:
 
 # 快速开始
 
-## 安装
+本页负责回答 3 个问题：怎么安装、怎么开始用、公开导入应该怎么写。组件列表看 [组件总览](/components)，导入边界看 [API 参考](/api)。
 
-使用 npm、yarn 或 pnpm 安装:
+## 安装
 
 ```bash
 # npm
@@ -23,24 +23,24 @@ yarn add @xinghunm/compass-ui
 pnpm add @xinghunm/compass-ui
 ```
 
-## 使用
+## 从根入口开始
 
-### 完整引入
+大多数业务代码应优先从根入口导入高频组件和主题门面能力：
 
 ```tsx
 import React from 'react'
-import { Button, ConfigProvider } from '@xinghunm/compass-ui'
+import { Button, ConfigProvider, defaultTheme } from '@xinghunm/compass-ui'
 
 export default () => (
-  <ConfigProvider>
+  <ConfigProvider theme={{ token: defaultTheme }}>
     <Button variant="primary">Hello Compass UI</Button>
   </ConfigProvider>
 )
 ```
 
-### 公共子路径引入
+## 使用公开子路径
 
-Compass UI 目前公开的子路径主要用于主题、语言包和图标等共享能力:
+当前公开子路径主要用于资源型和领域型能力：
 
 ```tsx
 import React from 'react'
@@ -49,14 +49,23 @@ import { zhCN } from '@xinghunm/compass-ui/locale'
 
 export default () => (
   <ConfigProvider locale={zhCN} theme={{ token: defaultTheme }}>
-    <Button variant="primary">Hello Compass UI</Button>
+    <Button variant="primary">你好，Compass UI</Button>
   </ConfigProvider>
 )
 ```
 
+可用的公开路径只有：
+
+- `@xinghunm/compass-ui`
+- `@xinghunm/compass-ui/theme`
+- `@xinghunm/compass-ui/locale`
+- `@xinghunm/compass-ui/icons`
+
+不要从 `src/`、`dist/` 或未声明的 `@xinghunm/compass-ui/*` 子路径导入。
+
 ## 主题定制
 
-Compass UI 提供了强大的主题定制能力,你可以通过 `ConfigProvider` 来定制主题:
+你可以通过 `ConfigProvider` 传入主题 token 覆盖默认值：
 
 ```tsx
 import React from 'react'
@@ -67,7 +76,7 @@ export default () => (
     theme={{
       token: {
         colors: {
-          primary: '#722ed1',
+          primary: '#1677ff',
         },
         components: {
           button: {
@@ -85,16 +94,19 @@ export default () => (
 
 ## TypeScript
 
-Compass UI 使用 TypeScript 开发,提供完整的类型定义:
+`compass-ui` 提供根入口的类型导出：
 
 ```tsx
 import React from 'react'
 import type { ButtonProps } from '@xinghunm/compass-ui'
 import { Button } from '@xinghunm/compass-ui'
 
-const MyButton: React.FC<ButtonProps> = (props) => {
-  return <Button {...props} />
-}
+const MyButton: React.FC<ButtonProps> = (props) => <Button {...props} />
 
 export default MyButton
 ```
+
+## 下一步
+
+- 想看当前有哪些组件：前往 [组件总览](/components)
+- 想确认每个公开路径的职责：前往 [API 参考](/api)

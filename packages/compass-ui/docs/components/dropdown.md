@@ -379,6 +379,12 @@ export default () => (
 )
 ```
 
+## 键盘与可访问性
+
+- 触发元素会暴露 `aria-haspopup` 和 `aria-expanded`，用于表达菜单展开状态。
+- 当 `trigger="click"` 且触发元素本身可聚焦时，可以通过键盘激活触发元素来打开下拉菜单。
+- `disabled` 状态下不会响应悬停或点击触发。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)

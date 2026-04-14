@@ -155,6 +155,22 @@ describe('DatePicker', () => {
       renderWithTheme(<DatePicker aria-label="Choose date" />)
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label', 'Choose date')
     })
+
+    it('should be reachable with keyboard navigation', async () => {
+      const user = userEvent.setup()
+      renderWithTheme(
+        <>
+          <button>Before</button>
+          <DatePicker placeholder="Choose date" />
+        </>,
+      )
+
+      await user.tab()
+      expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus()
+
+      await user.tab()
+      expect(screen.getByPlaceholderText('Choose date')).toHaveFocus()
+    })
   })
   describe('Date Picker Branches', () => {
     it('should handle week picker mode', async () => {
