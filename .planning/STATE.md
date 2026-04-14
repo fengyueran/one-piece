@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 4 已完成，等待里程碑收尾
-stopped_at: Phase 4 completed
-last_updated: '2026-04-14T05:43:26Z'
-last_activity: 2026-04-14 — Phase 4 已完成，复杂交互体系已收口
+status: v1.0 已归档，等待下一 milestone
+stopped_at: v1.0 archived
+last_updated: '2026-04-14T06:00:00Z'
+last_activity: 2026-04-14 — v1.0 已归档，等待定义下一 milestone
 progress:
   total_phases: 4
   completed_phases: 4
@@ -21,14 +21,14 @@ progress:
 参考：`.planning/PROJECT.md`（更新于 2026-04-13）
 
 **Core value:** 用尽可能低的重复建设成本，持续沉淀一套能在真实项目里稳定复用、可独立发布、带完整文档和 demo 的前端资产。
-**Current focus:** Milestone wrap-up
+**Current focus:** Next milestone definition
 
 ## 当前定位
 
 Phase: 4 / 4（复杂交互稳态化）
 Plan: 当前阶段 4 / 4
-Status: Phase 4 已完成，等待里程碑收尾
-Last activity: 2026-04-14 — Phase 4 已完成，复杂交互体系已收口
+Status: v1.0 已归档，等待下一 milestone
+Last activity: 2026-04-14 — v1.0 已归档，等待定义下一 milestone
 
 Progress: [██████████] 100%
 
@@ -72,7 +72,8 @@ Progress: [██████████] 100%
 
 ### Pending Todos
 
-- 里程碑已进入收尾状态，可以继续做 audit、cleanup 或发布准备。
+- 使用 `$gsd-new-milestone` 启动下一轮 requirements / roadmap
+- 视需要清理 `publint` warning、`.dumirc.ts` include 与 `Browserslist` 数据
 
 ### Blockers/Concerns
 
@@ -80,6 +81,6 @@ Progress: [██████████] 100%
 
 ## 会话连续性
 
-Last session: 2026-04-14T05:43:26Z
-Stopped at: Phase 4 completed
-Resume file: .planning/phases/04-complex-interaction-stabilization/04-VERIFICATION.md
+Last session: 2026-04-14T06:00:00Z
+Stopped at: v1.0 archived
+Resume file: .planning/PROJECT.md
