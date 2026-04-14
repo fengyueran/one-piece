@@ -61,6 +61,9 @@ export type { MessageProps } from './message'
 export { default as Modal } from './modal'
 export type { ModalProps } from './modal'
 
+export { default as Drawer } from './drawer'
+export type { DrawerProps, DrawerPlacement, DrawerClassNames, DrawerStyles } from './drawer'
+
 export { default as Progress } from './progress'
 export type { ProgressProps } from './progress'
 

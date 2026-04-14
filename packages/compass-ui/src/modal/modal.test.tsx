@@ -1,6 +1,8 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Modal from './index'
+import Button from '../button'
 import { ThemeProvider, defaultTheme } from '../theme'
 
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -132,6 +134,23 @@ describe('Modal', () => {
       expect(handleCancel).toHaveBeenCalledTimes(1)
     })
 
+    it('should call onCancel when Escape is pressed', async () => {
+      const user = userEvent.setup()
+      const handleCancel = jest.fn()
+      renderWithTheme(
+        <Modal isOpen={true} onCancel={handleCancel}>
+          <button>Inside action</button>
+        </Modal>,
+      )
+
+      await waitFor(() => {
+        expect(document.querySelector('.compass-modal-content')).toHaveFocus()
+      })
+
+      await user.keyboard('{Escape}')
+      expect(handleCancel).toHaveBeenCalledTimes(1)
+    })
+
     it('should call onOk when OK button is clicked', () => {
       const handleOk = jest.fn()
       renderWithTheme(
@@ -167,6 +186,38 @@ describe('Modal', () => {
       }
 
       expect(handleAfterClose).toHaveBeenCalledTimes(1)
+    })
+
+    it('should restore focus to trigger after close', async () => {
+      const user = userEvent.setup()
+
+      const Example = () => {
+        const [open, setOpen] = React.useState(false)
+
+        return (
+          <>
+            <Button onClick={() => setOpen(true)}>Open Modal</Button>
+            <Modal isOpen={open} onCancel={() => setOpen(false)} title="Modal Title">
+              <button>Inside action</button>
+            </Modal>
+          </>
+        )
+      }
+
+      renderWithTheme(<Example />)
+
+      const trigger = screen.getByRole('button', { name: 'Open Modal' })
+      await user.click(trigger)
+
+      await waitFor(() => {
+        expect(document.querySelector('.compass-modal-content')).toHaveFocus()
+      })
+
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => {
+        expect(trigger).toHaveFocus()
+      })
     })
   })
 
