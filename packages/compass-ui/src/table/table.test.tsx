@@ -67,6 +67,7 @@ describe('Table', () => {
         </ThemeProvider>,
       )
       expect(screen.getByText('Custom Empty')).toBeInTheDocument()
+      expect(document.querySelector('.compass-empty')).toBeInTheDocument()
     })
 
     it('should show loading state', () => {
@@ -75,7 +76,19 @@ describe('Table', () => {
           <Table columns={columns} dataSource={[]} loading loadingIndicator="Loading..." />
         </ThemeProvider>,
       )
+      expect(screen.getByRole('status', { name: 'Loading...' })).toBeInTheDocument()
       expect(screen.getByText('Loading...')).toBeInTheDocument()
+    })
+
+    it('should use shared overlay loading state when data exists', () => {
+      render(
+        <ThemeProvider>
+          <Table columns={columns} dataSource={data} loading />
+        </ThemeProvider>,
+      )
+
+      expect(document.querySelector('.compass-spin-loading-overlay')).toBeInTheDocument()
+      expect(screen.getByRole('status', { name: '加载中' })).toBeInTheDocument()
     })
 
     it('should render with scroll settings', () => {

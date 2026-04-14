@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react'
+import Empty from '../empty'
 import Pagination from '../pagination'
+import SpinLoading from '../spin-loading'
 import { TableProps, ColumnType } from './types'
 import {
   StyledTableWrapper,
@@ -9,10 +11,7 @@ import {
   StyledTr,
   StyledTh,
   StyledTd,
-  EmptyWrapper,
   PaginationWrapper,
-  StyledLoadingOverlay,
-  StyledSpinner,
 } from './table.styles'
 
 export function Table<T = unknown>(props: TableProps<T>) {
@@ -213,6 +212,8 @@ export function Table<T = unknown>(props: TableProps<T>) {
   const renderBody = () => {
     if (processedData.length === 0) {
       const isInitialLoading = loading && dataSource.length === 0
+      const loadingTip = typeof loadingIndicator === 'string' ? loadingIndicator : undefined
+      const customIndicator = typeof loadingIndicator === 'string' ? undefined : loadingIndicator
 
       return (
         <StyledTbody
@@ -229,23 +230,19 @@ export function Table<T = unknown>(props: TableProps<T>) {
               }}
             >
               {isInitialLoading ? (
-                <StyledLoadingOverlay
-                  className={`compass-table-loading-overlay ${classNames?.loadingOverlay || ''}`}
-                  style={{
-                    position: 'static',
-                    background: 'transparent',
-                    ...styles?.loadingOverlay,
-                  }}
-                >
-                  {loadingIndicator || <StyledSpinner />}
-                </StyledLoadingOverlay>
+                <SpinLoading
+                  tip={loadingTip}
+                  indicator={customIndicator}
+                  classNames={{ root: classNames?.loadingOverlay }}
+                  styles={{ root: { width: '100%', ...styles?.loadingOverlay } }}
+                />
               ) : (
-                <EmptyWrapper
-                  className={`compass-table-empty ${classNames?.empty || ''}`}
-                  style={styles?.empty}
-                >
-                  {emptyText}
-                </EmptyWrapper>
+                <Empty
+                  size="small"
+                  description={emptyText}
+                  classNames={{ root: classNames?.empty }}
+                  styles={{ root: styles?.empty }}
+                />
               )}
             </StyledTd>
           </StyledTr>
@@ -325,23 +322,23 @@ export function Table<T = unknown>(props: TableProps<T>) {
         className={`${tableClassName} ${className || ''} ${classNames?.root || ''}`}
         style={{ ...style, ...styles?.root }}
       >
-        <StyledTable
-          className={`compass-table-container ${classNames?.table || ''}`}
-          scrollY={scroll?.y}
-          scrollX={scroll?.x}
-          style={styles?.table}
+        <SpinLoading
+          spinning={loading && dataSource.length > 0}
+          tip={typeof loadingIndicator === 'string' ? loadingIndicator : undefined}
+          indicator={typeof loadingIndicator === 'string' ? undefined : loadingIndicator}
+          classNames={{ overlay: classNames?.loadingOverlay }}
+          styles={{ overlay: styles?.loadingOverlay }}
         >
-          {renderHeader()}
-          {renderBody()}
-        </StyledTable>
-        {loading && dataSource.length > 0 && (
-          <StyledLoadingOverlay
-            className={`compass-table-loading-overlay ${classNames?.loadingOverlay || ''}`}
-            style={styles?.loadingOverlay}
+          <StyledTable
+            className={`compass-table-container ${classNames?.table || ''}`}
+            scrollY={scroll?.y}
+            scrollX={scroll?.x}
+            style={styles?.table}
           >
-            {loadingIndicator || <StyledSpinner />}
-          </StyledLoadingOverlay>
-        )}
+            {renderHeader()}
+            {renderBody()}
+          </StyledTable>
+        </SpinLoading>
       </StyledTableWrapper>
       {pagination && (
         <PaginationWrapper
