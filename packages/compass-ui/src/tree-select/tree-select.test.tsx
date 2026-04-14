@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import TreeSelect from './index'
 import '@testing-library/jest-dom'
 
@@ -29,6 +30,32 @@ describe('TreeSelect', () => {
     await waitFor(() => {
       expect(screen.getByText('Node 1')).toBeVisible()
     })
+  })
+
+  it('should expose aria-controls and close on escape', async () => {
+    const user = userEvent.setup()
+    render(<TreeSelect treeData={treeData} />)
+
+    const trigger = screen.getByRole('combobox')
+    await user.click(trigger)
+    await waitFor(() => {
+      expect(screen.getByText('Node 1')).toBeVisible()
+    })
+
+    const controlsId = trigger.getAttribute('aria-controls')
+    expect(controlsId).toBeTruthy()
+    expect(document.querySelector('.compass-tree-select-dropdown')).toHaveAttribute(
+      'id',
+      controlsId,
+    )
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => {
+      expect(screen.queryByText('Node 1')).not.toBeInTheDocument()
+    })
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
   })
 
   it('should select a node in single mode', async () => {

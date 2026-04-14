@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react'
+import React, { useState, useRef, useMemo, useId } from 'react'
 import {
   useFloating,
   autoUpdate,
@@ -30,6 +30,7 @@ import {
   InputWrapper,
   SingleValue,
 } from './tree-select.styles'
+import { getOverlaySurfaceProps, getOverlayTriggerA11yProps } from '../internal/overlay-utils'
 
 const TreeSelect: React.FC<TreeSelectProps> = (props) => {
   const {
@@ -68,6 +69,7 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
   const [inputValue, setInputValue] = useState('')
   const isComposing = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const popupId = useId().replace(/:/g, '')
 
   // Manage expanded keys internally to support both search-based auto-expansion and manual toggling
   const [internalExpandedKeys, setInternalExpandedKeys] = useState<(string | number)[]>(
@@ -269,6 +271,13 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
                 onCompositionStart={handleCompositionStart}
                 onCompositionEnd={handleCompositionEnd}
                 disabled={disabled}
+                role="combobox"
+                {...getOverlayTriggerA11yProps({
+                  open,
+                  controlsId: `compass-tree-select-${popupId}`,
+                  popupRole: 'tree',
+                  disabled,
+                })}
               />
             </InputWrapper>
           )}
@@ -320,6 +329,13 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             disabled={disabled}
+            role="combobox"
+            {...getOverlayTriggerA11yProps({
+              open,
+              controlsId: `compass-tree-select-${popupId}`,
+              popupRole: 'tree',
+              disabled,
+            })}
             style={{ opacity: open || inputValue ? 1 : 0 }}
           />
         </>
@@ -456,6 +472,24 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
       } ${disabled ? 'compass-tree-select-disabled' : ''}`}
       style={style}
       {...getReferenceProps({
+        ...(showSearch
+          ? {
+              role: undefined,
+              'aria-expanded': undefined,
+              'aria-haspopup': undefined,
+              'aria-controls': undefined,
+              'aria-disabled': undefined,
+            }
+          : {
+              role: 'combobox' as const,
+              tabIndex: disabled ? -1 : 0,
+              ...getOverlayTriggerA11yProps({
+                open,
+                controlsId: `compass-tree-select-${popupId}`,
+                popupRole: 'tree',
+                disabled,
+              }),
+            }),
         onClick: () => {
           if (showSearch) inputRef.current?.focus()
         },
@@ -492,7 +526,8 @@ const TreeSelect: React.FC<TreeSelectProps> = (props) => {
               visibility: x === null || y === null ? 'hidden' : 'visible',
             }}
             className={`compass-tree-select-dropdown ${dropdownClassName || ''}`}
-            {...getFloatingProps()}
+            {...getFloatingProps(getOverlaySurfaceProps())}
+            id={`compass-tree-select-${popupId}`}
           >
             {filteredTreeData.length > 0 ? (
               <Tree

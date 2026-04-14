@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useId } from 'react'
 import {
   useFloating,
   useDismiss,
@@ -50,6 +50,7 @@ import {
 } from './date-picker.styles'
 import { useConfig } from '../config-provider'
 import defaultLocale from '../locale/zh_CN'
+import { getOverlaySurfaceProps, getOverlayTriggerA11yProps } from '../internal/overlay-utils'
 
 type PanelMode = 'date' | 'month' | 'year' | 'quarter'
 
@@ -85,6 +86,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
   const [panelMode, setPanelMode] = useState<PanelMode>(picker === 'week' ? 'date' : picker)
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
   const [inputHover, setInputHover] = useState(false)
+  const popupId = useId().replace(/:/g, '')
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -353,6 +355,12 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
           value={inputValue}
           readOnly
           disabled={disabled}
+          {...getOverlayTriggerA11yProps({
+            open: isOpen,
+            controlsId: `compass-date-picker-${popupId}`,
+            popupRole: 'dialog',
+            disabled,
+          })}
           onClick={() => !disabled && setIsOpen(!isOpen)}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (!e.target.value) {
@@ -389,7 +397,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>((pro
             <div
               ref={refs.setFloating}
               style={{ ...floatingStyles, zIndex: 1000 }}
-              {...getFloatingProps()}
+              {...getFloatingProps(getOverlaySurfaceProps())}
+              id={`compass-date-picker-${popupId}`}
             >
               <StyledCalendar className={classNames?.popup} style={styles?.popup}>
                 {renderHeader()}

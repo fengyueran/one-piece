@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useId } from 'react'
 import {
   useFloating,
   useDismiss,
@@ -14,6 +14,7 @@ import { format as formatDate, isSameDay, isWithinInterval, isBefore, isAfter } 
 import styled from '@emotion/styled'
 import { useConfig } from '../config-provider/context'
 import defaultLocale from '../locale/zh_CN'
+import { getOverlaySurfaceProps, getOverlayTriggerA11yProps } from '../internal/overlay-utils'
 
 import { DateRangePickerProps } from './types'
 import { useCalendar } from './hooks/use-calendar'
@@ -83,6 +84,7 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
   const [hoverDate, setHoverDate] = useState<Date | null>(null)
   const [inputHover, setInputHover] = useState(false)
   const isSecondSelection = useRef(false)
+  const popupId = useId().replace(/:/g, '')
 
   // Sync internal state with props
   useEffect(() => {
@@ -245,6 +247,12 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
             value={dates[0] ? formatDate(dates[0], getFormat()) : ''}
             readOnly
             disabled={disabled}
+            {...getOverlayTriggerA11yProps({
+              open: isOpen,
+              controlsId: `compass-date-range-picker-${popupId}`,
+              popupRole: 'dialog',
+              disabled,
+            })}
             onClick={() => handleInputClick('start')}
           />
           <StyledSeparator>→</StyledSeparator>
@@ -253,6 +261,12 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
             value={dates[1] ? formatDate(dates[1], getFormat()) : ''}
             readOnly
             disabled={disabled}
+            {...getOverlayTriggerA11yProps({
+              open: isOpen,
+              controlsId: `compass-date-range-picker-${popupId}`,
+              popupRole: 'dialog',
+              disabled,
+            })}
             onClick={() => handleInputClick('end')}
           />
           {clearable && inputHover && (dates[0] || dates[1]) ? (
@@ -282,7 +296,8 @@ const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps>((
             <div
               ref={refs.setFloating}
               style={{ ...floatingStyles, zIndex: 1000 }}
-              {...getFloatingProps()}
+              {...getFloatingProps(getOverlaySurfaceProps())}
+              id={`compass-date-range-picker-${popupId}`}
             >
               <StyledCalendar className={classNames?.popup} style={styles?.popup}>
                 <StyledHeader className={classNames?.header} style={styles?.header}>

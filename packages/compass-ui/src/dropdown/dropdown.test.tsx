@@ -316,6 +316,33 @@ describe('Dropdown', () => {
       await user.keyboard('{Enter}')
       expect(await screen.findByTestId('overlay')).toBeInTheDocument()
     })
+
+    it('should close click dropdown on escape and expose aria-controls', async () => {
+      const user = userEvent.setup()
+      render(
+        <Dropdown overlay={overlay} trigger="click">
+          <button>Trigger</button>
+        </Dropdown>,
+      )
+
+      const trigger = screen.getByRole('button', { name: 'Trigger' })
+      await user.click(trigger)
+      await screen.findByTestId('overlay')
+
+      const controlsId = trigger.getAttribute('aria-controls')
+      expect(controlsId).toBeTruthy()
+      expect(screen.getByTestId('overlay').closest('.compass-dropdown')).toHaveAttribute(
+        'id',
+        controlsId,
+      )
+
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('overlay')).not.toBeInTheDocument()
+      })
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    })
   })
 
   describe('Style Merging & Customization', () => {

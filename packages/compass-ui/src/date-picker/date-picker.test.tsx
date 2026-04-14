@@ -103,6 +103,27 @@ describe('DatePicker', () => {
       expect(screen.getByText(format(new Date(), 'yyyy年 M月'))).toBeInTheDocument()
     })
 
+    it('should expose aria-controls and close on escape', async () => {
+      const user = userEvent.setup()
+      renderWithTheme(<DatePicker />)
+
+      const input = screen.getByRole('textbox')
+      await user.click(input)
+      expect(screen.getByText(format(new Date(), 'yyyy年 M月'))).toBeInTheDocument()
+
+      const controlsId = input.getAttribute('aria-controls')
+      expect(controlsId).toBeTruthy()
+      expect(document.getElementById(controlsId!)).toBeInTheDocument()
+      expect(input).toHaveAttribute('aria-expanded', 'true')
+
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => {
+        expect(screen.queryByText(format(new Date(), 'yyyy年 M月'))).not.toBeInTheDocument()
+      })
+      expect(input).toHaveAttribute('aria-expanded', 'false')
+    })
+
     it('should select a date', async () => {
       const handleChange = jest.fn()
       renderWithTheme(<DatePicker onChange={handleChange} />)
