@@ -7,11 +7,11 @@
 
 ### 发布契约
 
-- [ ] **PUBL-01**: 外部用户可以只通过 `package.json.exports` 中声明的公开入口使用 `@xinghunm/compass-ui`，不需要引用 `src/*` 或 `dist/*` 内部路径
-- [ ] **PUBL-02**: `@xinghunm/compass-ui` 的 peer 依赖、Node 与 pnpm 基线、包访问级别和版本发布策略在仓库内只有一套权威配置
-- [ ] **PUBL-03**: 每次发布前都可以自动校验 `npm pack` 产物、类型分发和公开导出是否可用
-- [ ] **PUBL-04**: 消费者项目可以通过公开包名安装并完成最小接入验证，而不依赖仓库内 alias 或源码直连
-- [ ] **PUBL-05**: 仓库可以用稳定、可重复的发布流程把 `compass-ui` 发布到 npm，而不依赖人工经验记忆
+- [x] **PUBL-01**: 外部用户可以只通过 `package.json.exports` 中声明的公开入口使用 `@xinghunm/compass-ui`，不需要引用 `src/*` 或 `dist/*` 内部路径
+- [x] **PUBL-02**: `@xinghunm/compass-ui` 的 peer 依赖、Node 与 pnpm 基线、包访问级别和版本发布策略在仓库内只有一套权威配置
+- [x] **PUBL-03**: 每次发布前都可以自动校验 `npm pack` 产物、类型分发和公开导出是否可用
+- [x] **PUBL-04**: 消费者项目可以通过公开包名安装并完成最小接入验证，而不依赖仓库内 alias 或源码直连
+- [x] **PUBL-05**: 仓库可以用稳定、可重复的发布流程把 `compass-ui` 发布到 npm，而不依赖人工经验记忆
 
 ### 文档与验证
 
@@ -67,30 +67,30 @@
 
 ## Traceability
 
-| Requirement | Phase   | Status  |
-| ----------- | ------- | ------- |
-| PUBL-01     | Phase 1 | Pending |
-| PUBL-02     | Phase 1 | Pending |
-| PUBL-03     | Phase 1 | Pending |
-| PUBL-04     | Phase 1 | Pending |
-| PUBL-05     | Phase 1 | Pending |
-| DOCS-01     | Phase 2 | Pending |
-| DOCS-02     | Phase 2 | Pending |
-| DOCS-03     | Phase 2 | Pending |
-| DOCS-04     | Phase 2 | Pending |
-| DOCS-05     | Phase 2 | Pending |
-| COMP-01     | Phase 3 | Pending |
-| COMP-02     | Phase 3 | Pending |
-| COMP-03     | Phase 3 | Pending |
-| COMP-04     | Phase 3 | Pending |
-| COMP-05     | Phase 3 | Pending |
-| COMP-06     | Phase 3 | Pending |
-| COMP-07     | Phase 3 | Pending |
-| INTR-01     | Phase 4 | Pending |
-| INTR-02     | Phase 4 | Pending |
-| INTR-03     | Phase 4 | Pending |
-| INTR-04     | Phase 4 | Pending |
-| INTR-05     | Phase 4 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| PUBL-01     | Phase 1 | Complete |
+| PUBL-02     | Phase 1 | Complete |
+| PUBL-03     | Phase 1 | Complete |
+| PUBL-04     | Phase 1 | Complete |
+| PUBL-05     | Phase 1 | Complete |
+| DOCS-01     | Phase 2 | Pending  |
+| DOCS-02     | Phase 2 | Pending  |
+| DOCS-03     | Phase 2 | Pending  |
+| DOCS-04     | Phase 2 | Pending  |
+| DOCS-05     | Phase 2 | Pending  |
+| COMP-01     | Phase 3 | Pending  |
+| COMP-02     | Phase 3 | Pending  |
+| COMP-03     | Phase 3 | Pending  |
+| COMP-04     | Phase 3 | Pending  |
+| COMP-05     | Phase 3 | Pending  |
+| COMP-06     | Phase 3 | Pending  |
+| COMP-07     | Phase 3 | Pending  |
+| INTR-01     | Phase 4 | Pending  |
+| INTR-02     | Phase 4 | Pending  |
+| INTR-03     | Phase 4 | Pending  |
+| INTR-04     | Phase 4 | Pending  |
+| INTR-05     | Phase 4 | Pending  |
 
 **Coverage:**
 
@@ -102,4 +102,4 @@
 ---
 
 _Requirements defined: 2026-04-13_
-_Last updated: 2026-04-13 after roadmap initialization_
+_Last updated: 2026-04-14 after phase 1 execution_
