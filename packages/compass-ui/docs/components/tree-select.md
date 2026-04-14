@@ -300,7 +300,7 @@ export default () => {
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { TreeSelect } from '@xinghunm/compass-ui'
-import type { TreeSelectProps } from '@xinghunm/compass-ui/src/tree-select/types'
+import type { TreeSelectProps } from '@xinghunm/compass-ui'
 
 // 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
 const TreeSelectWrapper = ({ className, ...props }: TreeSelectProps) => (

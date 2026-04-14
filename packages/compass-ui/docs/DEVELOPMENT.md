@@ -300,15 +300,37 @@ pnpm build
 - **MINOR** (0.1.0): 新功能，向后兼容
 - **PATCH** (0.0.1): Bug 修复，向后兼容
 
+### 公开发布流程
+
+`compass-ui` 的发布前校验入口统一收口在仓库根脚本 `pnpm run release:verify:compass-ui`。该命令会先运行 `pnpm --filter @xinghunm/compass-ui test`，再调用 `packages/compass-ui/scripts/verify-public-api.mjs`，串联 `build`、`publint`、`pnpm pack` 和 `test-consumer` 的类型冒烟校验。
+
+标准发布步骤如下：
+
+```bash
+# 1. 本地预检
+pnpm run release:verify:compass-ui
+
+# 2. 记录版本变更
+pnpm changeset
+
+# 3. 提交 changeset 后，由 CI release workflow 执行发布
+```
+
+CI 使用固定工作流 `.github/workflows/release.yml`。该 workflow 会执行以下步骤：
+
+1. 使用 `pnpm@8.6.10` 安装依赖
+2. 使用 `Node.js 22.14.0` 作为 trusted publishing 的 release job runtime
+3. 执行 `pnpm run release:verify:compass-ui`
+4. 通过 `changesets/action@v1` 运行 `pnpm changeset publish`
+
+在 npm 后台需要为 `@xinghunm/compass-ui` 配置 Trusted Publisher，配置路径为 `npm package settings -> Trusted publishers`，并绑定当前 GitHub 仓库与工作流文件 `.github/workflows/release.yml`。
+
 ### 发布前检查清单
 
-- [ ] 所有测试通过 (`pnpm test`)
-- [ ] 测试覆盖率达标 (`pnpm test -- --coverage`)
-- [ ] 代码检查通过 (`pnpm lint`)
-- [ ] 构建成功 (`pnpm build`)
-- [ ] 文档站可构建 (`pnpm docs:build`)
-- [ ] 更新 CHANGELOG.md
-- [ ] 更新版本号 (`package.json`)
+- [ ] `pnpm run release:verify:compass-ui` 通过
+- [ ] 需要发布的改动已通过 `pnpm changeset` 记录
+- [ ] 文档站可构建 (`pnpm --filter @xinghunm/compass-ui docs:build`)
+- [ ] npm Trusted Publisher 已绑定到 `.github/workflows/release.yml`
 
 ## 开发规范
 

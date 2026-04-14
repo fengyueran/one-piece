@@ -115,7 +115,8 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Steps, LoadingIcon, InfoIcon } from '@xinghunm/compass-ui'
+import { Steps } from '@xinghunm/compass-ui'
+import { LoadingIcon, InfoIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => {
   const items = [

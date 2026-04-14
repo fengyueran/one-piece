@@ -425,7 +425,7 @@ export default () => {
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { AutoComplete } from '@xinghunm/compass-ui'
-import type { AutoCompleteProps } from '@xinghunm/compass-ui/src/auto-complete/types'
+import type { AutoCompleteProps } from '@xinghunm/compass-ui'
 
 // 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
 const AutoCompleteWrapper = ({ className, classNames, ...props }: AutoCompleteProps) => (

@@ -196,7 +196,7 @@ export default () => {
 ```tsx
 import React, { useState } from 'react'
 import { DatePicker, ConfigProvider } from '@xinghunm/compass-ui'
-import enUS from '@xinghunm/compass-ui/dist/locale/en_US'
+import { enUS } from '@xinghunm/compass-ui/locale'
 
 export default () => {
   const [date, setDate] = useState(null)
@@ -262,7 +262,7 @@ export default () => {
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { DatePicker } from '@xinghunm/compass-ui'
-import type { DatePickerProps } from '@xinghunm/compass-ui/src/date-picker/types'
+import type { DatePickerProps } from '@xinghunm/compass-ui'
 
 // 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
 const DatePickerWrapper = ({ className, ...props }: DatePickerProps) => (

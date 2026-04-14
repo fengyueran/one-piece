@@ -80,7 +80,8 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon, CloseIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -98,7 +99,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -119,7 +121,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, CloseIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { CloseIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -213,7 +216,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>

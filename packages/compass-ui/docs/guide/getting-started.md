@@ -38,17 +38,18 @@ export default () => (
 )
 ```
 
-### 按需引入
+### 公共子路径引入
 
-Compass UI 支持 tree-shaking,你可以直接引入需要的组件:
+Compass UI 目前公开的子路径主要用于主题、语言包和图标等共享能力:
 
 ```tsx
 import React from 'react'
-import Button from '@xinghunm/compass-ui/button'
-import ConfigProvider from '@xinghunm/compass-ui/config-provider'
+import { Button, ConfigProvider } from '@xinghunm/compass-ui'
+import { defaultTheme } from '@xinghunm/compass-ui/theme'
+import { zhCN } from '@xinghunm/compass-ui/locale'
 
 export default () => (
-  <ConfigProvider>
+  <ConfigProvider locale={zhCN} theme={{ token: defaultTheme }}>
     <Button variant="primary">Hello Compass UI</Button>
   </ConfigProvider>
 )

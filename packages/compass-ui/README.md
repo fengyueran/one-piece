@@ -28,7 +28,8 @@ pnpm add @xinghunm/compass-ui
 
 ```tsx
 import React from 'react'
-import { Button, ThemeProvider, defaultTheme } from '@xinghunm/compass-ui'
+import { Button, ThemeProvider } from '@xinghunm/compass-ui'
+import { defaultTheme } from '@xinghunm/compass-ui/theme'
 
 function App() {
   return (
