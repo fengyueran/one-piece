@@ -410,26 +410,12 @@ export default () => (
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.dropdown)</summary>
+| Token Name                            | Description  | Default                                                                                                    |
+| ------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `components.dropdown.zIndex`          | 下拉菜单层级 | `1050`                                                                                                     |
+| `components.dropdown.backgroundColor` | 背景颜色     | `#ffffff`                                                                                                  |
+| `components.dropdown.boxShadow`       | 阴影         | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.dropdown.borderRadius`    | 圆角         | `4px`                                                                                                      |
+| `components.dropdown.padding`         | 内边距       | `4px 0`                                                                                                    |
 
-| 变量名                                | 说明         |
-| ------------------------------------- | ------------ |
-| `components.dropdown.zIndex`          | 下拉菜单层级 |
-| `components.dropdown.backgroundColor` | 背景颜色     |
-| `components.dropdown.boxShadow`       | 阴影         |
-| `components.dropdown.borderRadius`    | 圆角         |
-| `components.dropdown.padding`         | 内边距       |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名              | 说明         |
-| ------------------- | ------------ |
-| `colors.background` | 背景基础颜色 |
-| `shadows.lg`        | 默认大阴影   |
-| `borderRadius.md`   | 默认中圆角   |
-
-</details>
+Dropdown 也会跟随全局 `colors.background`、`shadows.lg`、`borderRadius.md` 等 token 变化，但组件级覆盖优先使用 `components.dropdown.*`。

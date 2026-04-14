@@ -648,16 +648,42 @@ export default () => {
 
 ### 组件 Token
 
-| Token Name                           | Description    |
-| ------------------------------------ | -------------- |
-| `components.select.borderRadius`     | 边框圆角       |
-| `components.select.backgroundColor`  | 背景颜色       |
-| `components.select.borderColor`      | 边框颜色       |
-| `components.select.placeholderColor` | 占位符颜色     |
-| `components.select.optionSelectedBg` | 选项选中背景色 |
-| `components.select.optionHoverBg`    | 选项悬停背景色 |
-| `components.select.tagBg`            | 标签背景色     |
-| `components.select.tagColor`         | 标签文字颜色   |
+| Token Name                              | Description      | Default                                                                                                    |
+| --------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.select.borderRadius`        | 边框圆角         | `4px`                                                                                                      |
+| `components.select.backgroundColor`     | 背景颜色         | `#ffffff`                                                                                                  |
+| `components.select.borderColor`         | 边框颜色         | `#d9d9d9`                                                                                                  |
+| `components.select.hoverBorderColor`    | 悬停边框颜色     | `#4096ff`                                                                                                  |
+| `components.select.activeBorderColor`   | 激活边框颜色     | `#1890ff`                                                                                                  |
+| `components.select.placeholderColor`    | 占位符颜色       | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.select.dropdownBg`          | 下拉菜单背景色   | `#ffffff`                                                                                                  |
+| `components.select.dropdownBoxShadow`   | 下拉菜单阴影     | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.select.dropdownPadding`     | 下拉菜单内边距   | `4px 0`                                                                                                    |
+| `components.select.dropdownZIndex`      | 下拉菜单层级     | `1050`                                                                                                     |
+| `components.select.dropdownMaxHeight`   | 下拉菜单最大高度 | `256px`                                                                                                    |
+| `components.select.optionSelectedBg`    | 选项选中背景色   | `#e6f7ff`                                                                                                  |
+| `components.select.optionHoverBg`       | 选项悬停背景色   | `#f5f5f5`                                                                                                  |
+| `components.select.optionColor`         | 选项文字颜色     | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.optionSelectedColor` | 选中项文字颜色   | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.optionPadding`       | 选项内边距       | `0 12px`                                                                                                   |
+| `components.select.optionMinHeight`     | 选项最小高度     | `32px`                                                                                                     |
+| `components.select.optionFontSize`      | 选项字体大小     | `14px`                                                                                                     |
+| `components.select.tagBg`               | 标签背景色       | `#f5f5f5`                                                                                                  |
+| `components.select.tagColor`            | 标签文字颜色     | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.tagBorderColor`      | 标签边框颜色     | `#f0f0f0`                                                                                                  |
+| `components.select.tagHeight`           | 标签高度         | `24px`                                                                                                     |
+| `components.select.tagPadding`          | 标签内边距       | `0 8px`                                                                                                    |
+| `components.select.tagFontSize`         | 标签字体大小     | `12px`                                                                                                     |
+| `components.select.tagBorderRadius`     | 标签圆角         | `4px`                                                                                                      |
+| `components.select.padding.sm`          | 小尺寸输入内边距 | `1px 8px`                                                                                                  |
+| `components.select.padding.md`          | 中尺寸输入内边距 | `3px 12px`                                                                                                 |
+| `components.select.padding.lg`          | 大尺寸输入内边距 | `6px 16px`                                                                                                 |
+| `components.select.fontSize.sm`         | 小尺寸字体大小   | `12px`                                                                                                     |
+| `components.select.fontSize.md`         | 中尺寸字体大小   | `14px`                                                                                                     |
+| `components.select.fontSize.lg`         | 大尺寸字体大小   | `16px`                                                                                                     |
+| `components.select.minHeight.sm`        | 小尺寸最小高度   | `20px`                                                                                                     |
+| `components.select.minHeight.md`        | 中尺寸最小高度   | `24px`                                                                                                     |
+| `components.select.minHeight.lg`        | 大尺寸最小高度   | `26px`                                                                                                     |
 
 ### 全局 Token
 

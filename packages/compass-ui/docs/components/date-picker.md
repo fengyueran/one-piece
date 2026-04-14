@@ -386,43 +386,28 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.datePicker)</summary>
+| Token Name                                | Description     | Default                                                                                                    |
+| ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.datePicker.borderColor`       | 边框颜色        | `rgba(0, 0, 0, 0.06)`                                                                                      |
+| `components.datePicker.boxShadow`         | 阴影            | `0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.datePicker.headerPadding`     | 头部内边距      | `12px 16px`                                                                                                |
+| `components.datePicker.headerHeight`      | 头部高度        | `40px`                                                                                                     |
+| `components.datePicker.headerFontSize`    | 头部字体大小    | `14px`                                                                                                     |
+| `components.datePicker.weekDayFontSize`   | 星期字体大小    | `12px`                                                                                                     |
+| `components.datePicker.cellWidth`         | 单元格宽度      | `32px`                                                                                                     |
+| `components.datePicker.cellHeight`        | 单元格高度      | `32px`                                                                                                     |
+| `components.datePicker.cellPadding`       | 单元格内边距    | `0`                                                                                                        |
+| `components.datePicker.cellMargin`        | 单元格边距      | `2px`                                                                                                      |
+| `components.datePicker.cellFontSize`      | 单元格字体大小  | `14px`                                                                                                     |
+| `components.datePicker.cellColor`         | 单元格文字颜色  | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 | `#ffffff`                                                                                                  |
+| `components.datePicker.cellActiveBg`      | 选中背景色      | `#1890ff`                                                                                                  |
+| `components.datePicker.cellHoverBg`       | 悬停背景色      | `#40a9ff`                                                                                                  |
+| `components.datePicker.cellDisabledColor` | 禁用文字颜色    | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.datePicker.cellBorderRadius`  | 单元格圆角      | `4px`                                                                                                      |
+| `components.datePicker.zIndex`            | 弹层层级        | `1000`                                                                                                     |
 
-| 变量名                                    | 说明            |
-| ----------------------------------------- | --------------- |
-| `components.datePicker.borderColor`       | 边框颜色        |
-| `components.datePicker.boxShadow`         | 阴影            |
-| `components.datePicker.headerPadding`     | 头部内边距      |
-| `components.datePicker.headerFontSize`    | 头部字体大小    |
-| `components.datePicker.weekDayFontSize`   | 星期字体大小    |
-| `components.datePicker.cellWidth`         | 单元格宽度      |
-| `components.datePicker.cellHeight`        | 单元格高度      |
-| `components.datePicker.cellMargin`        | 单元格边距      |
-| `components.datePicker.cellFontSize`      | 单元格字体大小  |
-| `components.datePicker.cellColor`         | 单元格文字颜色  |
-| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 |
-| `components.datePicker.cellActiveBg`      | 选中背景色      |
-| `components.datePicker.cellHoverBg`       | 悬停背景色      |
-| `components.datePicker.cellDisabledColor` | 禁用文字颜色    |
-| `components.datePicker.cellBorderRadius`  | 单元格圆角      |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名                       | 说明         |
-| ---------------------------- | ------------ |
-| `colors.primary`             | 主色调       |
-| `colors.background`          | 背景色       |
-| `colors.backgroundSecondary` | 次级背景色   |
-| `colors.text`                | 文本颜色     |
-| `colors.textSecondary`       | 次级文本颜色 |
-| `colors.textDisabled`        | 禁用文本颜色 |
-| `colors.border`              | 边框颜色     |
-| `colors.error`               | 错误色       |
-| `borderRadius.lg`            | 大圆角       |
-| `shadows.lg`                 | 大阴影       |
+DatePicker 还会跟随全局 `colors.primary`、`colors.background`、`colors.backgroundSecondary`、`colors.text`、`colors.textSecondary`、`colors.textDisabled`、`colors.border`、`colors.error`、`borderRadius.lg` 等 token 变化。
+| `shadows.lg` | 大阴影 |
 
 </details>

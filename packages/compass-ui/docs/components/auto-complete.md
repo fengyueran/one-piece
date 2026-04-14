@@ -557,33 +557,15 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.select / components.dropdown)</summary>
+| Token Name                          | Description         | Default                                                                                                    |
+| ----------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.dropdown.zIndex`        | 下拉菜单层级        | `1050`                                                                                                     |
+| `components.dropdown.boxShadow`     | 下拉菜单阴影        | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.select.backgroundColor` | 下拉菜单背景色      | `#ffffff`                                                                                                  |
+| `components.select.borderRadius`    | 下拉菜单圆角        | `4px`                                                                                                      |
+| `components.select.optionColor`     | 选项文字颜色        | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.optionHoverBg`   | 选项悬停/激活背景色 | `#f5f5f5`                                                                                                  |
 
-| 变量名                              | 说明                |
-| ----------------------------------- | ------------------- |
-| `components.dropdown.zIndex`        | 下拉菜单层级        |
-| `components.dropdown.boxShadow`     | 下拉菜单阴影        |
-| `components.select.backgroundColor` | 下拉菜单背景色      |
-| `components.select.borderRadius`    | 下拉菜单圆角        |
-| `components.select.optionColor`     | 选项文字颜色        |
-| `components.select.optionHoverBg`   | 选项悬停/激活背景色 |
+> 注：AutoComplete 的下拉菜单样式部分复用了 `Select` 和 `Dropdown` 的 Token。输入框部分的样式请参考 [Input 组件 Token](/components/input-field#主题变量-design-token)。
 
-> 注：AutoComplete 的下拉菜单样式部分复用了 Select 和 Dropdown 的 Token。输入框部分的样式请参考 [Input 组件 Token](/components/input-field#主题变量-design-token)。
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名                 | 说明                 |
-| ---------------------- | -------------------- |
-| `colors.primary`       | 主色调（高亮文本等） |
-| `colors.text`          | 文本颜色             |
-| `colors.textSecondary` | 次级文本颜色         |
-| `colors.background`    | 背景色               |
-| `fontSize.sm`          | 小字号               |
-| `borderRadius.md`      | 中等圆角             |
-| `shadows.lg`           | 大阴影               |
-
-</details>
+AutoComplete 还会跟随全局 `colors.primary`、`colors.text`、`colors.textSecondary`、`colors.background`、`fontSize.sm`、`borderRadius.md`、`shadows.lg` 等 token 变化。

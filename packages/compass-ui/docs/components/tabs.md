@@ -402,23 +402,18 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.tabs)</summary>
-
-| 变量名                                    | 说明               |
-| ----------------------------------------- | ------------------ |
-| `components.tabs.tabBarBorderColor`       | 标签栏边框颜色     |
-| `components.tabs.tabBarBorderWidth`       | 标签栏边框宽度     |
-| `components.tabs.tabBarBackgroundColor`   | 标签栏背景色       |
-| `components.tabs.tabItemColor`            | 标签项文字颜色     |
-| `components.tabs.tabItemActiveColor`      | 激活标签项文字颜色 |
-| `components.tabs.tabItemHoverColor`       | 悬停标签项文字颜色 |
-| `components.tabs.tabItemDisabledColor`    | 禁用标签项文字颜色 |
-| `components.tabs.tabItemFontSize`         | 标签项字体大小     |
-| `components.tabs.tabItemPadding`          | 标签项内边距       |
-| `components.tabs.tabItemHorizontalGutter` | 标签项水平间距     |
-| `components.tabs.tabItemVerticalGutter`   | 标签项垂直间距     |
-| `components.tabs.inkBarColor`             | 指示条颜色         |
-| `components.tabs.inkBarHeight`            | 指示条高度         |
-
-</details>
+| Token Name                                | Description        | Default               |
+| ----------------------------------------- | ------------------ | --------------------- |
+| `components.tabs.tabBarBorderColor`       | 标签栏边框颜色     | `#f0f0f0`             |
+| `components.tabs.tabBarBorderWidth`       | 标签栏边框宽度     | `1px`                 |
+| `components.tabs.tabBarBackgroundColor`   | 标签栏背景色       | `#ffffff`             |
+| `components.tabs.tabItemColor`            | 标签项文字颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.tabs.tabItemActiveColor`      | 激活标签项文字颜色 | `#1890ff`             |
+| `components.tabs.tabItemHoverColor`       | 悬停标签项文字颜色 | `#40a9ff`             |
+| `components.tabs.tabItemDisabledColor`    | 禁用标签项文字颜色 | `rgba(0, 0, 0, 0.25)` |
+| `components.tabs.tabItemFontSize`         | 标签项字体大小     | `14px`                |
+| `components.tabs.tabItemPadding`          | 标签项内边距       | `12px 16px`           |
+| `components.tabs.tabItemHorizontalGutter` | 标签项水平间距     | `32px`                |
+| `components.tabs.tabItemVerticalGutter`   | 标签项垂直间距     | `16px`                |
+| `components.tabs.inkBarColor`             | 指示条颜色         | `#1890ff`             |
+| `components.tabs.inkBarHeight`            | 指示条高度         | `2px`                 |

@@ -839,28 +839,15 @@ type NamePath = string | number | (string | number)[]
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.form)</summary>
+| Token Name                          | Description      | Default               |
+| ----------------------------------- | ---------------- | --------------------- |
+| `components.form.itemMarginBottom`  | 表单项下间距     | `16px`                |
+| `components.form.labelMarginBottom` | 标签下间距       | `8px`                 |
+| `components.form.labelFontSize`     | 标签字体大小     | `14px`                |
+| `components.form.labelColor`        | 标签颜色         | `rgba(0, 0, 0, 0.88)` |
+| `components.form.errorColor`        | 错误信息颜色     | `#ff4d4f`             |
+| `components.form.errorFontSize`     | 错误信息字体大小 | `12px`                |
+| `components.form.errorMarginTop`    | 错误信息上间距   | `2px`                 |
+| `components.form.errorMarginBottom` | 错误信息下间距   | `2px`                 |
 
-| 变量名                              | 说明             |
-| ----------------------------------- | ---------------- |
-| `components.form.itemMarginBottom`  | 表单项下间距     |
-| `components.form.labelMarginBottom` | 标签下间距       |
-| `components.form.labelFontSize`     | 标签字体大小     |
-| `components.form.labelColor`        | 标签颜色         |
-| `components.form.errorColor`        | 错误信息颜色     |
-| `components.form.errorFontSize`     | 错误信息字体大小 |
-| `components.form.errorMarginTop`    | 错误信息上间距   |
-| `components.form.errorMarginBottom` | 错误信息下间距   |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名         | 说明     |
-| -------------- | -------- |
-| `spacing.md`   | 默认间距 |
-| `colors.error` | 错误主色 |
-
-</details>
+Form 还会跟随全局 `spacing.md`、`colors.error` 等 token 变化，但组件级配置入口以 `components.form.*` 为主。
