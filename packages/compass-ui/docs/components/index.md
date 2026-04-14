@@ -21,10 +21,13 @@ group:
 ## 基础组件
 
 - [Button 按钮](/components/button)
+- [Checkbox 多选框](/components/checkbox)
 - [InputField 输入框](/components/input-field)
 - [InputNumber 数字输入框](/components/input-number)
 - [Progress 进度条](/components/progress)
+- [Radio 单选框](/components/radio)
 - [Steps 步骤条](/components/steps)
+- [Switch 开关](/components/switch)
 - [Tabs 标签页](/components/tabs)
 
 ## 表单与选择

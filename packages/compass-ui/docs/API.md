@@ -13,12 +13,21 @@
 根入口适合放“高频门面能力”，也就是业务代码最常直接用到的组件、配置入口和主题默认值。
 
 ```ts
-import { Button, ConfigProvider, ThemeProvider, defaultTheme } from '@xinghunm/compass-ui'
+import {
+  Button,
+  Checkbox,
+  ConfigProvider,
+  Radio,
+  Switch,
+  ThemeProvider,
+  defaultTheme,
+} from '@xinghunm/compass-ui'
 ```
 
 根入口当前主要包含：
 
 - 已公开组件：如 `Button`、`InputField`、`Select`、`DatePicker`、`Table`、`Modal`
+- 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
 - 全局配置与主题门面：`ConfigProvider`、`ThemeProvider`、`useTheme`
 - 常用主题默认值与主要类型：`defaultTheme`、`Theme`、组件 Props 类型
 
@@ -81,7 +90,7 @@ import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 ## 类型导入示例
 
 ```ts
-import type { ButtonProps, Theme } from '@xinghunm/compass-ui'
+import type { ButtonProps, CheckboxProps, RadioGroupProps, SwitchProps, Theme } from '@xinghunm/compass-ui'
 ```
 
 ## 关于可访问性说明
