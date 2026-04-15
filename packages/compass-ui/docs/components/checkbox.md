@@ -136,6 +136,18 @@ export default () => (
 | `classNames`     | 语义化类名覆写     | `CheckboxProps['classNames']`                    | -          |
 | `styles`         | 语义化样式覆写     | `CheckboxProps['styles']`                        | -          |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名      | 说明       |
+| ----------- | ---------- |
+| `root`      | 根容器     |
+| `input`     | 原生输入框 |
+| `control`   | 控件区域   |
+| `label`     | 标签区域   |
+| `indicator` | 勾选标记   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                               | Description      | Default               |

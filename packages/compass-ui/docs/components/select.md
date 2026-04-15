@@ -644,6 +644,18 @@ export default () => {
 | value    | 选项的值       | `string \| number` | -       |
 | disabled | 是否禁用该选项 | `boolean`          | `false` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明     |
+| ---------- | -------- |
+| `root`     | 根容器   |
+| `trigger`  | 触发器   |
+| `dropdown` | 下拉容器 |
+| `option`   | 选项节点 |
+| `tag`      | 标签项   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                              | Description      | Default                                                                                                    |

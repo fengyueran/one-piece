@@ -57,3 +57,15 @@ export default () => <InputField placeholder="旧代码仍可继续工作" />
 ## 说明
 
 如果你只是想找标准化的单行文本输入，请直接跳到 [`Input`](/components/input)。如果你需要多行输入，请使用 [`Textarea`](/components/textarea)。
+
+## classNames / styles 插槽
+
+`InputField` 与 [`Input`](/components/input) 共享同一套 `classNames` / `styles` slot key。
+
+| 插槽名   | 说明     |
+| -------- | -------- |
+| `root`   | 根容器   |
+| `input`  | 输入区域 |
+| `prefix` | 前缀区域 |
+| `suffix` | 后缀区域 |
+| `clear`  | 清除按钮 |

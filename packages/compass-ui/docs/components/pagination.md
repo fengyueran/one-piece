@@ -211,6 +211,19 @@ export default () => (
 | styles          | 内部组件样式                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
 | classNames      | 内部组件类名                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名       | 说明     |
+| ------------ | -------- |
+| `root`       | 根容器   |
+| `item`       | 页码项   |
+| `activeItem` | 当前页项 |
+| `jumpItem`   | 跳转项   |
+| `options`    | 配置区域 |
+| `total`      | 总数区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                               | Description    | Default             |

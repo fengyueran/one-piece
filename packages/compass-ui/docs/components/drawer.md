@@ -168,6 +168,20 @@ export default () => {
 - 当前实现优先保证 portal / mask / Escape / focus-return 的稳定契约，不提供命令式 `useDrawer`、多层堆叠管理或 body scroll lock 策略。
 - 更复杂的 overlay 基础层边界统一记录在开发指南中。
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `mask`    | 遮罩层   |
+| `content` | 内容区域 |
+| `header`  | 头部区域 |
+| `title`   | 标题区域 |
+| `body`    | 主体区域 |
+| `footer`  | 底部区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                        | Description    | Default                                                                                                    |

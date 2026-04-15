@@ -341,6 +341,21 @@ export default () => {
 | className   | 自定义类名 | `string`                                     | -       |
 | style       | 自定义样式 | `React.CSSProperties`                        | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名        | 说明       |
+| ------------- | ---------- |
+| `root`        | 根容器     |
+| `item`        | 步骤项     |
+| `icon`        | 图标区域   |
+| `content`     | 内容区域   |
+| `title`       | 标题区域   |
+| `subtitle`    | 副标题区域 |
+| `description` | 描述文本   |
+| `tail`        | 连接线     |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                 | Description      | Default               |

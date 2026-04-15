@@ -210,6 +210,17 @@ export default () => (
 | classNames      | 语义化类名             | `{ root?: string; overlay?: string; content?: string; arrow?: string }`                                                                                              | -         |
 | styles          | 语义化样式             | `{ root?: CSSProperties; overlay?: CSSProperties; content?: CSSProperties; arrow?: CSSProperties }`                                                                  | -         |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `overlay` | 浮层容器 |
+| `content` | 内容区域 |
+| `arrow`   | 箭头     |
+
 ## 主题变量 (Design Token)
 
 | Token Name                           | Description    | Default                          |

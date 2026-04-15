@@ -110,3 +110,15 @@ export default () => (
 | `onPressEnter` | 按下 Enter 时的回调 | `(event: KeyboardEvent<HTMLTextAreaElement>) => void` | -          |
 | `classNames`   | 语义化类名覆写      | `TextareaProps['classNames']`                         | -          |
 | `styles`       | 语义化样式覆写      | `TextareaProps['styles']`                             | -          |
+
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明     |
+| ---------- | -------- |
+| `root`     | 根容器   |
+| `textarea` | 文本域   |
+| `prefix`   | 前缀区域 |
+| `suffix`   | 后缀区域 |
+| `clear`    | 清除按钮 |

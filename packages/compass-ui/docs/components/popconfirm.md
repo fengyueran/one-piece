@@ -128,6 +128,18 @@ export default () => (
 | classNames   | 语义化类名           | `{ root, overlay, title, description, actions }`             | -         |
 | styles       | 语义化样式           | `{ root, overlay, title, description, actions }`             | -         |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名        | 说明     |
+| ------------- | -------- |
+| `root`        | 根容器   |
+| `overlay`     | 浮层容器 |
+| `title`       | 标题区域 |
+| `description` | 描述文本 |
+| `actions`     | 操作区   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                   | Description  | Default               |

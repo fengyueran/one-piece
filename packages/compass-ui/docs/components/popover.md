@@ -127,6 +127,18 @@ export default () => (
 - 当前实现优先保证触发、关闭和基础语义稳定，不提供箭头、嵌套层级管理或复杂焦点陷阱。
 - 更细的 overlay 策略与边界说明，会在项目的复杂交互基础层文档中统一维护。
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `overlay` | 浮层容器 |
+| `header`  | 头部区域 |
+| `title`   | 标题区域 |
+| `body`    | 主体区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                           | Description  | Default                                                          |

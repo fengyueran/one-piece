@@ -400,6 +400,17 @@ export default () => {
 | disabled | 是否禁用             | `boolean`   | `false` |
 | active   | 是否激活（内部使用） | `boolean`   | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `nav`     | 导航区域 |
+| `inkBar`  | 激活条   |
+| `content` | 内容区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                | Description        | Default               |

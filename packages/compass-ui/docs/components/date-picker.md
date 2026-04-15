@@ -384,6 +384,20 @@ export default () => {
 | onChange     | 日期范围改变时的回调 | `(dates: [Date \| null, Date \| null]) => void` | -                          |
 | placeholder  | 输入框提示文字       | `[string, string]`                              | `['开始日期', '结束日期']` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名   | 说明       |
+| -------- | ---------- |
+| `root`   | 根容器     |
+| `input`  | 输入区域   |
+| `popup`  | 弹层容器   |
+| `header` | 头部区域   |
+| `body`   | 主体区域   |
+| `footer` | 底部区域   |
+| `day`    | 日期单元格 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                | Description     | Default                                                                                                    |

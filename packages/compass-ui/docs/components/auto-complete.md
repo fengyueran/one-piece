@@ -555,6 +555,17 @@ export default () => {
 | disabled      | 是否禁用                        | `boolean`         | `false` |
 | [key: string] | 允许包含任意其他自定义属性/字段 | `unknown`         | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明     |
+| ---------- | -------- |
+| `root`     | 根容器   |
+| `input`    | 输入区域 |
+| `dropdown` | 下拉容器 |
+| `option`   | 选项节点 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                          | Description         | Default                                                                                                    |

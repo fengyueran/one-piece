@@ -424,6 +424,19 @@ export default () => {
 | styles         | 内部组件样式                                      | `{ root, mask, content, header, body, footer }`                | -        |
 | classNames     | 内部组件类名                                      | `{ root, mask, content, header, body, footer }`                | -        |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `mask`    | 遮罩层   |
+| `content` | 内容区域 |
+| `header`  | 头部区域 |
+| `body`    | 主体区域 |
+| `footer`  | 底部区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                       | Description  | Default                                                                                                    |

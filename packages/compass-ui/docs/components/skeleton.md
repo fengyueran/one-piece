@@ -107,6 +107,17 @@ export default () => (
 | `classNames` | 语义化类名覆写                     | `SkeletonProps['classNames']` | -       |
 | `styles`     | 语义化样式覆写                     | `SkeletonProps['styles']`     | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名   | 说明       |
+| -------- | ---------- |
+| `root`   | 根容器     |
+| `avatar` | 头像占位   |
+| `title`  | 标题占位   |
+| `row`    | 段落行占位 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                  | Description  | Default               |

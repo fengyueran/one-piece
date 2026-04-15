@@ -75,6 +75,12 @@ group:
 
 如果组件还暴露了相关类型，再在主表之后继续补充。
 
+如果组件公开了 `classNames` / `styles`：
+
+- 在主 API 表后补 `### classNames / styles 插槽`
+- 明确说明 `classNames` 与 `styles` 使用同一套 slot key
+- 用表格列出所有 slot 名和对应语义，不要只写 `XXXProps['classNames']`
+
 ## 主题变量章节要求
 
 仅在组件确实暴露 token 时添加。

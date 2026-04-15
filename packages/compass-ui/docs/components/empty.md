@@ -113,6 +113,18 @@ export default () => (
 | `classNames`  | 语义化类名覆写     | `EmptyProps['classNames']`       | -          |
 | `styles`      | 语义化样式覆写     | `EmptyProps['styles']`           | -          |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名        | 说明     |
+| ------------- | -------- |
+| `root`        | 根容器   |
+| `image`       | 插图区   |
+| `title`       | 标题区域 |
+| `description` | 描述文本 |
+| `action`      | 操作区   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                               | Description      | Default                                                                               |

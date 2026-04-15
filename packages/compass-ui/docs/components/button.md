@@ -361,6 +361,17 @@ export default () => (
 
 支持原生 `button` 元素的所有标准属性。
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `icon`    | 图标区域 |
+| `text`    | 文本区域 |
+| `loading` | 加载图标 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                          | Description      | Default  |

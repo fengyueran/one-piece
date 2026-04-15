@@ -133,6 +133,20 @@ export default () => (
 | `classNames`  | 语义化类名覆写                          | `AlertProps['classNames']`                    | -        |
 | `styles`      | 语义化样式覆写                          | `AlertProps['styles']`                        | -        |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名        | 说明     |
+| ------------- | -------- |
+| `root`        | 根容器   |
+| `icon`        | 图标区域 |
+| `content`     | 内容区域 |
+| `title`       | 标题区域 |
+| `description` | 描述文本 |
+| `action`      | 操作区   |
+| `close`       | 关闭按钮 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                                 | Description      | Default               |

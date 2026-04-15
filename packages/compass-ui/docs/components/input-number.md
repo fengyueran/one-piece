@@ -220,6 +220,20 @@ export default () => (
 | classNames   | 语义化类名         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
 | styles       | 语义化样式         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名         | 说明       |
+| -------------- | ---------- |
+| `root`         | 根容器     |
+| `input`        | 输入区域   |
+| `inputWrapper` | 输入包裹层 |
+| `prefix`       | 前缀区域   |
+| `suffix`       | 后缀区域   |
+| `upHandler`    | 增加按钮   |
+| `downHandler`  | 减少按钮   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                           | Description      | Default    |

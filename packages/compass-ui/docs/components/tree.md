@@ -511,6 +511,20 @@ export default () => {
 | icon       | 自定义图标     | `ReactNode`        | -       |
 | isLeaf     | 是否是叶子节点 | `boolean`          | `false` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明       |
+| ---------- | ---------- |
+| `root`     | 根容器     |
+| `node`     | 节点容器   |
+| `content`  | 内容区域   |
+| `switcher` | 展开切换器 |
+| `checkbox` | 复选框区域 |
+| `icon`     | 图标区域   |
+| `title`    | 标题区域   |
+
 ## 主题变量 (Design Token)
 
 | Token Name                           | Description      | Default               |

@@ -837,6 +837,17 @@ type NamePath = string | number | (string | number)[]
 | validating | 是否正在验证     | `boolean`              |
 | errors     | 错误信息列表     | `string[]`             |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名  | 说明     |
+| ------- | -------- |
+| `form`  | 表单容器 |
+| `item`  | 表单项   |
+| `label` | 标签区域 |
+| `error` | 错误提示 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                          | Description      | Default               |
