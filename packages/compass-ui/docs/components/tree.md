@@ -513,14 +513,14 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-| Token Name                | Description      | Default               |
-| ------------------------- | ---------------- | --------------------- |
-| `tree.nodeSelectedBg`     | 节点选中背景色   | `#e6f7ff`             |
-| `tree.nodeHoverBg`        | 节点悬浮背景色   | `#f5f5f5`             |
-| `tree.nodeColor`          | 节点文本颜色     | `rgba(0, 0, 0, 0.88)` |
-| `tree.nodeSelectedColor`  | 节点选中文本颜色 | `rgba(0, 0, 0, 0.88)` |
-| `tree.switcherColor`      | 展开图标颜色     | `rgba(0, 0, 0, 0.45)` |
-| `tree.switcherHoverColor` | 展开图标悬浮颜色 | `#1890ff`             |
-| `tree.fontSize`           | 字体大小         | `14px`                |
-| `tree.borderRadius`       | 圆角             | `4px`                 |
-| `tree.indentSize`         | 缩进大小         | `24px`                |
+| Token Name                           | Description      | Default               |
+| ------------------------------------ | ---------------- | --------------------- |
+| `components.tree.nodeSelectedBg`     | 节点选中背景色   | `#e6f7ff`             |
+| `components.tree.nodeHoverBg`        | 节点悬浮背景色   | `#f5f5f5`             |
+| `components.tree.nodeColor`          | 节点文本颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.nodeSelectedColor`  | 节点选中文本颜色 | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.switcherColor`      | 展开图标颜色     | `rgba(0, 0, 0, 0.45)` |
+| `components.tree.switcherHoverColor` | 展开图标悬浮颜色 | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.fontSize`           | 字体大小         | `14px`                |
+| `components.tree.borderRadius`       | 圆角             | `4px`                 |
+| `components.tree.indentSize`         | 缩进大小         | `24px`                |

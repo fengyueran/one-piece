@@ -80,9 +80,10 @@ group:
 仅在组件确实暴露 token 时添加。
 
 - 标题统一为 `## 主题变量 (Design Token)`
+- 必须放在文档最后，不能在它后面再出现新的二级标题
 - 表头统一为 `Token Name` / `Description` / `Default`
 - `Default` 必须与 `src/theme/default-theme.ts` 中的真实默认值一致
-- 如果组件还会跟随全局 token 变化，在表格后补一句简短说明即可
+- 如果组件还会跟随全局 token 变化，必须在表格后补一句简短说明
 - 不再使用旧的 `<details>`、`组件 Token`、`全局 Token` 展开块
 
 ## 写作风格

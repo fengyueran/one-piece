@@ -178,3 +178,5 @@ export default () => (
 | `components.radio.dotColor`           | 选中圆点颜色     | `#1890ff`             |
 | `components.radio.labelColor`         | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
 | `components.radio.focusRingColor`     | 焦点高亮颜色     | `#1890ff`             |
+
+Radio 还会跟随全局 `colors.primary`、`colors.border`、`colors.background`、`colors.text`、`spacing.sm`、`fontSize.*` 与 `lineHeight.normal` 等 token 变化，但组件级覆盖优先使用 `components.radio.*`。

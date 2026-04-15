@@ -99,19 +99,6 @@ export default () => (
 
 更多可配置字段见 [主题 Token](/guide/theme-tokens)。
 
-## 主题变量 (Design Token)
-
-| Token Name                                   | Description  | Default               |
-| -------------------------------------------- | ------------ | --------------------- |
-| `components.popconfirm.minWidth`             | 最小宽度     | `240px`               |
-| `components.popconfirm.titleColor`           | 标题颜色     | `rgba(0, 0, 0, 0.88)` |
-| `components.popconfirm.titleFontSize`        | 标题字体大小 | `14px`                |
-| `components.popconfirm.descriptionColor`     | 描述文字颜色 | `rgba(0, 0, 0, 0.65)` |
-| `components.popconfirm.descriptionFontSize`  | 描述字体大小 | `13px`                |
-| `components.popconfirm.descriptionMarginTop` | 描述上间距   | `8px`                 |
-| `components.popconfirm.actionsGap`           | 操作按钮间距 | `8px`                 |
-| `components.popconfirm.actionsMarginTop`     | 操作区上间距 | `14px`                |
-
 ## 交互边界与可访问性
 
 - `Popconfirm` 建立在 `Popover` 的打开/关闭契约之上，触发器同样通过 `aria-expanded`、`aria-controls` 关联浮层。
@@ -140,3 +127,18 @@ export default () => (
 | disabled     | 是否禁用             | `boolean`                                                    | `false`   |
 | classNames   | 语义化类名           | `{ root, overlay, title, description, actions }`             | -         |
 | styles       | 语义化样式           | `{ root, overlay, title, description, actions }`             | -         |
+
+## 主题变量 (Design Token)
+
+| Token Name                                   | Description  | Default               |
+| -------------------------------------------- | ------------ | --------------------- |
+| `components.popconfirm.minWidth`             | 最小宽度     | `240px`               |
+| `components.popconfirm.titleColor`           | 标题颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.popconfirm.titleFontSize`        | 标题字体大小 | `14px`                |
+| `components.popconfirm.descriptionColor`     | 描述文字颜色 | `rgba(0, 0, 0, 0.65)` |
+| `components.popconfirm.descriptionFontSize`  | 描述字体大小 | `13px`                |
+| `components.popconfirm.descriptionMarginTop` | 描述上间距   | `8px`                 |
+| `components.popconfirm.actionsGap`           | 操作按钮间距 | `8px`                 |
+| `components.popconfirm.actionsMarginTop`     | 操作区上间距 | `14px`                |
+
+Popconfirm 还会继承 `Popover`、`Button` 以及全局 `colors.text`、`colors.textSecondary`、`fontSize.md`、`fontSize.sm` 与 `fontWeight.semibold` 等 token 表现，但组件级覆盖优先使用 `components.popconfirm.*`。

@@ -437,3 +437,5 @@ export default () => {
 | `components.modal.footerPadding` | 底部内边距   | `10px 16px`                                                                                                |
 | `components.modal.padding`       | 内部通用间距 | `24px`                                                                                                     |
 | `components.modal.zIndex`        | 模态框层级   | `1000`                                                                                                     |
+
+Modal 还会跟随全局 `colors.background`、`colors.text`、`spacing.md`、`spacing.lg`、`borderRadius.lg`、`fontSize.lg`、`fontWeight.bold` 与 `shadows.lg` 等 token 变化，但组件级覆盖优先使用 `components.modal.*`。

@@ -145,3 +145,5 @@ export default () => (
 | `components.switch.thumbBg`        | 滑块背景色       | `#ffffff`             |
 | `components.switch.labelColor`     | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
 | `components.switch.focusRingColor` | 焦点高亮颜色     | `#1890ff`             |
+
+Switch 还会跟随全局 `colors.primary`、`colors.warning`、`colors.error`、`colors.text`、`colors.textDisabled`、`colors.white`、`spacing.sm`、`fontSize.*`、`lineHeight.normal` 与 `shadows.sm` 等 token 变化，但组件级覆盖优先使用 `components.switch.*`。

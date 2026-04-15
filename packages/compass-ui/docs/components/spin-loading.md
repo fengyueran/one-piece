@@ -127,3 +127,5 @@ export default () => (
 | `components.spinLoading.size.sm`             | 小尺寸指示器大小 | `16px`                      |
 | `components.spinLoading.size.md`             | 中尺寸指示器大小 | `24px`                      |
 | `components.spinLoading.size.lg`             | 大尺寸指示器大小 | `36px`                      |
+
+SpinLoading 还会跟随全局 `colors.primary`、`colors.textSecondary`、`spacing.sm`、`fontSize.sm` 与 `lineHeight.normal` 等 token 变化，但组件级覆盖优先使用 `components.spinLoading.*`。

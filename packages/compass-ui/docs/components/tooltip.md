@@ -222,3 +222,5 @@ export default () => (
 | `components.tooltip.padding`         | 提示框内边距   | `6px 10px`                       |
 | `components.tooltip.maxWidth`        | 提示框最大宽度 | `240px`                          |
 | `components.tooltip.fontSize`        | 提示框字体大小 | `12px`                           |
+
+Tooltip 还会跟随全局 `borderRadius.sm`、`shadows.sm` 与 `fontSize.sm` 等 token 变化，但组件级覆盖优先使用 `components.tooltip.*`。

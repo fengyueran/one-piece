@@ -136,3 +136,5 @@ export default () => (
 | `components.empty.titleColor`            | 标题文字颜色     | `#1f1f1f`                                                                             |
 | `components.empty.descriptionColor`      | 描述文字颜色     | `#8c8c8c`                                                                             |
 | `components.empty.actionGap`             | 操作区间距       | `8px`                                                                                 |
+
+Empty 还会跟随全局 `colors.border`、`colors.text`、`colors.textSecondary`、`spacing.sm`、`borderRadius.lg`、`fontSize.md` 与 `fontSize.sm` 等 token 变化，但组件级覆盖优先使用 `components.empty.*`。

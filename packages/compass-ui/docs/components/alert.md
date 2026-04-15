@@ -157,3 +157,5 @@ export default () => (
 | `components.alert.error.backgroundColor`   | 错误态背景色     | `#fff2f0`             |
 | `components.alert.error.borderColor`       | 错误态边框色     | `#ffccc7`             |
 | `components.alert.error.accentColor`       | 错误态强调色     | `#ff4d4f`             |
+
+Alert 还会跟随全局 `colors.text`、`colors.textSecondary`、`colors.info*`、`colors.success*`、`colors.warning*`、`colors.error*`、`spacing.*`、`borderRadius.*` 与 `fontSize.*` 等 token 变化，但组件级覆盖优先使用 `components.alert.*`。

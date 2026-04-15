@@ -118,3 +118,5 @@ export default () => (
 | `components.skeleton.borderRadius`          | 骨架块圆角   | `4px`                 |
 | `components.skeleton.shimmerBaseColor`      | 动画基础色   | `rgba(0, 0, 0, 0.06)` |
 | `components.skeleton.shimmerHighlightColor` | 动画高亮色   | `rgba(0, 0, 0, 0.12)` |
+
+Skeleton 还会跟随全局 `spacing.md`、`spacing.sm` 与 `borderRadius.sm` 等 token 变化，但组件级覆盖优先使用 `components.skeleton.*`。

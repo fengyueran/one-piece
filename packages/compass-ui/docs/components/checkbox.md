@@ -151,3 +151,5 @@ export default () => (
 | `components.checkbox.labelColor`         | 标签文字颜色     | `rgba(0, 0, 0, 0.88)` |
 | `components.checkbox.iconColor`          | 勾选图标颜色     | `#ffffff`             |
 | `components.checkbox.focusRingColor`     | 焦点高亮颜色     | `#1890ff`             |
+
+Checkbox 还会跟随全局 `colors.primary`、`colors.border`、`colors.background`、`colors.text`、`colors.textDisabled`、`spacing.sm`、`fontSize.*` 与 `borderRadius.sm` 等 token 变化，但组件级覆盖优先使用 `components.checkbox.*`。

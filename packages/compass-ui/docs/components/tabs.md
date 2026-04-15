@@ -417,3 +417,5 @@ export default () => {
 | `components.tabs.tabItemVerticalGutter`   | 标签项垂直间距     | `16px`                |
 | `components.tabs.inkBarColor`             | 指示条颜色         | `#1890ff`             |
 | `components.tabs.inkBarHeight`            | 指示条高度         | `2px`                 |
+
+Tabs 还会跟随全局 `colors.primary`、`colors.primaryHover`、`colors.text`、`colors.textSecondary`、`colors.textDisabled`、`colors.border` 与 `fontWeight.normal` 等 token 变化，但组件级覆盖优先使用 `components.tabs.*`。

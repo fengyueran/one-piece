@@ -224,3 +224,5 @@ export default () => (
 | `components.pagination.itemActiveColor`  | 选中项文字颜色 | #1890ff             |
 | `components.pagination.itemHoverColor`   | 悬停文字颜色   | #1890ff             |
 | `components.pagination.itemHoverBg`      | 悬停背景色     | -                   |
+
+Pagination 还会跟随全局 `colors.primary`、`colors.primaryHover` 与 `colors.border` 等 token 变化，但组件级覆盖优先使用 `components.pagination.*`。

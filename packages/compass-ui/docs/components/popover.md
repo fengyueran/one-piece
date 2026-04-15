@@ -122,6 +122,11 @@ export default () => (
 | classNames   | 语义化类名           | `{ root, overlay, header, title, body }` | -         |
 | styles       | 语义化样式           | `{ root, overlay, header, title, body }` | -         |
 
+## 当前约束
+
+- 当前实现优先保证触发、关闭和基础语义稳定，不提供箭头、嵌套层级管理或复杂焦点陷阱。
+- 更细的 overlay 策略与边界说明，会在项目的复杂交互基础层文档中统一维护。
+
 ## 主题变量 (Design Token)
 
 | Token Name                           | Description  | Default                                                          |
@@ -140,7 +145,4 @@ export default () => (
 | `components.popover.bodyColor`       | 内容文字颜色 | `rgba(0, 0, 0, 0.65)`                                            |
 | `components.popover.bodyFontSize`    | 内容字体大小 | `13px`                                                           |
 
-## 当前约束
-
-- 当前实现优先保证触发、关闭和基础语义稳定，不提供箭头、嵌套层级管理或复杂焦点陷阱。
-- 更细的 overlay 策略与边界说明，会在项目的复杂交互基础层文档中统一维护。
+Popover 还会跟随全局 `colors.background`、`colors.text`、`colors.textSecondary`、`borderRadius.md`、`fontSize.md` 与 `fontSize.sm` 等 token 变化，但组件级覆盖优先使用 `components.popover.*`。
