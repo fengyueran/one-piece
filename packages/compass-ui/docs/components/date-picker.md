@@ -400,6 +400,22 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
+常用调整通常集中在输入边框、弹层阴影和日期单元格状态颜色上，下面先列出最常改的一组 token。
+
+| Token Name                                | Description     | Default                                                                                                    |
+| ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.datePicker.borderColor`       | 边框颜色        | `rgba(0, 0, 0, 0.06)`                                                                                      |
+| `components.datePicker.boxShadow`         | 阴影            | `0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.datePicker.cellColor`         | 单元格文字颜色  | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 | `#ffffff`                                                                                                  |
+| `components.datePicker.cellActiveBg`      | 选中背景色      | `#1890ff`                                                                                                  |
+| `components.datePicker.cellHoverBg`       | 悬停背景色      | `#40a9ff`                                                                                                  |
+| `components.datePicker.cellDisabledColor` | 禁用文字颜色    | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.datePicker.zIndex`            | 弹层层级        | `1000`                                                                                                     |
+
+<details>
+<summary>查看完整 token 列表</summary>
+
 | Token Name                                | Description     | Default                                                                                                    |
 | ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
 | `components.datePicker.borderColor`       | 边框颜色        | `rgba(0, 0, 0, 0.06)`                                                                                      |
@@ -421,7 +437,7 @@ export default () => {
 | `components.datePicker.cellBorderRadius`  | 单元格圆角      | `4px`                                                                                                      |
 | `components.datePicker.zIndex`            | 弹层层级        | `1000`                                                                                                     |
 
-DatePicker 还会跟随全局 `colors.primary`、`colors.background`、`colors.backgroundSecondary`、`colors.text`、`colors.textSecondary`、`colors.textDisabled`、`colors.border`、`colors.error`、`borderRadius.lg` 等 token 变化。
-| `shadows.lg` | 大阴影 |
-
 </details>
+
+DatePicker 还会跟随全局 `colors.primary`、`colors.background`、`colors.backgroundSecondary`、`colors.text`、`colors.textSecondary`、`colors.textDisabled`、`colors.border`、`colors.error`、`borderRadius.lg` 等 token 变化。
+DatePicker 的阴影默认值也会继承全局 `shadows.lg` 的视觉层级习惯。

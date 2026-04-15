@@ -89,6 +89,9 @@ group:
 - 必须放在文档最后，不能在它后面再出现新的二级标题
 - 表头统一为 `Token Name` / `Description` / `Default`
 - `Default` 必须与 `src/theme/default-theme.ts` 中的真实默认值一致
+- token 数量较少时直接展示完整表格
+- token 数量明显较多时，先展示高频 token，再用折叠块放完整 token 列表
+- 折叠块只能做补充，不能替代主表
 - 如果组件还会跟随全局 token 变化，必须在表格后补一句简短说明
 - 不再使用旧的 `<details>`、`组件 Token`、`全局 Token` 展开块
 
