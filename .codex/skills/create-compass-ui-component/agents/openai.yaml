@@ -1,0 +1,4 @@
+interface:
+  display_name: '创建 Compass UI 组件'
+  short_description: '从仓库根目录路由到 packages/compass-ui 的组件创建流程'
+  default_prompt: '使用 $create-compass-ui-component 在这个 monorepo 中为 packages/compass-ui 新增一个组件。'

@@ -424,14 +424,31 @@ export default () => {
 | styles         | 内部组件样式                                      | `{ root, mask, content, header, body, footer }`                | -        |
 | classNames     | 内部组件类名                                      | `{ root, mask, content, header, body, footer }`                | -        |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `mask`    | 遮罩层   |
+| `content` | 内容区域 |
+| `header`  | 头部区域 |
+| `body`    | 主体区域 |
+| `footer`  | 底部区域 |
+
 ## 主题变量 (Design Token)
 
-| 变量名称                         | 描述         | 默认值                |
-| -------------------------------- | ------------ | --------------------- |
-| `components.modal.maskColor`     | 遮罩层背景色 | `rgba(0, 0, 0, 0.45)` |
-| `components.modal.contentBg`     | 模态框背景色 | `#ffffff`             |
-| `components.modal.borderRadius`  | 模态框圆角   | `8px`                 |
-| `components.modal.headerPadding` | 头部内边距   | `16px 24px`           |
-| `components.modal.bodyPadding`   | 内容内边距   | `24px`                |
-| `components.modal.footerPadding` | 底部内边距   | `10px 16px`           |
-| `components.modal.zIndex`        | 模态框层级   | `1000`                |
+| Token Name                       | Description  | Default                                                                                                    |
+| -------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `components.modal.maskColor`     | 遮罩层背景色 | `rgba(0, 0, 0, 0.45)`                                                                                      |
+| `components.modal.contentBg`     | 模态框背景色 | `#ffffff`                                                                                                  |
+| `components.modal.borderRadius`  | 模态框圆角   | `8px`                                                                                                      |
+| `components.modal.boxShadow`     | 模态框阴影   | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.modal.headerPadding` | 头部内边距   | `16px 24px`                                                                                                |
+| `components.modal.bodyPadding`   | 内容内边距   | `24px`                                                                                                     |
+| `components.modal.footerPadding` | 底部内边距   | `10px 16px`                                                                                                |
+| `components.modal.padding`       | 内部通用间距 | `24px`                                                                                                     |
+| `components.modal.zIndex`        | 模态框层级   | `1000`                                                                                                     |
+
+Modal 还会跟随全局 `colors.background`、`colors.text`、`spacing.md`、`spacing.lg`、`borderRadius.lg`、`fontSize.lg`、`fontWeight.bold` 与 `shadows.lg` 等 token 变化，但组件级覆盖优先使用 `components.modal.*`。

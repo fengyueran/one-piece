@@ -332,6 +332,13 @@ export default () => (
 )
 ```
 
+## 键盘与可访问性
+
+- `Button` 基于原生 `button` 元素渲染，支持通过 `Tab` 获得焦点。
+- 聚焦后按 `Enter` 可以触发和鼠标点击一致的操作回调。
+- `disabled` 或 `loading` 状态下不会再响应点击。
+- 加载中的装饰性 spinner 会通过 `aria-hidden` 对屏幕阅读器隐藏。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)
@@ -354,27 +361,29 @@ export default () => (
 
 支持原生 `button` 元素的所有标准属性。
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `icon`    | 图标区域 |
+| `text`    | 文本区域 |
+| `loading` | 加载图标 |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.button)</summary>
+| Token Name                          | Description      | Default  |
+| ----------------------------------- | ---------------- | -------- |
+| `components.button.padding.sm`      | 小尺寸按钮内边距 | `0 8px`  |
+| `components.button.padding.md`      | 中尺寸按钮内边距 | `0 16px` |
+| `components.button.fontSize.sm`     | 小尺寸按钮字体   | `12px`   |
+| `components.button.fontSize.md`     | 中尺寸按钮字体   | `14px`   |
+| `components.button.fontSize.lg`     | 大尺寸按钮字体   | `16px`   |
+| `components.button.borderRadius.sm` | 小尺寸按钮圆角   | `4px`    |
+| `components.button.borderRadius.md` | 中尺寸按钮圆角   | `6px`    |
+| `components.button.borderRadius.lg` | 大尺寸按钮圆角   | `8px`    |
+| `components.button.rippleOpacity`   | 水波纹透明度     | `0.3`    |
 
-| 变量名                           | 说明         |
-| -------------------------------- | ------------ |
-| `components.button.borderRadius` | 按钮圆角     |
-| `components.button.padding`      | 按钮内边距   |
-| `components.button.fontSize`     | 按钮字体大小 |
-| `components.button.height`       | 按钮高度     |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名           | 说明     |
-| ---------------- | -------- |
-| `colors.primary` | 主色调   |
-| `colors.danger`  | 危险色   |
-| `colors.text`    | 文本颜色 |
-
-</details>
+Button 还会跟随全局 `colors.primary`、`colors.text`、`colors.border` 等 token 变化。

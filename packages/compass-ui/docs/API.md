@@ -1,84 +1,147 @@
-# API 文档
+# API 参考
 
-Compass UI 组件库的完整 API 参考文档。
+本页只描述 `compass-ui` 当前已经声明在 `package.json.exports` 中的公开 API。对外示例和文档验证都以这里的导入边界为准。
 
-## 组件
+## 文档入口
 
-### 基础组件
+- 想先安装并运行第一个示例：看 [快速开始](/guide/getting-started)
+- 想浏览当前组件列表：看 [组件总览](/components)
+- 想了解维护和验证流程：看 [开发指南](./DEVELOPMENT.md)
 
-- **[Button](./api/Button.md)** - 按钮组件，用于触发操作和事件
-- **[Progress](./api/Progress.md)** - 进度条组件，显示任务完成状态
+## 根入口
 
-### 主题系统
+根入口适合放“高频门面能力”，也就是业务代码最常直接用到的组件、配置入口和主题默认值。
 
-- **[Theme](./api/Theme.md)** - 主题系统和 ThemeProvider 组件
-
-## 快速开始
-
-### 安装
-
-```bash
-pnpm add @xinghunm/compass-ui
+```ts
+import {
+  Alert,
+  Button,
+  Checkbox,
+  ConfigProvider,
+  Drawer,
+  Empty,
+  Input,
+  Popconfirm,
+  Popover,
+  Radio,
+  Skeleton,
+  SpinLoading,
+  Switch,
+  Textarea,
+  ThemeProvider,
+  defaultTheme,
+} from '@xinghunm/compass-ui'
 ```
 
-### 基本使用
+根入口当前主要包含：
 
-```tsx
-import { Button, ThemeProvider } from '@xinghunm/compass-ui'
+- 已公开组件：如 `Button`、`Input`、`Textarea`、`Select`、`DatePicker`、`Table`、`Modal`、`Drawer`
+- 新增锚点交互浮层：`Popover`、`Popconfirm`
+- 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
+- 新增页面状态组件：`Alert`、`Empty`、`Skeleton`、`SpinLoading`
+- 全局配置与主题门面：`ConfigProvider`、`ThemeProvider`、`useTheme`
+- 常用主题默认值与主要类型：`defaultTheme`、`Theme`、组件 Props 类型
 
-function App() {
-  return (
-    <ThemeProvider>
-      <Button variant="primary">Hello Compass UI</Button>
-    </ThemeProvider>
-  )
-}
+## `@xinghunm/compass-ui/theme`
+
+`/theme` 子路径用于主题系统本身。这里更偏向主题上下文和主题扩展能力，而不是业务组件。
+
+```ts
+import { ThemeProvider, defaultTheme } from '@xinghunm/compass-ui/theme'
 ```
 
-## TypeScript 支持
+适合场景：
 
-所有组件都提供完整的 TypeScript 类型定义：
+- 你只想按主题系统拆分导入
+- 你在封装更上层的主题基础设施
+- 你需要和根入口门面保持更明确的分层
 
-```typescript
-import type { ButtonProps, Theme } from '@xinghunm/compass-ui'
+## `@xinghunm/compass-ui/locale`
+
+`/locale` 子路径承载语言包资源。它属于资源型子路径，不建议和根入口的组件门面混在一起理解。
+
+```ts
+import { zhCN, enUS } from '@xinghunm/compass-ui/locale'
 ```
 
-## 可访问性
+适合场景：
 
-所有组件都遵循 WCAG 2.1 标准，支持：
+- 为 `ConfigProvider` 提供语言包
+- 在应用层按语言环境切换组件文案
 
-- ✅ 键盘导航
-- ✅ 屏幕阅读器
-- ✅ ARIA 属性
-- ✅ 焦点管理
-- ✅ 颜色对比度
+## `@xinghunm/compass-ui/icons`
 
-## 浏览器支持
+`/icons` 子路径承载图标资源，避免把大量图标名称都堆进根入口命名空间。
 
-- Chrome (最新版)
-- Firefox (最新版)
-- Safari (最新版)
-- Edge (最新版)
-
-## 更多资源
-
-- **[开发指南](./DEVELOPMENT.md)** - 组件开发和贡献指南
-- **[贡献指南](./CONTRIBUTING.md)** - 如何参与项目贡献
-- **[组件文档](./components/index.md)** - 组件示例与 API 说明
-
-```bash
-pnpm docs:dev
+```ts
+import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 ```
 
-## 问题反馈
+适合场景：
 
-如有问题或建议，请：
+- 需要在菜单、步骤条、输入组件等位置复用图标
+- 想保持组件 API 与资源型导出分层清晰
 
-1. 查看相关组件的 API 文档
-2. 查看 [开发指南](./DEVELOPMENT.md)
-3. 查看 [贡献指南](./CONTRIBUTING.md)
-4. 在 GitHub 提交 Issue
+## 导入边界
 
----
+当前文档与示例允许的正式公开路径只有下面 4 类：
 
-_最后更新：2024-10-16_
+- `@xinghunm/compass-ui`
+- `@xinghunm/compass-ui/theme`
+- `@xinghunm/compass-ui/locale`
+- `@xinghunm/compass-ui/icons`
+
+以下路径不属于公开 API：
+
+- `@xinghunm/compass-ui/src/...`
+- `@xinghunm/compass-ui/dist/...`
+- 任何未在 `exports` 中声明的 `@xinghunm/compass-ui/*`
+- 任何依赖仓库内部 alias 才能工作的导入写法
+
+## 类型导入示例
+
+```ts
+import type {
+  ButtonProps,
+  CheckboxProps,
+  DrawerProps,
+  EmptyProps,
+  InputProps,
+  PopconfirmProps,
+  PopoverProps,
+  RadioGroupProps,
+  SkeletonProps,
+  SpinLoadingProps,
+  SwitchProps,
+  TextareaProps,
+  Theme,
+} from '@xinghunm/compass-ui'
+```
+
+## 关于可访问性说明
+
+组件文档会逐步补充键盘与可访问性章节，但这里只承诺已经由自动化测试覆盖的基础行为。更复杂的 overlay、焦点管理与高级交互会在后续阶段继续补齐。
+
+## Select 当前交互契约
+
+- `Select` 当前对外暴露的是基础 `combobox` / `listbox` 语义，触发器或搜索输入会同步 `aria-expanded`、`aria-controls`、`aria-activedescendant`。
+- 非搜索模式下，关闭状态按 `Enter` 或 `ArrowDown` 会展开菜单；展开后按 `ArrowDown` / `ArrowUp` 移动激活项，按 `Enter` 或 `Space` 确认当前激活项。
+- 搜索模式下，输入框会在展开后自动获得焦点。输入过滤条件后，使用 `ArrowDown` / `ArrowUp` 导航，按 `Enter` 选择当前激活项。
+- `Escape` 会关闭当前展开的菜单；`disabled` 状态不会打开菜单，也不会响应键盘选择。
+- `allowClear` 只负责清空当前值，不额外承诺保留或返回被清空项的 option 对象。
+
+## 现有 Overlay 契约
+
+- `Dropdown`、`TreeSelect`、`DatePicker` / `RangePicker` 当前都使用统一的展开状态表达：触发器同步 `aria-expanded`，并用 `aria-controls` 指向实际浮层节点。
+- 这批现有 overlay 都支持通过外部点击关闭；`Dropdown`、`TreeSelect` 和日期类面板在当前实现里也支持 `Escape` 关闭。
+- 浮层内部点击默认不会被当成外部关闭处理；是否在交互后立即关闭，仍由各组件自己的场景规则决定，例如 `Dropdown.closeOnSelect`。
+- `Tooltip` 保持轻量提示角色，不承诺 `aria-expanded` 契约；当前只在打开时通过 `aria-describedby` 把触发器和提示层关联起来。
+- `Popover` 与 `Popconfirm` 现在也加入这套契约：它们使用 `aria-expanded`、`aria-controls` 和外部点击 / `Escape` 关闭模型，但职责是承载交互内容与轻量确认，而不是纯提示。
+- `Drawer` 与 `Modal` 属于页面级 overlay，不依赖 `Floating UI`。它们共享 portal、mask、关闭按钮、`Escape` 和关闭后焦点回收的契约，但 `Drawer` 用于侧边编辑/详情，`Modal` 用于居中阻断确认。
+
+## 页面状态组件边界
+
+- `Alert`：页面内持续反馈，不替代 `Message`
+- `Empty`：无结果或无内容时的占位，不表达“正在加载”
+- `Skeleton`：结构已知时的占位加载
+- `SpinLoading`：通用等待态，支持独立使用或包裹内容形成覆盖式加载

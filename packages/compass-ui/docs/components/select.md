@@ -488,7 +488,7 @@ export default () => {
 
 ```tsx
 import React, { useState } from 'react'
-import { Select, InputField, Button } from '@xinghunm/compass-ui'
+import { Select, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [name, setName] = useState('')
@@ -513,7 +513,7 @@ export default () => {
           {menu}
           <div style={{ borderTop: '1px solid #f0f0f0', margin: '8px 0' }} />
           <div style={{ display: 'flex', gap: 8, padding: '0 8px 8px' }}>
-            <InputField
+            <Input
               placeholder="Please enter item"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -593,6 +593,15 @@ export default () => {
 }
 ```
 
+## 键盘与可访问性
+
+- 非搜索模式下，触发器暴露为 `combobox`，下拉层暴露为 `listbox`，并通过 `aria-expanded`、`aria-controls`、`aria-activedescendant` 反映当前状态。
+- 关闭状态下按 `Enter` 或 `ArrowDown` 会展开下拉层；已展开后可用 `ArrowDown` / `ArrowUp` 在可选项之间移动激活项。
+- 单选模式下，已展开后按 `Enter` 或 `Space` 会确认当前激活项；按 `Escape` 会关闭下拉层。
+- `showSearch` 打开后，搜索输入框会自动获得焦点。输入过滤条件后，使用 `ArrowDown` / `ArrowUp` 导航，再用 `Enter` 选择当前激活项。
+- `tags` 模式支持在输入后按 `Enter` 创建新标签；如果输入值已匹配已有选项，则会优先选择已有选项。
+- `disabled` 状态下不会打开下拉层，也不会响应键盘选择动作。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)
@@ -635,28 +644,73 @@ export default () => {
 | value    | 选项的值       | `string \| number` | -       |
 | disabled | 是否禁用该选项 | `boolean`          | `false` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明     |
+| ---------- | -------- |
+| `root`     | 根容器   |
+| `trigger`  | 触发器   |
+| `dropdown` | 下拉容器 |
+| `option`   | 选项节点 |
+| `tag`      | 标签项   |
+
 ## 主题变量 (Design Token)
 
-### 组件 Token
+常用调整通常集中在触发器边框、下拉菜单、选项态和多选标签上，下面先列出最常改的一组 token。
 
-| Token Name                           | Description    |
-| ------------------------------------ | -------------- |
-| `components.select.borderRadius`     | 边框圆角       |
-| `components.select.backgroundColor`  | 背景颜色       |
-| `components.select.borderColor`      | 边框颜色       |
-| `components.select.placeholderColor` | 占位符颜色     |
-| `components.select.optionSelectedBg` | 选项选中背景色 |
-| `components.select.optionHoverBg`    | 选项悬停背景色 |
-| `components.select.tagBg`            | 标签背景色     |
-| `components.select.tagColor`         | 标签文字颜色   |
+| Token Name                            | Description    | Default                                                                                                    |
+| ------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.select.borderColor`       | 边框颜色       | `#d9d9d9`                                                                                                  |
+| `components.select.activeBorderColor` | 激活边框颜色   | `#1890ff`                                                                                                  |
+| `components.select.dropdownBg`        | 下拉菜单背景色 | `#ffffff`                                                                                                  |
+| `components.select.dropdownBoxShadow` | 下拉菜单阴影   | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.select.optionSelectedBg`  | 选项选中背景色 | `#e6f7ff`                                                                                                  |
+| `components.select.optionHoverBg`     | 选项悬停背景色 | `#f5f5f5`                                                                                                  |
+| `components.select.tagBg`             | 标签背景色     | `#f5f5f5`                                                                                                  |
+| `components.select.tagColor`          | 标签文字颜色   | `rgba(0, 0, 0, 0.88)`                                                                                      |
 
-### 全局 Token
+<details>
+<summary>查看完整 token 列表</summary>
 
-| Token Name             | Description  |
-| ---------------------- | ------------ |
-| `colors.primary`       | 主色调       |
-| `colors.border`        | 边框颜色     |
-| `colors.background`    | 背景颜色     |
-| `colors.text`          | 文本颜色     |
-| `colors.textSecondary` | 次级文本颜色 |
-| `borderRadius.md`      | 默认圆角     |
+| Token Name                              | Description      | Default                                                                                                    |
+| --------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.select.borderRadius`        | 边框圆角         | `4px`                                                                                                      |
+| `components.select.backgroundColor`     | 背景颜色         | `#ffffff`                                                                                                  |
+| `components.select.borderColor`         | 边框颜色         | `#d9d9d9`                                                                                                  |
+| `components.select.hoverBorderColor`    | 悬停边框颜色     | `#4096ff`                                                                                                  |
+| `components.select.activeBorderColor`   | 激活边框颜色     | `#1890ff`                                                                                                  |
+| `components.select.placeholderColor`    | 占位符颜色       | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.select.dropdownBg`          | 下拉菜单背景色   | `#ffffff`                                                                                                  |
+| `components.select.dropdownBoxShadow`   | 下拉菜单阴影     | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.select.dropdownPadding`     | 下拉菜单内边距   | `4px 0`                                                                                                    |
+| `components.select.dropdownZIndex`      | 下拉菜单层级     | `1050`                                                                                                     |
+| `components.select.dropdownMaxHeight`   | 下拉菜单最大高度 | `256px`                                                                                                    |
+| `components.select.optionSelectedBg`    | 选项选中背景色   | `#e6f7ff`                                                                                                  |
+| `components.select.optionHoverBg`       | 选项悬停背景色   | `#f5f5f5`                                                                                                  |
+| `components.select.optionColor`         | 选项文字颜色     | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.optionSelectedColor` | 选中项文字颜色   | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.optionPadding`       | 选项内边距       | `0 12px`                                                                                                   |
+| `components.select.optionMinHeight`     | 选项最小高度     | `32px`                                                                                                     |
+| `components.select.optionFontSize`      | 选项字体大小     | `14px`                                                                                                     |
+| `components.select.tagBg`               | 标签背景色       | `#f5f5f5`                                                                                                  |
+| `components.select.tagColor`            | 标签文字颜色     | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.select.tagBorderColor`      | 标签边框颜色     | `#f0f0f0`                                                                                                  |
+| `components.select.tagHeight`           | 标签高度         | `24px`                                                                                                     |
+| `components.select.tagPadding`          | 标签内边距       | `0 8px`                                                                                                    |
+| `components.select.tagFontSize`         | 标签字体大小     | `12px`                                                                                                     |
+| `components.select.tagBorderRadius`     | 标签圆角         | `4px`                                                                                                      |
+| `components.select.padding.sm`          | 小尺寸输入内边距 | `1px 8px`                                                                                                  |
+| `components.select.padding.md`          | 中尺寸输入内边距 | `3px 12px`                                                                                                 |
+| `components.select.padding.lg`          | 大尺寸输入内边距 | `6px 16px`                                                                                                 |
+| `components.select.fontSize.sm`         | 小尺寸字体大小   | `12px`                                                                                                     |
+| `components.select.fontSize.md`         | 中尺寸字体大小   | `14px`                                                                                                     |
+| `components.select.fontSize.lg`         | 大尺寸字体大小   | `16px`                                                                                                     |
+| `components.select.minHeight.sm`        | 小尺寸最小高度   | `20px`                                                                                                     |
+| `components.select.minHeight.md`        | 中尺寸最小高度   | `24px`                                                                                                     |
+| `components.select.minHeight.lg`        | 大尺寸最小高度   | `26px`                                                                                                     |
+
+</details>
+
+Select 还会跟随全局 `colors.primary`、`colors.border`、`colors.background`、`colors.text`、`colors.textSecondary`、`borderRadius.md` 等 token 变化。

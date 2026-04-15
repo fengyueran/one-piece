@@ -17,7 +17,7 @@ export const PaginationContainer = styled.ul<{ disabled?: boolean; size?: 'defau
     height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
     margin: 0 8px;
 
-    .compass-input-field {
+    .compass-input {
       height: 100%;
       padding: 0 6px;
     }

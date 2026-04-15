@@ -511,16 +511,30 @@ export default () => {
 | icon       | 自定义图标     | `ReactNode`        | -       |
 | isLeaf     | 是否是叶子节点 | `boolean`          | `false` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名     | 说明       |
+| ---------- | ---------- |
+| `root`     | 根容器     |
+| `node`     | 节点容器   |
+| `content`  | 内容区域   |
+| `switcher` | 展开切换器 |
+| `checkbox` | 复选框区域 |
+| `icon`     | 图标区域   |
+| `title`    | 标题区域   |
+
 ## 主题变量 (Design Token)
 
-| Token Name                | Description      | Default               |
-| ------------------------- | ---------------- | --------------------- |
-| `tree.nodeSelectedBg`     | 节点选中背景色   | `#e6f7ff`             |
-| `tree.nodeHoverBg`        | 节点悬浮背景色   | `#f5f5f5`             |
-| `tree.nodeColor`          | 节点文本颜色     | `rgba(0, 0, 0, 0.88)` |
-| `tree.nodeSelectedColor`  | 节点选中文本颜色 | `rgba(0, 0, 0, 0.88)` |
-| `tree.switcherColor`      | 展开图标颜色     | `rgba(0, 0, 0, 0.45)` |
-| `tree.switcherHoverColor` | 展开图标悬浮颜色 | `#1890ff`             |
-| `tree.fontSize`           | 字体大小         | `14px`                |
-| `tree.borderRadius`       | 圆角             | `4px`                 |
-| `tree.indentSize`         | 缩进大小         | `24px`                |
+| Token Name                           | Description      | Default               |
+| ------------------------------------ | ---------------- | --------------------- |
+| `components.tree.nodeSelectedBg`     | 节点选中背景色   | `#e6f7ff`             |
+| `components.tree.nodeHoverBg`        | 节点悬浮背景色   | `#f5f5f5`             |
+| `components.tree.nodeColor`          | 节点文本颜色     | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.nodeSelectedColor`  | 节点选中文本颜色 | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.switcherColor`      | 展开图标颜色     | `rgba(0, 0, 0, 0.45)` |
+| `components.tree.switcherHoverColor` | 展开图标悬浮颜色 | `rgba(0, 0, 0, 0.88)` |
+| `components.tree.fontSize`           | 字体大小         | `14px`                |
+| `components.tree.borderRadius`       | 圆角             | `4px`                 |
+| `components.tree.indentSize`         | 缩进大小         | `24px`                |

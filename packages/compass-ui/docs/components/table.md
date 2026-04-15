@@ -567,6 +567,23 @@ export default () => {
 | selectedRowKeys | 指定选中项的 key 数组  | `React.Key[]`                                               | `[]`   |
 | onChange        | 选中项发生变化时的回调 | `(selectedRowKeys: React.Key[], selectedRows: T[]) => void` | -      |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名           | 说明       |
+| ---------------- | ---------- |
+| `root`           | 根容器     |
+| `table`          | 表格元素   |
+| `thead`          | 表头区域   |
+| `tbody`          | 表体区域   |
+| `tr`             | 行元素     |
+| `th`             | 表头单元格 |
+| `td`             | 内容单元格 |
+| `pagination`     | 分页区域   |
+| `empty`          | 空状态区域 |
+| `loadingOverlay` | 加载遮罩层 |
+
 ## 主题变量
 
 | Token Name                     | Description      |

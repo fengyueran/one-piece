@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 import {
   useFloating,
   autoUpdate,
@@ -18,6 +18,7 @@ import { DropdownProps } from './types'
 import { OverlayContainer } from './dropdown.styles'
 import Menu from '../menu'
 import { MenuContext } from '../menu/context'
+import { getOverlaySurfaceProps, getOverlayTriggerA11yProps } from '../internal/overlay-utils'
 
 const Dropdown: React.FC<DropdownProps> = ({
   children,
@@ -39,6 +40,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [uncontrolledVisible, setUncontrolledVisible] = useState(false)
   const isControlled = controlledVisible !== undefined
   const visible = isControlled ? controlledVisible : uncontrolledVisible
+  const overlayId = useId().replace(/:/g, '')
 
   const handleVisibleChange = (nextVisible: boolean) => {
     if (disabled) return
@@ -99,6 +101,12 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const triggerElement = React.cloneElement(child, {
     ...getReferenceProps(child.props),
+    ...getOverlayTriggerA11yProps({
+      open: visible,
+      controlsId: `compass-dropdown-${overlayId}`,
+      popupRole: 'menu',
+      disabled,
+    }),
     className: triggerCls,
     style: { ...child.props.style, ...style, ...styles?.trigger },
     ref,
@@ -118,7 +126,8 @@ const Dropdown: React.FC<DropdownProps> = ({
             ref={refs.setFloating}
             style={{ ...floatingStyles, ...overlayStyle, ...styles?.overlay }}
             className={overlayCls}
-            {...getFloatingProps()}
+            {...getFloatingProps(getOverlaySurfaceProps())}
+            id={`compass-dropdown-${overlayId}`}
           >
             <MenuContext.Provider value={{ onItemClick: handleOverlayClick }}>
               <div

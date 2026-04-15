@@ -80,7 +80,8 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon, CloseIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon, CloseIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -98,7 +99,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -119,7 +121,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, CloseIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { CloseIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -213,7 +216,8 @@ export default () => (
 
 ```tsx
 import React from 'react'
-import { Menu, SearchIcon } from '@xinghunm/compass-ui'
+import { Menu } from '@xinghunm/compass-ui'
+import { SearchIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => (
   <div style={{ width: 200, border: '1px solid #eee' }}>
@@ -308,29 +312,27 @@ export default () => (
 | danger   | 危险状态                                 | `boolean`                       | `false` |
 | onClick  | 点击事件                                 | `(e: React.MouseEvent) => void` | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `item`    | 菜单项   |
+| `icon`    | 图标区域 |
+| `content` | 内容区域 |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.menu)</summary>
+| Token Name                       | Description        | Default               |
+| -------------------------------- | ------------------ | --------------------- |
+| `components.menu.itemHeight`     | 菜单项高度         | `32px`                |
+| `components.menu.itemPadding`    | 菜单项内边距       | `0 12px`              |
+| `components.menu.itemColor`      | 菜单项默认文字颜色 | `rgba(0, 0, 0, 0.88)` |
+| `components.menu.itemHoverBg`    | 菜单项悬停背景色   | `#f5f5f5`             |
+| `components.menu.itemSelectedBg` | 菜单项选中背景色   | `#e6f7ff`             |
+| `components.menu.fontSize`       | 字体大小           | `14px`                |
+| `components.menu.borderRadius`   | 菜单项圆角         | `4px`                 |
 
-| 变量名                           | 说明               |
-| -------------------------------- | ------------------ |
-| `components.menu.itemHeight`     | 菜单项高度         |
-| `components.menu.itemPadding`    | 菜单项内边距       |
-| `components.menu.itemColor`      | 菜单项默认文字颜色 |
-| `components.menu.itemHoverBg`    | 菜单项悬停背景色   |
-| `components.menu.itemSelectedBg` | 菜单项选中背景色   |
-| `components.menu.fontSize`       | 字体大小           |
-| `components.menu.borderRadius`   | 菜单项圆角         |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名           | 说明     |
-| ---------------- | -------- |
-| `colors.primary` | 主色调   |
-| `colors.error`   | 错误颜色 |
-
-</details>
+Menu 还会跟随全局 `colors.primary`、`colors.error` 等颜色 token 变化，但组件级配置入口以 `components.menu.*` 为主。

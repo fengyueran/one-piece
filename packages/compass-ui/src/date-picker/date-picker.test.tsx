@@ -38,8 +38,7 @@ describe('DatePicker', () => {
       const input = screen.getByRole('textbox')
       await userEvent.hover(input.parentElement!) // Hover to show clear button
 
-      // Note: compass-ui InputField usually shows clear button on hover or always if visible prop is handled.
-      // Based on InputField implementation, it has .compass-input-clear-button.
+      // The shared input facade shows the clear button on hover when the value is present.
       // We might need to query by class or role.
       // Clear button is now CloseCircleIcon which has aria-label="close-circle"
       const clearBtn = screen.getByLabelText('close-circle')
@@ -103,6 +102,27 @@ describe('DatePicker', () => {
       expect(screen.getByText(format(new Date(), 'yyyy年 M月'))).toBeInTheDocument()
     })
 
+    it('should expose aria-controls and close on escape', async () => {
+      const user = userEvent.setup()
+      renderWithTheme(<DatePicker />)
+
+      const input = screen.getByRole('textbox')
+      await user.click(input)
+      expect(screen.getByText(format(new Date(), 'yyyy年 M月'))).toBeInTheDocument()
+
+      const controlsId = input.getAttribute('aria-controls')
+      expect(controlsId).toBeTruthy()
+      expect(document.getElementById(controlsId!)).toBeInTheDocument()
+      expect(input).toHaveAttribute('aria-expanded', 'true')
+
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => {
+        expect(screen.queryByText(format(new Date(), 'yyyy年 M月'))).not.toBeInTheDocument()
+      })
+      expect(input).toHaveAttribute('aria-expanded', 'false')
+    })
+
     it('should select a date', async () => {
       const handleChange = jest.fn()
       renderWithTheme(<DatePicker onChange={handleChange} />)
@@ -154,6 +174,22 @@ describe('DatePicker', () => {
     it('should have correct ARIA attributes', () => {
       renderWithTheme(<DatePicker aria-label="Choose date" />)
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label', 'Choose date')
+    })
+
+    it('should be reachable with keyboard navigation', async () => {
+      const user = userEvent.setup()
+      renderWithTheme(
+        <>
+          <button>Before</button>
+          <DatePicker placeholder="Choose date" />
+        </>,
+      )
+
+      await user.tab()
+      expect(screen.getByRole('button', { name: 'Before' })).toHaveFocus()
+
+      await user.tab()
+      expect(screen.getByPlaceholderText('Choose date')).toHaveFocus()
     })
   })
   describe('Date Picker Branches', () => {

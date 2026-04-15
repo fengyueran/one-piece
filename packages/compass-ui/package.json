@@ -11,14 +11,29 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.mjs",
+      "require": "./dist/theme/index.js"
+    },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "import": "./dist/locale/index.mjs",
+      "require": "./dist/locale/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.mjs",
+      "require": "./dist/icons/index.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom --outDir dist --clean --minify",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom --outDir dist --watch",
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "jest",
     "test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=lcov",
@@ -37,8 +52,8 @@
   "author": "xinghunm",
   "license": "MIT",
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

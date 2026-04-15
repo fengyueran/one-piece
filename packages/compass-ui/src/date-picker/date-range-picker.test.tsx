@@ -31,6 +31,26 @@ describe('DateRangePicker Detailed', () => {
     expect(onChange).toHaveBeenCalledTimes(1)
   })
 
+  it('should expose aria-controls and close on escape', async () => {
+    const user = userEvent.setup()
+    renderWithTheme(<DateRangePicker />)
+    const inputs = screen.getAllByRole('textbox')
+
+    await user.click(inputs[0])
+    expect(screen.getByText(/\d{1,2}月/)).toBeInTheDocument()
+
+    const controlsId = inputs[0].getAttribute('aria-controls')
+    expect(controlsId).toBeTruthy()
+    expect(document.getElementById(controlsId!)).toBeInTheDocument()
+    expect(inputs[0]).toHaveAttribute('aria-expanded', 'true')
+    expect(inputs[1]).toHaveAttribute('aria-expanded', 'true')
+
+    await user.keyboard('{Escape}')
+
+    expect(screen.queryByText(/\d{1,2}月/)).not.toBeInTheDocument()
+    expect(inputs[0]).toHaveAttribute('aria-expanded', 'false')
+  })
+
   it('should swap dates if end is before start during end selection', async () => {
     const onChange = jest.fn()
     renderWithTheme(<DateRangePicker onChange={onChange} />)

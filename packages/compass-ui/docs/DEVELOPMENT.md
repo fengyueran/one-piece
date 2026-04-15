@@ -11,6 +11,7 @@
 - [测试指南](#测试指南)
 - [样式开发](#样式开发)
 - [文档编写](#文档编写)
+- [复杂交互基础层策略](#复杂交互基础层策略)
 - [构建与发布](#构建与发布)
 - [开发规范](#开发规范)
 
@@ -214,6 +215,61 @@ pnpm test -- -u
 - [ ] 示例代码与当前公开 API 一致
 - [ ] 没有提到 Storybook 或内部实现
 
+## 复杂交互基础层策略
+
+`compass-ui` 当前把复杂交互分成两层，不混用职责：
+
+### 1. 锚点型 overlay：继续基于 `Floating UI`
+
+适用组件：
+
+- `Tooltip`
+- `Dropdown`
+- `Popover`
+- `Popconfirm`
+- `Select`
+- `TreeSelect`
+- `DatePicker`
+
+原因：
+
+- 这类组件都需要跟随触发器定位、翻转、避让视口和处理 outside press。
+- `Floating UI` 已经很好地覆盖定位、中间件和大部分边界处理，我们只在组件层补充业务语义和无障碍契约。
+
+当前共享约束：
+
+- 打开态优先用 `aria-expanded`、`aria-controls` 或 `aria-describedby` 表达。
+- 外部点击与 `Escape` 的关闭能力应保持一致，但是否“点击内部后立即关闭”由组件职责决定。
+- `Tooltip` 只负责轻提示；需要交互内容时进入 `Popover` / `Popconfirm`。
+
+### 2. 页面级 overlay：继续自研 portal + mask 基础层
+
+适用组件：
+
+- `Modal`
+- `Drawer`
+
+原因：
+
+- 这类组件不是锚点定位，而是页面级阻断层。
+- 它们更关心 portal、mask、关闭按钮、`Escape`、焦点回收和布局结构，而不是锚点定位算法。
+
+当前共享约束：
+
+- 统一 portal 到 `document.body`
+- 支持 `maskVisible`
+- 支持关闭按钮与 `Escape`
+- 打开时把焦点移入内容容器，关闭后还给触发元素
+
+### 3. 当前明确不做的事情
+
+- 不在本阶段引入统一的 focus trap 管理器
+- 不在本阶段处理 body scroll lock 与多层 overlay 栈管理
+- 不提供命令式 `useDrawer`
+- 不把 `Popover` 或 `Popconfirm` 扩成 mini-`Modal`
+
+如果新增 overlay 组件，先判断它是“锚点型”还是“页面级”，再决定复用 `Floating UI` 还是复用 `Modal` / `Drawer` 这一套基础层。
+
 ## 样式开发
 
 ### 使用 Emotion Styled
@@ -300,15 +356,64 @@ pnpm build
 - **MINOR** (0.1.0): 新功能，向后兼容
 - **PATCH** (0.0.1): Bug 修复，向后兼容
 
+### 公开发布流程
+
+`compass-ui` 的发布前校验入口统一收口在仓库根脚本 `pnpm run release:verify:compass-ui`。该命令会先运行 `pnpm --filter @xinghunm/compass-ui test`，再调用 `packages/compass-ui/scripts/verify-public-api.mjs`，串联 `build`、`publint`、`pnpm pack` 和 `test-consumer` 的类型冒烟校验。
+
+标准发布步骤如下：
+
+```bash
+# 1. 本地预检
+pnpm run release:verify:compass-ui
+
+# 2. 记录版本变更
+pnpm changeset
+
+# 3. 提交 changeset 后，由 CI release workflow 执行发布
+```
+
+CI 使用固定工作流 `.github/workflows/release.yml`。该 workflow 会执行以下步骤：
+
+1. 使用 `pnpm@8.6.10` 安装依赖
+2. 使用 `Node.js 22.14.0` 作为 trusted publishing 的 release job runtime
+3. 执行 `pnpm run release:verify:compass-ui`
+4. 通过 `changesets/action@v1` 运行 `pnpm changeset publish`
+
+在 npm 后台需要为 `@xinghunm/compass-ui` 配置 Trusted Publisher，配置路径为 `npm package settings -> Trusted publishers`，并绑定当前 GitHub 仓库与工作流文件 `.github/workflows/release.yml`。
+
+### 文档验证
+
+文档入口与示例的固定校验命令是仓库根脚本 `pnpm run docs:verify:compass-ui`。该命令会执行两步：
+
+1. `pnpm --filter @xinghunm/compass-ui docs:build`
+2. `node packages/compass-ui/scripts/verify-docs-public-imports.mjs`
+
+其中 `verify-docs-public-imports.mjs` 会扫描 `packages/compass-ui/docs/**/*.md` 和 `packages/compass-ui/README.md`，拦截以下问题：
+
+- 使用 `src/`、`dist/` 等内部路径
+- 使用未在 `package.json.exports` 中声明的 `@xinghunm/compass-ui/*` 子路径
+- 使用仅在仓库内部 alias 下才能成立的导入
+
+推荐在以下场景运行：
+
+- 修改首页、安装指南、API 页面或任意组件文档之后
+- 新增公开子路径或调整 `package.json.exports` 之后
+- 准备提交与文档相关的变更之前
+
+它与 `pnpm run release:verify:compass-ui` 的边界如下：
+
+- `docs:verify:compass-ui` 负责文档站可构建和文档示例导入边界
+- `release:verify:compass-ui` 负责包构建、`publint`、`pnpm pack` 与真实消费者类型冒烟
+
+两者互补，不互相替代。
+
 ### 发布前检查清单
 
-- [ ] 所有测试通过 (`pnpm test`)
-- [ ] 测试覆盖率达标 (`pnpm test -- --coverage`)
-- [ ] 代码检查通过 (`pnpm lint`)
-- [ ] 构建成功 (`pnpm build`)
-- [ ] 文档站可构建 (`pnpm docs:build`)
-- [ ] 更新 CHANGELOG.md
-- [ ] 更新版本号 (`package.json`)
+- [ ] `pnpm run release:verify:compass-ui` 通过
+- [ ] `pnpm run docs:verify:compass-ui` 通过
+- [ ] 需要发布的改动已通过 `pnpm changeset` 记录
+- [ ] 文档站可构建 (`pnpm --filter @xinghunm/compass-ui docs:build`)
+- [ ] npm Trusted Publisher 已绑定到 `.github/workflows/release.yml`
 
 ## 开发规范
 

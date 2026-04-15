@@ -196,7 +196,7 @@ export default () => {
 ```tsx
 import React, { useState } from 'react'
 import { DatePicker, ConfigProvider } from '@xinghunm/compass-ui'
-import enUS from '@xinghunm/compass-ui/dist/locale/en_US'
+import { enUS } from '@xinghunm/compass-ui/locale'
 
 export default () => {
   const [date, setDate] = useState(null)
@@ -262,7 +262,7 @@ export default () => {
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { DatePicker } from '@xinghunm/compass-ui'
-import type { DatePickerProps } from '@xinghunm/compass-ui/src/date-picker/types'
+import type { DatePickerProps } from '@xinghunm/compass-ui'
 
 // 1. 制作一个透明转发的 Wrapper，将 className 透传给浮层
 const DatePickerWrapper = ({ className, ...props }: DatePickerProps) => (
@@ -279,7 +279,7 @@ const StyledDatePicker = styled(DatePickerWrapper)`
   &.compass-date-picker {
     width: 240px;
 
-    .compass-input-field-wrapper {
+    .compass-input-wrapper {
       border-radius: 8px;
       border-color: #eb2f96;
     }
@@ -343,6 +343,15 @@ export default () => {
 }
 ```
 
+## 键盘与可访问性
+
+- 输入框支持通过 `Tab` 聚焦，可直接透传 `aria-label` 给底层文本框。
+- 日期输入框和范围输入框会同步暴露 `aria-expanded` 与 `aria-controls`，用于表达当前弹层状态。
+- 展开后的日期面板支持通过 `Escape` 关闭；外部点击也会关闭当前面板。
+- `disabled` 状态下输入框保持不可交互。
+- `RangePicker` 的两个输入框共享同一个日期浮层，因此展开时两侧输入框都会反映相同的展开状态。
+- `clearable` 启用且存在值时，可通过清除控件快速回到空值状态。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)
@@ -375,45 +384,60 @@ export default () => {
 | onChange     | 日期范围改变时的回调 | `(dates: [Date \| null, Date \| null]) => void` | -                          |
 | placeholder  | 输入框提示文字       | `[string, string]`                              | `['开始日期', '结束日期']` |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名   | 说明       |
+| -------- | ---------- |
+| `root`   | 根容器     |
+| `input`  | 输入区域   |
+| `popup`  | 弹层容器   |
+| `header` | 头部区域   |
+| `body`   | 主体区域   |
+| `footer` | 底部区域   |
+| `day`    | 日期单元格 |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.datePicker)</summary>
+常用调整通常集中在输入边框、弹层阴影和日期单元格状态颜色上，下面先列出最常改的一组 token。
 
-| 变量名                                    | 说明            |
-| ----------------------------------------- | --------------- |
-| `components.datePicker.borderColor`       | 边框颜色        |
-| `components.datePicker.boxShadow`         | 阴影            |
-| `components.datePicker.headerPadding`     | 头部内边距      |
-| `components.datePicker.headerFontSize`    | 头部字体大小    |
-| `components.datePicker.weekDayFontSize`   | 星期字体大小    |
-| `components.datePicker.cellWidth`         | 单元格宽度      |
-| `components.datePicker.cellHeight`        | 单元格高度      |
-| `components.datePicker.cellMargin`        | 单元格边距      |
-| `components.datePicker.cellFontSize`      | 单元格字体大小  |
-| `components.datePicker.cellColor`         | 单元格文字颜色  |
-| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 |
-| `components.datePicker.cellActiveBg`      | 选中背景色      |
-| `components.datePicker.cellHoverBg`       | 悬停背景色      |
-| `components.datePicker.cellDisabledColor` | 禁用文字颜色    |
-| `components.datePicker.cellBorderRadius`  | 单元格圆角      |
+| Token Name                                | Description     | Default                                                                                                    |
+| ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.datePicker.borderColor`       | 边框颜色        | `rgba(0, 0, 0, 0.06)`                                                                                      |
+| `components.datePicker.boxShadow`         | 阴影            | `0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.datePicker.cellColor`         | 单元格文字颜色  | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 | `#ffffff`                                                                                                  |
+| `components.datePicker.cellActiveBg`      | 选中背景色      | `#1890ff`                                                                                                  |
+| `components.datePicker.cellHoverBg`       | 悬停背景色      | `#40a9ff`                                                                                                  |
+| `components.datePicker.cellDisabledColor` | 禁用文字颜色    | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.datePicker.zIndex`            | 弹层层级        | `1000`                                                                                                     |
+
+<details>
+<summary>查看完整 token 列表</summary>
+
+| Token Name                                | Description     | Default                                                                                                    |
+| ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.datePicker.borderColor`       | 边框颜色        | `rgba(0, 0, 0, 0.06)`                                                                                      |
+| `components.datePicker.boxShadow`         | 阴影            | `0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.datePicker.headerPadding`     | 头部内边距      | `12px 16px`                                                                                                |
+| `components.datePicker.headerHeight`      | 头部高度        | `40px`                                                                                                     |
+| `components.datePicker.headerFontSize`    | 头部字体大小    | `14px`                                                                                                     |
+| `components.datePicker.weekDayFontSize`   | 星期字体大小    | `12px`                                                                                                     |
+| `components.datePicker.cellWidth`         | 单元格宽度      | `32px`                                                                                                     |
+| `components.datePicker.cellHeight`        | 单元格高度      | `32px`                                                                                                     |
+| `components.datePicker.cellPadding`       | 单元格内边距    | `0`                                                                                                        |
+| `components.datePicker.cellMargin`        | 单元格边距      | `2px`                                                                                                      |
+| `components.datePicker.cellFontSize`      | 单元格字体大小  | `14px`                                                                                                     |
+| `components.datePicker.cellColor`         | 单元格文字颜色  | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.datePicker.cellActiveColor`   | 选中/悬停文字色 | `#ffffff`                                                                                                  |
+| `components.datePicker.cellActiveBg`      | 选中背景色      | `#1890ff`                                                                                                  |
+| `components.datePicker.cellHoverBg`       | 悬停背景色      | `#40a9ff`                                                                                                  |
+| `components.datePicker.cellDisabledColor` | 禁用文字颜色    | `rgba(0, 0, 0, 0.25)`                                                                                      |
+| `components.datePicker.cellBorderRadius`  | 单元格圆角      | `4px`                                                                                                      |
+| `components.datePicker.zIndex`            | 弹层层级        | `1000`                                                                                                     |
 
 </details>
 
-<details>
-<summary>全局 Token</summary>
-
-| 变量名                       | 说明         |
-| ---------------------------- | ------------ |
-| `colors.primary`             | 主色调       |
-| `colors.background`          | 背景色       |
-| `colors.backgroundSecondary` | 次级背景色   |
-| `colors.text`                | 文本颜色     |
-| `colors.textSecondary`       | 次级文本颜色 |
-| `colors.textDisabled`        | 禁用文本颜色 |
-| `colors.border`              | 边框颜色     |
-| `colors.error`               | 错误色       |
-| `borderRadius.lg`            | 大圆角       |
-| `shadows.lg`                 | 大阴影       |
-
-</details>
+DatePicker 还会跟随全局 `colors.primary`、`colors.background`、`colors.backgroundSecondary`、`colors.text`、`colors.textSecondary`、`colors.textDisabled`、`colors.border`、`colors.error`、`borderRadius.lg` 等 token 变化。
+DatePicker 的阴影默认值也会继承全局 `shadows.lg` 的视觉层级习惯。

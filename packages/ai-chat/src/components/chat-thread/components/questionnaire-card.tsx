@@ -7,7 +7,7 @@ import {
   type MouseEvent,
 } from 'react'
 import styled from '@emotion/styled'
-import { InputField } from '@xinghunm/compass-ui'
+import { Input } from '@xinghunm/compass-ui'
 import type { PlanQuestion, PlanQuestionnaire, PlanQuestionnaireSubmission } from '../../../types'
 import {
   createInitialAnswers,
@@ -631,11 +631,11 @@ const TextInput = styled.input`
   }
 `
 
-const InlineOtherInput = styled(InputField)`
+const InlineOtherInput = styled(Input)`
   width: 100%;
   margin-top: 0;
 
-  .compass-input-field-wrapper {
+  .compass-input-wrapper {
     min-height: 30px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
@@ -644,22 +644,22 @@ const InlineOtherInput = styled(InputField)`
     padding: 2px 9px;
   }
 
-  .compass-input-field-wrapper:hover {
+  .compass-input-wrapper:hover {
     border-color: rgba(126, 160, 255, 0.28);
   }
 
-  .compass-input-field-wrapper:focus-within {
+  .compass-input-wrapper:focus-within {
     border-color: rgba(126, 160, 255, 0.42);
     box-shadow: 0 0 0 1px rgba(126, 160, 255, 0.14);
   }
 
-  .compass-input-field-input {
+  .compass-input-input {
     color: rgba(255, 255, 255, 0.92);
     font-size: 13px;
     line-height: 1.2;
   }
 
-  .compass-input-field-input::placeholder {
+  .compass-input-input::placeholder {
     color: rgba(255, 255, 255, 0.34);
   }
 `

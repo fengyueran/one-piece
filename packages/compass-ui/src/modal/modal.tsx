@@ -47,10 +47,44 @@ export const BaseModal = (props: ModalBaseProps) => {
   const mergedCancelText = cancelText === '取消' ? locale.cancelText : cancelText
 
   const [loading, setLoading] = React.useState(false)
+  const contentRef = React.useRef<HTMLDivElement | null>(null)
+  const previousFocusRef = React.useRef<HTMLElement | null>(null)
+  const wasOpenRef = React.useRef(false)
+  const focusFrameRef = React.useRef<number | null>(null)
 
   React.useEffect(() => {
     if (!isOpen) {
       setLoading(false)
+    }
+  }, [isOpen])
+
+  React.useEffect(() => {
+    if (!canUseDom()) {
+      return
+    }
+
+    if (isOpen && !wasOpenRef.current) {
+      previousFocusRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null
+
+      focusFrameRef.current = window.requestAnimationFrame(() => {
+        contentRef.current?.focus()
+      })
+    }
+
+    if (!isOpen && wasOpenRef.current) {
+      if (previousFocusRef.current && document.contains(previousFocusRef.current)) {
+        previousFocusRef.current.focus()
+      }
+    }
+
+    wasOpenRef.current = isOpen
+
+    return () => {
+      if (focusFrameRef.current !== null) {
+        window.cancelAnimationFrame(focusFrameRef.current)
+        focusFrameRef.current = null
+      }
     }
   }, [isOpen])
 
@@ -85,6 +119,15 @@ export const BaseModal = (props: ModalBaseProps) => {
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Escape') {
+      return
+    }
+
+    event.stopPropagation()
+    onCancel?.()
+  }
+
   return (
     <RootContainer
       className={`compass-modal ${className || ''} ${classNames?.root || ''}`}
@@ -104,11 +147,14 @@ export const BaseModal = (props: ModalBaseProps) => {
         />
       )}
       <ModalContent
+        ref={contentRef}
         className={`compass-modal-content ${classNames?.content || ''}`}
         $visible={isOpen}
         $width={props.width}
         onTransitionEnd={onTransitionEnd}
+        onKeyDown={handleKeyDown}
         style={{ ...style, ...styles?.content }}
+        tabIndex={-1}
       >
         {header === undefined
           ? (title || closable) && (

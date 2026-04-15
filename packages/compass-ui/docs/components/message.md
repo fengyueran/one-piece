@@ -233,9 +233,13 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-| 变量名称                            | 描述           | 默认值     |
-| ----------------------------------- | -------------- | ---------- |
-| `components.message.contentPadding` | 消息内容内边距 | `8px 16px` |
-| `components.message.borderRadius`   | 消息内容圆角   | `8px`      |
-| `components.message.boxShadow`      | 消息阴影       | ...        |
-| `components.message.zIndex`         | 消息层级       | `1010`     |
+| Token Name                          | Description      | Default                                                                                                    |
+| ----------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `components.message.contentPadding` | 消息内容内边距   | `8px 16px`                                                                                                 |
+| `components.message.contentBg`      | 消息内容背景色   | `#ffffff`                                                                                                  |
+| `components.message.contentColor`   | 消息内容文字颜色 | `rgba(0, 0, 0, 0.88)`                                                                                      |
+| `components.message.borderRadius`   | 消息内容圆角     | `8px`                                                                                                      |
+| `components.message.boxShadow`      | 消息阴影         | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.message.zIndex`         | 消息层级         | `1010`                                                                                                     |
+
+Message 还会跟随全局 `colors.background`、`colors.text`、`colors.primary`、`colors.success`、`colors.warning`、`colors.error`、`spacing.sm`、`fontSize.sm`、`fontSize.md`、`borderRadius.lg` 与 `shadows.lg` 等 token 变化，但组件级覆盖优先使用 `components.message.*`。

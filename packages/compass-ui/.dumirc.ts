@@ -11,13 +11,17 @@ export default defineConfig({
     nav: [
       { title: '指南', link: '/guide' },
       { title: '组件', link: '/components' },
+      { title: 'API', link: '/api' },
       { title: 'GitHub', link: 'https://github.com/fengyueran/one-piece' },
     ],
     footer: 'Copyright © 2024 | Powered by Compass UI',
   },
 
   alias: {
-    '@xinghunm/compass-ui/dist/locale': path.join(__dirname, 'src/locale'),
+    '@xinghunm/compass-ui$': path.join(__dirname, 'src/index.ts'),
+    '@xinghunm/compass-ui/theme': path.join(__dirname, 'src/theme/index.ts'),
+    '@xinghunm/compass-ui/locale': path.join(__dirname, 'src/locale/index.ts'),
+    '@xinghunm/compass-ui/icons': path.join(__dirname, 'src/icons/index.ts'),
   },
   styles: [
     `

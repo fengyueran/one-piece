@@ -11,6 +11,8 @@
     "clean": "turbo run clean",
     "changeset": "changeset",
     "version-packages": "changeset version",
+    "docs:verify:compass-ui": "pnpm --filter @xinghunm/compass-ui docs:build && node packages/compass-ui/scripts/verify-docs-public-imports.mjs",
+    "release:verify:compass-ui": "pnpm --filter @xinghunm/compass-ui test && node packages/compass-ui/scripts/verify-public-api.mjs",
     "release": "turbo run lint test build --filter=./packages/* && changeset publish",
     "prepare": "husky",
     "commitlint": "commitlint --edit"

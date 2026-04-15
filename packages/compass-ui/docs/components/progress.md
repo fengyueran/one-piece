@@ -248,3 +248,5 @@ export default () => (
 | `components.progress.warningColor` | 警告状态颜色      | `#faad14` |
 | `components.progress.infoColor`    | 默认/信息状态颜色 | `#1890ff` |
 | `components.progress.fontSize`     | 进度文本字体大小  | `14px`    |
+
+Progress 还会跟随全局 `colors.primary`、`colors.success`、`colors.warning`、`colors.error`、`colors.text`、`colors.backgroundSecondary`、`spacing.sm` 与 `fontSize.*` 等 token 变化，但组件级覆盖优先使用 `components.progress.*`。

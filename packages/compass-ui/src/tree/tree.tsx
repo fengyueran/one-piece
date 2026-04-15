@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useMemo } from 'react'
-import { List, RowComponentProps } from 'react-window'
+import { List, ListProps, RowComponentProps } from 'react-window'
 import { TreeProps, DataNode, FlattenNode } from './types'
 import { TreeContainer } from './tree.styles'
 import { TreeNode } from './tree-node'
@@ -47,6 +47,7 @@ const Tree: React.FC<TreeProps> = ({
   const mergedExpandedKeys = propExpandedKeys || expandedKeys
   const mergedSelectedKeys = propSelectedKeys || selectedKeys
   const mergedCheckedKeys = propCheckedKeys || checkedKeys
+  const VirtualList = List as unknown as React.ComponentType<ListProps<object>>
 
   // Memoize entities map for cascade check
   const { keyEntities } = useMemo(() => {
@@ -177,7 +178,7 @@ const Tree: React.FC<TreeProps> = ({
   const renderContent = () => {
     if (virtual && height) {
       return (
-        <List
+        <VirtualList
           defaultHeight={height}
           rowCount={flattenedNodes.length}
           rowHeight={itemHeight}

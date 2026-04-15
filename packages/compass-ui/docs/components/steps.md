@@ -115,7 +115,8 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Steps, LoadingIcon, InfoIcon } from '@xinghunm/compass-ui'
+import { Steps } from '@xinghunm/compass-ui'
+import { LoadingIcon, InfoIcon } from '@xinghunm/compass-ui/icons'
 
 export default () => {
   const items = [
@@ -340,34 +341,43 @@ export default () => {
 | className   | 自定义类名 | `string`                                     | -       |
 | style       | 自定义样式 | `React.CSSProperties`                        | -       |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名        | 说明       |
+| ------------- | ---------- |
+| `root`        | 根容器     |
+| `item`        | 步骤项     |
+| `icon`        | 图标区域   |
+| `content`     | 内容区域   |
+| `title`       | 标题区域   |
+| `subtitle`    | 副标题区域 |
+| `description` | 描述文本   |
+| `tail`        | 连接线     |
+
 ## 主题变量 (Design Token)
 
-### 组件 Token
+| Token Name                                 | Description      | Default               |
+| ------------------------------------------ | ---------------- | --------------------- |
+| `components.steps.descriptionColor`        | 描述文字颜色     | `rgba(0, 0, 0, 0.45)` |
+| `components.steps.titleColor`              | 标题文字颜色     | `rgba(0, 0, 0, 0.65)` |
+| `components.steps.subTitleColor`           | 子标题文字颜色   | `rgba(0, 0, 0, 0.45)` |
+| `components.steps.waitIconColor`           | 等待状态图标颜色 | `rgba(0, 0, 0, 0.25)` |
+| `components.steps.processIconColor`        | 进行状态图标颜色 | `#1890ff`             |
+| `components.steps.finishIconColor`         | 完成状态图标颜色 | `#1890ff`             |
+| `components.steps.errorIconColor`          | 错误状态图标颜色 | `#ff4d4f`             |
+| `components.steps.waitTitleColor`          | 等待状态标题颜色 | `rgba(0, 0, 0, 0.45)` |
+| `components.steps.processTitleColor`       | 进行状态标题颜色 | `rgba(0, 0, 0, 0.85)` |
+| `components.steps.finishTitleColor`        | 完成状态标题颜色 | `rgba(0, 0, 0, 0.65)` |
+| `components.steps.errorTitleColor`         | 错误状态标题颜色 | `#ff4d4f`             |
+| `components.steps.waitDescriptionColor`    | 等待状态描述颜色 | `rgba(0, 0, 0, 0.45)` |
+| `components.steps.processDescriptionColor` | 进行状态描述颜色 | `rgba(0, 0, 0, 0.65)` |
+| `components.steps.finishDescriptionColor`  | 完成状态描述颜色 | `rgba(0, 0, 0, 0.45)` |
+| `components.steps.errorDescriptionColor`   | 错误状态描述颜色 | `#ff4d4f`             |
+| `components.steps.iconSize`                | 图标大小         | `32px`                |
+| `components.steps.dotSize`                 | 点状步骤条大小   | `8px`                 |
+| `components.steps.titleFontSize`           | 标题字体大小     | `16px`                |
+| `components.steps.descriptionFontSize`     | 描述字体大小     | `14px`                |
 
-| Token Name                                 | Description      | 默认值 |
-| ------------------------------------------ | ---------------- | ------ |
-| `components.steps.descriptionColor`        | 描述文字颜色     | -      |
-| `components.steps.titleColor`              | 标题文字颜色     | -      |
-| `components.steps.subTitleColor`           | 子标题文字颜色   | -      |
-| `components.steps.waitIconColor`           | 等待状态图标颜色 | -      |
-| `components.steps.processIconColor`        | 进行状态图标颜色 | -      |
-| `components.steps.finishIconColor`         | 完成状态图标颜色 | -      |
-| `components.steps.errorIconColor`          | 错误状态图标颜色 | -      |
-| `components.steps.waitTitleColor`          | 等待状态标题颜色 | -      |
-| `components.steps.processTitleColor`       | 进行状态标题颜色 | -      |
-| `components.steps.finishTitleColor`        | 完成状态标题颜色 | -      |
-| `components.steps.errorTitleColor`         | 错误状态标题颜色 | -      |
-| `components.steps.waitDescriptionColor`    | 等待状态描述颜色 | -      |
-| `components.steps.processDescriptionColor` | 进行状态描述颜色 | -      |
-| `components.steps.finishDescriptionColor`  | 完成状态描述颜色 | -      |
-| `components.steps.errorDescriptionColor`   | 错误状态描述颜色 | -      |
-| `components.steps.iconSize`                | 图标大小         | -      |
-| `components.steps.dotSize`                 | 点状步骤条大小   | -      |
-| `components.steps.titleFontSize`           | 标题字体大小     | -      |
-| `components.steps.descriptionFontSize`     | 描述字体大小     | -      |
-
-### 全局 Token
-
-| Token Name               | Description  |
-| ------------------------ | ------------ |
-| `colors.borderSecondary` | 次级边框颜色 |
+Steps 还会跟随全局 `colors.borderSecondary` 等 token 变化。

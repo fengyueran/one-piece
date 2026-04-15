@@ -154,6 +154,43 @@ export default () => (
 )
 ```
 
+### 自定义主题
+
+通过 `ConfigProvider` 覆盖提示框的主题变量。
+
+```tsx
+import React from 'react'
+import { Button, ConfigProvider, Tooltip } from '@xinghunm/compass-ui'
+
+export default () => (
+  <ConfigProvider
+    theme={{
+      token: {
+        components: {
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            contentColor: '#f8fafc',
+            borderRadius: '10px',
+            padding: '8px 12px',
+          },
+        },
+      },
+    }}
+  >
+    <Tooltip content="主题化提示">
+      <Button>Custom Theme</Button>
+    </Tooltip>
+  </ConfigProvider>
+)
+```
+
+## 交互边界与可访问性
+
+- `Tooltip` 仍然是轻量提示，不承载表单或确认操作；需要可点击内容时应使用后续的 `Popover` / `Popconfirm`。
+- 触发元素在浮层打开时会通过 `aria-describedby` 指向当前提示层。
+- `trigger="click"` 时，按 `Escape` 可以关闭提示层；提示层内部点击不会立即把自己关闭。
+- `disabled` 或空内容时不会渲染提示层。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)
@@ -173,20 +210,28 @@ export default () => (
 | classNames      | 语义化类名             | `{ root?: string; overlay?: string; content?: string; arrow?: string }`                                                                                              | -         |
 | styles          | 语义化样式             | `{ root?: CSSProperties; overlay?: CSSProperties; content?: CSSProperties; arrow?: CSSProperties }`                                                                  | -         |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `root`    | 根容器   |
+| `overlay` | 浮层容器 |
+| `content` | 内容区域 |
+| `arrow`   | 箭头     |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.tooltip)</summary>
+| Token Name                           | Description    | Default                          |
+| ------------------------------------ | -------------- | -------------------------------- |
+| `components.tooltip.zIndex`          | 提示框层级     | `1070`                           |
+| `components.tooltip.backgroundColor` | 提示框背景色   | `rgba(0, 0, 0, 0.85)`            |
+| `components.tooltip.contentColor`    | 提示框文字色   | `#ffffff`                        |
+| `components.tooltip.boxShadow`       | 提示框阴影     | `0 4px 12px rgba(0, 0, 0, 0.15)` |
+| `components.tooltip.borderRadius`    | 提示框圆角     | `8px`                            |
+| `components.tooltip.padding`         | 提示框内边距   | `6px 10px`                       |
+| `components.tooltip.maxWidth`        | 提示框最大宽度 | `240px`                          |
+| `components.tooltip.fontSize`        | 提示框字体大小 | `12px`                           |
 
-| 变量名                               | 说明           |
-| ------------------------------------ | -------------- |
-| `components.tooltip.zIndex`          | 提示框层级     |
-| `components.tooltip.backgroundColor` | 提示框背景色   |
-| `components.tooltip.contentColor`    | 提示框文字色   |
-| `components.tooltip.boxShadow`       | 提示框阴影     |
-| `components.tooltip.borderRadius`    | 提示框圆角     |
-| `components.tooltip.padding`         | 提示框内边距   |
-| `components.tooltip.maxWidth`        | 提示框最大宽度 |
-| `components.tooltip.fontSize`        | 提示框字体大小 |
-
-</details>
+Tooltip 还会跟随全局 `borderRadius.sm`、`shadows.sm` 与 `fontSize.sm` 等 token 变化，但组件级覆盖优先使用 `components.tooltip.*`。

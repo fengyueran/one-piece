@@ -379,6 +379,14 @@ export default () => (
 )
 ```
 
+## 键盘与可访问性
+
+- 触发元素会暴露 `aria-haspopup`、`aria-expanded` 和 `aria-controls`，用于表达菜单展开状态并关联当前浮层。
+- 当 `trigger="click"` 且触发元素本身可聚焦时，可以通过键盘激活触发元素来打开下拉菜单。
+- `trigger="click"` 的下拉菜单在展开后支持通过 `Escape` 关闭。
+- 菜单外部点击会关闭下拉层；浮层内部点击会保留当前展开状态，是否在选中后关闭仍由 `closeOnSelect` 决定。
+- `disabled` 状态下不会响应悬停或点击触发。
+
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)
@@ -400,28 +408,24 @@ export default () => (
 | classNames       | 语义化类名             | `{ trigger?: string; overlay?: string; content?: string }`                                                                                                           | -                |
 | styles           | 语义化样式             | `{ trigger?: CSSProperties; overlay?: CSSProperties; content?: CSSProperties }`                                                                                      | -                |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名    | 说明     |
+| --------- | -------- |
+| `trigger` | 触发器   |
+| `overlay` | 浮层容器 |
+| `content` | 内容区域 |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.dropdown)</summary>
+| Token Name                            | Description  | Default                                                                                                    |
+| ------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------- |
+| `components.dropdown.zIndex`          | 下拉菜单层级 | `1050`                                                                                                     |
+| `components.dropdown.backgroundColor` | 背景颜色     | `#ffffff`                                                                                                  |
+| `components.dropdown.boxShadow`       | 阴影         | `0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)` |
+| `components.dropdown.borderRadius`    | 圆角         | `4px`                                                                                                      |
+| `components.dropdown.padding`         | 内边距       | `4px 0`                                                                                                    |
 
-| 变量名                                | 说明         |
-| ------------------------------------- | ------------ |
-| `components.dropdown.zIndex`          | 下拉菜单层级 |
-| `components.dropdown.backgroundColor` | 背景颜色     |
-| `components.dropdown.boxShadow`       | 阴影         |
-| `components.dropdown.borderRadius`    | 圆角         |
-| `components.dropdown.padding`         | 内边距       |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名              | 说明         |
-| ------------------- | ------------ |
-| `colors.background` | 背景基础颜色 |
-| `shadows.lg`        | 默认大阴影   |
-| `borderRadius.md`   | 默认中圆角   |
-
-</details>
+Dropdown 也会跟随全局 `colors.background`、`shadows.lg`、`borderRadius.md` 等 token 变化，但组件级覆盖优先使用 `components.dropdown.*`。

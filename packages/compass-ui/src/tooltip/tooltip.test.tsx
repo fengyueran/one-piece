@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Tooltip from './tooltip'
 import type { TooltipPlacement } from './types'
@@ -217,6 +217,29 @@ describe('Tooltip', () => {
       await user.click(screen.getByLabelText('tooltip-input'))
 
       expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    })
+
+    it('should close click tooltip on escape and expose describedby', async () => {
+      const user = userEvent.setup()
+      render(
+        <Tooltip content="Tooltip content" trigger="click">
+          <button>Trigger</button>
+        </Tooltip>,
+      )
+
+      const trigger = screen.getByRole('button', { name: 'Trigger' })
+      await user.click(trigger)
+      await screen.findByRole('tooltip')
+
+      const describedBy = trigger.getAttribute('aria-describedby')
+      expect(describedBy).toBeTruthy()
+      expect(screen.getByRole('tooltip')).toHaveAttribute('id', describedBy)
+
+      await user.keyboard('{Escape}')
+
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+      })
     })
   })
 })

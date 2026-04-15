@@ -15,6 +15,17 @@ import { ItemWrapper, Label, ErrorMessage, MarginOffset } from './form-item.styl
 import { FormItemProps } from './types'
 import { defaultGetValueFromEvent, getNamePath } from './utils'
 
+interface FormBindingConfig {
+  valuePropName?: string
+  changePropName?: string
+  getValueFromEvent?: (...args: unknown[]) => unknown
+  getControlledValue?: (value: unknown, childProps: Record<string, unknown>) => unknown
+}
+
+interface FormAwareElementType {
+  __COMPASS_FORM_BINDING__?: FormBindingConfig
+}
+
 export const FormItem: React.FC<FormItemProps> = (props) => {
   const {
     name,
@@ -167,8 +178,18 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
   // Handle events
   const getControlled = (child: ReactElement) => {
     const mergeProps: Record<string, unknown> = { ...child.props }
+    const childType = child.type as FormAwareElementType
+    const formBinding = childType.__COMPASS_FORM_BINDING__ || {}
+    const valuePropName = formBinding.valuePropName || 'value'
+    const changePropName = formBinding.changePropName || 'onChange'
 
-    mergeProps.value = value === undefined ? '' : value
+    mergeProps[valuePropName] = formBinding.getControlledValue
+      ? formBinding.getControlledValue(value, child.props as Record<string, unknown>)
+      : value === undefined
+        ? valuePropName === 'checked'
+          ? false
+          : ''
+        : value
     // Pass name to child component for browser password manager recognition
     // Join with dots for string representation
     mergeProps.name = namePath.join('.')
@@ -179,12 +200,14 @@ export const FormItem: React.FC<FormItemProps> = (props) => {
     }
 
     const triggers = Array.isArray(validateTrigger) ? validateTrigger : [validateTrigger]
-    const originOnChange = mergeProps.onChange as (...args: unknown[]) => void
+    const originOnChange = mergeProps[changePropName] as ((...args: unknown[]) => void) | undefined
 
-    mergeProps.onChange = (...args: unknown[]) => {
+    mergeProps[changePropName] = (...args: unknown[]) => {
       originOnChange?.(...args)
 
-      const newValue = defaultGetValueFromEvent('value', ...args)
+      const newValue = formBinding.getValueFromEvent
+        ? formBinding.getValueFromEvent(...args)
+        : defaultGetValueFromEvent(valuePropName, ...args)
       context.setFieldValue(namePath, newValue)
 
       if (triggers.includes('onChange') && rules.length > 0) {

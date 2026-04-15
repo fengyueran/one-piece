@@ -1,105 +1,46 @@
-# Compass UI 文档说明
+# Compass UI 文档入口说明
 
-本项目包含两类文档:
+`packages/compass-ui/docs/` 是 `compass-ui` 当前唯一的对外文档入口，dumi 首页、组件目录、安装指南和 API 说明都从这里发布。
 
-## 📚 用户文档
+## 对外入口
 
-面向 **组件库使用者**,通过 `pnpm docs:dev` 启动,访问 http://localhost:8000
+- 首页：[`docs/index.md`](./index.md)
+- 安装指南：[`docs/guide/getting-started.md`](./guide/getting-started.md)
+- 组件目录：[`docs/components/index.md`](./components/index.md)
+- API 参考：[`docs/API.md`](./API.md)
 
-### 目录结构
+上面 4 个页面共同承担外部用户入口职责，内容必须保持一致：
 
-```
-docs/
-├── index.md                    # 首页
-├── guide/                      # 使用指南
-│   └── getting-started.md      # 快速开始
-└── components/                 # 组件文档
-    ├── button.md               # Button 组件
-    ├── steps.md                # Steps 组件
-    └── ...                     # 其他组件
-```
+- 首页负责回答“这是什么、先看哪里”
+- 安装指南负责回答“怎么安装、怎么开始用”
+- 组件目录负责回答“现在有哪些公开组件可以用”
+- API 参考负责回答“哪些导入路径属于正式公开契约”
 
-### 特点
+## 面向维护者的文档
 
-- ✅ **代码可编辑** - 所有示例代码都可以在线编辑和预览
-- ✅ **实时预览** - 修改代码后立即看到效果
-- ✅ **响应式** - 支持移动端和桌面端
-- ✅ **主题切换** - 支持亮色/暗色模式
+以下文档用于维护和扩展组件库，不属于对外产品入口：
 
-## 🛠️ 开发文档
+- [开发指南](./DEVELOPMENT.md)
+- `docs/components/*.md` 中的具体组件页面
 
-面向 **组件库贡献者和维护者**,独立于用户文档
+维护文档可以解释实现约束、测试方式和发布流程，但不能与首页和安装指南形成第二套对外叙事。
 
-### 文件位置
+## 文档编写约束
 
-```
-docs/
-├── DEVELOPMENT.md              # 开发规范和指南
-├── API.md                      # API 设计文档
-└── README.md                   # 文档说明(本文件)
-```
+- 所有示例只使用 `@xinghunm/compass-ui` 与已声明的公开子路径。
+- 不在文档中引用 `src/`、`dist/` 或仅在仓库 alias 下成立的导入路径。
+- 不新增 `apps/docs`、Storybook 或其他第二入口链接。
+- 组件文档只描述已经实现且有验证支撑的行为，尤其是键盘和可访问性说明。
 
-### 内容
-
-- 组件开发规范
-- TypeScript 规范
-- 测试规范
-- 样式规范
-- 文档规范
-- 发布流程
-
-## 🚀 命令
+## 本地命令
 
 ```bash
-# 启动用户文档
-pnpm docs:dev
+# 启动文档站
+pnpm --filter @xinghunm/compass-ui docs:dev
 
-# 构建用户文档
-pnpm docs:build
+# 构建文档站
+pnpm --filter @xinghunm/compass-ui docs:build
+
+# 运行文档验证
+pnpm run docs:verify:compass-ui
 ```
-
-## 📝 编写组件文档
-
-在 `docs/components/` 目录下创建 Markdown 文件:
-
-````markdown
----
-title: ComponentName 组件名
-nav:
-  title: 组件
-  order: 2
-group:
-  title: 分组名
-  order: 1
----
-
-# ComponentName 组件名
-
-组件描述
-
-## 何时使用
-
-- 使用场景 1
-- 使用场景 2
-
-## 代码演示
-
-### 基础用法
-
-描述
-
-```tsx
-import React from 'react'
-import { ComponentName } from '@xinghunm/compass-ui'
-
-export default () => {
-  return <ComponentName>示例</ComponentName>
-}
-```
-
-## API
-
-| 参数  | 说明 | 类型     | 默认值 |
-| ----- | ---- | -------- | ------ |
-| prop1 | 说明 | `string` | -      |
-````

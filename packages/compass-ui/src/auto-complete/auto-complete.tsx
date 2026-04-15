@@ -11,7 +11,7 @@ import {
   FloatingPortal,
   size as floatingSize,
 } from '@floating-ui/react'
-import InputField from '../input-field'
+import Input from '../input'
 import { AutoCompleteProps, AutoCompleteOption } from './types'
 import {
   AutoCompleteContainer,
@@ -215,7 +215,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = (props) => {
       className={`compass-auto-complete ${classNames?.root || ''} ${className || ''}`}
       {...getReferenceProps()}
     >
-      <InputField
+      <Input
         {...rest}
         style={styles?.input}
         className={classNames?.input}

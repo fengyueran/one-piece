@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useId, useRef, useState } from 'react'
 import {
   useFloating,
   autoUpdate,
@@ -19,6 +19,7 @@ import {
 
 import { TooltipProps } from './types'
 import { TooltipArrow, TooltipOverlay, TooltipTrigger } from './tooltip.styles'
+import { getOverlaySurfaceProps } from '../internal/overlay-utils'
 
 const hasTooltipContent = (value: React.ReactNode): boolean => {
   if (value === null || value === undefined || value === '' || typeof value === 'boolean') {
@@ -53,6 +54,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const isControlled = controlledOpen !== undefined
   const open = isControlled ? controlledOpen : uncontrolledOpen
+  const tooltipId = useId().replace(/:/g, '')
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (disabled) return
@@ -108,6 +110,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const triggerElement = React.cloneElement(child, {
     ...getReferenceProps(child.props),
+    'aria-describedby': open ? `compass-tooltip-${tooltipId}` : undefined,
     ref: mergedRef,
     className: [className, classNames?.root, child.props.className].filter(Boolean).join(' '),
     style: { ...child.props.style, ...style, ...styles?.root },
@@ -149,11 +152,8 @@ const Tooltip: React.FC<TooltipProps> = ({
             className={`compass-tooltip ${classNames?.overlay || ''}`}
             style={{ ...floatingStyles, ...styles?.overlay }}
             data-placement={resolvedPlacement}
-            {...getFloatingProps({
-              onClick: (e) => e.stopPropagation(),
-              onMouseDown: (e) => e.stopPropagation(),
-              onPointerDown: (e) => e.stopPropagation(),
-            })}
+            {...getFloatingProps(getOverlaySurfaceProps())}
+            id={`compass-tooltip-${tooltipId}`}
           >
             <TooltipOverlay
               className={`compass-tooltip-content ${classNames?.content || ''}`}

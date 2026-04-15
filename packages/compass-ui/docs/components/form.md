@@ -25,7 +25,7 @@ group:
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const handleSubmit = (values) => {
@@ -40,11 +40,11 @@ export default () => {
         name="username"
         rules={[{ required: true, message: '请输入用户名' }]}
       >
-        <InputField placeholder="请输入用户名" />
+        <Input placeholder="请输入用户名" />
       </Form.Item>
 
       <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-        <InputField type="password" placeholder="请输入密码" />
+        <Input type="password" placeholder="请输入密码" />
       </Form.Item>
 
       <Form.Item>
@@ -63,7 +63,7 @@ export default () => {
 
 ```tsx
 import React, { useState } from 'react'
-import { Form, InputField, Button, Select } from '@xinghunm/compass-ui'
+import { Form, Input, Button, Select } from '@xinghunm/compass-ui'
 
 export default () => {
   const [layout, setLayout] = useState('horizontal')
@@ -86,11 +86,11 @@ export default () => {
 
       <Form layout={layout}>
         <Form.Item label="用户名" name="username">
-          <InputField placeholder="请输入用户名" />
+          <Input placeholder="请输入用户名" />
         </Form.Item>
 
         <Form.Item label="密码" name="password">
-          <InputField type="password" placeholder="请输入密码" />
+          <Input type="password" placeholder="请输入密码" />
         </Form.Item>
 
         <Form.Item>
@@ -110,7 +110,7 @@ Form 组件提供了表单验证的功能,只需要通过 `rules` 属性传入�
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const handleSubmit = (values) => {
@@ -131,7 +131,7 @@ export default () => {
           { type: 'email', message: '请输入有效的邮箱地址' },
         ]}
       >
-        <InputField placeholder="请输入邮箱" />
+        <Input placeholder="请输入邮箱" />
       </Form.Item>
 
       <Form.Item
@@ -149,7 +149,7 @@ export default () => {
           },
         ]}
       >
-        <InputField type="number" placeholder="请输入年龄" />
+        <Input type="number" placeholder="请输入年龄" />
       </Form.Item>
 
       <Form.Item>
@@ -168,7 +168,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -180,7 +180,7 @@ export default () => {
   return (
     <Form form={form} onFinish={handleSubmit}>
       <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-        <InputField type="password" placeholder="请输入密码" />
+        <Input type="password" placeholder="请输入密码" />
       </Form.Item>
 
       <Form.Item
@@ -199,7 +199,7 @@ export default () => {
           },
         ]}
       >
-        <InputField type="password" placeholder="请再次输入密码" />
+        <Input type="password" placeholder="请再次输入密码" />
       </Form.Item>
 
       <Form.Item>
@@ -218,7 +218,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -237,11 +237,11 @@ export default () => {
       onFinish={handleSubmit}
     >
       <Form.Item label="用户名" name="username">
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item label="邮箱" name="email">
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item>
@@ -263,7 +263,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -271,11 +271,11 @@ export default () => {
   return (
     <Form form={form}>
       <Form.Item label="字段 A" name="fieldA">
-        <InputField placeholder="输入内容..." />
+        <Input placeholder="输入内容..." />
       </Form.Item>
 
       <Form.Item label="字段 B" name="fieldB">
-        <InputField placeholder="输入内容..." />
+        <Input placeholder="输入内容..." />
       </Form.Item>
 
       <Form.Item>
@@ -312,7 +312,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -320,10 +320,10 @@ export default () => {
   return (
     <Form form={form}>
       <Form.Item label="字段 A" name="a">
-        <InputField />
+        <Input />
       </Form.Item>
       <Form.Item label="字段 B" name="b">
-        <InputField />
+        <Input />
       </Form.Item>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Button onClick={() => form.setFieldValue('a', '值 A')}>设置 A</Button>
@@ -355,7 +355,7 @@ export default () => {
 
 ```tsx
 import React, { useState } from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -380,7 +380,7 @@ export default () => {
           },
         ]}
       >
-        <InputField placeholder="输入 'loading' 查看验证状态" />
+        <Input placeholder="输入 'loading' 查看验证状态" />
       </Form.Item>
 
       <div style={{ padding: 12, background: '#f5f5f5', marginTop: 16 }}>
@@ -413,7 +413,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -421,7 +421,7 @@ export default () => {
   return (
     <Form form={form} onFinish={(values) => alert(`提交成功:\n${JSON.stringify(values, null, 2)}`)}>
       <Form.Item label="邮箱" name="email" rules={[{ required: true, type: 'email' }]}>
-        <InputField />
+        <Input />
       </Form.Item>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -466,7 +466,7 @@ export default () => {
 
 ```tsx
 import React, { useEffect, useState } from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -490,7 +490,7 @@ export default () => {
         name="name"
         rules={[{ required: true, message: '请输入项目名称' }]}
       >
-        <InputField />
+        <Input />
       </Form.Item>
       <Form.Item
         label="邮箱"
@@ -500,7 +500,7 @@ export default () => {
           { type: 'email', message: '邮箱格式不正确' },
         ]}
       >
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Button variant="primary" type="submit" disabled={!isSubmittable}>
@@ -517,7 +517,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, InputNumber } from '@xinghunm/compass-ui'
+import { Form, Input, InputNumber } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -541,7 +541,7 @@ export default () => {
   return (
     <Form form={form}>
       <Form.Item label="姓名" name="name">
-        <InputField placeholder="请输入姓名" />
+        <Input placeholder="请输入姓名" />
       </Form.Item>
       <Form.Item label="年龄" name="age">
         <InputNumber placeholder="请输入年龄" />
@@ -563,7 +563,7 @@ export default () => {
 
 ```tsx
 import React, { useState } from 'react'
-import { Form, InputField } from '@xinghunm/compass-ui'
+import { Form, Input } from '@xinghunm/compass-ui'
 
 export default () => {
   const [form] = Form.useForm()
@@ -577,11 +577,11 @@ export default () => {
   return (
     <Form form={form} onValuesChange={onValuesChange}>
       <Form.Item label="项目名称" name="projectName">
-        <InputField placeholder="输入项目名称..." />
+        <Input placeholder="输入项目名称..." />
       </Form.Item>
 
       <Form.Item label="描述" name="description">
-        <InputField placeholder="输入描述..." />
+        <Input placeholder="输入描述..." />
       </Form.Item>
 
       {lastChange && (
@@ -600,7 +600,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const handleSubmit = (values) => {
@@ -610,7 +610,7 @@ export default () => {
   return (
     <Form onFinish={handleSubmit}>
       <Form.Item label="用户名" name="username" rules={[{ required: true }]}>
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item label="提示">
@@ -635,7 +635,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const handleSubmit = (values) => {
@@ -656,15 +656,15 @@ export default () => {
   return (
     <Form onFinish={handleSubmit} initialValues={initialValues}>
       <Form.Item label="First Name" name={['user', 'name', 'first']}>
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item label="Last Name" name={['user', 'name', 'last']}>
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item label="Email" name={['user', 'email']}>
-        <InputField />
+        <Input />
       </Form.Item>
 
       <Form.Item>
@@ -683,7 +683,7 @@ export default () => {
 
 ```tsx
 import React from 'react'
-import { Form, InputField, Button } from '@xinghunm/compass-ui'
+import { Form, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => (
   <Form
@@ -699,7 +699,7 @@ export default () => (
     }}
   >
     <Form.Item label="Custom Item" name="custom">
-      <InputField placeholder="Check styles in devtools" />
+      <Input placeholder="Check styles in devtools" />
     </Form.Item>
     <Button htmlType="submit">Submit</Button>
   </Form>
@@ -711,7 +711,7 @@ export default () => (
 通过 `ConfigProvider` 自定义表单主题。
 
 ```tsx
-import { ConfigProvider, Form, InputField } from '@xinghunm/compass-ui'
+import { ConfigProvider, Form, Input } from '@xinghunm/compass-ui'
 
 export default () => {
   return (
@@ -731,7 +731,7 @@ export default () => {
     >
       <Form>
         <Form.Item label="用户名" name="username">
-          <InputField />
+          <Input />
         </Form.Item>
       </Form>
     </ConfigProvider>
@@ -837,30 +837,28 @@ type NamePath = string | number | (string | number)[]
 | validating | 是否正在验证     | `boolean`              |
 | errors     | 错误信息列表     | `string[]`             |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名  | 说明     |
+| ------- | -------- |
+| `form`  | 表单容器 |
+| `item`  | 表单项   |
+| `label` | 标签区域 |
+| `error` | 错误提示 |
+
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.form)</summary>
+| Token Name                          | Description      | Default               |
+| ----------------------------------- | ---------------- | --------------------- |
+| `components.form.itemMarginBottom`  | 表单项下间距     | `16px`                |
+| `components.form.labelMarginBottom` | 标签下间距       | `8px`                 |
+| `components.form.labelFontSize`     | 标签字体大小     | `14px`                |
+| `components.form.labelColor`        | 标签颜色         | `rgba(0, 0, 0, 0.88)` |
+| `components.form.errorColor`        | 错误信息颜色     | `#ff4d4f`             |
+| `components.form.errorFontSize`     | 错误信息字体大小 | `12px`                |
+| `components.form.errorMarginTop`    | 错误信息上间距   | `2px`                 |
+| `components.form.errorMarginBottom` | 错误信息下间距   | `2px`                 |
 
-| 变量名                              | 说明             |
-| ----------------------------------- | ---------------- |
-| `components.form.itemMarginBottom`  | 表单项下间距     |
-| `components.form.labelMarginBottom` | 标签下间距       |
-| `components.form.labelFontSize`     | 标签字体大小     |
-| `components.form.labelColor`        | 标签颜色         |
-| `components.form.errorColor`        | 错误信息颜色     |
-| `components.form.errorFontSize`     | 错误信息字体大小 |
-| `components.form.errorMarginTop`    | 错误信息上间距   |
-| `components.form.errorMarginBottom` | 错误信息下间距   |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名         | 说明     |
-| -------------- | -------- |
-| `spacing.md`   | 默认间距 |
-| `colors.error` | 错误主色 |
-
-</details>
+Form 还会跟随全局 `spacing.md`、`colors.error` 等 token 变化，但组件级配置入口以 `components.form.*` 为主。

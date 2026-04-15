@@ -211,6 +211,19 @@ export default () => (
 | styles          | 内部组件样式                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
 | classNames      | 内部组件类名                   | `{ root, item, activeItem, jumpItem, options, total }`  | -                   |
 
+### classNames / styles 插槽
+
+`classNames` 与 `styles` 使用相同的 slot key。
+
+| 插槽名       | 说明     |
+| ------------ | -------- |
+| `root`       | 根容器   |
+| `item`       | 页码项   |
+| `activeItem` | 当前页项 |
+| `jumpItem`   | 跳转项   |
+| `options`    | 配置区域 |
+| `total`      | 总数区域 |
+
 ## 主题变量 (Design Token)
 
 | Token Name                               | Description    | Default             |
@@ -224,3 +237,5 @@ export default () => (
 | `components.pagination.itemActiveColor`  | 选中项文字颜色 | #1890ff             |
 | `components.pagination.itemHoverColor`   | 悬停文字颜色   | #1890ff             |
 | `components.pagination.itemHoverBg`      | 悬停背景色     | -                   |
+
+Pagination 还会跟随全局 `colors.primary`、`colors.primaryHover` 与 `colors.border` 等 token 变化，但组件级覆盖优先使用 `components.pagination.*`。
