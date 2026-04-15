@@ -25,9 +25,6 @@ export type { PopoverProps, PopoverPlacement, PopoverClassNames, PopoverStyles }
 export { default as Popconfirm } from './popconfirm'
 export type { PopconfirmProps, PopconfirmClassNames, PopconfirmStyles } from './popconfirm'
 
-export { default as InputField } from './input-field'
-export type { InputFieldProps } from './input-field'
-
 export { default as Input } from './input'
 export type { InputProps } from './input'
 

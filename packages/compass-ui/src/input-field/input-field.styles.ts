@@ -138,7 +138,7 @@ export const InputWrapper = styled.div<{
       return token('components.input.hoverBorderColor', token('colors.primary', '#1890ff'))
     }};
 
-    .compass-input-field-clear[data-visible='true'] {
+    .compass-input-clear[data-visible='true'] {
       opacity: 1;
       pointer-events: auto;
     }

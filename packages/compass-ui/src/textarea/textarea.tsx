@@ -1,7 +1,13 @@
 import React, { useRef, useState } from 'react'
 
 import { CloseCircleIcon } from '../icons'
-import { Adornment, ClearButton, Container, StyledTextarea, TextareaWrapper } from './textarea.styles'
+import {
+  Adornment,
+  ClearButton,
+  Container,
+  StyledTextarea,
+  TextareaWrapper,
+} from './textarea.styles'
 import { TextareaProps } from './types'
 
 /**
@@ -121,7 +127,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>((props, re
         {allowClear && !disabled && (
           <ClearButton
             type="button"
-            className={`compass-textarea-clear compass-input-field-clear ${classNames?.clear || ''}`}
+            className={`compass-textarea-clear ${classNames?.clear || ''}`}
             style={styles?.clear}
             visible={!!showClear}
             $isHoverShow={true}

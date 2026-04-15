@@ -15,16 +15,13 @@ describe('Input', () => {
     expect(input).toHaveAttribute('type', 'text')
   })
 
-  it('should apply new and legacy class names together for compatibility', () => {
+  it('should apply semantic class names for size and status', () => {
     const { container } = renderWithTheme(<Input size="large" status="error" />)
     const wrapper = container.querySelector('.compass-input-wrapper')
 
     expect(container.querySelector('.compass-input')).toBeInTheDocument()
-    expect(container.querySelector('.compass-input-field')).toBeInTheDocument()
     expect(wrapper).toHaveClass('compass-input--large')
     expect(wrapper).toHaveClass('compass-input--error')
-    expect(wrapper).toHaveClass('compass-input-field--large')
-    expect(wrapper).toHaveClass('compass-input-field--error')
   })
 
   it('should support allowClear while keeping focus on the input', () => {

@@ -38,8 +38,7 @@ describe('DatePicker', () => {
       const input = screen.getByRole('textbox')
       await userEvent.hover(input.parentElement!) // Hover to show clear button
 
-      // Note: compass-ui InputField usually shows clear button on hover or always if visible prop is handled.
-      // Based on InputField implementation, it has .compass-input-clear-button.
+      // The shared input facade shows the clear button on hover when the value is present.
       // We might need to query by class or role.
       // Clear button is now CloseCircleIcon which has aria-label="close-circle"
       const clearBtn = screen.getByLabelText('close-circle')

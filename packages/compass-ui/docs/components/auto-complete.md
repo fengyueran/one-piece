@@ -442,7 +442,7 @@ const StyledAutoComplete = styled(AutoCompleteWrapper)`
   &.compass-auto-complete {
     width: 250px;
 
-    .compass-input-field-wrapper {
+    .compass-input-wrapper {
       border-radius: 20px;
       border: 2px solid #52c41a;
     }
@@ -516,7 +516,7 @@ export default () => {
 
 通用属性参考：[通用属性](/guide/common-props)
 
-支持 [InputField](/components/input-field) 的所有属性，如 `prefix`, `suffix`, `allowClear`, `size`, `bordered` 等。
+支持 [Input](/components/input) 的所有属性，如 `prefix`, `suffix`, `allowClear`, `size`, `bordered` 等。
 
 | 参数                     | 说明                                                                                                                                             | 类型                                                                       | 默认值  |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ------- |

@@ -1,4 +1,4 @@
-import { InputFieldProps } from '../input-field'
+import type { InputFieldProps } from '../input-field/types'
 
 export interface InputNumberProps
   extends Omit<InputFieldProps, 'onChange' | 'value' | 'defaultValue' | 'type' | 'allowClear'> {

@@ -24,7 +24,6 @@ group:
 - [Button 按钮](/components/button)
 - [Checkbox 多选框](/components/checkbox)
 - [Input 输入框](/components/input)
-- [InputField 输入框](/components/input-field)
 - [InputNumber 数字输入框](/components/input-number)
 - [Progress 进度条](/components/progress)
 - [Radio 单选框](/components/radio)
@@ -69,7 +68,7 @@ group:
 当前目录聚焦已经公开导出且适合在真实项目中直接消费的组件能力：
 
 - 优先补齐高频常用组件，而不是追求一次性覆盖完整设计系统。
-- 文本输入场景默认优先使用 `Input` 与 `Textarea`，`InputField` 只作为兼容入口保留。
+- 文本输入场景默认优先使用 `Input` 与 `Textarea`。
 - 页面反馈与状态闭环优先使用 `Alert`、`Empty`、`Skeleton`、`SpinLoading` 这些页面内构件，再考虑全局提示。
 - 文档页会逐步补充键盘和可访问性说明，但只记录已经被自动化验证覆盖的行为。
 - 更复杂的 overlay、选择器稳态化和更广的组件覆盖面会在后续阶段继续推进。

@@ -126,12 +126,6 @@ export default () => (
 - 按 `Enter` 会触发 `onPressEnter`
 - 开启 `allowClear` 时，清除按钮默认不进入 Tab 序列，点击后会把焦点还给输入框
 
-## 兼容说明
-
-- 新代码推荐使用 `Input`
-- `InputField` 仍然可用，但当前阶段只作为兼容入口保留
-- `Input` 与 `InputField` 共享同一套底层实现与类型契约
-
 ## API
 
 通用属性参考：[通用属性](/guide/common-props)

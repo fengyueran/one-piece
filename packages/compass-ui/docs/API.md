@@ -39,7 +39,6 @@ import {
 - 新增锚点交互浮层：`Popover`、`Popconfirm`
 - 新增基础布尔选择控件：`Checkbox`、`Radio`、`Switch`
 - 新增页面状态组件：`Alert`、`Empty`、`Skeleton`、`SpinLoading`
-- 兼容入口：`InputField` 仍然保留，但新代码推荐直接使用 `Input`
 - 全局配置与主题门面：`ConfigProvider`、`ThemeProvider`、`useTheme`
 - 常用主题默认值与主要类型：`defaultTheme`、`Theme`、组件 Props 类型
 

@@ -46,7 +46,6 @@ export default () => (
 
 - 单行输入使用 `Input`
 - 多行输入使用 `Textarea`
-- `InputField` 仍然可用，但主要用于兼容既有代码
 
 ## 使用公开子路径
 

@@ -279,7 +279,7 @@ const StyledDatePicker = styled(DatePickerWrapper)`
   &.compass-date-picker {
     width: 240px;
 
-    .compass-input-field-wrapper {
+    .compass-input-wrapper {
       border-radius: 8px;
       border-color: #eb2f96;
     }

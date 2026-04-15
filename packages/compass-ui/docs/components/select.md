@@ -488,7 +488,7 @@ export default () => {
 
 ```tsx
 import React, { useState } from 'react'
-import { Select, InputField, Button } from '@xinghunm/compass-ui'
+import { Select, Input, Button } from '@xinghunm/compass-ui'
 
 export default () => {
   const [name, setName] = useState('')
@@ -513,7 +513,7 @@ export default () => {
           {menu}
           <div style={{ borderTop: '1px solid #f0f0f0', margin: '8px 0' }} />
           <div style={{ display: 'flex', gap: 8, padding: '0 8px 8px' }}>
-            <InputField
+            <Input
               placeholder="Please enter item"
               value={name}
               onChange={(e) => setName(e.target.value)}
