@@ -305,8 +305,8 @@ export const defaultTheme: Theme = {
       avatarSize: '40px',
       blockHeight: '14px',
       borderRadius: '4px',
-      shimmerBaseColor: 'rgba(0, 0, 0, 0.08)',
-      shimmerHighlightColor: 'rgba(255, 255, 255, 0.55)',
+      shimmerBaseColor: 'rgba(0, 0, 0, 0.12)',
+      shimmerHighlightColor: 'rgba(255, 255, 255, 0.92)',
     },
     spinLoading: {
       indicatorColor: '#1677ff',

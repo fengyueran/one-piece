@@ -11,19 +11,19 @@ const shimmer = keyframes`
   }
 `
 
-const skeletonBaseColor = token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.08)')
+const skeletonBaseColor = token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.12)')
 const skeletonHighlightColor = token(
   'components.skeleton.shimmerHighlightColor',
-  'rgba(255, 255, 255, 0.55)',
+  'rgba(255, 255, 255, 0.92)',
 )
 
 const skeletonHighlight = `
   linear-gradient(
     90deg,
     transparent 0%,
-    transparent 35%,
+    transparent 42%,
     ${skeletonHighlightColor} 50%,
-    transparent 65%,
+    transparent 58%,
     transparent 100%
   )
 `
@@ -35,10 +35,10 @@ const skeletonShimmerStyles = `
   &::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -1px;
     background-image: ${skeletonHighlight};
     transform: translateX(-140%);
-    animation: ${shimmer} 1s ease-in-out infinite;
+    animation: ${shimmer} 0.9s ease-in-out infinite;
     will-change: transform;
     pointer-events: none;
   }
