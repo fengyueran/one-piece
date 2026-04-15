@@ -1,47 +1,29 @@
-import { keyframes } from '@emotion/react'
+import { css, keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { token } from '../theme/token-utils'
 
 const shimmer = keyframes`
   0% {
-    transform: translateX(-140%);
+    background-position: 100% 50%;
   }
   100% {
-    transform: translateX(140%);
+    background-position: 0 50%;
   }
 `
 
-const skeletonBaseColor = token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.12)')
+const skeletonBaseColor = token('components.skeleton.shimmerBaseColor', 'rgba(0, 0, 0, 0.06)')
 const skeletonHighlightColor = token(
   'components.skeleton.shimmerHighlightColor',
-  'rgba(255, 255, 255, 0.92)',
+  'rgba(0, 0, 0, 0.12)',
 )
 
 const skeletonHighlight = `
   linear-gradient(
     90deg,
-    transparent 0%,
-    transparent 42%,
-    ${skeletonHighlightColor} 50%,
-    transparent 58%,
-    transparent 100%
+    ${skeletonBaseColor} 25%,
+    ${skeletonHighlightColor} 37%,
+    ${skeletonBaseColor} 63%
   )
-`
-
-const skeletonShimmerStyles = `
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background-image: ${skeletonHighlight};
-    transform: translateX(-140%);
-    animation: ${shimmer} 0.9s ease-in-out infinite;
-    will-change: transform;
-    pointer-events: none;
-  }
 `
 
 export const SkeletonRoot = styled.div`
@@ -51,6 +33,15 @@ export const SkeletonRoot = styled.div`
   width: 100%;
 `
 
+const getSkeletonAnimationStyles = (active?: boolean) =>
+  active
+    ? css`
+        animation: ${shimmer} 1.4s ease infinite;
+      `
+    : css`
+        animation: none;
+      `
+
 export const SkeletonAvatar = styled.div<{
   $active?: boolean
 }>`
@@ -59,13 +50,11 @@ export const SkeletonAvatar = styled.div<{
   border-radius: 50%;
   background-color: ${skeletonBaseColor};
   flex-shrink: 0;
-  ${({ $active }) =>
-    $active
-      ? skeletonShimmerStyles
-      : `
-        position: relative;
-        overflow: hidden;
-      `}
+  background-image: ${skeletonHighlight};
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  will-change: background-position;
+  ${({ $active }) => getSkeletonAnimationStyles($active)}
 `
 
 export const SkeletonContent = styled.div`
@@ -86,11 +75,9 @@ export const SkeletonBlock = styled.span<{
   border-radius: ${({ $round }) =>
     $round ? '999px' : token('components.skeleton.borderRadius', token('borderRadius.sm', '4px'))};
   background-color: ${skeletonBaseColor};
-  ${({ $active }) =>
-    $active
-      ? skeletonShimmerStyles
-      : `
-        position: relative;
-        overflow: hidden;
-      `}
+  background-image: ${skeletonHighlight};
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  will-change: background-position;
+  ${({ $active }) => getSkeletonAnimationStyles($active)}
 `
