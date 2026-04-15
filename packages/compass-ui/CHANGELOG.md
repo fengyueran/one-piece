@@ -1,5 +1,14 @@
 # @xinghunm/compass-ui
 
+## 0.9.0
+
+### Minor Changes
+
+- 补齐高频组件与交互基线，收口 `compass-ui` 的公开 API 和文档体验：
+  - 新增 `Checkbox`、`Radio`、`Switch`、`Alert`、`Empty`、`Skeleton`、`SpinLoading`、`Popover`、`Popconfirm`、`Drawer`、`Input` 和 `Textarea` 等高频组件，并补齐主题 token、文档示例与自动化测试。
+  - 调整 `Select`、`Dropdown`、`DatePicker`、`Modal` 等复杂交互组件的浮层、键盘与焦点行为，统一文档入口、公开导入校验和发布前验证链路。
+  - 将单行文本输入的公开入口收敛为 `Input`，不再从包根入口导出 `InputField`。
+
 ## 0.8.3
 
 ### Patch Changes

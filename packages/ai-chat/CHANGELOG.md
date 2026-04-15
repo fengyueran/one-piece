@@ -1,5 +1,16 @@
 # @xinghunm/ai-chat
 
+## 1.1.2
+
+### Patch Changes
+
+- 兼容 `compass-ui` 新版输入组件入口，保持问卷卡片中的补充输入交互稳定：
+  - 将问卷卡片里 `Other` 选项的内联输入框切换到 `Input` 公开入口，避免依赖已移除的 `InputField` 导出。
+  - 同步更新输入框样式选择器，确保焦点边框、占位文案和暗色面板样式在新版 `compass-ui` 下保持一致。
+
+- Updated dependencies
+  - @xinghunm/compass-ui@0.9.0
+
 ## 1.1.1
 
 ### Patch Changes
