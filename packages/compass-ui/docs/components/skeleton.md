@@ -60,6 +60,7 @@ import { ConfigProvider, Skeleton } from '@xinghunm/compass-ui'
 export default () => (
   <ConfigProvider
     theme={{
+      global: false,
       token: {
         components: {
           skeleton: {
