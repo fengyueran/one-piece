@@ -94,33 +94,44 @@ export default () => {
 ### 自定义主题
 
 ```tsx
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, ConfigProvider, Drawer } from '@xinghunm/compass-ui'
 
-export default () => (
-  <ConfigProvider
-    theme={{
-      token: {
-        components: {
-          drawer: {
-            titleColor: '#0f172a',
-            maskColor: 'rgba(15, 23, 42, 0.42)',
-            bodyPadding: '32px',
+export default () => {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          components: {
+            drawer: {
+              titleColor: '#0f172a',
+              maskColor: 'rgba(15, 23, 42, 0.42)',
+              bodyPadding: '32px',
+            },
           },
         },
-      },
-    }}
-  >
-    <Drawer
-      isOpen
-      title="主题化抽屉"
-      onCancel={() => undefined}
-      footer={<Button variant="primary">保存</Button>}
+      }}
     >
-      <p>抽屉遮罩、标题和内容区间距都可以通过组件 token 覆盖。</p>
-    </Drawer>
-  </ConfigProvider>
-)
+      <>
+        <Button onClick={() => setOpen(true)}>Open Themed Drawer</Button>
+        <Drawer
+          isOpen={open}
+          title="主题化抽屉"
+          onCancel={() => setOpen(false)}
+          footer={
+            <Button variant="primary" onClick={() => setOpen(false)}>
+              保存
+            </Button>
+          }
+        >
+          <p>抽屉遮罩、标题和内容区间距都可以通过组件 token 覆盖。</p>
+        </Drawer>
+      </>
+    </ConfigProvider>
+  )
+}
 ```
 
 更多可配置字段见 [主题 Token](/guide/theme-tokens)。
