@@ -646,8 +646,6 @@ export default () => {
 
 ## 主题变量 (Design Token)
 
-### 组件 Token
-
 | Token Name                              | Description      | Default                                                                                                    |
 | --------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------- |
 | `components.select.borderRadius`        | 边框圆角         | `4px`                                                                                                      |
@@ -685,13 +683,4 @@ export default () => {
 | `components.select.minHeight.md`        | 中尺寸最小高度   | `24px`                                                                                                     |
 | `components.select.minHeight.lg`        | 大尺寸最小高度   | `26px`                                                                                                     |
 
-### 全局 Token
-
-| Token Name             | Description  |
-| ---------------------- | ------------ |
-| `colors.primary`       | 主色调       |
-| `colors.border`        | 边框颜色     |
-| `colors.background`    | 背景颜色     |
-| `colors.text`          | 文本颜色     |
-| `colors.textSecondary` | 次级文本颜色 |
-| `borderRadius.md`      | 默认圆角     |
+Select 还会跟随全局 `colors.primary`、`colors.border`、`colors.background`、`colors.text`、`colors.textSecondary`、`borderRadius.md` 等 token 变化。

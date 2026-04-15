@@ -220,38 +220,18 @@ export default () => (
 | classNames   | 语义化类名         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
 | styles       | 语义化样式         | `{ root, input, inputWrapper, prefix, suffix, upHandler, downHandler }` | -          |
 
-<details>
-<summary>组件 Token (components.input)</summary>
+## 主题变量 (Design Token)
 
-| 变量名                               | 说明             |
-| ------------------------------------ | ---------------- |
-| `components.input.activeBorderColor` | 激活状态边框颜色 |
-| `components.input.hoverBorderColor`  | 悬停状态边框颜色 |
-| `components.input.borderRadius`      | 边框圆角         |
-| `components.input.padding.sm`        | 小尺寸内边距     |
-| `components.input.padding.md`        | 中尺寸内边距     |
-| `components.input.padding.lg`        | 大尺寸内边距     |
-| `components.input.fontSize.sm`       | 小尺寸字体大小   |
-| `components.input.fontSize.md`       | 中尺寸字体大小   |
-| `components.input.fontSize.lg`       | 大尺寸字体大小   |
+| Token Name                           | Description      | Default    |
+| ------------------------------------ | ---------------- | ---------- |
+| `components.input.activeBorderColor` | 激活状态边框颜色 | `#40a9ff`  |
+| `components.input.hoverBorderColor`  | 悬停状态边框颜色 | `#4096ff`  |
+| `components.input.borderRadius`      | 边框圆角         | `4px`      |
+| `components.input.padding.sm`        | 小尺寸内边距     | `4px 8px`  |
+| `components.input.padding.md`        | 中尺寸内边距     | `6px 12px` |
+| `components.input.padding.lg`        | 大尺寸内边距     | `8px 16px` |
+| `components.input.fontSize.sm`       | 小尺寸字体大小   | `12px`     |
+| `components.input.fontSize.md`       | 中尺寸字体大小   | `14px`     |
+| `components.input.fontSize.lg`       | 大尺寸字体大小   | `16px`     |
 
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名                       | 说明         |
-| ---------------------------- | ------------ |
-| `colors.primary`             | 主色调       |
-| `colors.text`                | 文本颜色     |
-| `colors.textSecondary`       | 次级文本颜色 |
-| `colors.textTertiary`        | 三级文本颜色 |
-| `colors.textDisabled`        | 禁用文本颜色 |
-| `colors.border`              | 边框颜色     |
-| `colors.background`          | 背景颜色     |
-| `colors.backgroundSecondary` | 次级背景颜色 |
-| `colors.backgroundTertiary`  | 三级背景颜色 |
-| `colors.error`               | 错误状态颜色 |
-| `colors.warning`             | 警告状态颜色 |
-
-</details>
+InputNumber 还会跟随全局 `colors.primary`、`colors.text`、`colors.textSecondary`、`colors.textTertiary`、`colors.textDisabled`、`colors.border`、`colors.background`、`colors.backgroundSecondary`、`colors.backgroundTertiary`、`colors.error`、`colors.warning` 等 token 变化。

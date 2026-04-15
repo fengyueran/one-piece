@@ -363,25 +363,16 @@ export default () => (
 
 ## 主题变量 (Design Token)
 
-<details>
-<summary>组件 Token (components.button)</summary>
+| Token Name                          | Description      | Default  |
+| ----------------------------------- | ---------------- | -------- |
+| `components.button.padding.sm`      | 小尺寸按钮内边距 | `0 8px`  |
+| `components.button.padding.md`      | 中尺寸按钮内边距 | `0 16px` |
+| `components.button.fontSize.sm`     | 小尺寸按钮字体   | `12px`   |
+| `components.button.fontSize.md`     | 中尺寸按钮字体   | `14px`   |
+| `components.button.fontSize.lg`     | 大尺寸按钮字体   | `16px`   |
+| `components.button.borderRadius.sm` | 小尺寸按钮圆角   | `4px`    |
+| `components.button.borderRadius.md` | 中尺寸按钮圆角   | `6px`    |
+| `components.button.borderRadius.lg` | 大尺寸按钮圆角   | `8px`    |
+| `components.button.rippleOpacity`   | 水波纹透明度     | `0.3`    |
 
-| 变量名                           | 说明         |
-| -------------------------------- | ------------ |
-| `components.button.borderRadius` | 按钮圆角     |
-| `components.button.padding`      | 按钮内边距   |
-| `components.button.fontSize`     | 按钮字体大小 |
-| `components.button.height`       | 按钮高度     |
-
-</details>
-
-<details>
-<summary>全局 Token</summary>
-
-| 变量名           | 说明     |
-| ---------------- | -------- |
-| `colors.primary` | 主色调   |
-| `colors.danger`  | 危险色   |
-| `colors.text`    | 文本颜色 |
-
-</details>
+Button 还会跟随全局 `colors.primary`、`colors.text`、`colors.border` 等 token 变化。
